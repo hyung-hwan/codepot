@@ -1,0 +1,85 @@
+
+<div class="taskbar">
+        <div class="boxb">
+		<!--
+                [websvn:revision_form]
+                [lang:REV] [websvn:revision_hidden][websvn:revision_input]
+                [websvn:revision_submit]
+                [websvn:revision_endform]
+		-->
+        </div>
+
+	<div class="boxa">
+		<a href="[websvn:codepot_userhomeurl]">[lang:HOME]</a> 
+		<a href="[websvn:codepot_projectlisturl]">[lang:PROJECTS]</a> 
+	</div>
+</div>
+
+<div class="projectbar">
+	<div class="title">[websvn:repname]</div>
+	<div class="ctxmenu">&nbsp;</div>
+	<div class="fixedmenu">
+		<a href="[websvn:codepot_indexurl]">[lang:PROJECTS]</a> 
+		<a href="[websvn:codepot_wikiurl]">[lang:WIKI]</a>
+		<a href="[websvn:codepot_sourceurl]">[lang:SOURCE]</a>
+		<a href="[websvn:codepot_fileurl]">[lang:FILES]</a>
+	</div>
+</div>
+
+<div class="mainarea">
+
+[websvn-test:noaccess]
+   [lang:NOACCESS]
+[websvn-else]
+
+<div class="title">[websvn:curdirlinks] - [lang:DIFFREVS] [websvn:rev2] [lang:AND] [websvn:rev1]</div>
+
+<div class="menu">
+	[websvn-test:goyoungestlink]
+		[websvn:goyoungestlink] |
+	[websvn-endtest]
+	[websvn-test:showalllink]
+		[websvn:showalllink] |
+	[websvn-endtest]
+	[websvn-test:showcompactlink]
+		[websvn:showcompactlink] |
+	[websvn-endtest]
+	[websvn:filedetaillink] |
+	[websvn:blamelink] |
+	[websvn:fileviewloglink] 
+</div> <!-- menu -->
+
+<div id="result">
+
+[websvn-test:noprev]
+	[lang:NOPREVREV]
+[websvn-else]
+
+   <table>
+      <tr>
+         <th>[lang:REV] [websvn:rev2]</th>
+         <th>[lang:REV] [websvn:rev1]</th>
+      </tr>
+
+    [websvn-startlisting]
+    [websvn-test:rev1lineno]
+      <tr class="diffcode">
+        <td class="row1"><strong>[lang:LINE] [websvn:rev1lineno]...</strong></td>
+        <td class="row1"><strong>[lang:LINE] [websvn:rev2lineno]...</strong></td>
+      </tr>
+      [websvn-else]
+      <tr class="diffcode">
+        <td class="[websvn:rev1diffclass]"><pre>[websvn:rev1line]</pre></td>
+        <td class="[websvn:rev2diffclass]"><pre>[websvn:rev2line]</pre></td>
+      </tr>
+    [websvn-endtest]
+    [websvn-endlisting]
+
+   </table>
+
+[websvn-endtest]
+
+[websvn-endtest]
+</div> <!-- result -->
+
+</div> <!-- mainarea -->

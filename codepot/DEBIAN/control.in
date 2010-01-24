@@ -1,0 +1,12 @@
+Package: @PACKAGE@
+Version: @VERSION@
+Maintainer: @PACKAGE_BUGREPORT@
+Homepage: @PACKAGE_URL@
+Depends: subversion, apache2-mpm-prefork, libapache2-svn, php5, php5-ldap 
+Recommends: php5-mysql, php5-svn
+Suggests: slapd, mysql-server
+Section: web
+Priority: optional
+Architecture: all
+Description: Simple source code manager
+ Codepot is a simple source code manager.

@@ -1,0 +1,87 @@
+
+CODEPOT
+
+ Codepot is a simple web-based source code manager. It incorporates the
+ subversion revision control system and wiki-based documentation, and supports
+ authentication via LDAP.
+
+
+INSTALLATION
+
+ Here is how to install Codepot into the standard locations under Ubuntu Linux.
+
+ * Install required packages.
+   $ sudo apt-get install subversion
+   $ sudo apt-get install apache2-mpm-prefork
+   $ sudo apt-get install libapache2-svn
+   $ sudo apt-get install php5 php5-ldap php5-mysql
+   $ sudo apt-get install php5-svn # if available
+
+ * Install the mysql server if you want to store projects in a local mysql 
+   database.
+   $ sudo apt-get install mysql-server
+
+ * Install the openldap server if you want to use a local LDAP server.
+   $ sudo apt-get install slapd
+
+ * Enable the apache server modules
+   $ sudo a2enmod php5
+   $ sudo a2enmod authnz_ldap
+   $ sudo a2enmod dav_svn
+   $ sudo a2enmod userdir # to enable $HOME/public_html
+   $ sudo /etc/init.d/apache2 restart
+
+ * Install source code
+   $ ./configure \
+        --with-wwwdir=/var/www/codepot \
+        --with-cfgdir=/etc/codepot \
+        --with-depotdir=/var/lib/codepot \
+        --with-logdir=/var/log/codepot \
+        --with-cachedir=/var/cache/codepot
+   $ make install
+   $ mkdir -p /var/lib/codepot/svnrepo /var/lib/codepot/files
+   $ mkdir -p /var/cache/codepot /var/log/codepot
+  
+ * Customize CFGDIR/codepot.ini based on CFGDIR/codepot.ini-dist.
+
+ * Initialize database using CFGDIR/codepot.sql
+
+ * Configure apache web server ahthentication for subversion webdav access 
+   using CFGDIR/codepot.a2ldap
+
+ * To enable SSL 
+   $ sudo a2enmod ssl 
+   $ sudo a2ensite default-ssl
+   $ sudo hostname actual.domain.name
+   $ sudo make-ssl-cert generate-default-snakeoil --force-overwrite
+   $ sudo hostname ${HOSTNAME}
+   $ sudo /etc/init.d/apache2 restart
+
+LICENSE
+
+ This software is licensed under the GNU General Public License.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+ This software contains the following third-party components.
+
+   ------------------------------------------------------------------------
+   Name                                         License
+   ------------------------------------------------------------------------
+   CodeIgniter 1.7.2                            See src/system/license.txt
+   Google code prettify                         Apache License 2.0
+   JavaScript Creole 1.0 Wiki Markup Parser     See src/js/creole.js
+   WebSVN 2.1.0                                 See src/websvn/license.txt
+   ------------------------------------------------------------------------
+

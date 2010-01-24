@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# create directories not handled by make install
+[ -d "@CACHEDIR@" ] || { mkdir -p "@CACHEDIR@" && cachedir=1; } 
+[ -d "@LOGDIR@" ] || { mkdir -p "@LOGDIR@" && logdir=1; }
+[ -d "@DEPOTDIR@/svnrepo" ] || { mkdir -p "@DEPOTDIR@/svnrepo" && svnrepodir=1; } 
+[ -d "@DEPOTDIR@/files" ] || { mkdir -p "@DEPOTDIR@/files" && filesdir=1; }
+
+[ -f "@SYSCONFDIR@/apache2/envvars" ] && {
+	GROUP=$(. "@SYSCONFDIR@/apache2/envvars" && echo "${APACHE_RUN_GROUP}")
+	[ -n "${GROUP}" ]  && {
+		[ "${cachedir}" = "1" ] && {
+			chgrp -R "${GROUP}" "@CACHEDIR@"
+			chmod 0775 "@CACHEDIR@"
+		}
+		[ "${logdir}" = "1" ] && {
+			chgrp -R "${GROUP}" "@LOGDIR@"
+			chmod 0775 "@LOGDIR@"
+		}
+		[ "${svnrepodir}" = "1" ] && {
+			chgrp -R "${GROUP}" "@DEPOTDIR@/svnrepo"
+			chmod 0775 "@DEPOTDIR@/svnrepo"
+		}
+		[ "${filesdir}" = "1" ] && {
+			chgrp -R "${GROUP}" "@DEPOTDIR@/files"
+			chmod 0775 "@DEPOTDIR@/files"
+		}
+	}
+}
+
+exit 0

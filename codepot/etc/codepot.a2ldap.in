@@ -1,0 +1,47 @@
+#
+# This file contains sample configuration to enable LDAP authentication
+# for subversion webdav access. The actual configuration can be more
+# complex than this file depending on your requirement.
+#
+
+<Location "/svn">
+        DAV svn
+        SVNParentPath "@DEPOTDIR@/svnrepo"
+
+	# Uncomment SSLRequireSSL below to disallow non-SSL access.
+	# Note that SSL must be enabled site-wide to use it.
+	# SSLRequireSSL
+
+        AuthType Basic
+        AuthName "@PACKAGE@"
+
+	#
+	# configure authentication below
+	#
+
+	#
+	# Apache version 2.1 or later
+	# mod_authnz_ldap 
+	#
+        AuthBasicProvider ldap
+
+	# prevent other authenticatication moudles from authenticating users
+	# if this one fails.
+        AuthzLDAPAuthoritative on
+
+        AuthLDAPGroupAttribute memberUid
+        AuthLDAPGroupAttributeIsDN off
+        AuthLDAPRemoteUserIsDN off
+
+        AuthLDAPURL ldap://127.0.0.1:389/ou=users,dc=sample,dc=net?uid
+        AuthLDAPBindDN cn=admin,dc=sample,dc=net
+        AuthLDAPBindPassword xxxxxxx
+
+        Require ldap-group cn=developers,ou=groups,dc=sample,dc=net
+
+	# 
+	# Apache version 2.0.41
+	# mod_auth_ldap
+	#
+</Location>
+
