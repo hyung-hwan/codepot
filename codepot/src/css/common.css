@@ -1,0 +1,426 @@
+ody {
+	//margin: 0;
+	padding: 0;
+	margin: 5px 5px 5px 5px;
+}
+
+.content
+{
+	//margin: 2px 2px 2px 2px;
+	font-size: 90%;
+	font-family: sans-serif;
+}
+
+.content .taskbar {
+	font-size: 0.9em;
+	font-weight: bold;
+	text-transform: uppercase;
+	padding: 0.6em 0.2em 0.6em 0.2em;
+	color: #ffffff;
+	background-color: #203150
+}
+
+.content .taskbar .boxa {
+	/*vertical-align: bottom;*/
+}
+
+.content .taskbar .boxb {
+	float: right;
+}
+
+.content .taskbar a {
+	text-decoration: none;
+	color: #ffffff;
+	padding-left: 0.3em;
+	padding-right: 0.5em;
+	margin: 0.1em 0.1em 0.1em 0.1em;
+}
+
+.content .taskbar a:hover {
+	background-color: #7788CC;
+}
+
+.content .taskbar a:active {
+}
+
+.content .taskbar form input {
+	font-size: inherit;
+	font-family: inherit;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.content .taskbar form input[type="text"] {
+	font-weight: bold;
+	background-color: #FFFF99;
+	border: 1px solid #FFFF99;
+}
+
+.content .taskbar form input[type="password"] {
+	font-weight: bold;
+	background-color: #FFFF99;
+	border: 1px solid #FFFF99;
+}
+
+.content .taskbar form input[type="submit"] {
+	cursor: pointer;
+}
+
+.content .projectbar {
+	padding: 0.2em 0.2em 0.2em 0.2em;
+	background-color: #2A5090;
+	color: #FFFFFF;
+}
+
+.content .projectbar .title {
+	font-size: 2em;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin-bottom: 0.2em;
+}
+
+.content .projectbar .ctxmenu {
+	float: right;
+	padding-top: 0.1em 0em 0.1em 0em;
+}
+
+.content .projectbar .fixedmenu {
+	float: none;
+	padding-top: 0.1em 0em 0.1em 0em;
+}
+
+.content .projectbar a {
+	text-decoration: none;
+	font-style: italic;
+	padding-left: 0.3em;
+	padding-right: 0.5em;
+	margin: 0.1em 0.1em 0.1em 0.1em;
+	color: #FFFFFF;
+}
+
+.content .projectbar a.selected {
+	text-decoration: none;
+	font-style: italic;
+	padding-left: 0.3em;
+	padding-right: 0.5em;
+	margin: 0.1em 0.1em 0.1em 0.1em;
+	color: #333333;
+	background-color: #FFFFFF;
+}
+
+.content .projectbar a:hover {
+	background-color: #9999CC;
+}
+
+.content .mainarea {
+	padding: 0.2em 0em 0.2em 0em;
+	min-height: 30em;
+}
+
+.content .mainarea .title {
+	font-size: 120%;	
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+        font-weight: bold;
+}
+
+.content .mainarea .title a {
+	text-decoration: none;
+	color: #000000;
+	padding-left: .3em;
+	padding-right: .3em;
+}
+
+.content .mainarea .title a:hover {
+	background-color: #BBCCDD;
+}
+
+.content .mainarea .menu {
+	margin-top: 0.5em;
+	margin-left: 0.3em;
+	margin-bottom: 0.5em;
+}
+
+.content .mainarea .menu a {
+	text-decoration: none;
+	margin-left: .2em;
+	margin-right: .2em;
+}
+
+.content .mainarea .menu a:hover {
+	background-color: #BBCCDD;
+}
+
+.content .mainarea form {
+	margin: 0;
+}
+
+.content .mainarea form fieldset {
+	margin: 0;
+	border: 1px solid #BBCCDD;
+}
+
+.content .mainarea form label {
+	font-style: italic;
+	font-weight: bold;
+}
+
+.content .mainarea form input[type="text"] {
+	border: 1px solid #BBCCDD;
+}
+
+.content .mainarea form input[type="password"] {
+	border: 1px solid #BBCCDD;
+}
+
+.content .mainarea form textarea {
+	border: 1px solid #BBCCDD;
+}
+
+.content .mainarea table {
+	border-collapse:collapse;
+	border-bottom: 2px solid #BBCCDD;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.content .mainarea .icon {
+	border: 0;
+}
+
+.content .mainarea table th {
+        color:#FFFFFF;
+        background-color: #7777FF;
+	font-weight: normal;
+	white-space: nowrap;
+}
+
+.content .mainarea table tr:hover {
+	background-color: #BBCCFF;
+}
+
+.content .mainarea table td {
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+}
+
+.content .mainarea table td img {
+	vertical-align: middle;
+	display:inline-block;
+}
+
+.content .mainarea pre,
+.content .mainarea tt,
+.content .mainarea .codebox {
+        padding: .3em .3em .3em .3em;
+	border: 1px dashed #BBCCDD;
+	background-color: #F1F1FF;
+}
+
+.content .mainarea .codebox pre,
+.content .mainarea .codebox tt {
+	padding: 0;
+	border: 0;
+}
+
+.content .mainarea table td.code {
+	white-space: nowarp;
+}
+
+.content .mainarea table td.code pre {
+	padding: 0;
+	margin: 0;
+}
+
+.content .mainarea table td.code pre {
+	padding: 0;
+	border: 0 none;	
+	background-color: inherit;
+}
+
+.content .mainarea table tbody tr.diffcode td.diff pre {
+	display:block;
+	height:100%;
+	margin: 0;
+	padding: 0;
+	padding-left:22px;
+	border: 0 none;
+	background-color: inherit;
+}
+
+.content .mainarea table tbody td.diffdeleted pre {
+  border:1px solid #e8d4bc;
+  background-color:#f8e4cc;
+  background-image:url(images/bullet_delete.png);
+  background-position:2px 50%;
+  background-repeat:no-repeat;
+  padding: 0;
+  padding-left:22px;
+  margin: 0;
+}
+
+.content .mainarea table tbody tr.diffcode td.diffadded pre {
+  border:1px solid #cdf0cd;
+  background-color:#ddffdd;
+  background-image:url(images/bullet_add.png);
+  background-repeat:no-repeat;
+  background-position:2px 50%;
+  padding: 0;
+  padding-left:22px;
+  margin: 0;
+}
+.content .mainarea table tbody tr.diffcode td.diffchanged pre {
+  border:1px solid #f0f0bc;
+  background-color:#ffffcc;
+  background-image:url(images/bullet_yellow.png);
+  background-repeat:no-repeat;
+  background-position:2px 50%;
+  padding: 0;
+  padding-left:22px;
+  margin: 0;
+}
+
+.content .mainarea pre.prettyprint {
+	/* anything that make prettyprint area different from other pres? */
+	background-color: #FFFFFF;
+}
+
+pre.prettyprint .str { color: #080; }
+pre.prettyprint .kwd { color: #008; }
+pre.prettyprint .com { color: #800; }
+pre.prettyprint .typ { color: #606; }
+pre.prettyprint .lit { color: #066; }
+pre.prettyprint .pun { color: #660; }
+pre.prettyprint .pln { color: #000; }
+pre.prettyprint .tag { color: #008; }
+pre.prettyprint .atn { color: #606; }
+pre.prettyprint .atv { color: #080; }
+pre.prettyprint .dec { color: #606; }
+pre.prettyprint .nocode {
+        border-right: 1px solid #BBCCDD;
+        color: #8888FF;
+}
+
+pre.prettyprint .nocode a,
+pre.prettyprint .nocode a {
+	text-decoration: none;
+	color: #4444FF;
+}
+
+pre.prettyprint .nocode a:hover,
+pre.prettyprint .nocode a:hover {
+	background-color: #BBCCDD;
+}
+
+@media print {
+	pre.prettyprint .str { color: #060; }
+	pre.prettyprint .kwd { color: #006; font-weight: bold; }
+	pre.prettyprint .com { color: #600; font-style: italic; }
+	pre.prettyprint .typ { color: #404; font-weight: bold; }
+	pre.prettyprint .lit { color: #044; }
+	pre.prettyprint .pun { color: #440; }
+	pre.prettyprint .pln { color: #000; }
+	pre.prettyprint .tag { color: #006; font-weight: bold; }
+	pre.prettyprint .atn { color: #404; }
+	pre.prettyprint .atv { color: #060; }
+	pre.prettyprint .nocode a,
+	pre.prettyprint .nocode a {
+		text-decoration: none;
+		color: #4444FF;
+	}
+
+	pre.prettyprint .nocode a:hover,
+	pre.prettyprint .nocode a:hover {
+		background-color: #BBCCDD;
+	}
+}
+
+.content .sidebar {
+        /* sidebar to show extra information holding one or more infoboxes */
+	font-size: 0.9em;
+        float: right;
+        width: 20em;
+        //padding: 5px;
+        //margin-right: 2px;
+}
+
+.content .sidebar .box {
+        /* box in an sidebar to present actual information  */
+        padding:8px 8px 8px 8px;
+        margin: 1px 1px 2px 1px;
+        display:block;
+        border: none;
+        background: #E5ECF9 none repeat scroll 0 0;
+}
+
+.content .sidebar .boxtitle {
+        /* title of an infobox */
+        font-weight:bold;
+        outline-color:-moz-use-text-color;
+        outline-style:none;
+        outline-width:0;
+        padding: 2px;
+        vertical-align:baseline;
+        border:0 none;
+        color:#FFFFFF;
+        background-color: #7777FF;
+	text-transform: uppercase;
+}
+
+.content .sidebar .boxtitle a {
+	text-decoration: none;
+}
+
+.content .sidebar .boxtitle a:hover {
+        background-color: #BBBBFF;
+}
+
+.content .sidebar ul {
+	margin: 0.2em 0 0.2em 0;
+	padding: 0.2em 0 0.2em 1em;
+}
+
+.content .sidebar ul li {
+	list-style: square;
+}
+
+.content .sidebar a {
+	text-decoration: none;
+	padding-left: .2em;
+	padding-right: .2em;
+}
+
+.content .sidebar table {
+	font-size: 1em;
+	width: 100%;
+	margin: 0.2em 0 0.2em 0;
+	padding: 0.2em 0 0.2em 1em;
+}
+
+
+.content .sidebar a:hover {
+}
+
+.content .footer {
+	padding: 0.3em 0em 0.3em 0em;
+	font-size: .9em;
+	font-weight: bold;
+	font-style: italic;
+	text-align: center;
+	color: #FFFFFF;
+	background-color: #203150;
+}
+
+.content .footer a {
+	color: #FFFFFF;
+}
+
+.content .form_message {
+	color: red;
+}
+
+.content .form_field_error {
+	color: red;
+}
+

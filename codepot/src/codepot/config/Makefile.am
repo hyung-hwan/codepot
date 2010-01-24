@@ -1,0 +1,16 @@
+wwwdir=$(WWWDIR)/codepot/config
+www_DATA =  \
+	autoload.php \
+	config.php \
+	constants.php \
+	database.php \
+	doctypes.php \
+	hooks.php \
+	index.html \
+	mimes.php \
+	routes.php \
+	smileys.php \
+	user_agents.php
+
+EXTRA_DIST = $(www_DATA)
+

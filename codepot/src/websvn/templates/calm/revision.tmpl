@@ -1,0 +1,97 @@
+<div class="taskbar">
+        <div class="boxb">
+                [websvn:revision_form]
+                [lang:REV] [websvn:revision_hidden][websvn:revision_input]
+                [websvn:revision_submit]
+                [websvn:revision_endform]
+        </div>
+
+	<div class="boxa">
+		<a href="[websvn:codepot_userhomeurl]">[lang:HOME]</a> 
+		<a href="[websvn:codepot_projectlisturl]">[lang:PROJECTS]</a> 
+	</div>
+</div>
+
+<div class="projectbar">
+	<div class="title">[websvn:repname]</div>
+	<div class="ctxmenu">&nbsp;</div>
+	<div class="fixedmenu">
+		<a href="[websvn:codepot_indexurl]">[lang:PROJECTS]</a> 
+		<a href="[websvn:codepot_wikiurl]">[lang:WIKI]</a>
+		<a href="[websvn:codepot_sourceurl]">[lang:SOURCE]</a>
+		<a href="[websvn:codepot_fileurl]">[lang:FILES]</a>
+	</div>
+</div>
+
+[websvn-test:noaccess]
+   [lang:NOACCESS]
+[websvn-else]
+
+<div class="mainarea">
+
+	<div class="sidebar">
+
+	<div class="box">
+		<div class="boxtitle">[lang:LASTMOD]</div>
+		<ul>
+		<li>[lang:REV] [websvn:lastchangedrev], [websvn:date]</li>
+		<li><strong>[lang:AUTHOR]:</strong> [websvn:author]</li>
+		<li><dl><dt><strong>[lang:LOGMSG]:</strong></dt><dd>[websvn:log]</dd></dl></li>
+		</ul>
+	</div> 
+
+	</div> <!-- sidebar -->
+
+
+	<div class="title">[websvn:curdirlinks] - [lang:REV] [websvn:rev]</div>
+
+	<div class="menu">
+		[websvn-test:goyoungesturl]
+			<a href="[websvn:goyoungesturl]">[lang:GOYOUNGEST]</a> |
+		[websvn-endtest]
+
+		<a href="[websvn:listingurl]">[lang:LISTING]</a> |
+		<a href="[websvn:logurl]">[lang:VIEWLOG]</a>
+
+		[websvn-test:compareurl]
+			| <a href="[websvn:compareurl]">[lang:DIFFPREV]</a> 
+		[websvn-endtest]
+	</div> <!-- menu -->
+
+	<div id="wrap">
+
+   <table>
+      <thead>
+      <tr align="left" valign="middle">
+        <th scope="col" class="path" colspan="4">[lang:PATH]</th>
+      </tr>
+      </thead>
+      <tbody>
+      [websvn-startlisting]
+      <tr class="row[websvn:rowparity]">
+         <td>
+         	[websvn-test:modified]
+         		<a href="[websvn:detailurl]" class="modified">
+         	[websvn-endtest]
+         	[websvn-test:added]
+         		<a href="[websvn:detailurl]" class="added">
+         	[websvn-endtest]
+         	[websvn-test:deleted]
+         		<a href="[websvn:detailurl]" class="deleted">
+         	[websvn-endtest]
+         		
+         		[websvn:file]</a>
+         </td>
+         <td><a href="[websvn:logurl]" title="[lang:VIEWLOG]"><img src="[websvn:locwebsvnhttp]/templates/calm/images/log.png" class="icon" alt="" /></a></td>
+         <td><a href="[websvn:diffurl]" title="[lang:DIFFPREV]"><img src="[websvn:locwebsvnhttp]/templates/calm/images/diff.png" class="icon" alt="" /></a></td>
+         <td><a href="[websvn:blameurl]" title="[lang:BLAME]"><img src="[websvn:locwebsvnhttp]/templates/calm/images/blame.png" class="icon" alt="" /></a></td>
+      </tr>
+      [websvn-endlisting]
+    </tbody>
+
+   </table>
+
+	</div>
+
+</div>
+[websvn-endtest]
