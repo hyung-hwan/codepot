@@ -1,0 +1,65 @@
+<?php
+
+define ('CODEPOT_DEPOT_DIR',   '@DEPOTDIR@');
+define ('CODEPOT_CFG_DIR',     '@CFGDIR@');
+define ('CODEPOT_WWW_DIR',     '@WWWDIR@');
+define ('CODEPOT_LOG_DIR',     '@LOGDIR@');
+define ('CODEPOT_CACHE_DIR',   '@CACHEDIR@');
+
+function load_ini ($file)
+{
+	$cfg = parse_ini_file ($file, FALSE);
+	if (/*$cfg === FALSE*/ $cfg == FALSE) die ("ERROR: cannot parse $file");
+
+	$xcfgs = array (
+
+		array ('default_banner',               'string',     '@PACKAGE@'),
+		array ('lang',                         'string',     'english'),
+		array ('always_require_signin',        'boolean',    FALSE),
+		array ('enable_websvn',                'boolean',    FALSE),
+
+		array ('api_base_url',                 'string',     'http://127.0.0.1'),
+		array ('svn_base_url',                 'string',     'http://${SERVER_NAME}:${SERVER_PORT}/svn'),
+
+		array ('login_model',                  'string',     'LdapLoginModel'),
+		array ('sysadmin_userid',              'string',     ''),
+		array ('max_upload_size',              'string',     '10000'), // kbytes
+		array ('max_latest_projects',          'integer',    10),
+
+		array ('database_username',            'string',     ''),
+		array ('database_password',            'string',     ''),
+		array ('database_name',                'string',     ''),
+		array ('database_driver',              'string',     ''),
+		array ('database_prefix',              'string',     ''),
+
+		array ('ldap_server_host',             'string',     '127.0.0.1'),
+		array ('ldap_server_port',             'integer',    389),
+		array ('ldap_server_protocol_version', 'integer',    3),
+		array ('ldap_userid_format',           'string',     '${userid}'),
+		array ('ldap_password_format',         'string',     '${password}'),
+
+		array ('svnrepo_dir',                  'string',      CODEPOT_DEPOT_DIR.'/svnrepo'),
+		array ('file_dir',                     'string',      CODEPOT_DEPOT_DIR.'/files')
+	);
+
+	foreach ($xcfgs as $x)
+	{
+		$idx = $x[0];
+		$const = 'CODEPOT_' . strtoupper ($idx);
+
+		if (array_key_exists ($idx, $cfg))
+		{
+			$rawval = $cfg[$idx];
+			if ($x[1] == 'string') define ($const, $rawval);
+			else if ($x[1] == 'boolean') define ($const, strcasecmp ($rawval, 'yes') == 0); 
+			else if ($x[1] == 'integer') define ($const, intval ($rawval));
+			else define ($const, $x[2]);
+		}
+		else define ($const, $x[2]);
+	}
+
+	return TRUE;
+}
+
+load_ini (CODEPOT_CFG_DIR.'/codepot.ini');
+?>

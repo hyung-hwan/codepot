@@ -1,0 +1,2 @@
+SUBDIRS =  english korean indonesian
+

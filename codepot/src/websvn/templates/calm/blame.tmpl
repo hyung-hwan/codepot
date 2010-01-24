@@ -1,0 +1,72 @@
+<div class="taskbar">
+        <div class="boxb">
+                [websvn:revision_form]
+                [lang:REV] [websvn:revision_hidden][websvn:revision_input]
+                [websvn:revision_submit]
+                [websvn:revision_endform]
+        </div>
+
+	<div class="boxa">
+		<a href="[websvn:codepot_userhomeurl]">[lang:HOME]</a> 
+		<a href="[websvn:codepot_projectlisturl]">[lang:PROJECTS]</a> 
+	</div>
+</div>
+
+<div class="projectbar">
+	<div class="title">[websvn:repname]</div>
+	<div class="ctxmenu">&nbsp;</div>
+	<div class="fixedmenu">
+		<a href="[websvn:codepot_indexurl]">[lang:PROJECTS]</a> 
+		<a href="[websvn:codepot_wikiurl]">[lang:WIKI]</a>
+		<a href="[websvn:codepot_sourceurl]">[lang:SOURCE]</a>
+		<a href="[websvn:codepot_fileurl]">[lang:FILES]</a>
+	</div>
+</div>
+
+<div class="mainarea">
+
+[websvn-test:noaccess]
+   [lang:NOACCESS]
+[websvn-else]
+
+
+	<div class="title">[websvn:curdirlinks] - [lang:BLAMEFOR] [websvn:rev]</div>
+
+	<div class="menu">
+		[websvn-test:goyoungestlink]
+		<span class="goyoungest">[websvn:goyoungestlink]</span> |
+		[websvn-endtest]
+		<span class="detail">[websvn:filedetaillink]</span> |
+		<span class="diff">[websvn:prevdifflink]</span> |
+		<span class="log">[websvn:fileviewloglink]</span> 
+	</div>
+
+	<div>
+		<table>
+		<thead>
+		<tr>
+			<th scope="col" class="collno">[lang:LINENO]</th>
+			<th scope="col" class="colrev">[lang:REV]</th>
+			<th scope="col" class="colauth">[lang:AUTHOR]</th>
+			<th scope="col" class="colcode">[lang:LINE]</th>
+		</tr>
+		</thead>
+		<tbody>
+		[websvn-startlisting]
+		<tr valign="middle">
+		<td>[websvn:lineno]</td>
+		<td>[websvn:revision]</td>
+		<td>[websvn:author]</td>
+		<td class="code"><pre>[websvn:line]</pre></td>
+		</tr>
+		[websvn-endlisting]
+		</tbody>
+		</table>
+	</div>
+
+	[websvn:javascript]
+
+
+[websvn-endtest]
+
+</div> <!-- mainarea -->
