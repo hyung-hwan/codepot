@@ -29,14 +29,15 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="sidebar" id="project_source_folder_sidebar">
-<div class="box">
-<div class="boxtitle"><?=$this->lang->line('Folder')?></div>
-<ul>
-<li><?=$this->lang->line('Revision')?>: <?=$revision?></li>
-</ul>
-</div>
-</div> <!-- project_source_folder_sidebar -->
+<?php if ($revision >= 0): ?>
+	<div class="sidebar" id="project_source_folder_sidebar">
+	<div class="box">
+	<ul>
+	<li><?=$this->lang->line('Revision')?>: <?=$revision?></li>
+	</ul>
+	</div>
+	</div> <!-- project_source_folder_sidebar -->
+<?php endif; ?>
 
 
 <!---------------------------------------------------------------------------->
@@ -46,7 +47,18 @@ $this->load->view (
 
 <div class="title">
 <?php
-print anchor ('/source/folder/' . $project->id, htmlspecialchars($project->name));
+if ($revision <= 0)
+{
+	$revreq = '';
+	$revreqroot = '';
+}
+else
+{
+	$revreq = "/{$revision}";
+	$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
+}
+
+print anchor ("/source/folder/{$project->id}{$revreqroot}", htmlspecialchars($project->name));
 if ($folder != '') 
 {
 	$exps = explode ('/', $folder);
@@ -54,10 +66,11 @@ if ($folder != '')
 	$par = '';
 	for ($i = 1; $i < $expsize; $i++)
 	{
+		print '/';
+
 		$par .= '/' . $exps[$i];
 		$hexpar = $this->converter->AsciiToHex ($par);
-		print '/';
-		print anchor ('source/folder/' . $project->id . '/' . $hexpar, htmlspecialchars($exps[$i]));
+		print anchor ("source/folder/{$project->id}/{$hexpar}{$revreq}", htmlspecialchars($exps[$i]));
 	}
 }
 ?>
@@ -82,32 +95,45 @@ if ($folder != '')
 	else 
 	{
 		print '<div class="menu" id="project_source_folder_mainarea_menu">';
-		$par = $this->converter->AsciiTohex ($folder);
-		print anchor ('source/history/folder/' . $project->id . '/' . $par, $this->lang->line('History'));
+		$hexpar = $this->converter->AsciiTohex ($folder);
+		if ($revision > 0 && $revision < $next_revision)
+		{
+			print anchor ("source/folder/{$project->id}", $this->lang->line('Head revision'));
+			print ' | ';
+		}
+		print anchor ("source/history/folder/{$project->id}/{$hexpar}", $this->lang->line('History'));
 		print '</div>';
 
 		usort ($files, 'comp_files');
 
-		print '<table>';
-		print '<tr>';
+		print '<div id="project_source_folder_mainarea_result">';
+		print '<table id="project_source_folder_mainarea_result_table">';
+		print '<tr class="heading">';
 		print '<th>' . $this->lang->line('Name') . '</th>';
 		print '<th>' . $this->lang->line('Revision') . '</th>';
 		print '<th>' . $this->lang->line('Size') . '</th>';
 		print '<th>' . $this->lang->line('Author') . '</th>';
 		print '<th>' . $this->lang->line('Time') . '</th>';
+		print '<th>' . '</th>';
+		print '<th>' . '</th>';
 		print '</tr>';
+
+		$rowclasses = array ('even', 'odd');
+		$rownum = 0;
 		foreach ($files as $f)
 		{
 			$fullpath = $folder . '/' . $f['name'];
 
+			$rowclass = $rowclasses[++$rownum % 2];
 			if ($f['type'] === 'dir')
 			{
 				// directory 
-				print '<tr>';
+				$hexpath = $this->converter->AsciiToHex($fullpath);
+       		         	print "<tr class='{$rowclass}'>";
 				print '<td>';
-				$url = 'source/folder/' . $project->id . '/' . 
-					$this->converter->AsciiToHex ($fullpath);
-				print anchor ($url, htmlspecialchars($f['name']));
+				print anchor (
+					"source/folder/{$project->id}/{$hexpath}{$revreq}",
+					htmlspecialchars($f['name']));
 				print '</td>';
 				print '<td>';
 				print $f['created_rev'];
@@ -116,19 +142,22 @@ if ($folder != '')
 				print '<td>';
 				print htmlspecialchars($f['last_author']);
 				print '</td>';
-				print '<td>';
+				print '<td><code>';
 				print date('r', $f['time_t']);
-				print '</td>';
+				print '</code></td>';
+				print '<td></td>';
+				print '<td></td>';
 				print '</tr>';
 			}
 			else
 			{
 				// file
-       		         	print '<tr>';
+				$hexpath = $this->converter->AsciiToHex($fullpath);
+       		         	print "<tr class='{$rowclass}'>";
 				print '<td>';
-				$url = 'source/file/' . $project->id . '/' . 
-					$this->converter->AsciiToHex($fullpath);
-				print anchor ($url, htmlspecialchars($f['name']));
+				print anchor (
+					"source/file/{$project->id}/{$hexpath}{$revreq}",
+					htmlspecialchars($f['name']));
 				print '</td>';
 				print '<td>';
 				print $f['created_rev'];
@@ -139,13 +168,25 @@ if ($folder != '')
 				print '<td>';
 				print htmlspecialchars($f['last_author']);
 				print '</td>';
-				print '<td>';
+				print '<td><code>';
 				print date('r', $f['time_t']);
+				print '</code></td>';
+
+				print '<td>';
+				print anchor (
+					"source/blame/{$project->id}/{$hexpath}{$revreq}",
+					$this->lang->line('Blame'));
+				print '</td>';
+				print '<td>';
+				print anchor (
+					"source/diff/{$project->id}/{$hexpath}{$revreq}",
+					$this->lang->line('Difference'));
 				print '</td>';
 				print '</tr>';
 			}
 		}
 		print '</table>';
+		print '</div>';
 	}
 ?>
 
