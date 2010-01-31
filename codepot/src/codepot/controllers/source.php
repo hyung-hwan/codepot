@@ -7,6 +7,7 @@ class Source extends Controller
 	var $VIEW_FILE = 'source_file';
 	var $VIEW_BLAME = 'source_blame';
 	var $VIEW_HISTORY = 'source_history';
+	var $VIEW_DIFF = 'source_diff';
 
 	function Source ()
 	{
@@ -36,6 +37,7 @@ class Source extends Controller
 		$data['loginid'] = $loginid;
 
 		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -58,10 +60,17 @@ class Source extends Controller
 			}
 			else
 			{
+
 				$data['project'] = $project;
 				$data['folder'] = $path;
 				$data['files'] = $files;
+
 				$data['revision'] = $rev;
+				$data['prev_revision'] =
+					$this->subversion->getPrevRev ($projectid, $path, $rev);
+				$data['next_revision'] =
+					$this->subversion->getNextRev ($projectid, $path, $rev);
+
 				$this->load->view ($this->VIEW_FOLDER, $data);
 			}
 		}
@@ -112,11 +121,26 @@ class Source extends Controller
 			}
 			else
 			{
-				$data['project'] = $project;
-				$data['folder'] = substr ($path, 0, strrpos($path, '/'));
-				$data['file'] = $file;
-				$data['revision'] = $rev;
-				$this->load->view ($this->VIEW_FILE, $data);
+				$head_rev = $this->subversion->getHeadRev ($projectid, $path);
+				if ($head_rev === FALSE)
+				{
+					$data['message'] = 'Failed to get head revision';
+					$this->load->view ($this->VIEW_ERROR, $data);
+				}
+				else
+				{
+					$file['head_rev'] = $head_rev;
+					$file['prev_rev'] = $this->subversion->getPrevRev (
+						$projectid, $path, $file['created_rev']);
+					$file['next_rev'] = $this->subversion->getNextRev (
+						$projectid, $path, $file['created_rev']);
+
+					$data['project'] = $project;
+					$data['folder'] = substr ($path, 0, strrpos($path, '/'));
+					$data['file'] = $file;
+					$data['revision'] = $rev;
+					$this->load->view ($this->VIEW_FILE, $data);
+				}
 			}
 		}
 	}
@@ -154,11 +178,26 @@ class Source extends Controller
 			}
 			else
 			{
-				$data['project'] = $project;
-				$data['folder'] = substr ($path, 0, strrpos($path, '/'));
-				$data['file'] = $file;
-				$data['revision'] = $rev;
-				$this->load->view ($this->VIEW_BLAME, $data);
+				$head_rev = $this->subversion->getHeadRev ($projectid, $path);
+				if ($head_rev === FALSE)
+				{
+					$data['message'] = 'Failed to get head revision';
+					$this->load->view ($this->VIEW_ERROR, $data);
+				}
+				else
+				{
+					$file['head_rev'] = $head_rev;
+					$file['prev_rev'] = $this->subversion->getPrevRev (
+						$projectid, $path, $file['created_rev']);
+					$file['next_rev'] = $this->subversion->getNextRev (
+						$projectid, $path, $file['created_rev']);
+
+					$data['project'] = $project;
+					$data['folder'] = substr ($path, 0, strrpos($path, '/'));
+					$data['file'] = $file;
+					$data['revision'] = $rev;
+					$this->load->view ($this->VIEW_BLAME, $data);
+				}
 			}
 		}
 	}
@@ -207,4 +246,55 @@ class Source extends Controller
 		}
 	}
 
+	function diff ($projectid, $path, $rev1 = SVN_REVISION_HEAD, $rev2 = SVN_REVISION_PREV)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+
+		$loginid = $this->login->getUserid ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+			redirect ('main/signin');
+		$data['loginid'] = $loginid;
+
+		$path = $this->converter->HexToAscii ($path);
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE)
+		{
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+                }
+		else if ($project === NULL)
+		{
+			$data['message'] = "NO SUCH PROJECT - $projectid";
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			$file = $this->subversion->getDiff ($projectid, $path, $rev1, $rev2);
+			if ($file === FALSE)
+			{
+				$data['message'] = 'Failed to get diff';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else
+			{
+				$file['prev_rev'] =
+					$this->subversion->getPrevRev ($projectid, $path, $file['created_rev']);	
+				$file['next_rev'] =
+					$this->subversion->getNextRev ($projectid, $path, $file['created_rev']);	
+				$file['against']['prev_rev'] = 
+					$this->subversion->getPrevRev ($projectid, $path, $file['against']['created_rev']);
+				$file['against']['next_rev'] = 
+					$this->subversion->getNextRev ($projectid, $path, $file['against']['created_rev']);
+
+				$data['project'] = $project;
+				$data['folder'] = substr ($path, 0, strrpos($path, '/'));
+				$data['file'] = $file;
+				$data['revision1'] = $rev1;
+				$data['revision2'] = $rev2;
+				$this->load->view ($this->VIEW_DIFF, $data);
+			}
+		}
+	}
 }

@@ -1,5 +1,110 @@
-/* specific IDs */
+/*
+ * This file contains specific IDs for furthur customization.
+ */
 
-#project_list_mainarea {
+/*----------------------------------------------- 
+ * project source folder view 
+ *-----------------------------------------------*/
+#project_source_folder_mainarea_result {
+	overflow: auto;
+}
+
+#project_source_folder_mainarea_result_table tr {
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+/*----------------------------------------------- 
+ * project source folder view 
+ *-----------------------------------------------*/
+#project_file_home_mainarea_result {
+	overflow: auto;
+}
+
+#project_file_home_mainarea_result_table tr {
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+/*----------------------------------------------- 
+ * project source history view 
+ *-----------------------------------------------*/
+#project_source_history_mainarea_result {
+	overflow: auto;
+}
+
+#project_source_history_mainarea_result_table tr {
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+#project_source_history_mainarea_result_table_path_list {
+	/* the list in the 'paths' column */
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	white-space: nowrap;
+}
+
+/*----------------------------------------------- 
+ * project source diff view 
+ *-----------------------------------------------*/
+#project_source_diff_mainarea_result {
+	overflow: auto;
+}
+
+#project_source_diff_mainarea_result_table {
+	border: 0;
+}
+
+#project_source_diff_mainarea_result_table tr.diff td pre {
+	background-color: inherit;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+#project_source_diff_mainarea_result_table tr.diff td.diff {
+	padding: 0;
+	padding-left:22px;
+	margin: 0;
+}
+
+#project_source_diff_mainarea_result_table tr.diff td.diffrow {
+	font-style: italic;
+	font-weight: bold;
+}
+
+#project_source_diff_mainarea_result_table tr.diff td.diffadded {
+	border:1px solid #cdf0cd;
+	background-color:#ddffdd;
+	background-image:url(images/bullet_add.png);
+	background-repeat:no-repeat;
+	background-position:2px 50%;
+	padding: 0;
+	padding-left:22px;
+	margin: 0;
+}
+
+#project_source_diff_mainarea_result_table tr.diff td.diffdeleted {
+	border:1px solid #e8d4bc;
+	background-color:#f8e4cc;
+	background-image:url(images/bullet_delete.png);
+	background-position:2px 50%;
+	background-repeat:no-repeat;
+	padding: 0;
+	padding-left:22px;
+	margin: 0;
+}
+
+#project_source_diff_mainarea_result_table tr.diff td.diffchanged {
+	border:1px solid #f0f0bc;
+	background-color:#ffffcc;
+	background-image:url(images/bullet_yellow.png);
+	background-repeat:no-repeat;
+	background-position:2px 50%;
+	padding: 0;
+	padding-left:22px;
+	margin: 0;
 }
 

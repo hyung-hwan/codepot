@@ -26,7 +26,7 @@
 	</div>
 </div>
 
-<div class="mainarea">
+<div class="mainarea" id="websvn_diff_mainarea">
 
 [websvn-test:noaccess]
    [lang:NOACCESS]
@@ -49,26 +49,26 @@
 	[websvn:fileviewloglink] 
 </div> <!-- menu -->
 
-<div id="result">
+<div id="websvn_diff_mainarea_result">
 
 [websvn-test:noprev]
 	[lang:NOPREVREV]
 [websvn-else]
 
-   <table>
-      <tr>
+   <table id="websvn_diff_mainarea_result_table">
+      <tr class="heading">
          <th>[lang:REV] [websvn:rev2]</th>
          <th>[lang:REV] [websvn:rev1]</th>
       </tr>
 
     [websvn-startlisting]
     [websvn-test:rev1lineno]
-      <tr class="diffcode">
-        <td class="row1"><strong>[lang:LINE] [websvn:rev1lineno]...</strong></td>
-        <td class="row1"><strong>[lang:LINE] [websvn:rev2lineno]...</strong></td>
+      <tr class="diff">
+        <td class="diffrow"><strong>[lang:LINE] [websvn:rev1lineno]...</strong></td>
+        <td class="diffrow"><strong>[lang:LINE] [websvn:rev2lineno]...</strong></td>
       </tr>
       [websvn-else]
-      <tr class="diffcode">
+      <tr class="diff">
         <td class="[websvn:rev1diffclass]"><pre>[websvn:rev1line]</pre></td>
         <td class="[websvn:rev2diffclass]"><pre>[websvn:rev2line]</pre></td>
       </tr>

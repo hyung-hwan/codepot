@@ -1,12 +1,10 @@
-ody {
-	//margin: 0;
+body {
 	padding: 0;
 	margin: 5px 5px 5px 5px;
 }
 
 .content
 {
-	//margin: 2px 2px 2px 2px;
 	font-size: 90%;
 	font-family: sans-serif;
 }
@@ -178,107 +176,74 @@ ody {
 	border: 1px solid #BBCCDD;
 }
 
-.content .mainarea table {
-	border-collapse:collapse;
-	border-bottom: 2px solid #BBCCDD;
-	margin-top: 0.5em;
-	margin-bottom: 0.5em;
-}
-
 .content .mainarea .icon {
 	border: 0;
 }
 
-.content .mainarea table th {
-        color:#FFFFFF;
-        background-color: #7777FF;
-	font-weight: normal;
+.content .mainarea pre {
+        padding: .3em .3em .3em .3em;
+	border: 1px dashed #BBCCDD;
+	background-color: #F1F1FF;
+	overflow: auto;
+	width: inherit;
+}
+
+.content .mainarea tt {
+	padding: .1em .1em .1em .1em;
+	background-color: #F1F1FF;
+}
+
+.content .mainarea tt:hover {
+	background-color: inherit;
+}
+
+.content .mainarea table {
+	font-size: inherit;
+	background-color: inherit;
+}
+
+.content .mainarea table tr.heading {
+	color: #FFFFFF;
+	background-color: #7777FF;
+}
+
+.content .mainarea table tr.heading a {
+	color: inherit;
+	background-color: inherit;
+	text-decoration: none;
+}
+
+.content .mainarea table tr.odd {
+	background-color: inherit;
+}
+
+.content .mainarea table tr.even {
+	background-color: #EEEEFF;
+}
+
+.content .mainarea table tr th {
 	white-space: nowrap;
 }
 
-.content .mainarea table tr:hover {
-	background-color: #BBCCFF;
-}
-
-.content .mainarea table td {
+.content .mainarea table tr td {
 	padding-left: 0.2em;
 	padding-right: 0.2em;
 }
 
-.content .mainarea table td img {
+.content .mainarea table tr td img {
 	vertical-align: middle;
 	display:inline-block;
 }
 
-.content .mainarea pre,
-.content .mainarea tt,
-.content .mainarea .codebox {
-        padding: .3em .3em .3em .3em;
-	border: 1px dashed #BBCCDD;
-	background-color: #F1F1FF;
-}
-
-.content .mainarea .codebox pre,
-.content .mainarea .codebox tt {
-	padding: 0;
-	border: 0;
-}
-
-.content .mainarea table td.code {
+.content .mainarea table tr td.code {
 	white-space: nowarp;
 }
 
-.content .mainarea table td.code pre {
+.content .mainarea table tr td.code pre {
 	padding: 0;
 	margin: 0;
-}
-
-.content .mainarea table td.code pre {
-	padding: 0;
 	border: 0 none;	
 	background-color: inherit;
-}
-
-.content .mainarea table tbody tr.diffcode td.diff pre {
-	display:block;
-	height:100%;
-	margin: 0;
-	padding: 0;
-	padding-left:22px;
-	border: 0 none;
-	background-color: inherit;
-}
-
-.content .mainarea table tbody td.diffdeleted pre {
-  border:1px solid #e8d4bc;
-  background-color:#f8e4cc;
-  background-image:url(images/bullet_delete.png);
-  background-position:2px 50%;
-  background-repeat:no-repeat;
-  padding: 0;
-  padding-left:22px;
-  margin: 0;
-}
-
-.content .mainarea table tbody tr.diffcode td.diffadded pre {
-  border:1px solid #cdf0cd;
-  background-color:#ddffdd;
-  background-image:url(images/bullet_add.png);
-  background-repeat:no-repeat;
-  background-position:2px 50%;
-  padding: 0;
-  padding-left:22px;
-  margin: 0;
-}
-.content .mainarea table tbody tr.diffcode td.diffchanged pre {
-  border:1px solid #f0f0bc;
-  background-color:#ffffcc;
-  background-image:url(images/bullet_yellow.png);
-  background-repeat:no-repeat;
-  background-position:2px 50%;
-  padding: 0;
-  padding-left:22px;
-  margin: 0;
 }
 
 .content .mainarea pre.prettyprint {
@@ -336,8 +301,19 @@ pre.prettyprint .nocode a:hover {
 	}
 }
 
+.content .infostrip {
+	font-size: 0.9em;
+        background: #E5ECF9 none repeat scroll 0 0;
+	margin: 0.3em 0em 0em 0em;
+	padding: 0.3em 0.3em 0.3em 0.3em;
+	text-align: right;
+}
+
+.content .infostrip a {
+	text-decoration: none;
+}
+
 .content .sidebar {
-        /* sidebar to show extra information holding one or more infoboxes */
 	font-size: 0.9em;
         float: right;
         width: 20em;
@@ -396,10 +372,6 @@ pre.prettyprint .nocode a:hover {
 	width: 100%;
 	margin: 0.2em 0 0.2em 0;
 	padding: 0.2em 0 0.2em 1em;
-}
-
-
-.content .sidebar a:hover {
 }
 
 .content .footer {
