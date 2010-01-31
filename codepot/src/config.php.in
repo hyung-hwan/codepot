@@ -50,10 +50,28 @@ function load_ini ($file)
 		if (array_key_exists ($idx, $cfg))
 		{
 			$rawval = $cfg[$idx];
-			if ($x[1] == 'string') define ($const, $rawval);
-			else if ($x[1] == 'boolean') define ($const, strcasecmp ($rawval, 'yes') == 0); 
-			else if ($x[1] == 'integer') define ($const, intval ($rawval));
-			else define ($const, $x[2]);
+			if ($x[1] == 'string') 
+			{
+				define ($const, $rawval);
+			}
+			else if ($x[1] == 'boolean') 
+			{
+				if (is_bool($rawval))
+					define ($const, $rawval);
+				else if (is_numeric($rawval) === TRUE)
+					define ($const, $rawval != 0);
+				else
+					define ($const, strcasecmp ($rawval, 'yes') == 0); 
+			}
+			else if ($x[1] == 'integer') 
+			{
+				define ($const, intval ($rawval));
+			}
+			else 
+			{
+				// set the default value
+				define ($const, $x[2]);
+			}
 		}
 		else define ($const, $x[2]);
 	}

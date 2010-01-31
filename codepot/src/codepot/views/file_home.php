@@ -34,7 +34,7 @@ $this->load->view (
 <div class="mainarea" id="project_file_home_mainarea">
 <div class="title"><?=$this->lang->line('Files')?></div>
 
-<div id="project_file_home_textarea">
+<div id="project_file_home_mainarea_result">
 <?php
 if (empty($files))
 {
@@ -55,8 +55,8 @@ else
 
         usort ($files, 'comp_files');
 
-	print '<table>';
-	print '<tr>';
+	print '<table id="project_file_home_mainarea_result_table">';
+	print '<tr class="heading">';
 	print '<th>' . $this->lang->line('Tag') . '</th>';
 	print '<th>' . $this->lang->line('Name') . '</th>';
 	print '<th>' . $this->lang->line('Summary') . '</th>';
@@ -65,10 +65,13 @@ else
 	print '</tr>';
 	
 	$oldtag = '';
+	$rownum = 0;
+	$rowclasses = array ('odd', 'even');
 	foreach ($files as $file) 
 	{
 		$hexname = $this->converter->AsciiToHex ($file->name);
-		print '<tr>';
+		$rowclass = $rowclasses[$rownum++ % 2];
+		print "<tr class='{$rowclass}'>";
 		print '<td>';
 		if ($file->tag != $oldtag)
 		{
@@ -82,9 +85,9 @@ else
 		print '<td>';
 		print htmlspecialchars($file->summary);
 		print '</td>';
-		print '<td>';
+		print '<td><tt>';
 		print $file->md5sum;
-		print '</td>';
+		print '</tt></td>';
 		print '<td>';
 		print anchor ("file/get/{$project->id}/{$hexname}", $this->lang->line('Download'));
 		print '</td>';

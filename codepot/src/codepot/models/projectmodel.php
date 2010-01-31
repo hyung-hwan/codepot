@@ -241,9 +241,9 @@ class ProjectModel extends Model
 
 	function deleteDirectory($dir) 
 	{
-		if (is_link($dir)) return unlink($dir);
+		if (is_link($dir)) return @unlink($dir);
 		if (!file_exists($dir)) return TRUE;
-		if (!is_dir($dir)) return unlink($dir);
+		if (!is_dir($dir)) return @unlink($dir);
 
 		foreach ($this->_scandir($dir) as $item) 
 		{

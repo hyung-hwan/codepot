@@ -154,17 +154,20 @@ class Project extends Controller
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
 		{
+			$data['loginid'] = $loginid;
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if ($project === NULL)
 		{
+			$data['loginid'] = $loginid;
 			$data['message'] = "NO SUCH PROJECT - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if (!$this->login->isSysadmin() &&
 		         $this->projects->projectHasMember($project->id, $loginid) === FALSE)
 		{
+			$data['loginid'] = $loginid;
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
@@ -243,17 +246,20 @@ class Project extends Controller
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
 		{
+			$data['loginid'] = $loginid;
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if ($project === NULL)
 		{
+			$data['loginid'] = $loginid;
 			$data['message'] = "NO SUCH PROJECT - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if (!$this->login->isSysadmin() &&
 		         $this->projects->projectHasMember($project->id, $loginid) === FALSE)
 		{
+			$data['loginid'] = $loginid;
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}

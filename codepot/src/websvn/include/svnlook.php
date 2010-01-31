@@ -549,7 +549,7 @@ class SVNRepository {
       @exec($cmd);
 
       // Get the file as a string (memory hogging, but we have no other options)
-      $content = highlight_file($filename, true);
+      $content = '<PRE>' . highlight_file($filename, true) . '</PRE>';
 
       // Destroy the previous version, and replace it with the highlighted version
       $f = fopen($filename, "w");
@@ -664,7 +664,9 @@ class SVNRepository {
       @exec($cmd);
       $tmpStr = file_get_contents($tmp);
       $tmpStr = str_replace(array("\r\n"), array("\n"), $tmpStr);
+      print '<PRE>';
       highlight_string($tmpStr);
+      print '</PRE>';
       @unlink($tmp);
     } else if ($l !== null && $config->useGeshi) {
       $tmp = tempnam("temp", "wsvn");

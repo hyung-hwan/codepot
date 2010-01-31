@@ -14,6 +14,7 @@ www_DATA =  \
 	project_list.php \
 	projectbar.php \
 	source_blame.php \
+	source_diff.php \
 	source_file.php \
 	source_folder.php \
 	source_history.php \

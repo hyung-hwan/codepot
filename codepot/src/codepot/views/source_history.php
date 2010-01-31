@@ -66,19 +66,22 @@ if ($type == 'file')
 {
 	$par = $folder;
 	$par = $this->converter->AsciiTohex ($par);
-	$xpar = 'source/file/' . $project->id . '/' . $par;
+	$xpar = "source/file/{$project->id}/{$par}";
 	print anchor ($xpar, $this->lang->line('Details'));
 	print ' | ';
-	$xpar = 'source/blame/' . $project->id . '/' . $par;
+	$xpar = "source/blame/{$project->id}/{$par}";
 	print anchor ($xpar, $this->lang->line('Blame'));
+	print ' | ';
+	$xpar = "source/diff/{$project->id}/{$par}";
+	print anchor ($xpar, $this->lang->line('Difference'));
 }
 ?>
 </div> <!-- project_source_history_mainarea_menu -->
 
 
-<div id="project_source_history_mainarea_body">
-<table>
-<tr>
+<div id="project_source_history_mainarea_result">
+<table id="project_source_history_mainarea_result_table">
+<tr class='heading'>
 	<th><?=$this->lang->line('Revision')?></th>
 	<th><?=$this->lang->line('Author')?></th>
 	<th><?=$this->lang->line('Time')?></th>
@@ -86,26 +89,28 @@ if ($type == 'file')
 	<th><?=$this->lang->line('Files')?></th>
 </tr>
 <?php 
+	$rowclasses = array ('even', 'odd');
 	$history = $file['history'];
 	$history_count = count($history);	
 	for ($i = $history_count; $i > 0; )
 	{
 		$h = $history[--$i];
 
-		print '<tr>';
+		$rowclass = $rowclasses[($history_count - $i) % 2];
+		print "<tr class='{$rowclass}'>";
 
 		print '<td>';
 		$hexfolder = $this->converter->AsciiToHex(($folder == '')? '.': $folder);
-		print anchor ("/source/$type/" . $project->id . '/' . $hexfolder . '/' . $h['rev'], $h['rev']);
+		print anchor ("/source/$type/{$project->id}/{$hexfolder}/{$h['rev']}", $h['rev']);
 		print '</td>';
 
 		print '<td>';
 		print htmlspecialchars($h['author']);
 		print '</td>';
 
-		print '<td>';
+		print '<td><code>';
 		print date('r', strtotime($h['date']));
-		print '</td>';
+		print '</code></td>';
 
 		print '<td>';
 		print htmlspecialchars($h['msg']);
@@ -115,15 +120,19 @@ if ($type == 'file')
 		if (count($paths) > 0)
 		{
 			print '<td>';
+			print '<ul id="project_source_history_mainarea_result_table_path_list">';
 			foreach ($paths as $p)
 			{
 				print '<li>';
+				print '<code>';
 				print '[';
 				print $p['action'];
 				print '] ';
 				print_path ($project, $p['path'], 'file', $this->converter, $h['rev']);
+				print '</code>';
 				print '</li>';
 			}
+			print '</ul>';
 			print '</td>';
 		}
 

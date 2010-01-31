@@ -32,30 +32,30 @@ $this->load->view (
 	)
 );
 ?>
-<!---------------------------------------------------------------------------->
-
-<div class="sidebar" id="project_source_file_sidebar">
-<div class="box">
-<div class="boxtitle"><?=$this->lang->line('File')?></div>
-<ul>
-<li><?=$this->lang->line('Revision')?>: <?=$file['created_rev']?></li>
-<li><?=$this->lang->line('Author')?>: <?=htmlspecialchars($file['last_author'])?></li>
-<li><?=$this->lang->line('Size')?>: <?=$file['size']?></li>
-<li><?=$this->lang->line('Last updated on')?>: <?=$file['time']?></li>
-</ul>
-</div>
-
-</div> <!-- project_source_file_sidebar -->
-
 
 <!---------------------------------------------------------------------------->
 
 <div class="mainarea" id="project_source_file_mainarea">
 
-<div class="title" id="project_source_file_title">
+<div class="title" id="project_source_file_mainarea_title">
 <?php
-$xpar = '/source/folder/' . $project->id;
-print anchor ($xpar, htmlspecialchars($project->name));
+if ($revision <= 0)
+{
+	$revreq = '';
+	$revreqroot = '';
+}
+else
+{
+	//$revreq = ($file['created_rev'] == $file['head_rev'])? '': "/{$file['created_rev']}";
+	//$revreqroot = ($revreq == '')? '': ('/' . $this->converter->AsciiToHex ('.') . $revreq);
+	$revreq = "/{$revision}";
+	$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
+}
+
+print anchor (
+	"/source/folder/{$project->id}{$revreqroot}",
+	htmlspecialchars($project->name));
+
 if ($folder != '')
 {
 	$exps = explode ('/', $folder);
@@ -63,35 +63,51 @@ if ($folder != '')
 	$par = '';
 	for ($i = 1; $i < $expsize; $i++)
 	{
+		print '/';
+
 		$par .= '/' . $exps[$i];
 		$hexpar = $this->converter->AsciiToHex ($par);
-		print '/';
-		$xpar = 'source/folder/' . $project->id . '/' . $hexpar;
-		if ($revision != SVN_REVISION_HEAD) $xpar .= '/' . $revision;
-		print anchor ($xpar, htmlspecialchars($exps[$i]));
+		print anchor (
+			"source/folder/{$project->id}/{$hexpar}{$revreq}",
+			htmlspecialchars($exps[$i]));
 	}
 }
-$par = $folder . '/' . $file['name'];
-$par = $this->converter->AsciiTohex ($par);
+
 print '/';
-$xpar = '/source/file/' . $project->id . '/' . $par;
-if ($revision != SVN_REVISION_HEAD) $xpar .= '/' . $revision;
-print anchor ($xpar, htmlspecialchars($file['name']));
+
+$par = $this->converter->AsciiTohex ("{$folder}/{$file['name']}");
+print anchor (
+        "/source/file/{$project->id}/{$par}{$revreq}",
+        htmlspecialchars($file['name']));
 ?>
 </div> <!-- project_source_file_mainarea_title -->
 
-
 <div class="menu" id="project_source_file_mainarea_menu">
 <?php
-$par = $folder . '/' . $file['name'];
-$par = $this->converter->AsciiTohex ($par);
-$xpar = 'source/blame/' . $project->id . '/' . $par;
-if ($revision != SVN_REVISION_HEAD) $xpar .= '/' . $revision;
-print anchor ($xpar, $this->lang->line('Blame'));
+$par = $this->converter->AsciiToHex ("{$folder}/{$file['name']}");
+
+if ($file['created_rev'] != $file['head_rev']) 
+{
+	print anchor ("source/file/{$project->id}/${par}", $this->lang->line('Head revision'));
+	print ' | ';
+}
+
+print anchor ("source/blame/{$project->id}/${par}{$revreq}", $this->lang->line('Blame'));
 print ' | ';
-print anchor ('source/history/file/' . $project->id . '/' . $par, $this->lang->line('History'));
+print anchor ("source/diff/{$project->id}/{$par}{$revreq}", $this->lang->line('Difference'));
+print ' | ';
+print anchor ("source/history/file/{$project->id}/{$par}", $this->lang->line('History'));
 ?>
 </div> <!-- project_source_file_mainarea_menu -->
+
+<div class="infostrip">
+<?=anchor ("source/file/{$project->id}/${par}/{$file['prev_rev']}", '<<')?> 
+<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
+<?=anchor ("source/file/{$project->id}/${par}/{$file['next_rev']}", '>>')?> |
+<?=$this->lang->line('Author')?>: <?=htmlspecialchars($file['last_author'])?> |
+<?=$this->lang->line('Size')?>: <?=$file['size']?> |
+<?=$this->lang->line('Last updated on')?>: <?=$file['time']?> 
+</div>
 
 <?php 
 $fileext = substr(strrchr($file['name'], '.'), 1);

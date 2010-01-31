@@ -205,7 +205,8 @@ wwwdir = $(WWWDIR)/css
 SUBDIRS = images
 www_DATA = \
 	common.css \
-	project.css
+	project.css \
+	websvn.css
 
 EXTRA_DIST = $(www_DATA)
 all: all-recursive
