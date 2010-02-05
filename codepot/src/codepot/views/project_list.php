@@ -5,8 +5,8 @@
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
 <?php
-	$caption = $this->lang->line('Home');
-	if (isset($loginid) && $loginid != '') $caption .= "({$loginid})";
+	$caption = $this->lang->line('Projects');
+	if ($login['id'] != '') $caption .= "({$login['id']})";
 ?>
 <title><?=htmlspecialchars($caption)?></title>
 </head>
@@ -25,7 +25,6 @@
 $this->load->view (
         'projectbar',
         array (
-		'loginid' => $loginid,
 		'project' => NULL,
 		'pageid' => '',
                 'ctxmenuitems' => array (

@@ -27,17 +27,17 @@
    [lang:NOACCESS]
 [websvn-else]
 
-<div class="mainarea">
+<div class="mainarea" id="websvn_log_mainarea">
 
 <div class="title">Log messages</div>
 
-<div class="menu">
+<div class="menu" id="websvn_log_mainarea_menu">
 	[websvn-test:goyoungestlink]
 		[websvn:goyoungestlink] 
 	[websvn-endtest]
 </div> <!-- menu -->
 
-<div id="filter">
+<div id="websvn_log_mainarea_filter">
 <!-- <div class="title">[lang:FILTER]</div> -->
 
 [websvn:logsearch_form]
@@ -57,7 +57,7 @@
 
 </div> <!-- filter -->
 
-<div id="result" style="margin-top: 1em">
+<div id="websvn_log_mainarea_result">
 
 [websvn-test:logsearch_nomatches]
    [lang:NORESULTS]
@@ -65,9 +65,9 @@
 
 [websvn-test:logsearch_resultsfound]
    [websvn:compare_form]
-      <table width="100%">
+      <table id="websvn_log_mainarea_result_table">
          <thead>
-         <tr>
+         <tr class="heading">
             <th>&nbsp;</th>
             <th>[lang:REV]</th>
             <th>[lang:LOGMSG]</th>
@@ -88,21 +88,23 @@
          </tr>
          [websvn-endlisting]
       </table>
-      <p class="submit">
       [websvn:compare_submit][websvn:compare_hidden]
-      </p>  
    [websvn:compare_endform]
 [websvn-endtest]
 
 [websvn-test:logsearch_nomorematches]
    <p>[lang:NOMORERESULTS]</p>
 [websvn-endtest]
+
+</div> <!-- result -->
       
+<div id="websvn_log_mainarea_extra">
+
 <p>[websvn:logsearch_moreresultslink]</p>
 <p>[websvn:pagelinks]</p>
 <p>[websvn:showalllink]</p>
 
-</div> <!-- result -->
+</div>
 
 </div> <!-- mainarea -->
 [websvn-endtest]

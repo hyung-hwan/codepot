@@ -27,10 +27,10 @@ class Wiki extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('WikiModel', 'wikis');
 	
-		$loginid = $this->login->getUserid ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -45,7 +45,7 @@ class Wiki extends Controller
 		}
 		else
 		{
-			$wikis = $this->wikis->getAll ($loginid, $project);
+			$wikis = $this->wikis->getAll ($login['id'], $project);
 			if ($wikis === FALSE)
 			{
 				$data['message'] = 'DATABASE ERROR';
@@ -65,10 +65,10 @@ class Wiki extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('WikiModel', 'wikis');
 
-		$loginid = $this->login->getUserid ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
 
@@ -95,7 +95,7 @@ class Wiki extends Controller
 			}
 			else
 			{
-				$wiki = $this->wikis->get ($loginid, $project, $name);
+				$wiki = $this->wikis->get ($login['id'], $project, $name);
 				if ($wiki === FALSE)
 				{
 					$data['message'] = 'DATABASE ERROR';
@@ -123,9 +123,9 @@ class Wiki extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('WikiModel', 'wikis');
 
-		$loginid = $this->login->getUserid ();
-		if ($loginid == '') redirect ('main');
-		$data['loginid'] = $loginid;
+		$login = $this->login->getUser ();
+		if ($login['id'] == '') redirect ('main');
+		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
 
@@ -140,8 +140,8 @@ class Wiki extends Controller
 			$data['message'] = "NO SUCH PROJECT - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
-		else if (!$this->login->isSysadmin() && 
-		         $this->projects->projectHasMember($project->id, $loginid) === FALSE)
+		else if (!$login['sysadmin?'] && 
+		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
@@ -176,8 +176,8 @@ class Wiki extends Controller
 				if ($this->form_validation->run())
 				{
 					$result = ($mode == 'update')?
-						$this->wikis->update ($loginid, $wiki):
-						$this->wikis->create ($loginid, $wiki);
+						$this->wikis->update ($login['id'], $wiki):
+						$this->wikis->create ($login['id'], $wiki);
 					if ($result === FALSE)
 					{
 						$data['message'] = 'DATABASE ERROR';
@@ -201,7 +201,7 @@ class Wiki extends Controller
 			{
 				if ($mode == 'update')
 				{
-					$wiki = $this->wikis->get ($loginid, $project, $name);
+					$wiki = $this->wikis->get ($login['id'], $project, $name);
 					if ($wiki === FALSE)
 					{
 						$data['message'] = 'DATABASE ERROR';
@@ -249,9 +249,9 @@ class Wiki extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('WikiModel', 'wikis');
 
-		$loginid = $this->login->getUserid ();
-		if ($loginid == '') redirect ('main');
-		$data['loginid'] = $loginid;
+		$login = $this->login->getUser ();
+		if ($login['id'] == '') redirect ('main');
+		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
 
@@ -266,8 +266,8 @@ class Wiki extends Controller
 			$data['message'] = "NO SUCH PROJECT - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
-		else if (!$this->login->isSysadmin() &&
-		         $this->projects->projectHasMember($project->id, $loginid) === FALSE)
+		else if (!$login['sysadmin?'] && 
+		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
@@ -296,7 +296,7 @@ class Wiki extends Controller
 				{
 					if ($data['wiki_confirm'] == 'yes')
 					{
-						$result = $this->wikis->delete ($loginid, $wiki);
+						$result = $this->wikis->delete ($login['id'], $wiki);
 						if ($result === FALSE)
 						{
 							$data['message'] = 'DATABASE ERROR';
@@ -323,7 +323,7 @@ class Wiki extends Controller
 			}
 			else
 			{
-				$wiki = $this->wikis->get ($loginid, $project, $name);
+				$wiki = $this->wikis->get ($login['id'], $project, $name);
 				if ($wiki === FALSE)
 				{
 					$data['message'] = 'DATABASE ERROR';

@@ -39,6 +39,7 @@ $lang['Sign out'] = 'Sign out';
 $lang['Size'] = 'Size';
 $lang['Source'] = 'Source';
 $lang['Summary'] = 'Summary';
+$lang['System'] = 'System';
 $lang['Tag'] = 'Tag';
 $lang['Text'] = 'Text';
 $lang['Time'] = 'Time';

@@ -26,22 +26,22 @@ class User extends Controller
 
 	function home ()
 	{
-		$loginid = $this->login->getUserid();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
 
 		$this->load->model ('ProjectModel', 'projects');
 
-		$latest_projects = $this->projects->getLatestProjects ($loginid, CODEPOT_MAX_LATEST_PROJECTS);
+		$latest_projects = $this->projects->getLatestProjects ($login['id'], CODEPOT_MAX_LATEST_PROJECTS);
 		if ($latest_projects === FALSE)
 		{
-			$data['loginid'] = $loginid;
+			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
 		{
-			$data['loginid'] = $loginid;
+			$data['login'] = $login;
 			$data['latest_projects'] = $latest_projects;
 			$data['user_name'] = '';
 			$data['user_pass'] = '';
@@ -51,24 +51,24 @@ class User extends Controller
 
 	function projectlist ()
 	{
-		$loginid = $this->login->getUserid();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
 
 		$this->load->model ('ProjectModel', 'projects');
 
-		$projects = $this->projects->getMyProjects ($loginid);
-		$other_projects = $this->projects->getOtherProjects ($loginid);
+		$projects = $this->projects->getMyProjects ($login['id']);
+		$other_projects = $this->projects->getOtherProjects ($login['id']);
 
 		if ($projects === FALSE || $other_projects === FALSE)
 		{
-			$data['loginid'] = $loginid;
+			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
 		{
-			$data['loginid'] = $loginid;
+			$data['login'] = $login;
 			$data['projects'] = $projects;
 			$data['other_projects'] = $other_projects;
 			$this->load->view ($this->VIEW_PROJECT_LIST, $data);
@@ -77,16 +77,38 @@ class User extends Controller
 
 	function preference ()
 	{
-		$loginid = $this->login->getUserid();
-		if ($loginid == '') redirect ('main/signin');
+		$login = $this->login->getUser();
+		if ($login['id'] == '') redirect ('main/signin');
 
 		$this->load->view (	
 			$this->VIEW_ERROR, 
 			array (
-				'loginid' => $loginid,
+				'login' => $login,
 				'message' => 'USER PREFERENCE NOT SUPPORTED YET'
 			)
 		);
+	}
+
+	function admin ()
+	{
+		$login = $this->login->getUser();
+		if ($login['id'] == '') redirect ('main/signin');
+
+
+		if ($login['sysadmin?'])
+		{
+			echo "...Site Administration...";
+		}
+		else
+		{
+			$this->load->view (	
+				$this->VIEW_ERROR, 
+				array (
+					'login' => $login,
+					'message' => 'NO PERMISSION'
+				)
+			);
+		}
 	}
 
 }

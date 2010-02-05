@@ -1,5 +1,6 @@
 <?php
 
+define ('CODEPOT_VERSION',     '@VERSION@');
 define ('CODEPOT_DEPOT_DIR',   '@DEPOTDIR@');
 define ('CODEPOT_CFG_DIR',     '@CFGDIR@');
 define ('CODEPOT_WWW_DIR',     '@WWWDIR@');

@@ -25,10 +25,10 @@ class File extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('FileModel', 'files');
 	
-		$loginid = $this->login->getUserid ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -43,7 +43,7 @@ class File extends Controller
 		}
 		else
 		{
-			$files = $this->files->getAll ($loginid, $project);
+			$files = $this->files->getAll ($login['id'], $project);
 			if ($files === FALSE)
 			{
 				$data['message'] = 'DATABASE ERROR';
@@ -63,10 +63,10 @@ class File extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('FileModel', 'files');
 
-		$loginid = $this->login->getUserid ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
 
@@ -83,7 +83,7 @@ class File extends Controller
 		}
 		else
 		{
-			$file = $this->files->get ($loginid, $project, $name);
+			$file = $this->files->get ($login['id'], $project, $name);
 			if ($file === FALSE)
 			{
 				$data['message'] = 'DATABASE ERROR';
@@ -108,10 +108,10 @@ class File extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('FileModel', 'files');
 
-		$loginid = $this->login->getUserid ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
 
@@ -128,7 +128,7 @@ class File extends Controller
 		}
 		else
 		{
-			$file = $this->files->get ($loginid, $project, $name);
+			$file = $this->files->get ($login['id'], $project, $name);
 			if ($file === FALSE)
 			{
 				$data['message'] = 'DATABASE ERROR';
@@ -164,9 +164,9 @@ class File extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('FileModel', 'files');
 
-		$loginid = $this->login->getUserid ();
-		if ($loginid == '') redirect ('main');
-		$data['loginid'] = $loginid;
+		$login = $this->login->getUser ();
+		if ($login['id'] == '') redirect ('main');
+		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
 
@@ -181,8 +181,8 @@ class File extends Controller
 			$data['message'] = "NO SUCH PROJECT - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
-		else if (!$this->login->isSysadmin() && 
-		         $this->projects->projectHasMember($project->id, $loginid) === FALSE)
+		else if (!$login['sysadmin?'] && 
+		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
@@ -219,7 +219,7 @@ class File extends Controller
 					{
 						$file->name = $this->input->post('file_name');
 
-						if ($this->files->update ($loginid, $file) === FALSE)
+						if ($this->files->update ($login['id'], $file) === FALSE)
 						{
 							$data['message'] = 'DATABASE ERROR';
 							$data['file'] = $file;
@@ -277,7 +277,7 @@ class File extends Controller
 							{
 								$file->md5sum = $md5sum;
 
-								if ($this->files->create ($loginid, $file) === FALSE)
+								if ($this->files->create ($login['id'], $file) === FALSE)
 								{
 									unlink (CODEPOT_FILE_DIR . "/{$file->encname}");
 									$data['message'] = 'DATABASE ERROR';
@@ -304,7 +304,7 @@ class File extends Controller
 			{
 				if ($mode == 'update')
 				{
-					$file = $this->files->get ($loginid, $project, $name);
+					$file = $this->files->get ($login['id'], $project, $name);
 					if ($file === FALSE)
 					{
 						$data['message'] = 'DATABASE ERROR';
@@ -355,9 +355,9 @@ class File extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('FileModel', 'files');
 
-		$loginid = $this->login->getUserid ();
-		if ($loginid == '') redirect ('main');
-		$data['loginid'] = $loginid;
+		$login = $this->login->getUser ();
+		if ($login['id'] == '') redirect ('main');
+		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
 
@@ -372,8 +372,8 @@ class File extends Controller
 			$data['message'] = "NO SUCH PROJECT - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
-		else if (!$this->login->isSysadmin() &&
-		         $this->projects->projectHasMember($project->id, $loginid) === FALSE)
+		else if (!$login['sysadmin?'] && 
+		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
@@ -396,7 +396,7 @@ class File extends Controller
 				{
 					if ($data['file_confirm'] == 'yes')
 					{
-						$result = $this->files->delete ($loginid, $file);
+						$result = $this->files->delete ($login['id'], $file);
 						if ($result === FALSE)
 						{
 							$data['message'] = 'DATABASE ERROR';
@@ -423,7 +423,7 @@ class File extends Controller
 			}
 			else
 			{
-				$file = $this->files->get ($loginid, $project, $name);
+				$file = $this->files->get ($login['id'], $project, $name);
 				if ($file === FALSE)
 				{
 					$data['message'] = 'DATABASE ERROR';

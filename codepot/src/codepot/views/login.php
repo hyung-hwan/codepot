@@ -28,7 +28,6 @@
 $this->load->view (
 	'projectbar',
 	array (
-		'loginid' => $loginid,
 		'project' => NULL,
 		'pageid' => '',
 		'ctxmenuitems' => array ()
