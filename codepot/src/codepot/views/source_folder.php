@@ -114,8 +114,8 @@ if ($folder != '')
 		print '<th>' . $this->lang->line('Size') . '</th>';
 		print '<th>' . $this->lang->line('Author') . '</th>';
 		print '<th>' . $this->lang->line('Time') . '</th>';
-		print '<th>' . '</th>';
-		print '<th>' . '</th>';
+		print '<th>' . $this->lang->line('Blame') . '</th>';
+		print '<th>' . $this->lang->line('Difference') . '</th>';
 		print '</tr>';
 
 		$rowclasses = array ('even', 'odd');

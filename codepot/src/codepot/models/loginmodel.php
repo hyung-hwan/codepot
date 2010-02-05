@@ -15,20 +15,28 @@ class LoginModel extends Model
 		$this->load->library ('session');
 	}
 
-	function isSysadmin ()
-	{
-		$userid = $this->getUserid ();
-		if ($userid === NULL) return FALSE;
-		return $userid == CODEPOT_SYSADMIN_USERID;
-	}
-
-	function getUserid ()
+	function getUser ()
 	{
 		$server1 = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'];
 		$server2 = $this->session->userdata('server');
-		if ($server1 != $server2) return '';
-		$userid = $this->session->userdata('userid');
-		return ($userid === NULL)? '': $userid;
+		if ($server1 != $server2) 
+		{
+			$userid = '';
+			$issysadmin = FALSE;
+		}
+		else
+		{
+			$userid = $this->session->userdata('userid');
+			if ($userid === NULL) $userid = '';
+
+			$issysadmin = $this->session->userdata('sysadmin?');
+			if ($issysadmin === NULL) $issysadmin = FALSE;
+		}
+
+		return array (
+			'id' => $userid, 
+			'sysadmin?' => $issysadmin
+		);
 	}
 
 	function authenticate ($userid, $password)
@@ -37,7 +45,8 @@ class LoginModel extends Model
 		$this->session->set_userdata (
 			array (
 				'userid' => $userid,
-				'server' => $server
+				'server' => $server,
+				'sysadmin?' => ($userid == CODEPOT_SYSADMIN_USERID)
 			)
 		);
 		return TRUE;
