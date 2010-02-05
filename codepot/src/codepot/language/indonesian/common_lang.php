@@ -39,6 +39,7 @@ $lang['Sign out'] = 'Keluar';
 $lang['Size'] = 'Ukuran';
 $lang['Source'] = 'Sumber';
 $lang['Summary'] = 'Rangkuman';
+$lang['System'] = 'Sistem';
 $lang['Tag'] = 'Label';
 $lang['Text'] = 'Teks';
 $lang['Time'] = 'Waktu';

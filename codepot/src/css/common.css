@@ -328,6 +328,7 @@ pre.prettyprint .nocode a:hover {
         display:block;
         border: none;
         background: #E5ECF9 none repeat scroll 0 0;
+	overflow: auto;
 }
 
 .content .sidebar .boxtitle {
@@ -375,11 +376,11 @@ pre.prettyprint .nocode a:hover {
 }
 
 .content .footer {
-	padding: 0.3em 0em 0.3em 0em;
-	font-size: .9em;
+	padding: 0.3em 0.5em 0.3em 0.5em;
+	font-size: .8em;
 	font-weight: bold;
 	font-style: italic;
-	text-align: center;
+	text-align: right;
 	color: #FFFFFF;
 	background-color: #203150;
 }

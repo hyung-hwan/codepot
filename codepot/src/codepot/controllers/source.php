@@ -31,10 +31,10 @@ class Source extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
 	
-		$loginid = $this->login->getUserid ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
 		if ($path == '.') $path = ''; /* treat a period specially */
@@ -81,10 +81,10 @@ class Source extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
 	
-		$loginid = $this->login->getUserid ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
 
@@ -150,10 +150,10 @@ class Source extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
 	
-		$loginid = $this->login->getUserid ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
 
@@ -207,10 +207,10 @@ class Source extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
 	
-		$loginid = $this->login->getUserid ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
 
@@ -251,10 +251,10 @@ class Source extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
 
-		$loginid = $this->login->getUserid ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '')
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
 

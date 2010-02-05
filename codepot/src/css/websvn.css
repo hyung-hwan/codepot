@@ -27,6 +27,87 @@
 }
 
 /*----------------------------------------------- 
+ * websvn source blame view 
+ *-----------------------------------------------*/
+#websvn_blame_mainarea_result {
+	overflow: auto;
+}
+
+#websvn_blame_mainarea_result_table {
+	border: 0;
+	border-collapse: collapse;
+	vertical-align: top;
+}
+
+#websvn_blame_mainarea_result_table tr {
+	border: 0;
+	margin: 0;	
+	padding: 0;	
+	white-space: nowrap;
+}
+
+#websvn_blame_mainarea_result_table tr td {
+	margin: 0;	
+	padding: 0;
+	padding-left: 0.3em;
+	padding-right: 0.3em;
+}
+
+/*----------------------------------------------- 
+ * websvn source revision view 
+ *-----------------------------------------------*/
+#websvn_revision_mainarea_result {
+	overflow: auto;
+}
+
+#websvn_revision_mainarea_result_table {
+	border: 0;
+	border-collapse: collapse;
+	vertical-align: top;
+}
+
+#websvn_revision_mainarea_result_table tr {
+	border: 0;
+	margin: 0;	
+	padding: 0;	
+	white-space: nowrap;
+}
+
+#websvn_revision_mainarea_result_table tr td {
+	margin: 0;	
+	padding: 0;
+	padding-left: 0.3em;
+	padding-right: 0.3em;
+}
+
+/*----------------------------------------------- 
+ * websvn source log view 
+ *-----------------------------------------------*/
+#websvn_log_mainarea_result {
+	overflow: auto;
+}
+
+#websvn_log_mainarea_result_table {
+	border: 0;
+	border-collapse: collapse;
+	vertical-align: top;
+}
+
+#websvn_log_mainarea_result_table tr {
+	border: 0;
+	margin: 0;	
+	padding: 0;	
+	white-space: nowrap;
+}
+
+#websvn_log_mainarea_result_table tr td {
+	margin: 0;	
+	padding: 0;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+}
+
+/*----------------------------------------------- 
  * websvn source diff view 
  *-----------------------------------------------*/
 #websvn_diff_mainarea_result {

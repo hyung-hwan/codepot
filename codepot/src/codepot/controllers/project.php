@@ -24,11 +24,11 @@ class Project extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
-		$loginid = $this->login->getUserid();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $loginid == '') 
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '') 
 			redirect ('main/signin');
 
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -48,12 +48,12 @@ class Project extends Controller
 		}
 	}
 
-	function _edit_project ($project, $mode, $loginid)
+	function _edit_project ($project, $mode, $login)
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
 
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 
                 // SET VALIDATION RULES
 		$this->form_validation->set_rules (
@@ -92,8 +92,8 @@ class Project extends Controller
 
 				// if ok, take action
 				$result = ($mode == 'update')?
-					$this->projects->update ($loginid, $project):
-					$this->projects->create ($loginid, $project, $api_base_url);
+					$this->projects->update ($login['id'], $project):
+					$this->projects->create ($login['id'], $project, $api_base_url);
 				if ($result === FALSE)
 				{
 					$data['message'] = 'DATABASE ERROR';
@@ -132,57 +132,57 @@ class Project extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
-		$loginid = $this->login->getUserid ();
-		if ($loginid == '') redirect ('main/signin');
+		$login = $this->login->getUser ();
+		if ($login['id'] == '') redirect ('main/signin');
 
 		$project->id = $projectid;
 		$project->name = '';
 		$project->summary = '';
 		$project->description = '';
-		$project->members = $loginid;
+		$project->members = $login['id'];
 
-		$this->_edit_project ($project, 'create', $loginid);
+		$this->_edit_project ($project, 'create', $login);
 	}
 
 	function update ($projectid)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
-		$loginid = $this->login->getUserid ();
-		if ($loginid == '') redirect ('main/signin');
+		$login = $this->login->getUser ();
+		if ($login['id'] == '') redirect ('main/signin');
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
 		{
-			$data['loginid'] = $loginid;
+			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if ($project === NULL)
 		{
-			$data['loginid'] = $loginid;
+			$data['login'] = $login;
 			$data['message'] = "NO SUCH PROJECT - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
-		else if (!$this->login->isSysadmin() &&
-		         $this->projects->projectHasMember($project->id, $loginid) === FALSE)
+		else if (!$login['sysadmin?'] &&
+		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
-			$data['loginid'] = $loginid;
+			$data['login'] = $login;
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
 		{
-			$this->_edit_project ($project, 'update', $loginid);
+			$this->_edit_project ($project, 'update', $login);
 		}
 	}
 
-	function _delete_project ($project, $loginid)
+	function _delete_project ($project, $login)
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
 
-		$data['loginid'] = $loginid;
+		$data['login'] = $login;
 		$data['message'] = '';
 
 		$this->form_validation->set_rules ('project_confirm', 'confirm', 'alpha');
@@ -197,7 +197,7 @@ class Project extends Controller
 			{
 				if ($data['project_confirm'] == 'yes')
 				{
-					$result = $this->projects->delete ($loginid, $project);
+					$result = $this->projects->delete ($login['id'], $project);
 					if ($result === FALSE)
 					{
 						$data['message'] = 'DATABASE ERROR';
@@ -240,32 +240,32 @@ class Project extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
-		$loginid = $this->login->getUserid ();
-		if ($loginid == '') redirect ('main/signin');
+		$login = $this->login->getUser ();
+		if ($login['id'] == '') redirect ('main/signin');
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
 		{
-			$data['loginid'] = $loginid;
+			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if ($project === NULL)
 		{
-			$data['loginid'] = $loginid;
+			$data['login'] = $login;
 			$data['message'] = "NO SUCH PROJECT - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
-		else if (!$this->login->isSysadmin() &&
-		         $this->projects->projectHasMember($project->id, $loginid) === FALSE)
+		else if (!$login['sysadmin?'] &&
+		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
-			$data['loginid'] = $loginid;
+			$data['login'] = $login;
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
 		{
-			$this->_delete_project ($project, $loginid);
+			$this->_delete_project ($project, $login);
 		}
 	}
 }

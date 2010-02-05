@@ -24,7 +24,6 @@ class Main extends Controller
 		$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
 		
 		$data['message'] = '';
-		$data['loginid'] = '';
 
 		if($this->input->post('login'))
 		{

@@ -1,6 +1,6 @@
 
 <?php 
-function show_taskbar ($con, $loginid)
+function show_taskbar ($con, $loginid, $issysadmin)
 { 
 	print '<div class="taskbar">';
 
@@ -39,12 +39,14 @@ function show_taskbar ($con, $loginid)
 	print '<div class="boxa">';
 	print anchor ('user/home', $con->lang->line('Home'));
 	print anchor ('user/projectlist', $con->lang->line('Projects'));
+	if ($issysadmin)
+		print anchor ('user/admin', $con->lang->line('System'));
 	print '</div>';
 
 	print '</div>';
 }
 
-show_taskbar ($this, $loginid);
+show_taskbar ($this, $login['id'], $login['sysadmin?']);
 ?>
 
 
