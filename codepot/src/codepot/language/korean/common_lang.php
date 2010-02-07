@@ -8,6 +8,7 @@ $lang['Delete'] = '삭제';
 $lang['Description'] = '설명';
 $lang['Details'] = '상세내역';
 $lang['Difference'] = '차이점';
+$lang['Directory'] = '파일목록';
 $lang['Download'] = '내려받기';
 $lang['Edit'] = '수정';
 $lang['Head revision'] = '최신리비전';

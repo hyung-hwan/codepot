@@ -69,6 +69,23 @@ class SubversionModel extends Model
 		return $fileinfo;
 	}
 
+	function getRevisionHistory ($projectid, $file, $rev)
+	{
+		$path = 'file:///' . CODEPOT_SVNREPO_DIR .  '/' . $projectid . '/' . $file;
+
+		$last = substr(strrchr($path, '/'), 1);
+		$info['name'] = $last;
+		$fileinfo = $info;
+
+		$str = @svn_log ($path, $rev, $rev);
+		if ($str === FALSE) return FALSE;
+
+		if (count($str) != 1) return FALSE;
+
+		$fileinfo['history'] = $str[0];
+		return $fileinfo;
+	}
+
 	function _get_diff ($diff, $all, $ent)
 	{
 		/* copied from websvn */
