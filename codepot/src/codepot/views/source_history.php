@@ -49,23 +49,29 @@ function print_path ($project, $path, $type, $converter, $rev = SVN_REVISION_HEA
 		$par .= '/' . $exps[$i];
 		$hexpar = $converter->AsciiToHex ($par);
 		print '/';
-		$xpar = "source/$type/" . $project->id . '/' . $hexpar;
-		if ($rev != '') $xpar .=  '/' . $rev;
+		$xpar = "source/history/$type/{$project->id}/{$hexpar}";
+		if ($rev != '') $xpar .=  "/{$rev}";
 		print anchor ($xpar, htmlspecialchars($exps[$i]));
 	}
 }
 
-print anchor ('/source/folder/' . $project->id, htmlspecialchars($project->name));
+print anchor ("/source/history/folder/{$project->id}", htmlspecialchars($project->name));
 if ($folder != '') print_path ($project, $folder, 'folder', $this->converter);
 ?>
 </div>
 
 <div class="menu" id="project_source_history_mainarea_menu">
 <?php
-if ($type == 'file')
+/* the menu here prints links to the lastest revision */
+if ($type == 'folder')
 {
-	$par = $folder;
-	$par = $this->converter->AsciiTohex ($par);
+	$par = $this->converter->AsciiTohex ($folder);
+	$xpar = "source/folder/{$project->id}/{$par}";
+	print anchor ($xpar, $this->lang->line('Directory'));
+}
+else
+{
+	$par = $this->converter->AsciiTohex ($folder);
 	$xpar = "source/file/{$project->id}/{$par}";
 	print anchor ($xpar, $this->lang->line('Details'));
 	print ' | ';
@@ -86,7 +92,7 @@ if ($type == 'file')
 	<th><?=$this->lang->line('Author')?></th>
 	<th><?=$this->lang->line('Time')?></th>
 	<th><?=$this->lang->line('Message')?></th>
-	<th><?=$this->lang->line('Files')?></th>
+	<th></th>
 </tr>
 <?php 
 	$rowclasses = array ('even', 'odd');
@@ -101,7 +107,10 @@ if ($type == 'file')
 
 		print '<td>';
 		$hexfolder = $this->converter->AsciiToHex(($folder == '')? '.': $folder);
-		print anchor ("/source/$type/{$project->id}/{$hexfolder}/{$h['rev']}", $h['rev']);
+		if ($type == 'folder')
+			print anchor ("/source/revision/{$project->id}/{$hexfolder}/{$h['rev']}", $h['rev']);
+		else
+			print anchor ("/source/$type/{$project->id}/{$hexfolder}/{$h['rev']}", $h['rev']);
 		print '</td>';
 
 		print '<td>';
@@ -109,32 +118,29 @@ if ($type == 'file')
 		print '</td>';
 
 		print '<td><code>';
-		print date('r', strtotime($h['date']));
+		//print date('r', strtotime($h['date']));
+		print date('Y-m-d', strtotime($h['date']));
 		print '</code></td>';
 
 		print '<td>';
 		print htmlspecialchars($h['msg']);
 		print '</td>';
 
-		$paths = $h['paths'];
-		if (count($paths) > 0)
+		print '<td>';
+		if ($type == 'folder')	
 		{
-			print '<td>';
-			print '<ul id="project_source_history_mainarea_result_table_path_list">';
-			foreach ($paths as $p)
-			{
-				print '<li>';
-				print '<code>';
-				print '[';
-				print $p['action'];
-				print '] ';
-				print_path ($project, $p['path'], 'file', $this->converter, $h['rev']);
-				print '</code>';
-				print '</li>';
-			}
-			print '</ul>';
-			print '</td>';
+			print anchor ("/source/folder/{$project->id}/{$hexfolder}/{$h['rev']}", 
+				$this->lang->line('Directory'));
 		}
+		else
+		{
+			print anchor ("/source/blame/{$project->id}/{$hexfolder}/{$h['rev']}", 
+				$this->lang->line('Blame'));
+			print ' | ';
+			print anchor ("/source/diff/{$project->id}/{$hexfolder}/{$h['rev']}", 
+				$this->lang->line('Difference'));
+		}
+		print '</td>';
 
 		print '</tr>';
 	}
