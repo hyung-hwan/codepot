@@ -47,6 +47,17 @@
 }
 
 /*----------------------------------------------- 
+ * project source revision view 
+ *-----------------------------------------------*/
+#project_source_revision_mainarea_result {
+	overflow: auto;
+}
+
+#project_source_revision_mainarea_result ul li {
+	list-style: square;
+}
+
+/*----------------------------------------------- 
  * project source diff view 
  *-----------------------------------------------*/
 #project_source_diff_mainarea_result {

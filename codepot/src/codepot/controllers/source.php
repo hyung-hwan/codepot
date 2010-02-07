@@ -7,6 +7,7 @@ class Source extends Controller
 	var $VIEW_FILE = 'source_file';
 	var $VIEW_BLAME = 'source_blame';
 	var $VIEW_HISTORY = 'source_history';
+	var $VIEW_REVISION = 'source_revision';
 	var $VIEW_DIFF = 'source_diff';
 
 	function Source ()
@@ -115,7 +116,13 @@ class Source extends Controller
 					$data['project'] = $project;
 					$data['folder'] = $path;
 					$data['files'] = $files;
+
 					$data['revision'] = $rev;
+					$data['prev_revision'] =
+						$this->subversion->getPrevRev ($projectid, $path, $rev);
+					$data['next_revision'] =
+						$this->subversion->getNextRev ($projectid, $path, $rev);
+
 					$this->load->view ($this->VIEW_FOLDER, $data);
 				}
 			}
@@ -213,6 +220,7 @@ class Source extends Controller
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -242,6 +250,50 @@ class Source extends Controller
 				$data['file'] = $file;
 				$data['revision'] = $rev;
 				$this->load->view ($this->VIEW_HISTORY, $data);
+			}
+		}
+	}
+
+	function revision ($projectid, $path, $rev)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+	
+		$login = $this->login->getUser ();
+		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
+			redirect ('main/signin');
+		$data['login'] = $login;
+
+		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE)
+		{
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+                }
+		else if ($project === NULL)
+		{
+			$data['message'] = "NO SUCH PROJECT - $projectid";
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			$file = $this->subversion->getRevisionHistory ($projectid, $path, $rev);
+			if ($file === FALSE)
+			{
+				$data['message'] = 'Failed to get log content';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else
+			{
+				$data['project'] = $project;
+				//$data['folder'] = substr ($path, 0, strrpos($path, '/'));
+				$data['folder'] = $path;
+				$data['file'] = $file;
+				$data['revision'] = $rev;
+				$this->load->view ($this->VIEW_REVISION, $data);
 			}
 		}
 	}

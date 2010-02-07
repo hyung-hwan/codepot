@@ -181,6 +181,7 @@ www_DATA = \
 	source_file.php \
 	source_folder.php \
 	source_history.php \
+	source_revision.php \
 	taskbar.php \
 	user_home.php \
 	wiki_delete.php \

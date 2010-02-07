@@ -8,6 +8,7 @@ $lang['Delete'] = 'Delete';
 $lang['Description'] = 'Description';
 $lang['Details'] = 'Details';
 $lang['Difference'] = 'Diff';
+$lang['Directory'] = 'Directory';
 $lang['Download'] = 'Download';
 $lang['Edit'] = 'Edit';
 $lang['Head revision'] = 'Head revision';

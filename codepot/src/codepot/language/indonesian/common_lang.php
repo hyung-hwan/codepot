@@ -8,6 +8,7 @@ $lang['Delete'] = 'Hapus';
 $lang['Description'] = 'Penjelasan';
 $lang['Details'] = 'Detail';
 $lang['Difference'] = 'Beda';
+ng['Directory'] = 'Direktori';
 $lang['Download'] = 'Download';
 $lang['Edit'] = 'Rubah';
 $lang['Head revision'] = 'Kepala Revisi';
