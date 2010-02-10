@@ -31,6 +31,7 @@ $lang['Latest projects'] = 'Proyek terakhir';
 $lang['Other projects'] = 'Proyek lain';
 $lang['Overview'] = 'Ringkasan';
 $lang['Password'] = 'Kata sandi';
+$lang['Path'] = 'Path';
 $lang['Project'] = 'Proyek';
 $lang['Projects'] = 'Proyek';
 $lang['Repository'] = 'Repository';

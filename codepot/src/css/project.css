@@ -53,8 +53,36 @@
 	overflow: auto;
 }
 
-#project_source_revision_mainarea_result ul li {
-	list-style: square;
+#project_source_revision_mainarea_result_table td.M {
+	white-space: nowrap;
+	background-image:url(images/page_white_edit.png);
+	background-position:2px 50%;
+	background-repeat:no-repeat;
+	padding-left: 22px;
+}
+
+#project_source_revision_mainarea_result_table td.D {
+	white-space: nowrap;
+	background-image:url(images/page_white_delete.png);
+	background-position:2px 50%;
+	background-repeat:no-repeat;
+	padding-left: 22px;
+}
+
+#project_source_revision_mainarea_result_table td.A {
+	white-space: nowrap;
+	background-image:url(images/page_white_add.png);
+	background-position:2px 50%;
+	background-repeat:no-repeat;
+	padding-left: 22px;
+}
+
+#project_source_revision_mainarea_result_table td.R {
+	white-space: nowrap;
+	background-image:url(images/page_white_add.png);
+	background-position:2px 50%;
+	background-repeat:no-repeat;
+	padding-left: 22px;
 }
 
 /*----------------------------------------------- 

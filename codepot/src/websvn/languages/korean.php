@@ -41,6 +41,8 @@ $lang["LINE"] = "행";
 $lang["SHOWENTIREFILE"] = "모두 보기";
 $lang["SHOWCOMPACT"] = "바뀐 부분만 보기";
 
+$lang["LISTING"] = "디렉토리열람";
+$lang["FILEDETAIL"] = "자세히 보기";
 $lang["DIFFPREV"] = "이전 리비전과 비교";
 $lang["BLAME"] = "수정한 사람 보기";
 
@@ -54,7 +56,7 @@ $lang["HIDECHANGED"] = "변경된 파일 숨기기";
 $lang["NEWFILES"] = "새 파일";
 $lang["CHANGEDFILES"] = "수정된 파일";
 $lang["DELETEDFILES"] = "삭제된 파일";
-$lang["VIEWLOG"] = "로그&nbsp;보기";
+$lang["VIEWLOG"] = "로그보기";
 $lang["PATH"] = "경로";
 $lang["AUTHOR"] = "작성자";
 $lang["AGE"] = "기간";

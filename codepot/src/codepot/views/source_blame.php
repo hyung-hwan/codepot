@@ -134,9 +134,8 @@ for ($i = 0; $i < $len; $i++)
 		$rev = $line['rev'];
 		$rev_padded = str_pad ($rev, 6, ' ', STR_PAD_LEFT);
 
-		$par = $folder . '/' . $file['name'];
-		$par = $this->converter->AsciiTohex ($par);
-		$rev_padded = anchor ('/source/blame/' . $project->id . '/' . $par . '/' . $rev, $rev_padded);
+		$par = $this->converter->AsciiTohex ("{$folder}/{$file['name']}");
+		$rev_padded = anchor ("/source/blame/{$project->id}/{$par}/{$rev}", $rev_padded);
 	}
 	else
 	{
@@ -154,9 +153,9 @@ for ($i = 0; $i < $len; $i++)
 		$author_padded = str_pad (' ', 8, ' ', STR_PAD_RIGHT);
 	}
 
-	print '<span class="nocode">' . $rev_padded . ' </span> ';
-	print '<span class="nocode">' . $author_padded . ' </span> ';
-	print '<span class="nocode">' . $lineno_padded . ' </span> ';
+	print "<span class='nocode'>{$rev_padded}</span>";
+	print "<span class='nocode' title='{$author}'>{$author_padded}</span>";
+	print "<span class='nocode'>{$lineno_padded}</span>";
 	print htmlspecialchars ($line['line']);
 	print "\n";
 }

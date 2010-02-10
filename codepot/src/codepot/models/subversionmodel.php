@@ -10,7 +10,7 @@ class SubversionModel extends Model
 	function getList ($projectid, $subdir = '', $rev = SVN_REVISION_HEAD, $recurse = FALSE) 
 	{
 		$path = 'file:///' . CODEPOT_SVNREPO_DIR . '/' . $projectid;
-		if ($subdir != '') $path .= '/' . $subdir;
+		if ($subdir != '') $path .= "/{$subdir}";
 
 		$list = @svn_ls ($path, $rev, $recurse);
 		if ($list === FALSE) return FALSE;
@@ -26,6 +26,8 @@ class SubversionModel extends Model
 		if ($info === FALSE) return FALSE;
 
 		$last = substr(strrchr($path, '/'), 1);
+		if ($last === FALSE) $last = '';
+
 		if (array_key_exists ($last, $info) === FALSE) return FALSE;
 		$fileinfo = $info[$last];
 
@@ -44,6 +46,8 @@ class SubversionModel extends Model
 		if ($info === FALSE) return FALSE;
 
 		$last = substr(strrchr($path, '/'), 1);
+		if ($last === FALSE) $last = '';
+
 		if (array_key_exists ($last, $info) === FALSE) return FALSE;
 		$fileinfo = $info[$last];
 
@@ -59,6 +63,8 @@ class SubversionModel extends Model
 		$path = 'file:///' . CODEPOT_SVNREPO_DIR .  '/' . $projectid . '/' . $file;
 
 		$last = substr(strrchr($path, '/'), 1);
+		if ($last === FALSE) $last = '';
+
 		$info['name'] = $last;
 		$fileinfo = $info;
 
@@ -69,11 +75,13 @@ class SubversionModel extends Model
 		return $fileinfo;
 	}
 
-	function getRevisionHistory ($projectid, $file, $rev)
+	function getRevHistory ($projectid, $file, $rev)
 	{
 		$path = 'file:///' . CODEPOT_SVNREPO_DIR .  '/' . $projectid . '/' . $file;
 
 		$last = substr(strrchr($path, '/'), 1);
+		if ($last === FALSE) $last = '';
+
 		$info['name'] = $last;
 		$fileinfo = $info;
 
@@ -334,6 +342,8 @@ class SubversionModel extends Model
 		if ($info === FALSE) return FALSE;
 
 		$last = substr(strrchr($path, '/'), 1);
+		if ($last === FALSE) $last = '';
+
 		if (array_key_exists ($last, $info) === FALSE) return FALSE;
 		$fileinfo = $info[$last];
 
