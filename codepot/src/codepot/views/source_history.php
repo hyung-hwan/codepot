@@ -67,7 +67,7 @@ if ($type == 'folder')
 {
 	$par = $this->converter->AsciiTohex ($folder);
 	$xpar = "source/folder/{$project->id}/{$par}";
-	print anchor ($xpar, $this->lang->line('Directory'));
+	print anchor ($xpar, $this->lang->line('Folder'));
 }
 else
 {
@@ -107,10 +107,13 @@ else
 
 		print '<td>';
 		$hexfolder = $this->converter->AsciiToHex(($folder == '')? '.': $folder);
+		/*
 		if ($type == 'folder')
-			print anchor ("/source/revision/{$project->id}/{$hexfolder}/{$h['rev']}", $h['rev']);
+			print anchor ("/source/revision/{$type}/{$project->id}/{$hexfolder}/{$h['rev']}", $h['rev']);
 		else
-			print anchor ("/source/$type/{$project->id}/{$hexfolder}/{$h['rev']}", $h['rev']);
+			print anchor ("/source/{$type}/{$project->id}/{$hexfolder}/{$h['rev']}", $h['rev']);
+		*/
+		print $h['rev'];
 		print '</td>';
 
 		print '<td>';
@@ -129,14 +132,20 @@ else
 		print '<td>';
 		if ($type == 'folder')	
 		{
+			print anchor ("/source/revision/{$type}/{$project->id}/{$hexfolder}/{$h['rev']}",
+				$this->lang->line('Details'));
+			print ' ';
 			print anchor ("/source/folder/{$project->id}/{$hexfolder}/{$h['rev']}", 
-				$this->lang->line('Directory'));
+				$this->lang->line('Folder'));
 		}
 		else
 		{
+			print anchor ("/source/{$type}/{$project->id}/{$hexfolder}/{$h['rev']}", 
+				$this->lang->line('Details'));
+			print ' ';
 			print anchor ("/source/blame/{$project->id}/{$hexfolder}/{$h['rev']}", 
 				$this->lang->line('Blame'));
-			print ' | ';
+			print ' ';
 			print anchor ("/source/diff/{$project->id}/{$hexfolder}/{$h['rev']}", 
 				$this->lang->line('Difference'));
 		}
