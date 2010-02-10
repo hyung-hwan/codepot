@@ -31,6 +31,7 @@ $lang['Latest projects'] = 'Latest projects';
 $lang['Other projects'] = 'Other projects';
 $lang['Overview'] = 'Overview';
 $lang['Password'] = 'Password';
+$lang['Path'] = 'Path';
 $lang['Project'] = 'Project';
 $lang['Projects'] = 'Projects';
 $lang['Repository'] = 'Repository';

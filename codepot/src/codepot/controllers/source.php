@@ -77,7 +77,7 @@ class Source extends Controller
 		}
 	}
 
-	function file ($projectid, $path, $rev = SVN_REVISION_HEAD)
+	function file ($projectid, $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
@@ -88,6 +88,7 @@ class Source extends Controller
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -163,6 +164,7 @@ class Source extends Controller
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -248,13 +250,19 @@ class Source extends Controller
 				//$data['folder'] = substr ($path, 0, strrpos($path, '/'));
 				$data['folder'] = $path;
 				$data['file'] = $file;
+
 				$data['revision'] = $rev;
+				$data['prev_revision'] =
+					$this->subversion->getPrevRev ($projectid, $path, $rev);
+				$data['next_revision'] =
+					$this->subversion->getNextRev ($projectid, $path, $rev);
+
 				$this->load->view ($this->VIEW_HISTORY, $data);
 			}
 		}
 	}
 
-	function revision ($projectid, $path, $rev)
+	function revision ($type, $projectid, $path, $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
@@ -280,7 +288,7 @@ class Source extends Controller
 		}
 		else
 		{
-			$file = $this->subversion->getRevisionHistory ($projectid, $path, $rev);
+			$file = $this->subversion->getRevHistory ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
 				$data['message'] = 'Failed to get log content';
@@ -288,11 +296,18 @@ class Source extends Controller
 			}
 			else
 			{
+				$data['type'] = $type;
 				$data['project'] = $project;
 				//$data['folder'] = substr ($path, 0, strrpos($path, '/'));
 				$data['folder'] = $path;
 				$data['file'] = $file;
+
 				$data['revision'] = $rev;
+				$data['prev_revision'] =
+					$this->subversion->getPrevRev ($projectid, $path, $rev);
+				$data['next_revision'] =
+					$this->subversion->getNextRev ($projectid, $path, $rev);
+
 				$this->load->view ($this->VIEW_REVISION, $data);
 			}
 		}
