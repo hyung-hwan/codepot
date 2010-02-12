@@ -35,19 +35,6 @@ $this->load->view (
 $history = $file['history'];
 ?>
 
-<!--
-<div class="sidebar" id="project_source_revision_mainarea_sidebar">
-<div class="box">
-<ul>
-<li><?=$this->lang->line('Revision')?>: <?=htmlspecialchars($history['rev'])?></li>
-<li><?=$this->lang->line('Author')?>: <?=htmlspecialchars($history['author'])?></li>
-<li><?=$this->lang->line('Last updated on')?>: <?=date('r', strtotime($history['date']))?></li>
-<li><?=$this->lang->line('Message')?>: <?=htmlspecialchars($history['msg'])?></li>
-</ul>
-</div>
-</div>
--->
-
 <div class="title" id="project_source_revision_mainarea_title">
 <?php
 function print_path ($project, $path, $rev, $converter)
@@ -94,6 +81,13 @@ print anchor ("source/history/{$type}/{$project->id}/{$hexfolder}", $this->lang-
 
 
 <div id="project_source_revision_mainarea_result">
+
+<div class="title">Message</div>
+<pre id="project_source_revision_mainarea_result_msg">
+<?=htmlspecialchars($history['msg'])?>
+</pre>
+
+<div class="title">Files updated</div>
 <table id="project_source_revision_mainarea_result_table">
 <?php 
 	print '<tr class="heading">';
@@ -111,27 +105,15 @@ print anchor ("source/history/{$type}/{$project->id}/{$hexfolder}", $this->lang-
 		$hexpar = $this->converter->AsciiToHex ($p['path']);
 
 		print "<td class='{$p['action']}'>";
-		print htmlspecialchars($p['path']);
+		print anchor ("source/file/{$project->id}/{$hexpar}/{$history['rev']}", htmlspecialchars($p['path']));
 		print '</td>';
 
 		print '<td>';
-/*
-		if ($type == 'folder')
-		{
-			print anchor ("source/folder/{$project->id}/{$hexpar}/{$history['rev']}", $this->lang->line('Folder'));
-		}
-		else
-		{
-*/
-			print anchor ("source/file/{$project->id}/{$hexpar}/{$history['rev']}", $this->lang->line('Details'));
-			print ' ';
-			print anchor ("source/blame/{$project->id}/{$hexpar}/{$history['rev']}", $this->lang->line('Blame'));
-			print ' ';
-			print anchor ("source/diff/{$project->id}/{$hexpar}/{$history['rev']}", $this->lang->line('Difference'));
-/*
-		}
-*/
+		print anchor ("source/blame/{$project->id}/{$hexpar}/{$history['rev']}", $this->lang->line('Blame'));
+		print ' ';
+		print anchor ("source/diff/{$project->id}/{$hexpar}/{$history['rev']}", $this->lang->line('Difference'));
 		print '</td>';
+
 		print '</tr>';
 	}
 ?>

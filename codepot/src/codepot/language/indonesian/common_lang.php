@@ -4,6 +4,7 @@ $lang['Blame'] = 'Menyalahkan';
 $lang['Create'] = 'Dibuat';
 $lang['Created by'] = 'Dibuat oleh';
 $lang['Created on'] = 'Waktu dibuat';
+$lang['Date'] = 'Date';
 $lang['Delete'] = 'Hapus';
 $lang['Description'] = 'Penjelasan';
 $lang['Details'] = 'Detail';
