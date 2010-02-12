@@ -4,6 +4,7 @@ $lang['Blame'] = '책임전가';
 $lang['Create'] = '생성';
 $lang['Created by'] = '최초생성인';
 $lang['Created on'] = '최초생성시간';
+$lang['Date'] = '날짜';
 $lang['Delete'] = '삭제';
 $lang['Description'] = '설명';
 $lang['Details'] = '상세내역';
