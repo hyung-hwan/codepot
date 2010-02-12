@@ -65,13 +65,13 @@ class SubversionModel extends Model
 		$last = substr(strrchr($path, '/'), 1);
 		if ($last === FALSE) $last = '';
 
-		$info['name'] = $last;
-		$fileinfo = $info;
+		/* set the file name to the information array */
+		$fileinfo['name'] = $last;
 
-		$str = @svn_log ($path, 1, $rev);
-		if ($str === FALSE) return FALSE;
+		$log = @svn_log ($path, 1, $rev, 0, SVN_DISCOVER_CHANGED_PATHS);
+		if ($log === FALSE) return FALSE;
 
-		$fileinfo['history'] = $str;
+		$fileinfo['history'] = $log;
 		return $fileinfo;
 	}
 
@@ -82,15 +82,15 @@ class SubversionModel extends Model
 		$last = substr(strrchr($path, '/'), 1);
 		if ($last === FALSE) $last = '';
 
-		$info['name'] = $last;
-		$fileinfo = $info;
+		/* set the file name to the information array */
+		$fileinfo['name'] = $last;
 
-		$str = @svn_log ($path, $rev, $rev);
-		if ($str === FALSE) return FALSE;
+		$log = @svn_log ($path, $rev, $rev, 1, SVN_DISCOVER_CHANGED_PATHS);
+		if ($log === FALSE) return FALSE;
 
-		if (count($str) != 1) return FALSE;
+		if (count($log) != 1) return FALSE;
 
-		$fileinfo['history'] = $str[0];
+		$fileinfo['history'] = $log[0];
 		return $fileinfo;
 	}
 

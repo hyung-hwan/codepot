@@ -4,6 +4,7 @@ $lang['Blame'] = 'Blame';
 $lang['Create'] = 'Create';
 $lang['Created by'] = 'Created by';
 $lang['Created on'] = 'Created on';
+$lang['Date'] = 'Date';
 $lang['Delete'] = 'Delete';
 $lang['Description'] = 'Description';
 $lang['Details'] = 'Details';

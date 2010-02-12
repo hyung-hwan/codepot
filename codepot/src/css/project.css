@@ -3,6 +3,18 @@
  */
 
 /*----------------------------------------------- 
+ * project file home view 
+ *-----------------------------------------------*/
+#project_file_home_mainarea_result {
+	overflow: auto;
+}
+
+#project_file_home_mainarea_result_table tr {
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+/*----------------------------------------------- 
  * project source folder view 
  *-----------------------------------------------*/
 #project_source_folder_mainarea_result {
@@ -15,15 +27,23 @@
 }
 
 /*----------------------------------------------- 
- * project source folder view 
+ * project source file view 
  *-----------------------------------------------*/
-#project_file_home_mainarea_result {
-	overflow: auto;
+#project_source_file_mainarea_result {
+	position: relative;
 }
 
-#project_file_home_mainarea_result_table tr {
-	vertical-align: top;
-	white-space: nowrap;
+#project_source_file_mainarea_result_info {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 20em;
+	background-color: red;
+}
+
+#project_source_file_mainarea_result_info pre {
+	border: 0;
+	margin: 0;
 }
 
 /*----------------------------------------------- 
@@ -46,11 +66,35 @@
 	white-space: nowrap;
 }
 
+#project_source_history_mainarea_result_table pre {
+	border: 0;
+	background-color: inherit;
+	padding: 0;
+	margin: 0;
+}
+
+#project_source_history_mainarea_result_table .title {
+	font-size: inherit;
+	font-weight: inherit;
+	font-style: italic;
+	text-align: center;
+	background-color: #AABBFF;
+}
+
 /*----------------------------------------------- 
  * project source revision view 
  *-----------------------------------------------*/
+
 #project_source_revision_mainarea_result {
 	overflow: auto;
+}
+
+#project_source_revision_mainarea_result_msg {
+	border: 0;
+	padding: 0;	
+	background-color: inherit;
+	margin: 0;
+	margin-bottom: 1em;
 }
 
 #project_source_revision_mainarea_result_table td.M {
@@ -83,6 +127,16 @@
 	background-position:2px 50%;
 	background-repeat:no-repeat;
 	padding-left: 22px;
+}
+
+#project_source_revision_mainarea_result_sidebar {
+	/*overflow: auto;*/
+}
+
+#project_source_revision_mainarea_result_sidebar pre {
+	overflow: auto;
+	border: 0;
+	padding: 0;
 }
 
 /*----------------------------------------------- 
@@ -119,7 +173,7 @@
 	background-color:#ddffdd;
 	background-image:url(images/bullet_add.png);
 	background-repeat:no-repeat;
-	background-position:2px 50%;
+	background-position: 2px 50%;
 	padding: 0;
 	padding-left:22px;
 	margin: 0;
@@ -129,7 +183,7 @@
 	border:1px solid #e8d4bc;
 	background-color:#f8e4cc;
 	background-image:url(images/bullet_delete.png);
-	background-position:2px 50%;
+	background-position: 2px 50%;
 	background-repeat:no-repeat;
 	padding: 0;
 	padding-left:22px;
@@ -141,7 +195,7 @@
 	background-color:#ffffcc;
 	background-image:url(images/bullet_yellow.png);
 	background-repeat:no-repeat;
-	background-position:2px 50%;
+	background-position: 2px 50%;
 	padding: 0;
 	padding-left:22px;
 	margin: 0;

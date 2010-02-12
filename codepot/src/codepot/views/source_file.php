@@ -100,7 +100,7 @@ print anchor ("source/history/file/{$project->id}/{$par}", $this->lang->line('Hi
 ?>
 </div> <!-- project_source_file_mainarea_menu -->
 
-<div class="infostrip">
+<div class="infostrip" id="project_source_file_mainarea_infostrip">
 <?=anchor ("source/file/{$project->id}/${par}/{$file['prev_rev']}", '<<')?> 
 <?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
 <?=anchor ("source/file/{$project->id}/${par}/{$file['next_rev']}", '>>')?> |
@@ -109,12 +109,14 @@ print anchor ("source/history/file/{$project->id}/{$par}", $this->lang->line('Hi
 <?=$this->lang->line('Last updated on')?>: <?=$file['time']?> 
 </div>
 
+<div id="project_source_file_mainarea_result">
+
 <?php 
 $fileext = substr(strrchr($file['name'], '.'), 1);
-if ($fileext == "") $fileext = "html"
+if ($fileext == '') $fileext = "html"
 ?>
 
-<pre class="prettyprint lang-<?=$fileext?>">
+<pre class="prettyprint lang-<?=$fileext?>" id="project_source_file_mainarea_result_pre">
 <?php
 	// print htmlspecialchars($file['content']);
 
@@ -140,11 +142,23 @@ if ($fileext == "") $fileext = "html"
 ?>
 </pre>
 
+<div id="project_source_file_mainarea_result_info">
+<pre>
+akdjflosjfkdsajflkdsj
+aslkfdjdsalkjfs
+alkjfdlkajf
+
+
+sadkfjsalfjskjdslkfsaj
+</pre>
+</div>
+
+</div> <!-- project_source_file_mainarea_result -->
+
 </div> <!-- project_source_file_mainarea -->
 
 
 <!---------------------------------------------------------------------------->
-
 
 <?php $this->load->view ('footer'); ?>
 

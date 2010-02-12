@@ -47,32 +47,36 @@ $this->load->view (
 
 <div class="title">
 <?php
-if ($revision <= 0)
-{
-	$revreq = '';
-	$revreqroot = '';
-}
-else
-{
-	$revreq = "/{$revision}";
-	$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
-}
+	if ($revision <= 0)
+	{
+		$revreq = '';
+		$revreqroot = '';
+	}
+	else
+	{
+		$revreq = "/{$revision}";
+		$revreqroot = '/' . $this->converter->AsciiToHex('.') . $revreq;
+	}
 
-print anchor ("/source/folder/{$project->id}{$revreqroot}", htmlspecialchars($project->name));
-if ($folder != '') 
-{
+	// print the main anchor for the root folder. 
+	// let the anchor text be the project name.
+	print anchor (
+		"/source/folder/{$project->id}{$revreqroot}", 
+		htmlspecialchars($project->name));
+
+	// explode non-root folder parts to anchors
 	$exps = explode ('/', $folder);
 	$expsize = count($exps);
 	$par = '';
 	for ($i = 1; $i < $expsize; $i++)
 	{
 		print '/';
-
 		$par .= '/' . $exps[$i];
-		$hexpar = $this->converter->AsciiToHex ($par);
-		print anchor ("source/folder/{$project->id}/{$hexpar}{$revreq}", htmlspecialchars($exps[$i]));
+		$xpar = $this->converter->AsciiToHex ($par);
+		print anchor (
+			"source/folder/{$project->id}/{$xpar}{$revreq}",
+			htmlspecialchars($exps[$i]));
 	}
-}
 ?>
 </div>
 
@@ -95,13 +99,13 @@ if ($folder != '')
 	else 
 	{
 		print '<div class="menu" id="project_source_folder_mainarea_menu">';
-		$hexpar = $this->converter->AsciiTohex ($folder);
+		$xpar = $this->converter->AsciiTohex ($folder);
 		if ($revision > 0 && $revision < $next_revision)
 		{
 			print anchor ("source/folder/{$project->id}", $this->lang->line('Head revision'));
 			print ' | ';
 		}
-		print anchor ("source/history/folder/{$project->id}/{$hexpar}", $this->lang->line('History'));
+		print anchor ("source/history/folder/{$project->id}/{$xpar}", $this->lang->line('History'));
 		print '</div>';
 
 		usort ($files, 'comp_files');
@@ -113,7 +117,7 @@ if ($folder != '')
 		print '<th>' . $this->lang->line('Revision') . '</th>';
 		print '<th>' . $this->lang->line('Size') . '</th>';
 		print '<th>' . $this->lang->line('Author') . '</th>';
-		print '<th>' . $this->lang->line('Time') . '</th>';
+		print '<th>' . $this->lang->line('Date') . '</th>';
 		print '<th>' . $this->lang->line('Blame') . '</th>';
 		print '<th>' . $this->lang->line('Difference') . '</th>';
 		print '</tr>';
@@ -143,7 +147,8 @@ if ($folder != '')
 				print htmlspecialchars($f['last_author']);
 				print '</td>';
 				print '<td><code>';
-				print date('r', $f['time_t']);
+				//print date('r', $f['time_t']);
+				print date('Y-m-d', $f['time_t']);
 				print '</code></td>';
 				print '<td></td>';
 				print '<td></td>';
@@ -169,7 +174,8 @@ if ($folder != '')
 				print htmlspecialchars($f['last_author']);
 				print '</td>';
 				print '<td><code>';
-				print date('r', $f['time_t']);
+				//print date('r', $f['time_t']);
+				print date('Y-m-d', $f['time_t']);
 				print '</code></td>';
 
 				print '<td>';
