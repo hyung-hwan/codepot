@@ -39,74 +39,76 @@ $this->load->view (
 
 <div class="title" id="project_source_file_mainarea_title">
 <?php
-if ($revision <= 0)
-{
-	$revreq = '';
-	$revreqroot = '';
-}
-else
-{
-	//$revreq = ($file['created_rev'] == $file['head_rev'])? '': "/{$file['created_rev']}";
-	//$revreqroot = ($revreq == '')? '': ('/' . $this->converter->AsciiToHex ('.') . $revreq);
-	$revreq = "/{$revision}";
-	$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
-}
+	if ($revision <= 0)
+	{
+		$revreq = '';
+		$revreqroot = '';
+	}
+	else
+	{
+		$revreq = "/{$file['created_rev']}";
+		$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
+	}
 
-print anchor (
-	"/source/folder/{$project->id}{$revreqroot}",
-	htmlspecialchars($project->name));
+	print anchor (
+		"/source/file/{$project->id}{$revreqroot}",
+		htmlspecialchars($project->name));
 
-if ($folder != '')
-{
-	$exps = explode ('/', $folder);
+	$exps = explode ('/', $headpath);
 	$expsize = count($exps);
 	$par = '';
 	for ($i = 1; $i < $expsize; $i++)
 	{
-		print '/';
-
 		$par .= '/' . $exps[$i];
-		$hexpar = $this->converter->AsciiToHex ($par);
+		$xpar = $this->converter->AsciiToHex ($par);
+
+		print '/';
 		print anchor (
-			"source/folder/{$project->id}/{$hexpar}{$revreq}",
+			"source/file/{$project->id}/{$xpar}{$revreq}",
 			htmlspecialchars($exps[$i]));
 	}
-}
 
-print '/';
-
-$par = $this->converter->AsciiTohex ("{$folder}/{$file['name']}");
-print anchor (
-        "/source/file/{$project->id}/{$par}{$revreq}",
-        htmlspecialchars($file['name']));
+	if ($headpath != $file['fullpath'])
+	{
+		print ' - ';
+		print htmlspecialchars($file['fullpath']);
+	}
 ?>
 </div> <!-- project_source_file_mainarea_title -->
 
 <div class="menu" id="project_source_file_mainarea_menu">
 <?php
-$par = $this->converter->AsciiToHex ("{$folder}/{$file['name']}");
+	$xpar = $this->converter->AsciiToHex ($headpath);
 
-if ($file['created_rev'] != $file['head_rev']) 
-{
-	print anchor ("source/file/{$project->id}/${par}", $this->lang->line('Head revision'));
+	if ($file['created_rev'] != $file['head_rev']) 
+	{
+		print anchor (
+			"source/file/{$project->id}/${xpar}",
+			$this->lang->line('Head revision'));
+		print ' | ';
+	}
+
+	print anchor (
+		"source/blame/{$project->id}/${xpar}{$revreq}",
+		$this->lang->line('Blame'));
 	print ' | ';
-}
-
-print anchor ("source/blame/{$project->id}/${par}{$revreq}", $this->lang->line('Blame'));
-print ' | ';
-print anchor ("source/diff/{$project->id}/{$par}{$revreq}", $this->lang->line('Difference'));
-print ' | ';
-print anchor ("source/history/file/{$project->id}/{$par}", $this->lang->line('History'));
+	print anchor (
+		"source/diff/{$project->id}/{$xpar}{$revreq}",
+		$this->lang->line('Difference'));
+	print ' | ';
+	print anchor (
+		"source/history/{$project->id}/{$xpar}", 
+		$this->lang->line('History'));
 ?>
 </div> <!-- project_source_file_mainarea_menu -->
 
 <div class="infostrip" id="project_source_file_mainarea_infostrip">
-<?=anchor ("source/file/{$project->id}/${par}/{$file['prev_rev']}", '<<')?> 
-<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
-<?=anchor ("source/file/{$project->id}/${par}/{$file['next_rev']}", '>>')?> |
-<?=$this->lang->line('Author')?>: <?=htmlspecialchars($file['last_author'])?> |
-<?=$this->lang->line('Size')?>: <?=$file['size']?> |
-<?=$this->lang->line('Last updated on')?>: <?=$file['time']?> 
+	<?=anchor ("source/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<')?> 
+	<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
+	<?=anchor ("source/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>')?> |
+	<?=$this->lang->line('Author')?>: <?=htmlspecialchars($file['last_author'])?> |
+	<?=$this->lang->line('Size')?>: <?=$file['size']?> |
+	<?=$this->lang->line('Last updated on')?>: <?=$file['time']?> 
 </div>
 
 <div id="project_source_file_mainarea_result">

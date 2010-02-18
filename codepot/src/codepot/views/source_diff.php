@@ -39,65 +39,57 @@ $this->load->view (
 
 <div class="title" id="project_source_diff_mainarea_title">
 <?php
-$xpar = '/source/folder/' . $project->id;
-print anchor ($xpar, htmlspecialchars($project->name));
-if ($folder != '')
-{
-	$exps = explode ('/', $folder);
+	if ($revision1 <= 0)
+	{
+		$revreq = '';
+		$revreqroot = '';
+	}
+	else
+	{
+		$revreq = "/{$file['created_rev']}";
+		$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
+	}
+
+	print anchor (
+		"/source/file/{$project->id}{$revreqroot}",
+		htmlspecialchars($project->name));
+
+	$exps = explode ('/', $headpath);
 	$expsize = count($exps);
 	$par = '';
 	for ($i = 1; $i < $expsize; $i++)
 	{
-		$par .= '/' . $exps[$i];
-		$hexpar = $this->converter->AsciiToHex ($par);
+		$par .= "/{$exps[$i]}";
+
+		$xpar = $this->converter->AsciiToHex ($par);
+		$xpar = "source/file/{$project->id}/{$xpar}{$revreq}";
+
 		print '/';
-		$xpar = 'source/folder/' . $project->id . '/' . $hexpar;
-		if ($revision1 != SVN_REVISION_HEAD) $xpar .= '/' . $revision1;
 		print anchor ($xpar, htmlspecialchars($exps[$i]));
 	}
-}
-$par = $folder . '/' . $file['name'];
-$par = $this->converter->AsciiTohex ($par);
-print '/';
-$xpar = '/source/file/' . $project->id . '/' . $par;
-if ($revision1 != SVN_REVISION_HEAD) $xpar .= '/' . $revision1;
-print anchor ($xpar, htmlspecialchars($file['name']));
 ?>
 </div> <!-- project_source_diff_mainarea_title -->
 
-
 <div class="menu" id="project_source_diff_mainarea_menu">
 <?php
-$par = $folder . '/' . $file['name'];
-$par = $this->converter->AsciiTohex ($par);
-
-$xdetails = "source/file/{$project->id}/{$par}";
-$xblame = "source/blame/{$project->id}/{$par}";
-if ($revision1 != SVN_REVISION_HEAD) 
-{
-	$xdetails .= "/{$revision1}";
-	$xblame .= "/{$revision1}";
-}
-
-print anchor ($xdetails, $this->lang->line('Details'));
-print ' | ';
-print anchor ($xblame, $this->lang->line('Blame'));
-print ' | ';
-print anchor ("source/history/file/{$project->id}/{$par}", $this->lang->line('History'));
+	$xpar = $this->converter->AsciiTohex ($headpath);
+	print anchor (
+		"source/file/{$project->id}/{$xpar}{$revreq}",
+		$this->lang->line('Details'));
+	print ' | ';
+	print anchor (
+		"source/blame/{$project->id}/{$xpar}{$revreq}",
+		$this->lang->line('Blame'));
+	print ' | ';
+	print anchor (
+		"source/history/file/{$project->id}/{$xpar}",
+		$this->lang->line('History'));
 ?>
 </div> <!-- project_source_diff_mainarea_menu -->
 
-<div class="infostrip" id="project_source_diff_mainarea_infostrip">
-<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> |
-<?=$this->lang->line('Author')?>: <?=htmlspecialchars($file['last_author'])?> |
-<?=$this->lang->line('Size')?>: <?=$file['size']?> |
-<?=$this->lang->line('Last updated on')?>: <?=$file['time']?>
-</div>
-
-
 <?php 
-$fileext = substr(strrchr($file['name'], '.'), 1);
-if ($fileext == "") $fileext = "html"
+	$fileext = substr(strrchr($file['name'], '.'), 1);
+	if ($fileext == "") $fileext = "html"
 ?>
 
 <div id="project_source_diff_mainarea_result">
@@ -115,7 +107,7 @@ if ($fileext == "") $fileext = "html"
 
 	$currev = $file['created_rev'];
 	$prevrev = $file['against']['prev_rev'];
-	$prevanc = "source/diff/{$project->id}/{$par}/{$currev}/{$prevrev}";
+	$prevanc = "source/diff/{$project->id}/{$xpar}/{$currev}/{$prevrev}";
 	print anchor ($prevanc, '<<');
 	print '&nbsp;&nbsp;&nbsp;';
 
@@ -125,7 +117,7 @@ if ($fileext == "") $fileext = "html"
 
 	$currev = $file['created_rev'];
 	$nextrev = $file['against']['next_rev'];
-	$nextanc = "source/diff/{$project->id}/{$par}/{$currev}/{$nextrev}";
+	$nextanc = "source/diff/{$project->id}/{$xpar}/{$currev}/{$nextrev}";
 	print '&nbsp;&nbsp;&nbsp;';
 	print anchor ($nextanc, '>>');
 
@@ -135,7 +127,7 @@ if ($fileext == "") $fileext = "html"
 
 	$currev = $file['against']['created_rev'];
 	$prevrev = $file['prev_rev'];
-	$prevanc = "source/diff/{$project->id}/{$par}/{$prevrev}/{$currev}";
+	$prevanc = "source/diff/{$project->id}/{$xpar}/{$prevrev}/{$currev}";
 	print anchor ($prevanc, '<<');
 	print '&nbsp;&nbsp;&nbsp;';
 
@@ -145,12 +137,32 @@ if ($fileext == "") $fileext = "html"
 
 	$currev = $file['against']['created_rev'];
 	$nextrev = $file['next_rev'];
-	$nextanc = "source/diff/{$project->id}/{$par}/{$nextrev}/{$currev}";
+	$nextanc = "source/diff/{$project->id}/{$xpar}/{$nextrev}/{$currev}";
 	print '&nbsp;&nbsp;&nbsp;';
 	print anchor ($nextanc, '>>');
 
 	print '</th>';
 	print '</tr>';
+
+	if ($headpath != $file['fullpath'] ||
+	    $headpath != $file['against']['fullpath'])
+	{
+		print '<tr>';
+
+		print '<th>';
+		print anchor (
+			"source/file/{$project->id}/{$xpar}/{$file['against']['created_rev']}",
+			htmlspecialchars ($file['against']['fullpath']));
+		print '</th>';
+
+		print '<th>';
+		print anchor (
+			"source/file/{$project->id}/{$xpar}/{$file['created_rev']}",
+			htmlspecialchars ($file['fullpath']));
+		print '</th>';
+
+		print '</tr>';
+	}
 
 	if (empty($file['content']))
 	{
