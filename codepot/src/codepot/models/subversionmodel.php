@@ -7,85 +7,135 @@ class SubversionModel extends Model
 		parent::Model ();
 	}
 
-	function getList ($projectid, $subdir = '', $rev = SVN_REVISION_HEAD, $recurse = FALSE) 
+	function getFile ($projectid, $path, $rev = SVN_REVISION_HEAD)
 	{
-		$path = 'file:///' . CODEPOT_SVNREPO_DIR . '/' . $projectid;
-		if ($subdir != '') $path .= "/{$subdir}";
+		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 
-		$list = @svn_ls ($path, $rev, $recurse);
-		if ($list === FALSE) return FALSE;
+		$info = @svn_info ($url, FALSE, $rev);
+		if ($info === FALSE || count($info) != 1) return FALSE;
 
-		return $list;
+		if ($info[0]['kind'] == SVN_NODE_FILE) 
+		{
+			$lsinfo = @svn_ls ($url, $rev, FALSE, TRUE);
+			if ($lsinfo === FALSE) return FALSE;
+
+			if (array_key_exists ($info[0]['path'], $lsinfo) === FALSE) return FALSE;
+			$fileinfo = $lsinfo[$info[0]['path']];
+
+			$str = @svn_cat ($url, $rev);
+			if ($str === FALSE) return FALSE;
+
+			$fileinfo['fullpath'] = substr (
+				$info[0]['url'], strlen($info[0]['repos']));
+			$fileinfo['content'] = $str;
+			return $fileinfo;
+		}
+		else if ($info[0]['kind'] == SVN_NODE_DIR) 
+		{
+			$list = @svn_ls ($url, $rev, FALSE, TRUE);
+			if ($list === FALSE) return FALSE;
+
+			$fileinfo['fullpath'] = substr (
+				$info[0]['url'], strlen($info[0]['repos']));
+			$fileinfo['name'] =  $info[0]['path'];
+			$fileinfo['type'] = 'dir';
+			$fileinfo['size'] = 0;
+			$fileinfo['created_rev'] = $info[0]['revision'];
+			$fileinfo['last_author'] = $info[0]['last_changed_rev'];
+			$fileinfo['content'] = $list;
+
+			return $fileinfo;
+		}
+
+		return FALSE;
 	}
 
-	function getFile ($projectid, $file, $rev = SVN_REVISION_HEAD)
+	function getBlame ($projectid, $path, $rev = SVN_REVISION_HEAD)
 	{
-		$path = 'file:///' . CODEPOT_SVNREPO_DIR .  '/' . $projectid . '/' . $file;
+		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 
-		$info = @svn_ls ($path, $rev, FALSE);
-		if ($info === FALSE) return FALSE;
+		$info = @svn_info ($url, FALSE, $rev);
+		if ($info === FALSE || count($info) != 1) return FALSE;
 
-		$last = substr(strrchr($path, '/'), 1);
-		if ($last === FALSE) $last = '';
+		if ($info[0]['kind'] != SVN_NODE_FILE) return FALSE;
 
-		if (array_key_exists ($last, $info) === FALSE) return FALSE;
-		$fileinfo = $info[$last];
+		$lsinfo = @svn_ls ($url, $rev, FALSE, TRUE);
+		if ($lsinfo === FALSE) return FALSE;
 
-		$str = @svn_cat ($path, $rev);
+		if (array_key_exists ($info[0]['path'], $lsinfo) === FALSE) return FALSE;
+		$fileinfo = $lsinfo[$info[0]['path']];
+
+		$str = @svn_blame ($url, $rev);
 		if ($str === FALSE) return FALSE;
 
+		$fileinfo['fullpath'] = substr (
+			$info[0]['url'], strlen($info[0]['repos']));
 		$fileinfo['content'] = $str;
 		return $fileinfo;
 	}
 
-	function getBlame ($projectid, $file, $rev = SVN_REVISION_HEAD)
+	function getHistory ($projectid, $path, $rev = SVN_REVISION_HEAD)
 	{
-		$path = 'file:///' . CODEPOT_SVNREPO_DIR .  '/' . $projectid . '/' . $file;
+		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 
-		$info = @svn_ls ($path, $rev, FALSE);
-		if ($info === FALSE) return FALSE;
+		$info = @svn_info ($url, FALSE, $rev);
+		if ($info === FALSE || count($info) != 1) return FALSE;
 
-		$last = substr(strrchr($path, '/'), 1);
-		if ($last === FALSE) $last = '';
+		if ($info[0]['kind'] == SVN_NODE_FILE) 
+		{
+			$lsinfo = @svn_ls ($url, $rev, FALSE, TRUE);
+			if ($lsinfo === FALSE) return FALSE;
 
-		if (array_key_exists ($last, $info) === FALSE) return FALSE;
-		$fileinfo = $info[$last];
+			if (array_key_exists ($info[0]['path'], $lsinfo) === FALSE) return FALSE;
+			$fileinfo = $lsinfo[$info[0]['path']];
+		}
+		else if ($info[0]['kind'] == SVN_NODE_DIR)
+		{
+			$fileinfo['fullpath'] = substr (
+				$info[0]['url'], strlen($info[0]['repos']));
+			$fileinfo['name'] =  $info[0]['path'];
+			$fileinfo['type'] = 'dir';
+			$fileinfo['size'] = 0;
+			$fileinfo['created_rev'] = $info[0]['revision'];
+			$fileinfo['last_author'] = $info[0]['last_changed_rev'];
+		}
+		else return FALSE;
 
-		$str = @svn_blame ($path, $rev);
-		if ($str === FALSE) return FALSE;
-
-		$fileinfo['content'] = $str;
-		return $fileinfo;
-	}
-
-	function getHistory ($projectid, $file, $rev = SVN_REVISION_HEAD)
-	{
-		$path = 'file:///' . CODEPOT_SVNREPO_DIR .  '/' . $projectid . '/' . $file;
-
-		$last = substr(strrchr($path, '/'), 1);
-		if ($last === FALSE) $last = '';
-
-		/* set the file name to the information array */
-		$fileinfo['name'] = $last;
-
-		$log = @svn_log ($path, 1, $rev, 0, SVN_DISCOVER_CHANGED_PATHS);
+		$log = @svn_log ($url, 1, $rev, 0, SVN_DISCOVER_CHANGED_PATHS);
 		if ($log === FALSE) return FALSE;
 
 		$fileinfo['history'] = $log;
 		return $fileinfo;
 	}
 
-	function getRevHistory ($projectid, $file, $rev)
+	function getRevHistory ($projectid, $path, $rev)
 	{
-		$path = 'file:///' . CODEPOT_SVNREPO_DIR .  '/' . $projectid . '/' . $file;
+		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 
-		$last = substr(strrchr($path, '/'), 1);
-		if ($last === FALSE) $last = '';
+		$info = @svn_info ($url, FALSE, $rev);
+		if ($info === FALSE || count($info) != 1) return FALSE;
 
-		/* set the file name to the information array */
-		$fileinfo['name'] = $last;
+		if ($info[0]['kind'] == SVN_NODE_FILE) 
+		{
+			$lsinfo = @svn_ls ($url, $rev, FALSE, TRUE);
+			if ($lsinfo === FALSE) return FALSE;
 
-		$log = @svn_log ($path, $rev, $rev, 1, SVN_DISCOVER_CHANGED_PATHS);
+			if (array_key_exists ($info[0]['path'], $lsinfo) === FALSE) return FALSE;
+			$fileinfo = $lsinfo[$info[0]['path']];
+		}
+		else if ($info[0]['kind'] == SVN_NODE_DIR)
+		{
+			$fileinfo['fullpath'] = substr (
+				$info[0]['url'], strlen($info[0]['repos']));
+			$fileinfo['name'] =  $info[0]['path'];
+			$fileinfo['type'] = 'dir';
+			$fileinfo['size'] = 0;
+			$fileinfo['created_rev'] = $info[0]['revision'];
+			$fileinfo['last_author'] = $info[0]['last_changed_rev'];
+		}
+		else return FALSE;
+
+		$log = @svn_log ($url, $rev, $rev, 1, SVN_DISCOVER_CHANGED_PATHS);
 		if ($log === FALSE) return FALSE;
 
 		if (count($log) != 1) return FALSE;
@@ -334,96 +384,163 @@ class SubversionModel extends Model
 		return $listing;
 	}
 
-	function getDiff ($projectid, $file, $rev1, $rev2)
+	
+	//  
+	// Given a path name at the HEAD revision, it compares the file
+	// between two revisions given. The actual path name at a given
+	// revision can be different from the path name at the HEAD revision.
+	// 
+	// $file - path name at the HEAD revision
+	// $rev1 - new revision number
+	// $rev2 - old revision number
+	//
+	function getDiff ($projectid, $path, $rev1, $rev2)
 	{
-		$path = 'file:///' . CODEPOT_SVNREPO_DIR .  '/' . $projectid . '/' . $file;
+		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 
-		$info = @svn_ls ($path, $rev1, FALSE);
-		if ($info === FALSE) return FALSE;
+		$lsinfo1 = @svn_ls ($url, $rev1, FALSE, TRUE);
+		if ($lsinfo1 === FALSE || count($lsinfo1) != 1) return FALSE;
 
-		$last = substr(strrchr($path, '/'), 1);
-		if ($last === FALSE) $last = '';
+		// the check above guarantees that the foreach block below
+		// is executed only once.
+		foreach ($lsinfo1 as $key => $value) 
+		{
+			if ($value['type'] != 'file') return FALSE;
+			$rev1 = $value['created_rev'];
+			$fileinfo = $value;
+		}
 
-		if (array_key_exists ($last, $info) === FALSE) return FALSE;
-		$fileinfo = $info[$last];
-
-		$rev1 = $info[$last]['created_rev'];
+		$fileinfo['head_name'] = $path;
 
 		if ($rev2 <= 0)
 		{
-			/*
-			$log = @svn_log ($path, $rev1, SVN_REVISION_INITIAL, 2);
+			// get two log entries including the new revision 
+			$log = @svn_log (
+				$url, $rev1, SVN_REVISION_INITIAL, 2,
+				SVN_OMIT_MESSAGES | SVN_DISCOVER_CHANGED_PATHS);
 			if ($log === FALSE) return FALSE;
-			if (count($log) < 2) return FALSE;
-			$rev2 = $log[1]['rev'];
-			*/
-			$rev2 = $rev1 - 1;
-			if ($rev2 <= 0) $rev2 = $rev1;
+			$rev2 = $log[(count($log) <= 1)? 0:1]['rev'];
 		}
 
-		$info2 = @svn_ls ($path, $rev2, FALSE);
-		if ($info2 === FALSE) 
+		$lsinfo2 = @svn_ls ($url, $rev2, FALSE, TRUE);
+		if ($lsinfo2 === FALSE || count($lsinfo2) != 1)  return FALSE;
+
+		// the check above guarantees the foreach block below
+		// is executed only once.
+		foreach ($lsinfo2 as $key => $value) 
 		{
-			$rev2 = $rev1;
-			$info2 = @svn_ls ($path, $rev2, FALSE);
-			if ($info2 === FALSE) return FALSE;
+			if ($value['type'] != 'file') return FALSE;
+			$rev2 = $value['created_rev'];
+			$fileinfo['against'] = $value;
 		}
 
-		if (array_key_exists ($last, $info2) === FALSE) return FALSE;
-		$rev2 = $info2[$last]['created_rev'];
+		// let's get the actual URL for each revision.
+		// the actual URLs may be different from $url 
+		// if the file has been changed.
+		$info1 = @svn_info ($url, FALSE, $rev1);
+		if ($info1 === FALSE || count($info1) != 1) return FALSE;
+		if ($info1[0]['kind'] != SVN_NODE_FILE) return FALSE;
+		$info2 = @svn_info ($url, FALSE, $rev2);
+		if ($info2 === FALSE || count($info1) != 1) return FALSE;
+		if ($info2[0]['kind'] != SVN_NODE_FILE) return FALSE;
 
-		list($diff, $errors) = @svn_diff ($path, $rev2, $path, $rev1);
+		// get the difference with the actual URLs
+		list($diff, $errors) = @svn_diff (
+			$info2[0]['url'], $info2[0]['revision'],
+			$info1[0]['url'], $info1[0]['revision']);
 		if (!$diff) return FALSE;
+
+		/* 
+			## Sample svn_info() array ##
+			[0] => Array
+			(
+				[path] => codepot.sql
+				[url] => file:///svn/test/codepot.sql
+				[revision] => 27
+				[kind] => 1
+				[repos] => file:///svn/test
+				[last_changed_rev] => 27
+				[last_changed_date] => 2010-02-18T01:53:13.076062Z
+				[last_changed_author] => hyunghwan
+       			 )
+		*/
+
+		$fileinfo['fullpath'] = substr (
+			$info1[0]['url'], strlen($info1[0]['repos']));
+		$fileinfo['against']['fullpath'] = substr (
+			$info2[0]['url'], strlen($info2[0]['repos']));
 
 		fclose($errors);
 
 		$fileinfo['content'] = $this->_get_diff ($diff, FALSE, FALSE);
 		fclose ($diff);
 
-/*
-print_r ($info[$last]);
-print_r ($info2[$last]);
-*/
-		$fileinfo['against'] = $info2[$last];
 		return $fileinfo;
 	}
 
-	function getPrevRev ($projectid, $file, $rev)
+	function getPrevRev ($projectid, $path, $rev)
 	{
-		$path = 'file:///' . CODEPOT_SVNREPO_DIR .  '/' . $projectid . '/' . $file;
+		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 
-		$info = @svn_log ($path, $rev, SVN_REVISION_INITIAL, 2, SVN_OMIT_MESSAGES);
-		if ($info === FALSE) return $rev;
+		$log = @svn_log (
+			$url, $rev, SVN_REVISION_INITIAL, 2,
+			SVN_OMIT_MESSAGES | SVN_DISCOVER_CHANGED_PATHS);
+		if ($log === FALSE) return $rev;
 
-		$count = count($info);
+		$count = count($log);
 		if ($count <= 0) return $rev;
-		if ($count == 1) return $info[0]['rev'];
+		if ($count == 1) return $log[0]['rev'];
 		
-		return $info[1]['rev'];
+		return $log[1]['rev'];
 	}
 
-	function getNextRev ($projectid, $file, $rev)
+	function getNextRev ($projectid, $path, $rev)
 	{
-		$path = 'file:///' . CODEPOT_SVNREPO_DIR .  '/' . $projectid . '/' . $file;
+		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 
-		$info = @svn_log ($path, SVN_REVISION_HEAD, $rev, 0, SVN_OMIT_MESSAGES);
-		if ($info === FALSE) return $rev;
+		$log = @svn_log (
+			$url, SVN_REVISION_HEAD, $rev, 0,
+			SVN_OMIT_MESSAGES | SVN_DISCOVER_CHANGED_PATHS);
+		if ($log === FALSE) return $rev;
 
-		$count = count($info);
+		$count = count($log);
 		if ($count <= 0) return $rev;
-		if ($count == 1) return $info[0]['rev'];
+		if ($count == 1) return $log[0]['rev'];
 		
-		return $info[$count-2]['rev'];
+		// 
+		// r22 /usr/lib/a.c  updated a.c
+		// r21 /usr/lib/a.c  moved /lib to /usr/lib
+		// r10 /lib/a.c      updated a.c
+		// r5  /lib/a.c      added a.c
+		// ------------------------------------------------------
+		// subversion does not a.c for r21 to show.
+		// the same thing can happen if the file is just renamed.
+		// make best effort to find the revision with change.
+		// 
+		for ($count = $count - 2; $count >= 0; $count--)
+		{
+			$info = svn_info ($url, FALSE, $log[$count]['rev']);
+			if ($info === FALSE) return FALSE;
+
+			if ($info[0]['last_changed_rev'] > $rev)
+			{
+				return $info[0]['revision'];
+			}
+		}
+
+		return $rev;
 	}
 
-	function getHeadRev ($projectid, $file)
+	function getHeadRev ($projectid, $path)
 	{
-		$path = 'file:///' . CODEPOT_SVNREPO_DIR .  '/' . $projectid . '/' . $file;
+		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 
-		$info = @svn_log ($path, SVN_REVISION_HEAD, SVN_REVISION_INITIAL, 1, SVN_OMIT_MESSAGES);
-		if ($info === FALSE) return FALSE;
-		if (count($info) != 1) return FALSE;
-		return $info[0]['rev'];
+		$log = @svn_log (
+			$url, SVN_REVISION_HEAD, SVN_REVISION_INITIAL, 1,
+			SVN_OMIT_MESSAGES | SVN_DISCOVER_CHANGED_PATHS);
+		if ($log === FALSE) return FALSE;
+		if (count($log) != 1) return FALSE;
+		return $log[0]['rev'];
 	}
 
 }

@@ -61,11 +61,11 @@ $this->load->view (
 	// print the main anchor for the root folder. 
 	// let the anchor text be the project name.
 	print anchor (
-		"/source/folder/{$project->id}{$revreqroot}", 
+		"/source/file/{$project->id}{$revreqroot}", 
 		htmlspecialchars($project->name));
 
 	// explode non-root folder parts to anchors
-	$exps = explode ('/', $folder);
+	$exps = explode ('/', $headpath);
 	$expsize = count($exps);
 	$par = '';
 	for ($i = 1; $i < $expsize; $i++)
@@ -74,8 +74,14 @@ $this->load->view (
 		$par .= '/' . $exps[$i];
 		$xpar = $this->converter->AsciiToHex ($par);
 		print anchor (
-			"source/folder/{$project->id}/{$xpar}{$revreq}",
+			"source/file/{$project->id}/{$xpar}{$revreq}",
 			htmlspecialchars($exps[$i]));
+	}
+
+	if ($headpath != $file['fullpath'])
+	{
+		print ' - ';
+		print htmlspecialchars ($file['fullpath']);
 	}
 ?>
 </div>
@@ -92,23 +98,23 @@ $this->load->view (
 		return ($a['type'] == 'dir')? -1: 1;
 	}
 
-	if (count($files) <= 0)
+	if (count($file['content']) <= 0)
 	{
 		 print $this->lang->line('MSG_NO_SOURCE_AVAIL');
 	}
 	else 
 	{
 		print '<div class="menu" id="project_source_folder_mainarea_menu">';
-		$xpar = $this->converter->AsciiTohex ($folder);
+		$xpar = $this->converter->AsciiTohex ($headpath);
 		if ($revision > 0 && $revision < $next_revision)
 		{
-			print anchor ("source/folder/{$project->id}", $this->lang->line('Head revision'));
+			print anchor ("source/file/{$project->id}", $this->lang->line('Head revision'));
 			print ' | ';
 		}
-		print anchor ("source/history/folder/{$project->id}/{$xpar}", $this->lang->line('History'));
+		print anchor ("source/history/{$project->id}/{$xpar}", $this->lang->line('History'));
 		print '</div>';
 
-		usort ($files, 'comp_files');
+		usort ($file['content'], 'comp_files');
 
 		print '<div id="project_source_folder_mainarea_result">';
 		print '<table id="project_source_folder_mainarea_result_table">';
@@ -124,9 +130,9 @@ $this->load->view (
 
 		$rowclasses = array ('even', 'odd');
 		$rownum = 0;
-		foreach ($files as $f)
+		foreach ($file['content'] as $f)
 		{
-			$fullpath = $folder . '/' . $f['name'];
+			$fullpath = $headpath . '/' . $f['name'];
 
 			$rowclass = $rowclasses[++$rownum % 2];
 			if ($f['type'] === 'dir')
@@ -136,7 +142,7 @@ $this->load->view (
        		         	print "<tr class='{$rowclass}'>";
 				print '<td>';
 				print anchor (
-					"source/folder/{$project->id}/{$hexpath}{$revreq}",
+					"source/file/{$project->id}/{$hexpath}{$revreq}",
 					htmlspecialchars($f['name']));
 				print '</td>';
 				print '<td>';
