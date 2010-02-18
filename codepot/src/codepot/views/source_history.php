@@ -29,12 +29,6 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="sidebar" id="project_source_history_sidebar">
-</div> <!-- project_source_history_sidebar -->
-
-<!---------------------------------------------------------------------------->
-
-
 <div class="mainarea" id="project_source_history_mainarea">
 
 <div class="title" id="project_source_history_mainarea_title">
@@ -50,13 +44,13 @@ $this->load->view (
 		$revreqroot = '/' . $this->converter->AsciiToHex('.') . $revreq;
 	}
 
-	// print the anchor for the root folder with a project name
+	// print the anchor for the root nolder with a project name
 	print anchor (
-		"/source/history/folder/{$project->id}{$revreqroot}",
+		"/source/history/{$project->id}{$revreqroot}",
 		htmlspecialchars($project->name));
 
-	// explodes part of the folder name into an array 
-	$exps = explode ('/', $folder);
+	// explodes part of the full path name into an array 
+	$exps = explode ('/', $fullpath);
 	$expsize = count($exps);
 	$par = '';
 	// print anchors pointing to each part
@@ -66,34 +60,33 @@ $this->load->view (
 		$par .= '/' . $exps[$i];
 		$xpar = $this->converter->AsciiToHex ($par);
 		print anchor (
-			"source/history/folder/{$project->id}/{$xpar}{$revreq}",
+			"source/history/{$project->id}/{$xpar}{$revreq}",
 			htmlspecialchars($exps[$i]));
 	}
 ?>
 </div>
 
 <div class="menu" id="project_source_history_mainarea_menu">
+<!--
 <?php
 	/* the menu here prints links to the lastest revision */
-	if ($type == 'folder')
+	$par = $this->converter->AsciiTohex ($fullpath);
+	print anchor (
+		"source/file/{$project->id}/{$par}",
+		$this->lang->line('Details'));
+
+	/*
+	if (...) 
 	{
-		$par = $this->converter->AsciiTohex ($folder);
-		$xpar = "source/folder/{$project->id}/{$par}";
-		print anchor ($xpar, $this->lang->line('Folder'));
-	}
-	else
-	{
-		$par = $this->converter->AsciiTohex ($folder);
-		$xpar = "source/file/{$project->id}/{$par}";
-		print anchor ($xpar, $this->lang->line('Details'));
 		print ' | ';
 		$xpar = "source/blame/{$project->id}/{$par}";
 		print anchor ($xpar, $this->lang->line('Blame'));
 		print ' | ';
 		$xpar = "source/diff/{$project->id}/{$par}";
 		print anchor ($xpar, $this->lang->line('Difference'));
-	}
+	} */
 ?>
+-->
 </div> <!-- project_source_history_mainarea_menu -->
 
 <div id="project_source_history_mainarea_result">
@@ -103,13 +96,13 @@ $this->load->view (
 	<th><?=$this->lang->line('Author')?></th>
 	<th><?=$this->lang->line('Date')?></th>
 	<th><?=$this->lang->line('Message')?></th>
-	<th></th>
+	<?php if ($file['type'] == 'file') print '<th></th>'; ?>
 </tr>
 <?php 
 	$rowclasses = array ('even', 'odd');
 	$history = $file['history'];
 	$history_count = count($history);	
-	$curfolder = $folder;
+	$curfullpath = $fullpath;
 	for ($i = $history_count; $i > 0; )
 	{
 		$h = $history[--$i];
@@ -118,14 +111,10 @@ $this->load->view (
 		print "<tr class='{$rowclass}'>";
 
 		print '<td>';
-		//
-		// it seems the history can be retrieved only from the latest name */
-		//
-		$xfolder = $this->converter->AsciiToHex(($folder == '')? '.': $folder);
-		if ($type == 'folder')
-			print anchor ("/source/revision/{$type}/{$project->id}/{$xfolder}/{$h['rev']}", $h['rev']);
-		else
-			print anchor ("/source/{$type}/{$project->id}/{$xfolder}/{$h['rev']}", $h['rev']);
+		$xfullpath = $this->converter->AsciiToHex (
+			($fullpath == '')? '.': $fullpath);
+
+		print anchor ("/source/file/{$project->id}/{$xfullpath}/{$h['rev']}", $h['rev']);
 		print '</td>';
 
 		print '<td>';
@@ -143,26 +132,24 @@ $this->load->view (
 		print '</pre>';
 		print '</td>';
 
-		print '<td>';
-		//
-		// the actual folder or file contents must be accessed with the name
-		// at a particular revision.
-		//
-		$xfolder = $this->converter->AsciiToHex(($curfolder == '')? '.': $curfolder);
-		if ($type == 'folder')	
+
+		if ($file['type'] == 'file')	
 		{
-			print anchor ("/source/folder/{$project->id}/{$xfolder}/{$h['rev']}", 
-				$this->lang->line('Folder'));
-		}
-		else
-		{
-			print anchor ("/source/blame/{$project->id}/{$xfolder}/{$h['rev']}", 
+			print '<td>';
+			print anchor ("/source/blame/{$project->id}/{$xfullpath}/{$h['rev']}", 
 				$this->lang->line('Blame'));
 			print ' ';
-			print anchor ("/source/diff/{$project->id}/{$xfolder}/{$h['rev']}", 
+			print anchor ("/source/diff/{$project->id}/{$xfullpath}/{$h['rev']}", 
 				$this->lang->line('Difference'));
+			print '</td>';
 		}
-		print '</td>';
+		else if ($file['type'] == 'dir')
+		{
+			print '<td>';
+			print anchor ("/source/revision/{$project->id}/{$xfullpath}/{$h['rev']}", 
+				$this->lang->line('Details'));
+			print '</td>';
+		}
 
 		print '</tr>';
 
@@ -170,13 +157,35 @@ $this->load->view (
 		// let's track the copy path.
 		//
 		$paths = $h['paths'];
+		$colspan = ($file['type'] == 'file')? 5: 4;
 		foreach ($paths as $p)
 		{
+			/*
 			if (array_key_exists ('copyfrom', $p) &&
-			    $p['path'] == $curfolder && $p['action'] == 'A')
+			    $p['path'] == $curfullpath && $p['action'] == 'A')
 			{
-				$curfolder = $p['copyfrom'];
-				print "<tr class='title'><td colspan=5>{$curfolder}</td></tr>";
+				$curfullpath = $p['copyfrom'];
+				print "<tr class='title'><td colspan='{$colspan}'>{$curfullpath}</td></tr>";
+			}
+			*/
+			if (array_key_exists ('copyfrom', $p) && 
+			    $p['action'] == 'A')
+			{
+				$d = $curfullpath;
+				$f = '';
+
+				while ($d != '/' && $d != '')
+				{
+					if ($d == $p['path'])
+					{
+						$curfullpath = $p['copyfrom'] . $f;
+						print "<tr class='title'><td colspan='{$colspan}'>{$curfullpath}</td></tr>";
+						break;
+					}
+
+					$d = dirname ($d);
+					$f = substr ($curfullpath, strlen($d));
+				}
 			}
 		}
 
