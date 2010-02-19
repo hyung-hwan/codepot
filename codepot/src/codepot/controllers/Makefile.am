@@ -5,6 +5,7 @@ www_DATA =  \
 	index.html \
 	main.php \
 	project.php \
+	site.php \
 	source.php \
 	user.php \
 	wiki.php

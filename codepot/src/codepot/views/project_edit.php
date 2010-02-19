@@ -21,6 +21,7 @@
 $this->load->view (
 	'projectbar',
 	array (
+		'site' => NULL,
 		'project' => (($mode != 'create')? $project: NULL),
 		'pageid' => 'project',
 		'ctxmenuitems' => array ()

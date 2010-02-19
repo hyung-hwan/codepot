@@ -13,8 +13,8 @@ function load_ini ($file)
 	if (/*$cfg === FALSE*/ $cfg == FALSE) die ("ERROR: cannot parse $file");
 
 	$xcfgs = array (
-
 		array ('default_banner',               'string',     '@PACKAGE@'),
+		array ('default_siteid',               'string',     'default'),
 		array ('lang',                         'string',     'english'),
 		array ('always_require_signin',        'boolean',    FALSE),
 		array ('enable_websvn',                'boolean',    FALSE),

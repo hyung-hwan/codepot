@@ -1,10 +1,14 @@
 <div class="projectbar">
 
 <?php
-function show_projectbar ($con, $project, $pageid, $ctxmenuitems)
+function show_projectbar ($con, $site, $project, $pageid, $ctxmenuitems)
 {
 	print "<div class='title'>";
-	print isset($project)? $project->id: CODEPOT_DEFAULT_BANNER;
+
+	if (isset($project)) print $project->id;
+	else if (isset($site) && $site->name != '') print htmlspecialchars($site->name);
+	else print htmlspecialchars(CODEPOT_DEFAULT_BANNER);
+
 	print "</div>";
 
 	print '<div class="ctxmenu">';
@@ -57,7 +61,7 @@ function show_projectbar ($con, $project, $pageid, $ctxmenuitems)
 	print '</div>';
 }
 
-show_projectbar ($this, $project, $pageid, $ctxmenuitems);
+show_projectbar ($this, $site, $project, $pageid, $ctxmenuitems);
 ?>
 
 </div>
