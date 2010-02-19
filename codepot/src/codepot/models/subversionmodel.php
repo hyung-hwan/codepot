@@ -25,15 +25,28 @@ class SubversionModel extends Model
 			$str = @svn_cat ($url, $rev);
 			if ($str === FALSE) return FALSE;
 
+			$log = @svn_log ($url, 
+				$fileinfo['created_rev'], 
+				$fileinfo['created_rev'],
+				1, SVN_DISCOVER_CHANGED_PATHS);
+			if ($log === FALSE) return FALSE;
+
 			$fileinfo['fullpath'] = substr (
 				$info[0]['url'], strlen($info[0]['repos']));
 			$fileinfo['content'] = $str;
+			$fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
 			return $fileinfo;
 		}
 		else if ($info[0]['kind'] == SVN_NODE_DIR) 
 		{
 			$list = @svn_ls ($url, $rev, FALSE, TRUE);
 			if ($list === FALSE) return FALSE;
+
+			$log = @svn_log ($url, 
+				$fileinfo['created_rev'], 
+				$fileinfo['created_rev'],
+				1, SVN_DISCOVER_CHANGED_PATHS);
+			if ($log === FALSE) return FALSE;
 
 			$fileinfo['fullpath'] = substr (
 				$info[0]['url'], strlen($info[0]['repos']));
@@ -43,7 +56,7 @@ class SubversionModel extends Model
 			$fileinfo['created_rev'] = $info[0]['revision'];
 			$fileinfo['last_author'] = $info[0]['last_changed_rev'];
 			$fileinfo['content'] = $list;
-
+			$fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
 			return $fileinfo;
 		}
 
@@ -68,9 +81,16 @@ class SubversionModel extends Model
 		$str = @svn_blame ($url, $rev);
 		if ($str === FALSE) return FALSE;
 
+		$log = @svn_log ($url, 
+			$fileinfo['created_rev'], 
+			$fileinfo['created_rev'],
+			1, SVN_DISCOVER_CHANGED_PATHS);
+		if ($log === FALSE) return FALSE;
+
 		$fileinfo['fullpath'] = substr (
 			$info[0]['url'], strlen($info[0]['repos']));
 		$fileinfo['content'] = $str;
+		$fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
 		return $fileinfo;
 	}
 

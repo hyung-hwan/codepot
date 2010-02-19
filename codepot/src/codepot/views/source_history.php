@@ -67,26 +67,6 @@ $this->load->view (
 </div>
 
 <div class="menu" id="project_source_history_mainarea_menu">
-<!--
-<?php
-	/* the menu here prints links to the lastest revision */
-	$par = $this->converter->AsciiTohex ($fullpath);
-	print anchor (
-		"source/file/{$project->id}/{$par}",
-		$this->lang->line('Details'));
-
-	/*
-	if (...) 
-	{
-		print ' | ';
-		$xpar = "source/blame/{$project->id}/{$par}";
-		print anchor ($xpar, $this->lang->line('Blame'));
-		print ' | ';
-		$xpar = "source/diff/{$project->id}/{$par}";
-		print anchor ($xpar, $this->lang->line('Difference'));
-	} */
-?>
--->
 </div> <!-- project_source_history_mainarea_menu -->
 
 <div id="project_source_history_mainarea_result">
@@ -96,7 +76,7 @@ $this->load->view (
 	<th><?=$this->lang->line('Author')?></th>
 	<th><?=$this->lang->line('Date')?></th>
 	<th><?=$this->lang->line('Message')?></th>
-	<?php if ($file['type'] == 'file') print '<th></th>'; ?>
+	<?php if ($file['type'] == 'file' || $file['type'] == 'dir') print '<th></th>'; ?>
 </tr>
 <?php 
 	$rowclasses = array ('even', 'odd');
@@ -157,17 +137,9 @@ $this->load->view (
 		// let's track the copy path.
 		//
 		$paths = $h['paths'];
-		$colspan = ($file['type'] == 'file')? 5: 4;
+		$colspan = ($file['type'] == 'file' || $file['type'] == 'dir')? 5: 4;
 		foreach ($paths as $p)
 		{
-			/*
-			if (array_key_exists ('copyfrom', $p) &&
-			    $p['path'] == $curfullpath && $p['action'] == 'A')
-			{
-				$curfullpath = $p['copyfrom'];
-				print "<tr class='title'><td colspan='{$colspan}'>{$curfullpath}</td></tr>";
-			}
-			*/
 			if (array_key_exists ('copyfrom', $p) && 
 			    $p['action'] == 'A')
 			{

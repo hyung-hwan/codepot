@@ -104,68 +104,89 @@ print anchor ("source/history/{$project->id}/{$xpar}", $this->lang->line('Histor
 ?>
 </div> <!-- project_source_blame_mainarea_menu -->
 
-<div class="infostrip">
-<?=anchor ("source/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<')?> 
-<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
-<?=anchor ("source/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>')?> |
-<?=$this->lang->line('Author')?>: <?=htmlspecialchars($file['last_author'])?> |
-<?=$this->lang->line('Size')?>: <?=$file['size']?> |
-<?=$this->lang->line('Last updated on')?>: <?=$file['time']?>
+<div class="infostrip" id="project_source_blame_mainarea_infostrip">
+	<?=anchor ("source/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<')?> 
+	<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
+	<?=anchor ("source/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>')?> |
+	<?=$this->lang->line('Author')?>: <?=htmlspecialchars($file['last_author'])?> |
+	<?=$this->lang->line('Size')?>: <?=$file['size']?> |
+	<?=$this->lang->line('Last updated on')?>: <?=$file['time']?>
 </div>
 
+<div id="project_source_blame_mainarea_result">
+
 <?php 
-$fileext = substr(strrchr($file['name'], '.'), 1);
-if ($fileext == "") $fileext = "html"
+	$fileext = substr(strrchr($file['name'], '.'), 1);
+	if ($fileext == "") $fileext = "html"
 ?>
 
 <pre class="prettyprint lang-<?=$fileext?>">
 <?php
 
-$content = $file['content'];
-$len = count($content);
-$rev = '';
-$author = '';
+	$content = $file['content'];
+	$len = count($content);
+	$rev = '';
+	$author = '';
 
-for ($i = 0; $i < $len; $i++)
-{
-	$line = $content[$i];
-	$lineno_padded = str_pad ($line['line_no'], 6, ' ', STR_PAD_LEFT);
-
-	if ($line['rev'] != $rev) 
+	for ($i = 0; $i < $len; $i++)
 	{
-		$rev = $line['rev'];
-		$rev_padded = str_pad ($rev, 6, ' ', STR_PAD_LEFT);
-
-		$xpar = $this->converter->AsciiTohex ($headpath);
-		$rev_padded = anchor ("/source/blame/{$project->id}/{$xpar}/{$rev}", $rev_padded);
+		$line = $content[$i];
+		$lineno_padded = str_pad ($line['line_no'], 6, ' ', STR_PAD_LEFT);
+	
+		if ($line['rev'] != $rev) 
+		{
+			$rev = $line['rev'];
+			$rev_padded = str_pad ($rev, 6, ' ', STR_PAD_LEFT);
+	
+			$xpar = $this->converter->AsciiTohex ($headpath);
+			$rev_padded = anchor ("/source/blame/{$project->id}/{$xpar}/{$rev}", $rev_padded);
+		}
+		else
+		{
+			$rev_padded = str_pad (' ', 6, ' ', STR_PAD_LEFT);
+		}
+	
+		if ($line['author'] != $author) 
+		{
+			$author = $line['author'];
+			$author_padded = str_pad ($author, 8, ' ', STR_PAD_RIGHT);
+			$author_padded = substr($author_padded, 0, 8);
+		}
+		else
+		{
+			$author_padded = str_pad (' ', 8, ' ', STR_PAD_RIGHT);
+		}
+	
+		print "<span class='nocode'>{$rev_padded}</span>";
+		print "<span class='nocode' title='{$author}'>{$author_padded}</span>";
+		print "<span class='nocode'>{$lineno_padded}</span>";
+		print htmlspecialchars ($line['line']);
+		print "\n";
 	}
-	else
-	{
-		$rev_padded = str_pad (' ', 6, ' ', STR_PAD_LEFT);
-	}
-
-	if ($line['author'] != $author) 
-	{
-		$author = $line['author'];
-		$author_padded = str_pad ($author, 8, ' ', STR_PAD_RIGHT);
-		$author_padded = substr($author_padded, 0, 8);
-	}
-	else
-	{
-		$author_padded = str_pad (' ', 8, ' ', STR_PAD_RIGHT);
-	}
-
-	print "<span class='nocode'>{$rev_padded}</span>";
-	print "<span class='nocode' title='{$author}'>{$author_padded}</span>";
-	print "<span class='nocode'>{$lineno_padded}</span>";
-	print htmlspecialchars ($line['line']);
-	print "\n";
-}
 ?>
 </pre>
 
-</div> <!-- project_source_blame_mainarea -->
+<div id="project_source_blame_mainarea_result_info">
+<script language='javascript'>
+function toggle_logmsg()
+{
+	var x = document.getElementById ('project_source_blame_mainarea_result_info_logmsg');	
+	if (x) x.style.visibility = (x.style.visibility == 'visible')? 'hidden': 'visible';
+	return false;
+}
+</script>
 
+<div class="title">
+<a href='#' onClick='toggle_logmsg()'><?= $this->lang->line('Message') ?></a>
+</div>
+<pre id="project_source_blame_mainarea_result_info_logmsg" style="visibility: visible">
+<?= $file['logmsg'] ?>
+</pre>
+</div> <!-- project_source_blame_mainarea_result_info -->
+
+</div> <!-- project_source_blame_mainarea_result -->
+
+</div> <!-- project_source_blame_mainarea -->
 
 <!---------------------------------------------------------------------------->
 

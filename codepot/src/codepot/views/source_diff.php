@@ -82,7 +82,7 @@ $this->load->view (
 		$this->lang->line('Blame'));
 	print ' | ';
 	print anchor (
-		"source/history/file/{$project->id}/{$xpar}",
+		"source/history/{$project->id}/{$xpar}",
 		$this->lang->line('History'));
 ?>
 </div> <!-- project_source_diff_mainarea_menu -->
