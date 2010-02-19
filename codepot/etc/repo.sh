@@ -29,10 +29,19 @@ make_repo() {
 		chmod 0755 "${repodir}/start-commit"
 	#}
 
+	#[ -f "${repodir}/post-commit" ] || {
+		sed "s|%API%|${api}|g" "${cfgdir}/post-commit" > "${repodir}/post-commit" || {
+			echo "ERROR: cannot install post-commit to ${repodir}"
+			return 1;
+		}
+		chmod 0755 "${repodir}/post-commit"
+	#}
+
 	svnadmin create "${repodir}/${reponame}" && {
 		oldpwd="`pwd`"
 		cd "${repodir}/${reponame}/hooks"
 		ln -sf ../../start-commit start-commit
+		ln -sf ../../post-commit post-commit
 		cd "${oldpwd}"
 	}
 

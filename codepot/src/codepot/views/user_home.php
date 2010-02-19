@@ -11,7 +11,7 @@ function render_wiki()
 	creole_render_wiki (
 		"user_home_mainarea_textpre",
 		"user_home_mainarea_text",
-		""
+		"<?=dirname(dirname(current_url()))?>/user/home/"
 	);
 }
 </script>
@@ -78,6 +78,44 @@ foreach ($latest_projects as $project)
 ?>
 </ul>
 </div>
+
+<div class="box">
+<div class="boxtitle"><?=$this->lang->line('SVN commits')?></div>
+<table id="user_home_mainarea_sidebar_svn_commits_table">
+<?php 
+	$xdot = $this->converter->AsciiToHex ('.');
+	foreach ($svn_commits as $commit)
+	{
+		print '<tr class="odd">';
+		print '<td>';
+		print substr($commit['time'], 0, 10);
+		print '</td>';
+		print '<td>';
+		print anchor (
+			"/source/file/{$commit['repo']}/{$xdot}/{$commit['rev']}", 
+			$commit['repo']);
+		print '</td>';
+		print '<td>';
+		print anchor (	
+			"/source/revision/{$commit['repo']}/{$xdot}/{$commit['rev']}", 
+			$commit['rev']);
+		print '</td>';
+		print '<td>';
+		print htmlspecialchars ($commit['author']);
+		print '</td>';
+		print '</tr>';
+
+		print '<tr class="even">';
+		print '<td colspan=4>';
+		$sm = strtok (trim ($commit['message']), "\r\n");
+		print htmlspecialchars ($sm);
+		print '</td>';
+		print '</tr>';
+	}
+?>
+</table>
+</div>
+
 </div> <!-- user_home_mainarea_sidebar -->
 
 <div id="user_home_mainarea_text">

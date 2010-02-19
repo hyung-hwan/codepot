@@ -43,6 +43,7 @@ $lang['Size'] = 'Ukuran';
 $lang['Source'] = 'Sumber';
 $lang['Summary'] = 'Rangkuman';
 $lang['System'] = 'Sistem';
+$lang['SVN commits'] = 'SVN commits';
 $lang['Tag'] = 'Label';
 $lang['Text'] = 'Teks';
 $lang['Time'] = 'Waktu';
