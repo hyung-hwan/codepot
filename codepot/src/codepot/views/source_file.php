@@ -144,16 +144,24 @@ if ($fileext == '') $fileext = "html"
 ?>
 </pre>
 
+
 <div id="project_source_file_mainarea_result_info">
-<pre>
-akdjflosjfkdsajflkdsj
-aslkfdjdsalkjfs
-alkjfdlkajf
+<script language='javascript'>
+function toggle_logmsg()
+{
+	var x = document.getElementById ('project_source_file_mainarea_result_info_logmsg');	
+	if (x) x.style.visibility = (x.style.visibility == 'visible')? 'hidden': 'visible';
+	return false;
+}
+</script>
 
-
-sadkfjsalfjskjdslkfsaj
-</pre>
+<div class="title">
+<a href='#' onClick='toggle_logmsg()'><?= $this->lang->line('Message') ?></a>
 </div>
+<pre id="project_source_file_mainarea_result_info_logmsg" style="visibility: visible">
+<?= $file['logmsg'] ?>
+</pre>
+</div> <!-- project_source_file_mainarea_result_info -->
 
 </div> <!-- project_source_file_mainarea_result -->
 
