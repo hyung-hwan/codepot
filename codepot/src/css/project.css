@@ -38,12 +38,70 @@
 	top: 0;
 	right: 0;
 	width: 20em;
-	background-color: red;
 }
 
 #project_source_file_mainarea_result_info pre {
+	overflow: auto;
 	border: 0;
 	margin: 0;
+	padding: 0;
+}
+
+#project_source_file_mainarea_result_info .title {
+	background-color: #7777FF;
+	border: 0;
+	margin: 0;
+	font-size: 0.8em;
+	text-align: right;	
+}
+
+#project_source_file_mainarea_result_info .title a {
+	color: white;
+	font-size: inherit;
+	background-color: inherit;
+}
+
+#project_source_file_mainarea_result_info .title a:hover {
+	background-color: inherit;
+}
+
+/*----------------------------------------------- 
+ * project source blame view 
+ *-----------------------------------------------*/
+#project_source_blame_mainarea_result {
+	position: relative;
+}
+
+#project_source_blame_mainarea_result_info {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 20em;
+}
+
+#project_source_blame_mainarea_result_info pre {
+	overflow: auto;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+#project_source_blame_mainarea_result_info .title {
+	background-color: #7777FF;
+	border: 0;
+	margin: 0;
+	font-size: 0.8em;
+	text-align: right;	
+}
+
+#project_source_blame_mainarea_result_info .title a {
+	color: white;
+	font-size: inherit;
+	background-color: inherit;
+}
+
+#project_source_blame_mainarea_result_info .title a:hover {
+	background-color: inherit;
 }
 
 /*----------------------------------------------- 
