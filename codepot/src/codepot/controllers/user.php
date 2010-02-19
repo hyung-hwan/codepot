@@ -31,21 +31,35 @@ class User extends Controller
 			redirect ('main/signin');
 
 		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SiteModel', 'sites');
 
-		$latest_projects = $this->projects->getLatestProjects ($login['id'], CODEPOT_MAX_LATEST_PROJECTS);
-		if ($latest_projects === FALSE)
+                $site = $this->sites->get (CODEPOT_DEFAULT_SITEID);
+		if ($site === FALSE)
 		{
 			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
-		else
+		else 
 		{
-			$data['login'] = $login;
-			$data['latest_projects'] = $latest_projects;
-			$data['user_name'] = '';
-			$data['user_pass'] = '';
-			$this->load->view ($this->VIEW_HOME, $data);
+			$latest_projects = $this->projects->getLatestProjects ($login['id'], CODEPOT_MAX_LATEST_PROJECTS);
+			if ($latest_projects === FALSE)
+			{
+				$data['login'] = $login;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else
+			{
+				if ($site === NULL) $site = $this->sites->getDefault ();
+
+				$data['login'] = $login;
+				$data['latest_projects'] = $latest_projects;
+				$data['site'] = $site;
+				//$data['user_name'] = '';
+				//$data['user_pass'] = '';
+				$this->load->view ($this->VIEW_HOME, $data);
+			}
 		}
 	}
 

@@ -5,6 +5,7 @@ www_DATA =  \
 	ldaploginmodel.php \
 	loginmodel.php \
 	projectmodel.php \
+	sitemodel.php \
 	subversionmodel.php \
 	wikimodel.php
 

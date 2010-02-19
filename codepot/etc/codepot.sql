@@ -1,6 +1,17 @@
 
 USE codepot;
 
+CREATE TABLE site (
+	id          VARCHAR(32)  PRIMARY KEY,
+	name        VARCHAR(128) NOT NULL,
+	text        TEXT         NOT NULL,
+
+	createdon   DATETIME,
+	updatedon   DATETIME,
+	createdby   VARCHAR(32),
+	updatedby   VARCHAR(32)
+) charset=utf8 engine=InnoDB;
+
 CREATE TABLE project (
 	id          VARCHAR(32)  PRIMARY KEY,
 	name        VARCHAR(255) UNIQUE NOT NULL,
@@ -61,5 +72,4 @@ CREATE TABLE file (
 	CONSTRAINT file_projectid FOREIGN KEY (projectid) REFERENCES project(id) 
 		ON DELETE RESTRICT ON UPDATE CASCADE
 ) charset=utf8 engine=InnoDB;	
-
 
