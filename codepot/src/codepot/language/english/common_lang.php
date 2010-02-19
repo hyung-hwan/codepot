@@ -43,6 +43,7 @@ $lang['Size'] = 'Size';
 $lang['Source'] = 'Source';
 $lang['Summary'] = 'Summary';
 $lang['System'] = 'System';
+$lang['SVN commits'] = 'SVN commits';
 $lang['Tag'] = 'Tag';
 $lang['Text'] = 'Text';
 $lang['Time'] = 'Time';

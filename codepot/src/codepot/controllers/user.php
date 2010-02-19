@@ -30,8 +30,9 @@ class User extends Controller
 		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
 			redirect ('main/signin');
 
-		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SiteModel', 'sites');
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('LogModel', 'logs');
 
                 $site = $this->sites->get (CODEPOT_DEFAULT_SITEID);
 		if ($site === FALSE)
@@ -39,28 +40,35 @@ class User extends Controller
 			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
 		}
-		else 
-		{
-			$latest_projects = $this->projects->getLatestProjects ($login['id'], CODEPOT_MAX_LATEST_PROJECTS);
-			if ($latest_projects === FALSE)
-			{
-				$data['login'] = $login;
-				$data['message'] = 'DATABASE ERROR';
-				$this->load->view ($this->VIEW_ERROR, $data);
-			}
-			else
-			{
-				if ($site === NULL) $site = $this->sites->getDefault ();
+		if ($site === NULL) $site = $this->sites->getDefault ();
 
-				$data['login'] = $login;
-				$data['latest_projects'] = $latest_projects;
-				$data['site'] = $site;
-				//$data['user_name'] = '';
-				//$data['user_pass'] = '';
-				$this->load->view ($this->VIEW_HOME, $data);
-			}
+		$latest_projects = $this->projects->getLatestProjects ($login['id'], CODEPOT_MAX_LATEST_PROJECTS);
+		if ($latest_projects === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
 		}
+
+		$svn_commits = $this->logs->getSvnCommits (CODEPOT_MAX_SVN_COMMITS);
+		if ($svn_commits === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$data['login'] = $login;
+		$data['latest_projects'] = $latest_projects;
+		$data['svn_commits'] = $svn_commits;
+		$data['site'] = $site;
+		//$data['user_name'] = '';
+		//$data['user_pass'] = '';
+		$this->load->view ($this->VIEW_HOME, $data);
 	}
 
 	function projectlist ()

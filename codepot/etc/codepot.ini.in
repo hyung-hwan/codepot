@@ -75,9 +75,15 @@ sysadmin_userid =
 max_upload_size = "10000"
 
 ;------------------------------------------------------------------------------
-; Maximum number of latest projects to show
+; Maximum number of latest projects to show in the front page
 ;------------------------------------------------------------------------------
 max_latest_projects = "10"
+
+;------------------------------------------------------------------------------
+; Maximum number of svn commits to show in the front page
+;------------------------------------------------------------------------------
+max_svn_commits = "10"
+
 
 ;------------------------------------------------------------------------------
 ; directory to accomodate subversion repositories

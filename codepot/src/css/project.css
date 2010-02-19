@@ -3,6 +3,27 @@
  */
 
 /*----------------------------------------------- 
+ * user home view 
+ *-----------------------------------------------*/
+#user_home_mainarea_sidebar {
+	width: 25em;
+}
+
+#user_home_mainarea_sidebar_svn_commits_table {
+	margin: 0;
+	padding: 0;
+}
+
+#user_home_mainarea_sidebar_svn_commits_table tr.odd {
+	background-color: #bbccef;
+}
+
+#user_home_mainarea_sidebar_svn_commits_table tr.even {
+	background-color: inherit;
+}
+
+
+/*----------------------------------------------- 
  * project file home view 
  *-----------------------------------------------*/
 #project_file_home_mainarea_result {

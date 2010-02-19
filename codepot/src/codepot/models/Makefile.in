@@ -167,6 +167,7 @@ www_DATA = \
 	index.html \
 	ldaploginmodel.php \
 	loginmodel.php \
+	logmodel.php \
 	projectmodel.php \
 	sitemodel.php \
 	subversionmodel.php \

@@ -73,3 +73,10 @@ CREATE TABLE file (
 		ON DELETE RESTRICT ON UPDATE CASCADE
 ) charset=utf8 engine=InnoDB;	
 
+CREATE TABLE log  (
+	id         BIGINT PRIMARY KEY AUTO_INCREMENT,
+	type       VARCHAR(16)  NOT NULL,
+	message    TEXT         NOT NULL,
+	createdon  DATETIME     NOT NULL,
+	INDEX timed_type (createdon, type)
+) charset=utf8 engine=InnoDB;	
