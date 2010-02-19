@@ -43,6 +43,7 @@ $lang['Size'] = '크기';
 $lang['Source'] = '소스';
 $lang['Summary'] = '요약';
 $lang['System'] = '시스템';
+$lang['SVN commits'] = 'SVN 커밋';
 $lang['Tag'] = '태그';
 $lang['Text'] = '본문';
 $lang['Time'] = '시간';

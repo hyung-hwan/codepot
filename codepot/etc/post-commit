@@ -1,0 +1,13 @@
+#!/bin/sh
+
+post_commit() {
+	local repo_path="$1"
+	local rev="$2"
+	local repo="`basename "${repo_path}"`"
+
+	ans="`wget -q -O- "%API%/logSvnCommit/${repo}/${rev}" 2>/dev/null`"
+	return 0
+}
+
+post_commit "$1" "$2"
+exit $?
