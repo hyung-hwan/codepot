@@ -176,6 +176,8 @@ www_DATA = \
 	project_home.php \
 	project_list.php \
 	projectbar.php \
+	site_edit.php \
+	site_delete.php \
 	source_blame.php \
 	source_diff.php \
 	source_file.php \

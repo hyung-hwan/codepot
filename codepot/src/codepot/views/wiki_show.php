@@ -23,6 +23,7 @@ $hexname = $this->converter->AsciiToHex ($wiki->name);
 $this->load->view (
 	'projectbar',
 	array (
+		'site' => NULL,
 		'pageid' => 'wiki',
 		'ctxmenuitems' => array (
 			array ("wiki/create/{$project->id}", $this->lang->line('New')),

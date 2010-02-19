@@ -35,6 +35,7 @@ function render_wiki()
 $this->load->view (
 	'projectbar', 
 	array (
+		'site' => NULL,
 		'pageid' => 'project',
 		'ctxmenuitems' => array (
 			array ("project/update/{$project->id}", $this->lang->line('Edit')),
