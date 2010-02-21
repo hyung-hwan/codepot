@@ -7,6 +7,7 @@ www_DATA =  \
 	doctypes.php \
 	hooks.php \
 	index.html \
+	lang_detect.php \
 	mimes.php \
 	routes.php \
 	smileys.php \

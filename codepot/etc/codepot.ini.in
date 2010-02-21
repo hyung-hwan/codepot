@@ -31,9 +31,11 @@ ldap_userid_format = "${userid}"
 ldap_password_format = "${password}"
 
 ;------------------------------------------------------------------------------
-; language to use
+; default langage to use. set it to 'auto' to detect it automatically.
+; available languages are: 
+;  english, korean, indonesian
 ;------------------------------------------------------------------------------
-lang = "english"
+language = "auto"
 
 ;------------------------------------------------------------------------------
 ; When set to yes, viewing pages require a user to sign in.
