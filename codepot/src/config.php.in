@@ -15,7 +15,7 @@ function load_ini ($file)
 	$xcfgs = array (
 		array ('default_banner',               'string',     '@PACKAGE@'),
 		array ('default_siteid',               'string',     'default'),
-		array ('lang',                         'string',     'english'),
+		array ('language',                     'string',     'auto'),
 		array ('always_require_signin',        'boolean',    FALSE),
 		array ('enable_websvn',                'boolean',    FALSE),
 
