@@ -52,7 +52,6 @@ class LogModel extends Model
 			$commits[$count]['repo'] = $repo;
 			$commits[$count]['rev'] = $rev;
 
-
 			$log = @svn_log (
 				'file:///'.CODEPOT_SVNREPO_DIR."/{$repo}",
 				$rev, $rev, 1,SVN_DISCOVER_CHANGED_PATHS);

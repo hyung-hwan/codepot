@@ -19,7 +19,7 @@ class Source extends Controller
 		$this->load->model (CODEPOT_LOGIN_MODEL, 'login');
 
 		$this->load->library ('Language', 'lang');
-		$this->lang->load ('common', CODEPOT_LANG);
+		$this->lang->load ('common', CODEPOT_LANG); 
 	}
 
 	function home ($projectid = '', $subdir = '', $rev = SVN_REVISION_HEAD)
