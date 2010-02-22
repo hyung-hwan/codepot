@@ -184,7 +184,8 @@ $this->load->view (
 				$diffclass = array_key_exists('rev1diffclass', $x)? $x['rev1diffclass']: 'diff';
 				print "<td class='{$diffclass}'>";
 				print "<pre class='prettyprint lang-{$fileext}'>";
-				print htmlspecialchars($x['rev1line']);
+				if ($x['rev1line'] == '') print '&nbsp;';
+				else print htmlspecialchars($x['rev1line']);
 				print '</pre>';
 				print '</td>';
 			}
@@ -200,7 +201,8 @@ $this->load->view (
 				$diffclass = array_key_exists('rev2diffclass', $x)? $x['rev2diffclass']: 'diff';
 				print "<td class='{$diffclass}'>";
 				print "<pre class='prettyprint lang-{$fileext}'>";
-				print htmlspecialchars($x['rev2line']);
+				if ($x['rev2line'] == '') print '&nbsp;';
+				else print htmlspecialchars($x['rev2line']);
 				print '</pre>';
 				print '</td>';
 			}

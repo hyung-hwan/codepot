@@ -28,7 +28,7 @@ class Wiki extends Controller
 		$this->load->model ('WikiModel', 'wikis');
 	
 		$login = $this->login->getUser ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ('main/signin');
 		$data['login'] = $login;
 
@@ -66,7 +66,7 @@ class Wiki extends Controller
 		$this->load->model ('WikiModel', 'wikis');
 
 		$login = $this->login->getUser ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ('main/signin');
 		$data['login'] = $login;
 

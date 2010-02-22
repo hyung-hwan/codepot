@@ -41,6 +41,30 @@ define('APPPATH', $application_folder.'/');
 
 /*
 |---------------------------------------------------------------
+| COMPULSORY HTTPS 
+|---------------------------------------------------------------
+*/
+if (CODEPOT_HTTPS_COMPULSORY)
+{
+	if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on') 
+	{
+		/* force https except api calls */
+
+		$tail = substr ($_SERVER['REQUEST_URI'], strlen($_SERVER['SCRIPT_NAME']));
+		//$tail = $_SERVER['PATH_INFO'];
+		if (strncmp ($tail, "/api/", 5) != 0)
+		{
+			require_once dirname(__FILE__) . '/codepot/libraries/converter.php';
+			$converter = new Converter ();
+			$url = $converter->expand (CODEPOT_HTTPS_URL, $_SERVER);
+			header("Location: $url");
+			exit;
+		}
+	}
+}
+
+/*
+|---------------------------------------------------------------
 | LOAD THE FRONT CONTROLLER
 |---------------------------------------------------------------
 */

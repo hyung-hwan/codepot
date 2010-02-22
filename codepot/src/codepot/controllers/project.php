@@ -25,7 +25,7 @@ class Project extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 
 		$login = $this->login->getUser ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '') 
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '') 
 			redirect ('main/signin');
 
 		$data['login'] = $login;
