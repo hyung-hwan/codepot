@@ -33,7 +33,7 @@ class Source extends Controller
 		$this->load->model ('SubversionModel', 'subversion');
 	
 		$login = $this->login->getUser ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ('main/signin');
 		$data['login'] = $login;
 
@@ -105,7 +105,7 @@ class Source extends Controller
 		$this->load->model ('SubversionModel', 'subversion');
 	
 		$login = $this->login->getUser ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ('main/signin');
 		$data['login'] = $login;
 
@@ -164,7 +164,7 @@ class Source extends Controller
 		$this->load->model ('SubversionModel', 'subversion');
 	
 		$login = $this->login->getUser ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ('main/signin');
 		$data['login'] = $login;
 
@@ -213,7 +213,7 @@ class Source extends Controller
 		$this->load->model ('SubversionModel', 'subversion');
 	
 		$login = $this->login->getUser ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ('main/signin');
 		$data['login'] = $login;
 
@@ -262,7 +262,7 @@ class Source extends Controller
 		$this->load->model ('SubversionModel', 'subversion');
 
 		$login = $this->login->getUser ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ('main/signin');
 		$data['login'] = $login;
 

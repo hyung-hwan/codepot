@@ -27,7 +27,7 @@ class User extends Controller
 	function home ()
 	{
 		$login = $this->login->getUser ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ('main/signin');
 
 		$this->load->model ('SiteModel', 'sites');
@@ -74,7 +74,7 @@ class User extends Controller
 	function projectlist ()
 	{
 		$login = $this->login->getUser ();
-		if (CODEPOT_ALWAYS_REQUIRE_SIGNIN && $login['id'] == '')
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ('main/signin');
 
 		$this->load->model ('ProjectModel', 'projects');
