@@ -121,7 +121,7 @@ print anchor ("source/history/{$project->id}/{$xpar}", $this->lang->line('Histor
 	if ($fileext == "") $fileext = "html"
 ?>
 
-<pre class="prettyprint lang-<?=$fileext?>">
+<pre class="prettyprint lang-<?=$fileext?>" id="project_source_blame_mainarea_result_pre">
 <?php
 
 	$content = $file['content'];

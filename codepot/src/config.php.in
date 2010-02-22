@@ -13,12 +13,15 @@ function load_ini ($file)
 	if (/*$cfg === FALSE*/ $cfg == FALSE) die ("ERROR: cannot parse $file");
 
 	$xcfgs = array (
-		array ('default_banner',               'string',     '@PACKAGE@'),
 		array ('default_siteid',               'string',     'default'),
+		array ('default_banner',               'string',     '@PACKAGE@'),
+
 		array ('language',                     'string',     'auto'),
-		array ('always_require_signin',        'boolean',    FALSE),
 		array ('enable_websvn',                'boolean',    FALSE),
 
+		array ('signin_compulsory',            'boolean',    FALSE),
+		array ('https_compulsory',             'boolean',    FALSE),
+		array ('https_url',                    'string',     'https://${SERVER_NAME}${REQUEST_URI}'),
 		array ('api_base_url',                 'string',     'http://127.0.0.1'),
 		array ('svn_base_url',                 'string',     'http://${SERVER_NAME}:${SERVER_PORT}/svn'),
 

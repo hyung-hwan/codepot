@@ -54,6 +54,11 @@
 	position: relative;
 }
 
+#project_source_file_mainarea_result_pre {
+	/* make it the same as font-size of info .title below */
+	padding-top: 0.8em;
+}
+
 #project_source_file_mainarea_result_info {
 	position: absolute;
 	top: 0;
@@ -91,6 +96,11 @@
  *-----------------------------------------------*/
 #project_source_blame_mainarea_result {
 	position: relative;
+}
+
+#project_source_blame_mainarea_result_pre {
+	/* make it the same as font-size of info .title below */
+	padding-top: 0.8em;
 }
 
 #project_source_blame_mainarea_result_info {
