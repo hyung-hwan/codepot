@@ -27,7 +27,7 @@ $config['lang_selected'] = 'en';
 // 'lang_expiration'  = the number of SECONDS you want the language to be
 //                      remembered. by default 2 years. 
 //                      Set zero for expiration when the browser is closed.
-$config['lang_cookie_name'] = 'lang_select_language';
+$config['lang_cookie_name'] = 'codepot_select_language';
 $config['lang_expiration']  = 63072000;
 
 ?>

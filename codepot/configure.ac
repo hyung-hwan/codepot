@@ -118,6 +118,7 @@ AC_CONFIG_FILES([
 	src/system/fonts/Makefile
 	src/system/helpers/Makefile
 	src/system/language/english/Makefile
+	src/system/language/korean/Makefile
 	src/system/language/Makefile
 	src/system/libraries/Makefile
 	src/system/logs/Makefile
