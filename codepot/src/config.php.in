@@ -1,11 +1,11 @@
 <?php
 
-define ('CODEPOT_VERSION',     '@VERSION@');
-define ('CODEPOT_DEPOT_DIR',   '@DEPOTDIR@');
-define ('CODEPOT_CFG_DIR',     '@CFGDIR@');
-define ('CODEPOT_WWW_DIR',     '@WWWDIR@');
-define ('CODEPOT_LOG_DIR',     '@LOGDIR@');
-define ('CODEPOT_CACHE_DIR',   '@CACHEDIR@');
+define ('CODEPOT_VERSION',   '@VERSION@');
+define ('CODEPOT_DEPOT_DIR', '@DEPOTDIR@');
+define ('CODEPOT_CFG_DIR',   '@CFGDIR@');
+define ('CODEPOT_WWW_DIR',   '@WWWDIR@');
+define ('CODEPOT_LOG_DIR',   '@LOGDIR@/'); // this requires a trailing slash
+define ('CODEPOT_CACHE_DIR', '@CACHEDIR@');
 
 function load_ini ($file)
 {
@@ -44,7 +44,9 @@ function load_ini ($file)
 		array ('ldap_password_format',         'string',     '${password}'),
 
 		array ('svnrepo_dir',                  'string',      CODEPOT_DEPOT_DIR.'/svnrepo'),
-		array ('file_dir',                     'string',      CODEPOT_DEPOT_DIR.'/files')
+		array ('file_dir',                     'string',      CODEPOT_DEPOT_DIR.'/files'),
+
+		array ('log_threshold',                'integer',     0)
 	);
 
 	foreach ($xcfgs as $x)

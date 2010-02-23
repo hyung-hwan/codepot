@@ -15,6 +15,7 @@ INSTALLATION
    $ sudo apt-get install subversion
    $ sudo apt-get install apache2-mpm-prefork
    $ sudo apt-get install libapache2-svn
+   $ sudo apt-get install libapache2-mod-auth-mysql # optional
    $ sudo apt-get install php5 php5-ldap php5-mysql
    $ sudo apt-get install php5-svn # if available
 
@@ -27,7 +28,8 @@ INSTALLATION
 
  * Enable the apache server modules
    $ sudo a2enmod php5
-   $ sudo a2enmod authnz_ldap
+   $ sudo a2enmod authnz_ldap # enable ldap-based authentication
+   $ sudo a2enmod auth_mysql  # enable mysql-based authentication
    $ sudo a2enmod dav_svn
    $ sudo a2enmod userdir # to enable $HOME/public_html
    $ sudo /etc/init.d/apache2 restart
@@ -48,7 +50,7 @@ INSTALLATION
  * Initialize database using CFGDIR/codepot.sql
 
  * Configure apache web server ahthentication for subversion webdav access 
-   using CFGDIR/codepot.a2ldap
+   using CFGDIR/codepot.a2ldap or CFGDIR/codepot.a2mysql
 
  * To enable SSL 
    $ sudo a2enmod ssl 

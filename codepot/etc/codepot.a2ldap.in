@@ -26,18 +26,20 @@
         AuthBasicProvider ldap
 
 	# prevent other authenticatication moudles from authenticating users
-	# if this one fails.
+	# if this one fails. Set it to 'off' for 'require valid-user' as it
+	# is handled by mod_authz_user.
         AuthzLDAPAuthoritative on
 
         AuthLDAPGroupAttribute memberUid
         AuthLDAPGroupAttributeIsDN off
         AuthLDAPRemoteUserIsDN off
 
+	# ldap binding information
         AuthLDAPURL ldap://127.0.0.1:389/ou=users,dc=sample,dc=net?uid
         AuthLDAPBindDN cn=admin,dc=sample,dc=net
         AuthLDAPBindPassword xxxxxxx
 
-        Require ldap-group cn=developers,ou=groups,dc=sample,dc=net
+        Require ldap-group cn=users,ou=groups,dc=sample,dc=net
 
 	# 
 	# Apache version 2.0.41
