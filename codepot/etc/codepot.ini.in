@@ -104,3 +104,14 @@ svnrepo_dir = "@DEPOTDIR@/svnrepo"
 ; directory to store uploaded files
 ;------------------------------------------------------------------------------
 file_dir = "@DEPOTDIR@/files"
+
+;------------------------------------------------------------------------------
+; log threshold
+;------------------------------------------------------------------------------
+; 0 = Disables logging, Error logging TURNED OFF
+; 1 = Error Messages (including PHP errors)
+; 2 = Debug Messages
+; 3 = Informational Messages
+; 4 = All Messages
+;------------------------------------------------------------------------------
+log_threshold = 0

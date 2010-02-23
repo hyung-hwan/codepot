@@ -1,4 +1,4 @@
-SUBDIRS =  english
+SUBDIRS =  english korean
 
 wwwdir=$(WWWDIR)/system/language
 www_DATA =  \

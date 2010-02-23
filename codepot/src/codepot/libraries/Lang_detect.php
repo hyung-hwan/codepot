@@ -187,10 +187,8 @@ class Lang_detect
 			//log_message('debug', __CLASS__.".detectLanguage(): Use default language: $lang ($language)");
 		}
 
-/*
 		// set the configuration for the CI_Language class
 		$this->obj->config->set_item('language', $language);
-*/
 
 		// store the language code too
 		$this->obj->config->set_item('lang_selected', $lang);
