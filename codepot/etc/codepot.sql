@@ -76,7 +76,8 @@ CREATE TABLE file (
 CREATE TABLE log  (
 	id         BIGINT PRIMARY KEY AUTO_INCREMENT,
 	type       VARCHAR(16)  NOT NULL,
+	projectid  VARCHAR(32)  NOT NULL,
 	message    TEXT         NOT NULL,
 	createdon  DATETIME     NOT NULL,
-	INDEX timed_type (createdon, type)
+	INDEX timed_type_project (createdon, type, projectid)
 ) charset=utf8 engine=InnoDB;	

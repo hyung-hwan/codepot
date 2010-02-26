@@ -113,7 +113,6 @@ body {
 
 .content .mainarea {
 	padding: 0.2em 0em 0.2em 0em;
-	min-height: 30em;
 }
 
 .content .mainarea .title {
@@ -377,6 +376,7 @@ pre.prettyprint .nocode a:hover {
 }
 
 .content .footer {
+	clear: both;
 	padding: 0.3em 0.5em 0.3em 0.5em;
 	font-size: .8em;
 	font-weight: bold;

@@ -23,6 +23,7 @@ class Project extends Controller
 	function home ($projectid = "")
 	{
 		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('LogModel',     'logs');
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '') 
@@ -43,8 +44,19 @@ class Project extends Controller
 		}
 		else
 		{
-			$data['project'] = $project;
-			$this->load->view ($this->VIEW_HOME, $data);
+			$svn_commits = $this->logs->getSvnCommits (
+				CODEPOT_MAX_SVN_COMMITS_IN_PROJECT, $projectid);
+			if ($svn_commits === FALSE)
+			{
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else
+			{
+				$data['project'] = $project;
+				$data['svn_commits'] = $svn_commits;
+				$this->load->view ($this->VIEW_HOME, $data);
+			}
 		}
 	}
 
