@@ -29,6 +29,14 @@ make_repo() {
 		chmod 0755 "${repodir}/start-commit"
 	#}
 
+	#[ -f "${repodir}/pre-commit" ] || {
+	#	sed "s|%API%|${api}|g" "${cfgdir}/pre-commit" > "${repodir}/pre-commit" || {
+	#		echo "ERROR: cannot install pre-commit to ${repodir}"
+	#		return 1;
+	#	}
+	#	chmod 0755 "${repodir}/pre-commit"
+	#}
+
 	#[ -f "${repodir}/post-commit" ] || {
 		sed "s|%API%|${api}|g" "${cfgdir}/post-commit" > "${repodir}/post-commit" || {
 			echo "ERROR: cannot install post-commit to ${repodir}"

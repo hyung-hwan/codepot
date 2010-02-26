@@ -1,21 +1,19 @@
 #!/bin/sh
 
-start_commit() {
-	local repo_path="$1"
-	local user="$2"
-	local repo="`basename "${repo_path}"`"
+REPOBASE="`basename "${1}"`"
+USER="${2}"
 
-	ans="`wget -q -O- "%API%/projectHasMember/${repo}/${user}" 2>/dev/null`"
-	[ "${ans}" = "YES" ] && return 0;
+ans="`wget -q -O- "%API%/projectHasMember/${REPOBASE}/${USER}" 2>/dev/null`"
+[ "${ans}" = "YES" ] && exit 0
 
-	[ "${ans}" = "NO" ] && {
-		echo "${user} is not a member of ${repo}" >&2
-		return 1
-	}
-
-	echo "Critical error occurred while checking project membership of ${repo} for ${user}" >&2
-	return 1
+[ "${ans}" = "NO" ] && {
+	echo "-------------------------------------------------------------" >&2
+	echo " ${USER} is not a member of ${REPOBASE}" >&2
+	echo "-------------------------------------------------------------" >&2
+	exit 1
 }
 
-start_commit "$1" "$2"
-exit $?
+echo "---------------------------------------------------------------------" >&2
+echo " Failed to check membership of ${REPOBASE} for ${USER}" >&2
+echo "---------------------------------------------------------------------" >&2
+exit 1

@@ -82,6 +82,40 @@ $this->load->view (
 <?= anchor ($this->converter->expand(CODEPOT_SVN_BASE_URL, $_SERVER) . '/' . $project->id) ?>
 </div>
 
+<div class="box">
+<div class="boxtitle"><?=$this->lang->line('SVN commits')?></div>
+<table id="project_home_mainarea_sidebar_svn_commits_table">
+<?php 
+	$xdot = $this->converter->AsciiToHex ('.');
+	foreach ($svn_commits as $commit)
+	{
+		print '<tr class="odd">';
+		print '<td>';
+		print substr($commit['time'], 0, 10);
+		print '</td>';
+
+		print '<td>';
+		print anchor (	
+			"/source/revision/{$commit['repo']}/{$xdot}/{$commit['rev']}", 
+			$commit['rev']);
+		print '</td>';
+
+		print '<td>';
+		print htmlspecialchars ($commit['author']);
+		print '</td>';
+		print '</tr>';
+
+		print '<tr class="even">';
+		print '<td colspan=4>';
+		$sm = strtok (trim ($commit['message']), "\r\n");
+		print htmlspecialchars ($sm);
+		print '</td>';
+		print '</tr>';
+	}
+?>
+</table>
+</div>
+
 </div> <!-- project_home_sidebar -->
 
 <!---------------------------------------------------------------------------->

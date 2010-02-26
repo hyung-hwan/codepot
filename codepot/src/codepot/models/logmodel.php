@@ -8,34 +8,12 @@ class LogModel extends Model
 		$this->load->database ();
 	}
 
-	/*
-	function get ($id)
-	{
-		$this->db->trans_start ();
-
-		$this->db->where ('id', (string)$id);
-		$query = $this->db->get ('log');
-
-		$result = $query->result ();
-		if (empty($result))
-		{
-			$this->db->trans_complete ();
-			if ($this->db->trans_status() === FALSE) return FALSE;
-			return NULL;
-		}
-
-		$this->db->trans_complete ();
-		if ($this->db->trans_status() === FALSE) return FALSE;
-
-		return $result[0];
-	}
-	*/
-
-	function getSvnCommits ($limit)
+	function getSvnCommits ($limit, $projectid = '')
 	{
 		$this->db->trans_start ();
 
 		$this->db->where ('type', 'svn-commit');
+		if ($projectid != '') $this->db->where ('projectid', $projectid);
 		$this->db->order_by ('createdon', 'desc');
 		$query = $this->db->get ('log', $limit);
 
@@ -49,7 +27,8 @@ class LogModel extends Model
 		{
 			list($repo,$rev) = split('[,]', $row->message);
 
-			$commits[$count]['repo'] = $repo;
+			/* $row->project must be equal to $repo */
+			$commits[$count]['repo'] = $row->projectid;
 			$commits[$count]['rev'] = $rev;
 
 			$log = @svn_log (
@@ -77,6 +56,7 @@ class LogModel extends Model
 	function writeSvnCommit ($repo, $rev)
 	{
 		$log->type = 'svn-commit';
+		$log->projectid = $repo;
 		$log->message = "{$repo},{$rev}";
 		$this->write ($log);
 	}
@@ -86,6 +66,7 @@ class LogModel extends Model
 		$this->db->trans_begin ();
 
 		$this->db->set ('type', $log->type);
+		$this->db->set ('projectid', $log->projectid);
 		$this->db->set ('message', $log->message);
 		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->insert ('log');

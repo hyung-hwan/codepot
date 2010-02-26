@@ -42,11 +42,23 @@ class LoginModel extends Model
 	function authenticate ($userid, $password)
 	{
 		$server = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'];
+
+		$sysadmin = FALSE;
+		$ids = explode (',', CODEPOT_SYSADMIN_USERIDS);
+		foreach ($ids as $id)
+		{
+			if (trim($id) == $userid) 
+			{
+				$sysadmin = TRUE;
+				break;
+			}
+		}
+
 		$this->session->set_userdata (
 			array (
 				'userid' => $userid,
 				'server' => $server,
-				'sysadmin?' => ($userid == CODEPOT_SYSADMIN_USERID)
+				'sysadmin?' => $sysadmin
 			)
 		);
 		return TRUE;

@@ -3,7 +3,7 @@ Version: @VERSION@
 Maintainer: @PACKAGE_BUGREPORT@
 Homepage: @PACKAGE_URL@
 Depends: subversion, apache2-mpm-prefork, libapache2-svn, php5, php5-ldap, wget
-Recommends: php5-mysql, php5-svn
+Recommends: php5-mysql, php5-svn (>= 0.5.1)
 Suggests: slapd, mysql-server
 Section: web
 Priority: optional

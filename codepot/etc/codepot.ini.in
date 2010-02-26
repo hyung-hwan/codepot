@@ -75,9 +75,11 @@ svn_base_url = "http://${SERVER_NAME}:${SERVER_PORT}/svn"
 login_model = "LdapLoginModel"
 
 ;------------------------------------------------------------------------------
-; System administrator ID
+; Comma separated list of system administrator IDs
 ;------------------------------------------------------------------------------
-sysadmin_userid =
+; sysadmin_userids = tom, dick, jane
+;------------------------------------------------------------------------------
+sysadmin_userids =
 
 ;------------------------------------------------------------------------------
 ; Maximum file upload size in Kbytes
@@ -94,6 +96,10 @@ max_latest_projects = "10"
 ;------------------------------------------------------------------------------
 max_svn_commits = "10"
 
+;------------------------------------------------------------------------------
+; Maximum number of svn commits to show in the project home page
+;------------------------------------------------------------------------------
+max_svn_commits_in_project = "5"
 
 ;------------------------------------------------------------------------------
 ; directory to accomodate subversion repositories
