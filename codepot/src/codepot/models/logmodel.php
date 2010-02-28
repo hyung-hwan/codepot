@@ -8,14 +8,28 @@ class LogModel extends Model
 		$this->load->database ();
 	}
 
-	function getSvnCommits ($limit, $projectid = '')
+	function getNumSvnCommits ($projectid = '')
+	{
+		$this->db->trans_start ();
+
+		$this->db->where ('type', 'svn-commit');
+		if ($projectid != '') $this->db->where ('projectid', $projectid);
+		$num = $this->db->count_all ('log');
+
+		$this->db->trans_complete ();
+		if ($this->db->trans_status() === FALSE) return FALSE;
+
+		return $num;
+	}
+
+	function getSvnCommits ($offset, $limit, $projectid = '')
 	{
 		$this->db->trans_start ();
 
 		$this->db->where ('type', 'svn-commit');
 		if ($projectid != '') $this->db->where ('projectid', $projectid);
 		$this->db->order_by ('createdon', 'desc');
-		$query = $this->db->get ('log', $limit);
+		$query = $this->db->get ('log', $limit, $offset);
 
 		$result = $query->result ();
 		$this->db->trans_complete ();
@@ -28,23 +42,27 @@ class LogModel extends Model
 			list($repo,$rev) = split('[,]', $row->message);
 
 			/* $row->project must be equal to $repo */
-			$commits[$count]['repo'] = $row->projectid;
-			$commits[$count]['rev'] = $rev;
+			$commits[$count]['time'] = $row->createdon;
+			$commits[$count]['type'] = $row->type;
+			$commits[$count]['projectid'] = $row->projectid;
+
+			$commits[$count]['svn_repo'] = $repo;
+			$commits[$count]['svn_rev'] = $rev;
 
 			$log = @svn_log (
 				'file:///'.CODEPOT_SVNREPO_DIR."/{$repo}",
 				$rev, $rev, 1,SVN_DISCOVER_CHANGED_PATHS);
 			if ($log === FALSE || count($log) < 1)
 			{
-				$commits[$count]['author'] = '';
-				$commits[$count]['message'] = '';
-				$commits[$count]['time'] = '';
+				$commits[$count]['svn_author'] = '';
+				$commits[$count]['svn_message'] = '';
+				$commits[$count]['svn_time'] = '';
 			}
 			else
 			{
-				$commits[$count]['author'] = $log[0]['author'];
-				$commits[$count]['message'] = $log[0]['msg'];
-				$commits[$count]['time'] = $log[0]['date'];
+				$commits[$count]['svn_author'] = $log[0]['author'];
+				$commits[$count]['svn_message'] = $log[0]['msg'];
+				$commits[$count]['svn_time'] = $log[0]['date'];
 			}
 	
 			$count++;
