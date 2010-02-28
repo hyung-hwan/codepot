@@ -4,5 +4,5 @@ REPOBASE="`basename "${1}"`"
 REV="${2}"
 
 # does not care if logging has failed.
-wget -q -O- "%API%/logSvnCommit/${REPOBASE}/${REV}" 2>/dev/null
+wget -q -O- "%API%/logCodeCommit/svn/${REPOBASE}/${REV}" 2>/dev/null
 exit 0
