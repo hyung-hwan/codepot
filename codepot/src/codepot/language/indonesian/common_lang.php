@@ -1,6 +1,9 @@
 <?php
 $lang['Author'] = 'Pengarang	';
 $lang['Blame'] = 'Menyalahkan';
+$lang['Change log'] = 'Change log';
+$lang['Code'] = 'Kode';
+$lang['Code changes'] = 'Kode changes'
 $lang['Create'] = 'Dibuat';
 $lang['Created by'] = 'Dibuat oleh';
 $lang['Created on'] = 'Waktu dibuat';
@@ -12,7 +15,7 @@ $lang['Difference'] = 'Beda';
 $lang['Directory'] = 'Direktori';
 $lang['Download'] = 'Download';
 $lang['Edit'] = 'Rubah';
-$lang['Head revision'] = 'Kepala Revisi';
+$lang['Head revision'] = 'Kepala revisi';
 $lang['History'] = 'Sejarah';
 $lang['Home'] = 'Beranda';
 $lang['File'] = 'File';
@@ -43,7 +46,6 @@ $lang['Size'] = 'Ukuran';
 $lang['Source'] = 'Sumber';
 $lang['Summary'] = 'Rangkuman';
 $lang['System'] = 'Sistem';
-$lang['SVN commits'] = 'SVN commits';
 $lang['Tag'] = 'Label';
 $lang['Text'] = 'Teks';
 $lang['Time'] = 'Waktu';

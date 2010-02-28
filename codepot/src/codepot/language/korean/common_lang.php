@@ -1,6 +1,9 @@
 <?php
 $lang['Author'] = '저자';
 $lang['Blame'] = '책임전가';
+$lang['Change log'] = '변경내역';
+$lang['Code'] = '코드';
+$lang['Code changes'] = '코드변경';
 $lang['Create'] = '생성';
 $lang['Created by'] = '최초생성인';
 $lang['Created on'] = '최초생성시간';
@@ -43,7 +46,6 @@ $lang['Size'] = '크기';
 $lang['Source'] = '소스';
 $lang['Summary'] = '요약';
 $lang['System'] = '시스템';
-$lang['SVN commits'] = 'SVN 커밋';
 $lang['Tag'] = '태그';
 $lang['Text'] = '본문';
 $lang['Time'] = '시간';

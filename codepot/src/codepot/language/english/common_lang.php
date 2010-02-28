@@ -1,6 +1,9 @@
 <?php
 $lang['Author'] = 'Author';
 $lang['Blame'] = 'Blame';
+$lang['Change log'] = 'Change log';
+$lang['Code'] = 'Code';
+$lang['Code changes'] = 'Code changes';
 $lang['Create'] = 'Create';
 $lang['Created by'] = 'Created by';
 $lang['Created on'] = 'Created on';
@@ -43,7 +46,6 @@ $lang['Size'] = 'Size';
 $lang['Source'] = 'Source';
 $lang['Summary'] = 'Summary';
 $lang['System'] = 'System';
-$lang['SVN commits'] = 'SVN commits';
 $lang['Tag'] = 'Tag';
 $lang['Text'] = 'Text';
 $lang['Time'] = 'Time';

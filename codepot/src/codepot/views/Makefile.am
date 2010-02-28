@@ -23,6 +23,7 @@ www_DATA =  \
 	source_revision.php \
 	taskbar.php \
 	user_home.php \
+	user_sitelog.php \
 	wiki_delete.php \
 	wiki_edit.php \
 	wiki_home.php \

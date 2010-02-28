@@ -10,35 +10,100 @@
 }
 
 #user_home_mainarea_sidebar_svn_commits_table {
-	margin: 0;
-	padding: 0;
+	border-collapse: collapse;
 }
 
 #user_home_mainarea_sidebar_svn_commits_table tr.odd {
 	background-color: #bbccef;
 }
 
+#user_home_mainarea_sidebar_svn_commits_table tr.odd td {
+	width: 1px;
+	white-space: nowrap;
+}
+
 #user_home_mainarea_sidebar_svn_commits_table tr.even {
 	background-color: inherit;
+	font-size: 0.9em;
+	font-style: italic;
+}
+
+/*----------------------------------------------- 
+ * user sidelog view 
+ *-----------------------------------------------*/
+#user_sitelog_mainarea_result {
+	overflow: auto;
+}
+
+#user_sitelog_mainarea_result_table {
+	border-collapse: collapse;
+}
+
+#user_sitelog_mainarea_result_table a {
+	text-decoration: none;
+}
+
+#user_sitelog_mainarea_result_table td {
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+#user_sitelog_mainarea_result_table td.break {
+	font-size: 0.5em;
+}
+
+#user_sitelog_mainarea_result_table td.date {
+	font-weight: bold;
+	background-color: #bbccef;
+}
+
+#user_sitelog_mainarea_result_table td.time {
+	width: 1px;
+	color: #777777;
+}
+
+#user_sitelog_mainarea_result_table td.details {
+	white-space: normal;
+}
+
+#user_sitelog_mainarea_result_table td.details .description {
+	font-style: italic;
+}
+
+#user_sitelog_mainarea_result_table td.details pre.message {
+	border: 0;
+	margin: 1px;
+	background-color: inherit;
+	white-space: pre-wrap;
+}
+
+#user_sitelog_mainarea_result_table td.pages {
+	padding-top: 1em;
+	text-align: center;
+	font-weight: bold;
 }
 
 /*----------------------------------------------- 
  * project home view 
  *-----------------------------------------------*/
 #project_home_mainarea_sidebar_svn_commits_table {
-	margin: 0;
-	padding: 0;
+	border-collapse: collapse;
 }
 
 #project_home_mainarea_sidebar_svn_commits_table tr.odd {
 	background-color: #bbccef;
 }
 
-#project_home_mainarea_sidebar_svn_commits_table tr.even {
-	background-color: inherit;
+#project_home_mainarea_sidebar_svn_commits_table tr.odd td {
+	width: 1px;
+	white-space: nowrap;
 }
 
-
+#project_home_mainarea_sidebar_svn_commits_table tr.even {
+	background-color: inherit;
+	//font-size: 0.9em;
+	font-style: italic;
+}
 
 /*----------------------------------------------- 
  * project file home view 

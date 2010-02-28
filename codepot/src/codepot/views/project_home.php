@@ -83,7 +83,9 @@ $this->load->view (
 </div>
 
 <div class="box">
-<div class="boxtitle"><?=$this->lang->line('SVN commits')?></div>
+<div class="boxtitle">
+<?= anchor ("source/history/{$project->id}", $this->lang->line('Code changes')) ?>
+</div>
 <table id="project_home_mainarea_sidebar_svn_commits_table">
 <?php 
 	$xdot = $this->converter->AsciiToHex ('.');
@@ -91,23 +93,23 @@ $this->load->view (
 	{
 		print '<tr class="odd">';
 		print '<td>';
-		print substr($commit['time'], 0, 10);
+		print substr($commit['svn_time'], 0, 10);
 		print '</td>';
 
 		print '<td>';
 		print anchor (	
-			"/source/revision/{$commit['repo']}/{$xdot}/{$commit['rev']}", 
-			$commit['rev']);
+			"/source/revision/{$commit['svn_repo']}/{$xdot}/{$commit['svn_rev']}", 
+			$commit['svn_rev']);
 		print '</td>';
 
 		print '<td>';
-		print htmlspecialchars ($commit['author']);
+		print htmlspecialchars ($commit['svn_author']);
 		print '</td>';
 		print '</tr>';
 
 		print '<tr class="even">';
-		print '<td colspan=4>';
-		$sm = strtok (trim ($commit['message']), "\r\n");
+		print '<td colspan=3>';
+		$sm = strtok (trim ($commit['svn_message']), "\r\n");
 		print htmlspecialchars ($sm);
 		print '</td>';
 		print '</tr>';
