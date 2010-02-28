@@ -81,38 +81,43 @@ foreach ($latest_projects as $project)
 
 <div class="box">
 <div class="boxtitle">
-<?= anchor ("/user/sitelog", $this->lang->line('Code changes')) ?>
+<?= anchor ("/user/sitelog", $this->lang->line('Change log')) ?>
 </div>
-<table id="user_home_mainarea_sidebar_svn_commits_table">
+<table id="user_home_mainarea_sidebar_log_table">
 <?php 
 	$xdot = $this->converter->AsciiToHex ('.');
-	foreach ($svn_commits as $commit)
+	foreach ($log_entries as $log)
 	{
-		print '<tr class="odd">';
-		print '<td>';
-		print substr($commit['svn_time'], 0, 10);
-		print '</td>';
-		print '<td>';
-		print anchor (
-			"/source/file/{$commit['svn_repo']}/{$xdot}/{$commit['svn_rev']}", 
-			$commit['svn_repo']);
-		print '</td>';
-		print '<td>';
-		print anchor (	
-			"/source/revision/{$commit['svn_repo']}/{$xdot}/{$commit['svn_rev']}", 
-			$commit['svn_rev']);
-		print '</td>';
-		print '<td>';
-		print htmlspecialchars ($commit['svn_author']);
-		print '</td>';
-		print '</tr>';
+		if ($log['type'] == 'code' && $log['action'] == 'commit')
+		{
+			$x = $log['code-commit'];
 
-		print '<tr class="even">';
-		print '<td colspan=4>';
-		$sm = strtok (trim ($commit['svn_message']), "\r\n");
-		print htmlspecialchars ($sm);
-		print '</td>';
-		print '</tr>';
+			print '<tr class="odd">';
+			print '<td>';
+			print substr($x['time'], 0, 10);
+			print '</td>';
+			print '<td>';
+			print anchor (
+				"/source/file/{$x['repo']}/{$xdot}/{$x['rev']}", 
+				$x['repo']);
+			print '</td>';
+			print '<td>';
+			print anchor (	
+				"/source/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
+				$x['rev']);
+			print '</td>';
+			print '<td>';
+			print htmlspecialchars ($x['author']);
+			print '</td>';
+			print '</tr>';
+
+			print '<tr class="even">';
+			print '<td colspan=4>';
+			$sm = strtok (trim ($x['message']), "\r\n");
+			print htmlspecialchars ($sm);
+			print '</td>';
+			print '</tr>';
+		}
 	}
 ?>
 </table>

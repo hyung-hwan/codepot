@@ -8,11 +8,12 @@ class LogModel extends Model
 		$this->load->database ();
 	}
 
-	function getNumSvnCommits ($projectid = '')
+	function getNumEntries ($projectid = '')
 	{
 		$this->db->trans_start ();
 
-		$this->db->where ('type', 'svn-commit');
+		//$this->db->where ('type', 'code');
+		//$this->db->where ('action', 'commit');
 		if ($projectid != '') $this->db->where ('projectid', $projectid);
 		$num = $this->db->count_all ('log');
 
@@ -22,11 +23,12 @@ class LogModel extends Model
 		return $num;
 	}
 
-	function getSvnCommits ($offset, $limit, $projectid = '')
+	function getEntries ($offset, $limit, $projectid = '')
 	{
 		$this->db->trans_start ();
 
-		$this->db->where ('type', 'svn-commit');
+		//$this->db->where ('type', 'code');
+		//$this->db->where ('action', 'commit');
 		if ($projectid != '') $this->db->where ('projectid', $projectid);
 		$this->db->order_by ('createdon', 'desc');
 		$query = $this->db->get ('log', $limit, $offset);
@@ -39,43 +41,49 @@ class LogModel extends Model
 		$commits = array ();
 		foreach ($result as $row)
 		{
-			list($repo,$rev) = split('[,]', $row->message);
+			list($type,$repo,$rev) = split('[,]', $row->message);
 
 			/* $row->project must be equal to $repo */
-			$commits[$count]['time'] = $row->createdon;
+			$commits[$count]['createdon'] = $row->createdon;
 			$commits[$count]['type'] = $row->type;
+			$commits[$count]['action'] = $row->action;
 			$commits[$count]['projectid'] = $row->projectid;
+			$commits[$count]['userid'] = $row->userid;
 
-			$commits[$count]['svn_repo'] = $repo;
-			$commits[$count]['svn_rev'] = $rev;
+			$tmp['type'] = $type;
+			$tmp['repo'] = $repo;
+			$tmp['rev'] = $rev;
 
 			$log = @svn_log (
 				'file:///'.CODEPOT_SVNREPO_DIR."/{$repo}",
 				$rev, $rev, 1,SVN_DISCOVER_CHANGED_PATHS);
 			if ($log === FALSE || count($log) < 1)
 			{
-				$commits[$count]['svn_author'] = '';
-				$commits[$count]['svn_message'] = '';
-				$commits[$count]['svn_time'] = '';
+				$tmp['time'] = '';
+				$tmp['author'] = '';
+				$tmp['message'] = '';
 			}
 			else
 			{
-				$commits[$count]['svn_author'] = $log[0]['author'];
-				$commits[$count]['svn_message'] = $log[0]['msg'];
-				$commits[$count]['svn_time'] = $log[0]['date'];
+				$tmp['time'] = $log[0]['date'];
+				$tmp['author'] = $log[0]['author'];
+				$tmp['message'] = $log[0]['msg'];
 			}
 	
+			$commits[$count][$row->type.'-'.$row->action] = $tmp;
 			$count++;
 		}	
 	
 		return $commits;
 	}
 
-	function writeSvnCommit ($repo, $rev)
+	function writeCodecommit ($type, $repo, $rev, $userid)
 	{
-		$log->type = 'svn-commit';
+		$log->type = 'code';
+		$log->action = 'commit';
 		$log->projectid = $repo;
-		$log->message = "{$repo},{$rev}";
+		$log->userid = $userid;
+		$log->message = "{$type},{$repo},{$rev}";
 		$this->write ($log);
 	}
 
@@ -84,6 +92,7 @@ class LogModel extends Model
 		$this->db->trans_begin ();
 
 		$this->db->set ('type', $log->type);
+		$this->db->set ('action', $log->action);
 		$this->db->set ('projectid', $log->projectid);
 		$this->db->set ('message', $log->message);
 		$this->db->set ('createdon', date('Y-m-d H:i:s'));

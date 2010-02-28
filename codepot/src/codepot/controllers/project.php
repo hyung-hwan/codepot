@@ -44,9 +44,9 @@ class Project extends Controller
 		}
 		else
 		{
-			$svn_commits = $this->logs->getSvnCommits (
+			$log_entries = $this->logs->getEntries (
 				0, CODEPOT_MAX_SVN_COMMITS_IN_PROJECT, $projectid);
-			if ($svn_commits === FALSE)
+			if ($log_entries === FALSE)
 			{
 				$data['message'] = 'DATABASE ERROR';
 				$this->load->view ($this->VIEW_ERROR, $data);
@@ -54,7 +54,7 @@ class Project extends Controller
 			else
 			{
 				$data['project'] = $project;
-				$data['svn_commits'] = $svn_commits;
+				$data['log_entries'] = $log_entries;
 				$this->load->view ($this->VIEW_HOME, $data);
 			}
 		}
