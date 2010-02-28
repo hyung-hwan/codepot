@@ -25,13 +25,13 @@ class API extends Controller
 		print ($this->projects->projectIsOwnedBy ($projectid, $userid) === FALSE)? 'NO': 'YES';
 	}
 
-	function logSvnCommit ($repo, $rev)
+	function logCodeCommit ($type, $repo, $rev)
 	{
 		if (!isset($repo) || !isset($rev)) return;
 
 		// TODO: access control - may allow localhost only
 		$this->load->model ('LogModel', 'logs');
-		$this->logs->writeSvnCommit ($repo, $rev);
+		$this->logs->writeCodeCommit ($type, $repo, $rev, '');
 	}
 }
 

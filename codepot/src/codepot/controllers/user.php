@@ -54,8 +54,8 @@ class User extends Controller
 			return;
 		}
 
-		$svn_commits = $this->logs->getSvnCommits (0, CODEPOT_MAX_SVN_COMMITS);
-		if ($svn_commits === FALSE)
+		$log_entries = $this->logs->getEntries (0, CODEPOT_MAX_SVN_COMMITS);
+		if ($log_entries === FALSE)
 		{
 			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
@@ -65,7 +65,7 @@ class User extends Controller
 
 		$data['login'] = $login;
 		$data['latest_projects'] = $latest_projects;
-		$data['svn_commits'] = $svn_commits;
+		$data['log_entries'] = $log_entries;
 		$data['site'] = $site;
 		//$data['user_name'] = '';
 		//$data['user_pass'] = '';
@@ -79,8 +79,8 @@ class User extends Controller
 		$this->load->library ('pagination');
 		$this->load->model ('LogModel', 'logs');
 		
-		$num_svn_commits = $this->logs->getNumSvnCommits ();
-		if ($num_svn_commits === FALSE)
+		$num_log_entries = $this->logs->getNumEntries ();
+		if ($num_log_entries === FALSE)
 		{
 			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
@@ -89,11 +89,11 @@ class User extends Controller
 		}
 
 		$pagecfg['base_url'] = site_url() . '/user/sitelog/';
-		$pagecfg['total_rows'] = $num_svn_commits;
+		$pagecfg['total_rows'] = $num_log_entries;
 		$pagecfg['per_page'] = CODEPOT_MAX_SITE_LOGS_PER_PAGE; 
 
-		$svn_commits = $this->logs->getSvnCommits ($offset, $pagecfg['per_page']);
-		if ($svn_commits === FALSE)
+		$log_entries = $this->logs->getEntries ($offset, $pagecfg['per_page']);
+		if ($log_entries === FALSE)
 		{
 			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
@@ -105,7 +105,7 @@ class User extends Controller
 		$this->pagination->initialize ($pagecfg);
 
 		$data['login'] = $login;
-		$data['sitelogs'] = $svn_commits;
+		$data['log_entries'] = $log_entries;
 		$data['page_links'] = $this->pagination->create_links ();
 
 		$this->load->view ($this->VIEW_SITELOG, $data);

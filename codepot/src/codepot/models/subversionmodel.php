@@ -43,8 +43,8 @@ class SubversionModel extends Model
 			if ($list === FALSE) return FALSE;
 
 			$log = @svn_log ($url, 
-				$fileinfo['created_rev'], 
-				$fileinfo['created_rev'],
+				$info[0]['revision'], 
+				$info[0]['revision'],
 				1, SVN_DISCOVER_CHANGED_PATHS);
 			if ($log === FALSE) return FALSE;
 

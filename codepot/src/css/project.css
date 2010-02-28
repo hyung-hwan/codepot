@@ -9,22 +9,21 @@
 	width: 25em;
 }
 
-#user_home_mainarea_sidebar_svn_commits_table {
+#user_home_mainarea_sidebar_log_table {
 	border-collapse: collapse;
 }
 
-#user_home_mainarea_sidebar_svn_commits_table tr.odd {
+#user_home_mainarea_sidebar_log_table tr.odd {
 	background-color: #bbccef;
 }
 
-#user_home_mainarea_sidebar_svn_commits_table tr.odd td {
+#user_home_mainarea_sidebar_log_table tr.odd td {
 	width: 1px;
 	white-space: nowrap;
 }
 
-#user_home_mainarea_sidebar_svn_commits_table tr.even {
+#user_home_mainarea_sidebar_log_table tr.even {
 	background-color: inherit;
-	font-size: 0.9em;
 	font-style: italic;
 }
 
@@ -86,20 +85,20 @@
 /*----------------------------------------------- 
  * project home view 
  *-----------------------------------------------*/
-#project_home_mainarea_sidebar_svn_commits_table {
+#project_home_mainarea_sidebar_log_table {
 	border-collapse: collapse;
 }
 
-#project_home_mainarea_sidebar_svn_commits_table tr.odd {
+#project_home_mainarea_sidebar_log_table tr.odd {
 	background-color: #bbccef;
 }
 
-#project_home_mainarea_sidebar_svn_commits_table tr.odd td {
+#project_home_mainarea_sidebar_log_table tr.odd td {
 	width: 1px;
 	white-space: nowrap;
 }
 
-#project_home_mainarea_sidebar_svn_commits_table tr.even {
+#project_home_mainarea_sidebar_log_table tr.even {
 	background-color: inherit;
 	//font-size: 0.9em;
 	font-style: italic;
@@ -120,6 +119,10 @@
 /*----------------------------------------------- 
  * project source folder view 
  *-----------------------------------------------*/
+#project_source_folder_sidebar_info pre {
+	white-space: pre-wrap;
+}
+
 #project_source_folder_mainarea_result {
 	overflow: auto;
 }
@@ -145,7 +148,7 @@
 	position: absolute;
 	top: 0;
 	right: 0;
-	width: 20em;
+	width: 22em;
 }
 
 #project_source_file_mainarea_result_info pre {
@@ -189,7 +192,7 @@
 	position: absolute;
 	top: 0;
 	right: 0;
-	width: 20em;
+	width: 22em;
 }
 
 #project_source_blame_mainarea_result_info pre {
@@ -266,6 +269,7 @@
 	background-color: inherit;
 	margin: 0;
 	margin-bottom: 1em;
+	white-space: pre-wrap;
 }
 
 #project_source_revision_mainarea_result_table td.M {

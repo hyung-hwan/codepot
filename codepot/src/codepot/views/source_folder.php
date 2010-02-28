@@ -30,15 +30,13 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<?php if ($revision >= 0): ?>
-	<div class="sidebar" id="project_source_folder_sidebar">
-	<div class="box">
-	<ul>
-	<li><?=$this->lang->line('Revision')?>: <?=$revision?></li>
-	</ul>
+
+<div class="sidebar" id="project_source_folder_sidebar">
+	<div class="box" id="project_source_folder_sidebar_info">
+		<div class="boxtitle"><?=$this->lang->line('Revision')?>: <?=$file['created_rev']?></div>
+		<pre><?=$file['logmsg']?></pre>
 	</div>
-	</div> <!-- project_source_folder_sidebar -->
-<?php endif; ?>
+</div> <!-- project_source_folder_sidebar -->
 
 
 <!---------------------------------------------------------------------------->

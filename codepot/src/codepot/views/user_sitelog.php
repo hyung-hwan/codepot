@@ -54,11 +54,21 @@ $this->load->view (
 	$rowclasses = array ('odd', 'even');
 	$rowcount = 0;
 
-	foreach ($sitelogs as $sitelog)
+	foreach ($log_entries as $log)
 	{
-		// TODO: use time... and inspect type then may use svn_time.
-		$date = substr($sitelog['svn_time'], 0, 10);
-		$time = substr($sitelog['svn_time'], 11, 5);
+		if ($log['type'] == 'code' && $log['action'] == 'commit')
+		{
+			$code_commit = $log['code-commit'];
+
+			$date = substr($code_commit['time'], 0, 10);
+			$time = substr($code_commit['time'], 11, 5);
+		}
+		else
+		{
+			$date = date ('Y-m-d', strtotime($log['createdon']));
+			$time = date ('h:i', strtotime($log['createdon']));
+		}
+
 		if ($curdate != $date)
 		{
 			print "<tr class='break'><td colspan=3 class='break'>&nbsp;</td></tr>";
@@ -73,32 +83,25 @@ $this->load->view (
 
 		print '<td class="projectid">';
 		print anchor (
-			"/source/file/{$sitelog['projectid']}/{$xdot}/{$sitelog['svn_rev']}", 
-			$sitelog['projectid']);
+			"/project/home/{$log['projectid']}",
+			$log['projectid']);
 		print '</td>';
 
 		print '<td class="details">';
 
-		if ($sitelog['type'] == 'svn-commit')
+		if ($log['type'] == 'code' && $log['action'] == 'commit')
 		{
 			print '<span class="description">';
 			print anchor (	
-				"/source/revision/{$sitelog['projectid']}/{$xdot}/{$sitelog['svn_rev']}", 
-				"r{$sitelog['svn_rev']}");
+				"/source/revision/{$log['projectid']}/{$xdot}/{$code_commit['rev']}", 
+				"r{$code_commit['rev']}");
 			print ' committed by ';
-			print htmlspecialchars ($sitelog['svn_author']);
+			print htmlspecialchars ($code_commit['author']);
 			print '</span>';
 
 			print '<pre class="message">';
-			print htmlspecialchars ($sitelog['svn_message']);
+			print htmlspecialchars ($code_commit['message']);
 			print '</pre>';
-			/*
-			print '<br />';
-			print '<span class="message">';
-			$sm = htmlspecialchars ($sitelog['svn_message']);
-			print str_replace (array ("\r\n", "\n", "\r"), '<br />', $sm);
-			print '</span>';
-			*/
 		}
 
 		print '</td>';
