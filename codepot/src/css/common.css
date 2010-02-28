@@ -316,9 +316,7 @@ pre.prettyprint .nocode a:hover {
 .content .sidebar {
 	font-size: 0.9em;
         float: right;
-        width: 20em;
-        //padding: 5px;
-        //margin-right: 2px;
+        width: 22em;
 }
 
 .content .sidebar .box {

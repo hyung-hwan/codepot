@@ -29,7 +29,7 @@ function show_projectbar ($con, $site, $project, $pageid, $ctxmenuitems)
 		$menuitems = array (
 			array ("project/home/{$project->id}", $con->lang->line('Overview')),
 			array ("wiki/home/{$project->id}", $con->lang->line('Wiki')),
-			array ("source/home/{$project->id}", $con->lang->line('Source')),
+			array ("source/home/{$project->id}", $con->lang->line('Code')),
 			array ("file/home/{$project->id}", $con->lang->line('Files'))
 		);
 

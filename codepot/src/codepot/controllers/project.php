@@ -45,7 +45,7 @@ class Project extends Controller
 		else
 		{
 			$svn_commits = $this->logs->getSvnCommits (
-				CODEPOT_MAX_SVN_COMMITS_IN_PROJECT, $projectid);
+				0, CODEPOT_MAX_SVN_COMMITS_IN_PROJECT, $projectid);
 			if ($svn_commits === FALSE)
 			{
 				$data['message'] = 'DATABASE ERROR';
