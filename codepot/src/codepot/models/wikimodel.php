@@ -45,6 +45,15 @@ class WikiModel extends Model
 		$this->db->set ('createdby', $userid);
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('wiki');
+
+                $this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'wiki');
+		$this->db->set ('action',    'create');
+		$this->db->set ('projectid', $wiki->projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $wiki->name);
+                $this->db->insert ('log');
+
 		$this->db->trans_complete ();
                 return $this->db->trans_status();
 	}
@@ -59,6 +68,15 @@ class WikiModel extends Model
 		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('wiki');
+
+                $this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'wiki');
+		$this->db->set ('action',    'update');
+		$this->db->set ('projectid', $wiki->projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $wiki->name);
+                $this->db->insert ('log');
+
 		$this->db->trans_complete ();
                 return $this->db->trans_status();
 	}
@@ -70,6 +88,15 @@ class WikiModel extends Model
 		$this->db->where ('projectid', $wiki->projectid);
 		$this->db->where ('name', $wiki->name);
 		$this->db->delete ('wiki');
+
+                $this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'wiki');
+		$this->db->set ('action',    'delete');
+		$this->db->set ('projectid', $wiki->projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $wiki->name);
+
+                $this->db->insert ('log');
 		$this->db->trans_complete ();
                 return $this->db->trans_status();
 	}

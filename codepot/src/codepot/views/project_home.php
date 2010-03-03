@@ -91,30 +91,78 @@ $this->load->view (
 	$xdot = $this->converter->AsciiToHex ('.');
 	foreach ($log_entries as $log)
 	{
-		if ($log['type'] == 'code' && $log['action'] == 'commit')
+		if ($log['type'] == 'code')
 		{
-			$x = $log['code-commit'];
+			$x = $log['message'];
 
 			print '<tr class="odd">';
 			print '<td>';
-			print substr($x['time'], 0, 10);
+			print substr($x['time'], 5, 5);
 			print '</td>';
-
 			print '<td>';
 			print anchor (	
 				"/source/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
-				$x['rev']);
+				"r{$x['rev']}");
 			print '</td>';
-			print '<td>';
-			print htmlspecialchars ($x['author']);
-			print '</td>';
+
 			print '</tr>';
 
 			print '<tr class="even">';
-			print '<td colspan=3>';
+
+			print '<td></td>';
+			print '<td colspan=1>';
+			print '<span class="description">';
+			$fmt = $this->lang->line (
+				'MSG_LOG_'.strtoupper($log['action']).'_BY');
+			print htmlspecialchars (sprintf($fmt, $x['author']));
+			print '</span>';
+
+			print '<pre class="message">';
 			$sm = strtok (trim ($x['message']), "\r\n");
 			print htmlspecialchars ($sm);
+			print '</pre>';
 			print '</td>';
+			print '</tr>';
+		}
+		else
+		{
+			print '<tr class="odd">';
+			print '<td>';
+			print date ('m-d', strtotime($log['createdon']));
+			print '</td>';
+
+			print '<td>';
+			$uri = '';
+			if ($log['type'] == 'project')
+			{
+				$uri = "/project/home/{$log['projectid']}";
+			}
+			else if ($log['type'] == 'wiki' ||
+			         $log['type'] == 'file')
+			{
+				$hex = $this->converter->AsciiToHex ($log['message']);
+				$uri = "/{$log['type']}/show/{$log['projectid']}/{$hex}";
+			}
+
+			$trimmed = preg_replace("/(.{20}).+/u", "$1…", $log['message']);
+			if ($uri != '')
+				print anchor ($uri, htmlspecialchars($trimmed));
+			else
+				print htmlspecialchars($trimmed);
+			print '</td>';
+
+			print '</tr>';
+
+			print '<tr class="even">';
+			print '<td></td>';
+			print '<td colspan=1>';
+			print '<span class="description">';
+			$fmt = $this->lang->line (
+				'MSG_LOG_'.strtoupper($log['action']).'_BY');
+			print htmlspecialchars (sprintf($fmt, $log['userid']));
+			print '</span>';
+			print '</td>';
+
 			print '</tr>';
 		}
 	}

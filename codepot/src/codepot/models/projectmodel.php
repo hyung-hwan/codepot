@@ -78,6 +78,14 @@ class ProjectModel extends Model
 			$this->db->insert ('project_membership');
 		}
 
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'project');
+		$this->db->set ('action',    'create');
+		$this->db->set ('projectid', $project->id);
+                $this->db->set ('userid',    $userid);
+                $this->db->set ('message',   $project->name);
+		$this->db->insert ('log');
+
 		if ($priority <= 0 || $this->db->trans_status() === FALSE)
 		{
 			$this->db->trans_rollback ();
@@ -140,6 +148,14 @@ class ProjectModel extends Model
 			$this->db->insert ('project_membership');
 		}
 
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'project');
+		$this->db->set ('action',    'update');
+		$this->db->set ('projectid', $project->id);
+                $this->db->set ('userid',    $userid);
+                $this->db->set ('message',   $project->name);
+		$this->db->insert ('log');
+
 		if ($priority <= 0 || $this->db->trans_status() === FALSE)
 		{
 			$this->db->trans_rollback ();
@@ -159,6 +175,14 @@ class ProjectModel extends Model
 
 		$this->db->where ('id', $project->id);
 		$this->db->delete ('project');
+
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'project');
+		$this->db->set ('action',    'delete');
+		$this->db->set ('projectid', $project->id);
+                $this->db->set ('userid',    $userid);
+                $this->db->set ('message',   $project->name);
+		$this->db->insert ('log');
 
 		if ($this->db->trans_status() === FALSE)
 		{

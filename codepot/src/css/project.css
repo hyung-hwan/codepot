@@ -6,7 +6,7 @@
  * user home view 
  *-----------------------------------------------*/
 #user_home_mainarea_sidebar {
-	width: 25em;
+	width: 24em;
 }
 
 #user_home_mainarea_sidebar_log_table {
@@ -24,7 +24,17 @@
 
 #user_home_mainarea_sidebar_log_table tr.even {
 	background-color: inherit;
+}
+
+#user_home_mainarea_sidebar_log_table tr.even .description {
 	font-style: italic;
+}
+
+#user_home_mainarea_sidebar_log_table tr.even pre.message {
+	border: 0;
+	margin: 1px;
+	background-color: inherit;
+	white-space: pre-wrap;
 }
 
 /*----------------------------------------------- 
@@ -66,7 +76,7 @@
 }
 
 #user_sitelog_mainarea_result_table td.details .description {
-	font-style: italic;
+	/*font-style: italic;*/
 }
 
 #user_sitelog_mainarea_result_table td.details pre.message {
@@ -100,8 +110,19 @@
 
 #project_home_mainarea_sidebar_log_table tr.even {
 	background-color: inherit;
-	//font-size: 0.9em;
+	/*font-size: 0.9em;*/
 	font-style: italic;
+}
+
+#project_home_mainarea_sidebar_log_table tr.even .description {
+	/*font-style: italic;*/
+}
+
+#project_home_mainarea_sidebar_log_table tr.even pre.message {
+	border: 0;
+	margin: 1px;
+	background-color: inherit;
+	white-space: pre-wrap;
 }
 
 /*----------------------------------------------- 
@@ -376,3 +397,14 @@
 	margin: 0;
 }
 
+/*----------------------------------------------- 
+ * project source diff view 
+ *-----------------------------------------------*/
+#project_wiki_show_textarea table th {
+	background-color: #bbccdd;
+}
+
+#project_wiki_show_textarea table td {
+	vertical-align: top;
+	border-bottom: 1px dashed #bbccdd;
+}

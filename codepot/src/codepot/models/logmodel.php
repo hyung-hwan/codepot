@@ -41,7 +41,6 @@ class LogModel extends Model
 		$commits = array ();
 		foreach ($result as $row)
 		{
-			list($type,$repo,$rev) = split('[,]', $row->message);
 
 			/* $row->project must be equal to $repo */
 			$commits[$count]['createdon'] = $row->createdon;
@@ -50,27 +49,36 @@ class LogModel extends Model
 			$commits[$count]['projectid'] = $row->projectid;
 			$commits[$count]['userid'] = $row->userid;
 
-			$tmp['type'] = $type;
-			$tmp['repo'] = $repo;
-			$tmp['rev'] = $rev;
-
-			$log = @svn_log (
-				'file:///'.CODEPOT_SVNREPO_DIR."/{$repo}",
-				$rev, $rev, 1,SVN_DISCOVER_CHANGED_PATHS);
-			if ($log === FALSE || count($log) < 1)
+			if ($row->type == 'code')
 			{
-				$tmp['time'] = '';
-				$tmp['author'] = '';
-				$tmp['message'] = '';
+				list($type,$repo,$rev) = split('[,]', $row->message);
+				$tmp['type'] = $type;
+				$tmp['repo'] = $repo;
+				$tmp['rev'] = $rev;
+
+				$log = @svn_log (
+					'file:///'.CODEPOT_SVNREPO_DIR."/{$repo}",
+					$rev, $rev, 1,SVN_DISCOVER_CHANGED_PATHS);
+				if ($log === FALSE || count($log) < 1)
+				{
+					$tmp['time'] = '';
+					$tmp['author'] = '';
+					$tmp['message'] = '';
+				}
+				else
+				{
+					$tmp['time'] = $log[0]['date'];
+					$tmp['author'] = $log[0]['author'];
+					$tmp['message'] = $log[0]['msg'];
+				}
+	
+				$commits[$count]['message'] = $tmp;
 			}
 			else
 			{
-				$tmp['time'] = $log[0]['date'];
-				$tmp['author'] = $log[0]['author'];
-				$tmp['message'] = $log[0]['msg'];
+				$commits[$count]['message'] = $row->message;
 			}
-	
-			$commits[$count][$row->type.'-'.$row->action] = $tmp;
+
 			$count++;
 		}	
 	

@@ -56,12 +56,12 @@ $this->load->view (
 
 	foreach ($log_entries as $log)
 	{
-		if ($log['type'] == 'code' && $log['action'] == 'commit')
+		if ($log['type'] == 'code')
 		{
-			$code_commit = $log['code-commit'];
+			$code = $log['message'];
 
-			$date = substr($code_commit['time'], 0, 10);
-			$time = substr($code_commit['time'], 11, 5);
+			$date = substr($code['time'], 0, 10);
+			$time = substr($code['time'], 11, 5);
 		}
 		else
 		{
@@ -71,8 +71,8 @@ $this->load->view (
 
 		if ($curdate != $date)
 		{
-			print "<tr class='break'><td colspan=3 class='break'>&nbsp;</td></tr>";
-			print "<tr class='head'><td colspan=3 class='date'>$date</td></tr>";
+			print "<tr class='break'><td colspan=4 class='break'>&nbsp;</td></tr>";
+			print "<tr class='head'><td colspan=4 class='date'>$date</td></tr>";
 			$curdate = $date;
 			$rowcount = 0;
 		}
@@ -82,26 +82,73 @@ $this->load->view (
 		print '<td class="time">' . $time . '</td>';
 
 		print '<td class="projectid">';
-		print anchor (
-			"/project/home/{$log['projectid']}",
-			$log['projectid']);
-		print '</td>';
-
-		print '<td class="details">';
-
 		if ($log['type'] == 'code' && $log['action'] == 'commit')
 		{
-			print '<span class="description">';
+			print anchor (
+				"/source/file/{$code['repo']}/{$xdot}/{$code['rev']}",
+				$log['projectid']);
+		}
+		else
+		{
+			print anchor (
+				"/project/home/{$log['projectid']}",
+				$log['projectid']);
+		}
+		print '</td>';
+
+
+		if ($log['type'] == 'code')
+		{
+			print '<td class="obejct">';
 			print anchor (	
-				"/source/revision/{$log['projectid']}/{$xdot}/{$code_commit['rev']}", 
-				"r{$code_commit['rev']}");
-			print ' committed by ';
-			print htmlspecialchars ($code_commit['author']);
+				"/source/revision/{$log['projectid']}/{$xdot}/{$code['rev']}", 
+				"r{$code['rev']}");
+			print '</td>';
+
+			print '<td class="details">';
+			print '<span class="description">';
+			$fmt = $this->lang->line (
+				'MSG_LOG_'.strtoupper($log['action']).'_BY');
+			print htmlspecialchars (sprintf($fmt, $code['author']));
 			print '</span>';
 
 			print '<pre class="message">';
-			print htmlspecialchars ($code_commit['message']);
+			print htmlspecialchars ($code['message']);
 			print '</pre>';
+		}
+		else
+		{
+			print '<td class="obejct">';
+
+			$uri = '';
+			if ($log['type'] == 'project')
+			{
+				$uri = "/project/home/{$log['projectid']}";
+			}
+			else if ($log['type'] == 'wiki' || 
+			         $log['type'] == 'file')
+			{
+				$hex = $this->converter->AsciiToHex ($log['message']);
+				$uri = "/{$log['type']}/show/{$log['projectid']}/{$hex}";
+			}
+
+			$trimmed = preg_replace("/(.{10}).+/u", "$1…", $log['message']);
+			if ($uri != '')
+			{
+				print anchor (
+					$uri,
+					htmlspecialchars ($trimmed),
+					'title="'.htmlspecialchars ($log['message']).'"');
+			}
+			else print htmlspecialchars ($trimmed);
+			print '</td>';
+
+			print '<td class="details">';
+			print '<span class="description">';
+			$fmt = $this->lang->line (
+				'MSG_LOG_'.strtoupper($log['action']).'_BY');
+			print htmlspecialchars (sprintf($fmt, $log['userid']));
+			print '</span>';
 		}
 
 		print '</td>';
@@ -109,7 +156,7 @@ $this->load->view (
 	}
 ?>
 <tr class='foot'>
-<td colspan=3 class='pages'><?= $page_links ?></td>
+<td colspan=4 class='pages'><?= $page_links ?></td>
 </table>
 
 </div> <!-- user_sitelog_mainarea_result -->

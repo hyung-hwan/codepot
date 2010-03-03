@@ -47,8 +47,16 @@ class FileModel extends Model
 		$this->db->set ('createdby', $userid);
 		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
 		$this->db->set ('updatedby', $userid);
-
 		$this->db->insert ('file');
+
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'file');
+		$this->db->set ('action',    'create');
+		$this->db->set ('projectid', $file->projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $file->name);
+		$this->db->insert ('log');
+
 		$this->db->trans_complete ();
                 return $this->db->trans_status();
 	}
@@ -63,8 +71,16 @@ class FileModel extends Model
 		$this->db->set ('description', $file->description);
 		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
 		$this->db->set ('updatedby', $userid);
-
 		$this->db->update ('file');
+
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'file');
+		$this->db->set ('action',    'update');
+		$this->db->set ('projectid', $file->projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $file->name);
+		$this->db->insert ('log');
+
 		$this->db->trans_complete ();
                 return $this->db->trans_status();
 	}
@@ -94,6 +110,14 @@ class FileModel extends Model
 		$this->db->where ('projectid', $file->projectid);
 		$this->db->where ('name', $file->name);
 		$this->db->delete ('file');
+
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'file');
+		$this->db->set ('action',    'delete');
+		$this->db->set ('projectid', $file->projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $file->name);
+		$this->db->insert ('log');
 	
 		if ($this->db->trans_status() === FALSE)
 		{

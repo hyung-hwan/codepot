@@ -48,7 +48,9 @@ class Source extends Controller
                 }
 		else if ($project === NULL)
 		{
-			$data['message'] = "NO SUCH PROJECT - $projectid";
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -120,7 +122,9 @@ class Source extends Controller
                 }
 		else if ($project === NULL)
 		{
-			$data['message'] = "NO SUCH PROJECT - $projectid";
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -179,7 +183,9 @@ class Source extends Controller
                 }
 		else if ($project === NULL)
 		{
-			$data['message'] = "NO SUCH PROJECT - $projectid";
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -228,7 +234,9 @@ class Source extends Controller
                 }
 		else if ($project === NULL)
 		{
-			$data['message'] = "NO SUCH PROJECT - $projectid";
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -276,7 +284,9 @@ class Source extends Controller
                 }
 		else if ($project === NULL)
 		{
-			$data['message'] = "NO SUCH PROJECT - $projectid";
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else

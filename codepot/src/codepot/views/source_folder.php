@@ -99,7 +99,7 @@ $this->load->view (
 
 	if (count($file['content']) <= 0)
 	{
-		 print $this->lang->line('MSG_NO_SOURCE_AVAIL');
+		 print $this->lang->line('MSG_NO_SOURCE_CODE_AVAIL');
 	}
 	else 
 	{
