@@ -84,7 +84,7 @@ $this->load->view (
 
 <div class="box">
 <div class="boxtitle">
-<?= anchor ("source/history/{$project->id}", $this->lang->line('Change log')) ?>
+<?= $this->lang->line('Change log') ?>
 </div>
 <table id="project_home_mainarea_sidebar_log_table">
 <?php 
@@ -96,10 +96,10 @@ $this->load->view (
 			$x = $log['message'];
 
 			print '<tr class="odd">';
-			print '<td>';
+			print '<td class="date">';
 			print substr($x['time'], 5, 5);
 			print '</td>';
-			print '<td>';
+			print '<td class="object">';
 			print anchor (	
 				"/source/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
 				"r{$x['rev']}");
@@ -110,7 +110,7 @@ $this->load->view (
 			print '<tr class="even">';
 
 			print '<td></td>';
-			print '<td colspan=1>';
+			print '<td colspan=1 class="details">';
 			print '<span class="description">';
 			$fmt = $this->lang->line (
 				'MSG_LOG_'.strtoupper($log['action']).'_BY');
@@ -127,11 +127,11 @@ $this->load->view (
 		else
 		{
 			print '<tr class="odd">';
-			print '<td>';
+			print '<td class="date">';
 			print date ('m-d', strtotime($log['createdon']));
 			print '</td>';
 
-			print '<td>';
+			print '<td class="object">';
 			$uri = '';
 			if ($log['type'] == 'project')
 			{
@@ -155,7 +155,7 @@ $this->load->view (
 
 			print '<tr class="even">';
 			print '<td></td>';
-			print '<td colspan=1>';
+			print '<td colspan=1 class="details">';
 			print '<span class="description">';
 			$fmt = $this->lang->line (
 				'MSG_LOG_'.strtoupper($log['action']).'_BY');

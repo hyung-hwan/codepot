@@ -55,10 +55,10 @@ $lang['Wiki'] = 'Wiki';
 $lang['Wikis'] = 'Wikis';
 
 
-$lang['MSG_LOG_COMMIT_BY'] = 'committed by %s';
-$lang['MSG_LOG_CREATE_BY'] = 'created by %s';
-$lang['MSG_LOG_DELETE_BY'] = 'deleted by %s';
-$lang['MSG_LOG_UPDATE_BY'] = 'updated by %s';
+$lang['MSG_LOG_COMMIT_BY'] = 'Committed by %s';
+$lang['MSG_LOG_CREATE_BY'] = 'Created by %s';
+$lang['MSG_LOG_DELETE_BY'] = 'Deleted by %s';
+$lang['MSG_LOG_UPDATE_BY'] = 'Updated by %s';
 
 $lang['MSG_NO_DIFF'] = 'No difference found';
 $lang['MSG_NO_FILES_AVAIL'] = 'No files available';

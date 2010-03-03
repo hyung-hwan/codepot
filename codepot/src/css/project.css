@@ -18,8 +18,11 @@
 }
 
 #user_home_mainarea_sidebar_log_table tr.odd td {
-	width: 1px;
 	white-space: nowrap;
+}
+
+#user_home_mainarea_sidebar_log_table tr.odd td.date {
+	width: 1px;
 }
 
 #user_home_mainarea_sidebar_log_table tr.even {
@@ -104,8 +107,11 @@
 }
 
 #project_home_mainarea_sidebar_log_table tr.odd td {
-	width: 1px;
 	white-space: nowrap;
+}
+
+#project_home_mainarea_sidebar_log_table tr.odd td.date {
+	width: 1px;
 }
 
 #project_home_mainarea_sidebar_log_table tr.even {
