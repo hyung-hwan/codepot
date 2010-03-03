@@ -5,8 +5,15 @@ function show_projectbar ($con, $site, $project, $pageid, $ctxmenuitems)
 {
 	print "<div class='title'>";
 
-	if (isset($project)) print $project->name;
-	else if (isset($site) && $site->name != '') print htmlspecialchars($site->name);
+	if (isset($project)) 
+	{
+		if (strcasecmp ($project->name, $project->id) == 0)
+			print $project->name;
+		else
+			print "{$project->name} ({$project->id})";
+	}
+	else if (isset($site) && $site->name != '') 
+		print htmlspecialchars($site->name);
 	else print htmlspecialchars(CODEPOT_DEFAULT_BANNER);
 
 	print "</div>";

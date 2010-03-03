@@ -54,9 +54,16 @@ $lang['Username'] = 'Username';
 $lang['Wiki'] = 'Wiki';
 $lang['Wikis'] = 'Wikis';
 
+
+$lang['MSG_LOG_COMMIT_BY'] = 'committed by %s';
+$lang['MSG_LOG_CREATE_BY'] = 'created by %s';
+$lang['MSG_LOG_DELETE_BY'] = 'deleted by %s';
+$lang['MSG_LOG_UPDATE_BY'] = 'updated by %s';
+
 $lang['MSG_NO_DIFF'] = 'No difference found';
 $lang['MSG_NO_FILES_AVAIL'] = 'No files available';
-$lang['MSG_NO_SOURCE_AVAIL'] = 'No source available';
+$lang['MSG_NO_SOURCE_CODE_AVAIL'] = 'No source code available';
+$lang['MSG_NO_SUCH_PROJECT'] = 'No such project';
 $lang['MSG_NO_WIKIS_AVAIL'] = 'No wiki pages available';
 $lang['MSG_SURE_TO_DELETE_THIS'] = "I'm sure to delete this";
 ?>

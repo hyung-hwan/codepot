@@ -132,7 +132,7 @@ class Site extends Controller
 		else if ($site === NULL)
 		{
 			$data['login'] = $login;
-			$data['message'] = "NO SUCH PROJECT - $siteid";
+			$data['message'] = "NO SUCH SITE - $siteid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if (!$login['sysadmin?'])
@@ -224,7 +224,7 @@ class Site extends Controller
 		else if ($site === NULL)
 		{
 			$data['login'] = $login;
-			$data['message'] = "NO SUCH PROJECT - $siteid";
+			$data['message'] = "NO SUCH SITE - $siteid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if (!$login['sysadmin?'])
