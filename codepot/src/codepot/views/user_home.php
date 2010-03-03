@@ -23,7 +23,7 @@ function render_wiki()
 <title><?=htmlspecialchars($caption)?></title>
 </head>
 
-<body  onLoad="render_wiki()">
+<body onLoad="render_wiki()">
 
 <div class="content" id="user_home_content">
 
@@ -93,15 +93,18 @@ foreach ($latest_projects as $project)
 			$x = $log['message'];
 
 			print '<tr class="odd">';
-			print '<td>';
+			print '<td class="date">';
 			print substr($x['time'], 5, 5);
 			print '</td>';
-			print '<td>';
+			print '<td class="projectid">';
+			/*
 			print anchor (
 				"/source/file/{$x['repo']}/{$xdot}/{$x['rev']}", 
 				$x['repo']);
+			*/
+			print anchor ("/project/home/{$x['repo']}", $x['repo']);
 			print '</td>';
-			print '<td>';
+			print '<td class="object">';
 			print anchor (	
 				"/source/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
 				"r{$x['rev']}");
@@ -112,7 +115,7 @@ foreach ($latest_projects as $project)
 			print '<tr class="even">';
 
 			print '<td></td>';
-			print '<td colspan=2>';
+			print '<td colspan=2 class="details">';
 			print '<span class="description">';
 			$fmt = $this->lang->line (
 				'MSG_LOG_'.strtoupper($log['action']).'_BY');
@@ -129,15 +132,15 @@ foreach ($latest_projects as $project)
 		else
 		{
 			print '<tr class="odd">';
-			print '<td>';
+			print '<td class="date">';
 			print date ('m-d', strtotime($log['createdon']));
 			print '</td>';
 
-			print '<td>';
+			print '<td class="project">';
 			print anchor ("/project/home/{$log['projectid']}", $log['projectid']);
 			print '</td>';
 
-			print '<td>';
+			print '<td class="object">';
 			$uri = '';
 			if ($log['type'] == 'project')
 			{
@@ -161,7 +164,7 @@ foreach ($latest_projects as $project)
 
 			print '<tr class="even">';
 			print '<td></td>';
-			print '<td colspan=2>';
+			print '<td colspan=2 class="details">';
 			print '<span class="description">';
 			$fmt = $this->lang->line (
 				'MSG_LOG_'.strtoupper($log['action']).'_BY');
