@@ -40,7 +40,9 @@ class Wiki extends Controller
                 }
 		else if ($project === NULL)
 		{
-			$data['message'] = "NO SUCH PROJECT - $projectid";
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -80,21 +82,36 @@ class Wiki extends Controller
 		}
 		else if ($project === NULL)
 		{
-			$data['message'] = "NO SUCH PROJECT - $projectid";
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
 		{
 			if ($name == '__PROJECT_HOME__')
 			{
-				redirect ('project/home/' . $projectid);
+				redirect ("project/home/{$projectid}");
 			}
 			else if ($name == '__WIKI_HOME__')
 			{
-				redirect ('wiki/home/' . $projectid . '/' . $name);
+				redirect ("wiki/home/{$projectid}");
 			}
 			else
 			{
+				$ex = explode (':', $name);
+				if (count($ex) == 2) 
+				{
+					if ($ex[0] == '__PROJECT_HOME__')
+					{
+						redirect ("project/home/{$ex[1]}");
+					}
+					else if ($ex[0] == '__WIKI_HOME__')
+					{
+						redirect ("wiki/home/{$ex[1]}");
+					}
+				}
+
 				$wiki = $this->wikis->get ($login['id'], $project, $name);
 				if ($wiki === FALSE)
 				{
@@ -103,7 +120,7 @@ class Wiki extends Controller
 				}
 				else if ($wiki === NULL)
 				{
-					redirect ('wiki/create/'. $projectid . '/' . 
+					redirect ("wiki/create/{$projectid}/" . 
 						$this->converter->AsciiToHex($name));
 				}
 				else
@@ -137,7 +154,9 @@ class Wiki extends Controller
 		}
 		else if ($project === NULL)
 		{
-			$data['message'] = "NO SUCH PROJECT - $projectid";
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if (!$login['sysadmin?'] && 
@@ -263,7 +282,9 @@ class Wiki extends Controller
 		}
 		else if ($project === NULL)
 		{
-			$data['message'] = "NO SUCH PROJECT - $projectid";
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if (!$login['sysadmin?'] && 
