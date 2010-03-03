@@ -82,18 +82,7 @@ $this->load->view (
 		print '<td class="time">' . $time . '</td>';
 
 		print '<td class="projectid">';
-		if ($log['type'] == 'code' && $log['action'] == 'commit')
-		{
-			print anchor (
-				"/source/file/{$code['repo']}/{$xdot}/{$code['rev']}",
-				$log['projectid']);
-		}
-		else
-		{
-			print anchor (
-				"/project/home/{$log['projectid']}",
-				$log['projectid']);
-		}
+		print anchor ("/project/home/{$log['projectid']}", $log['projectid']);
 		print '</td>';
 
 
