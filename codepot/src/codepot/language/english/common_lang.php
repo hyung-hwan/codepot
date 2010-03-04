@@ -15,6 +15,7 @@ $lang['Difference'] = 'Diff';
 $lang['Directory'] = 'Directory';
 $lang['Download'] = 'Download';
 $lang['Edit'] = 'Edit';
+$lang['Error'] = 'Error';
 $lang['Head revision'] = 'Head revision';
 $lang['History'] = 'History';
 $lang['Home'] = 'Home';
@@ -64,6 +65,7 @@ $lang['MSG_NO_DIFF'] = 'No difference found';
 $lang['MSG_NO_FILES_AVAIL'] = 'No files available';
 $lang['MSG_NO_SOURCE_CODE_AVAIL'] = 'No source code available';
 $lang['MSG_NO_SUCH_PROJECT'] = 'No such project';
+$lang['MSG_NO_SUCH_WIKI_PAGE'] = 'No such wiki page';
 $lang['MSG_NO_WIKIS_AVAIL'] = 'No wiki pages available';
 $lang['MSG_SURE_TO_DELETE_THIS'] = "I'm sure to delete this";
 ?>

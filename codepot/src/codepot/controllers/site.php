@@ -3,8 +3,11 @@
 class Site extends Controller 
 {
 	var $VIEW_ERROR = 'error';
+	var $VIEW_HOME = 'site_home';
 	var $VIEW_EDIT = 'site_edit';
 	var $VIEW_DELETE = 'site_delete';
+	var $VIEW_LOG = 'log';
+        var $VIEW_PROJECT_LIST = 'project_list';
 
 	function Site ()
 	{
@@ -17,6 +20,58 @@ class Site extends Controller
 
 		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG);
+	}
+
+	function index ()
+	{
+		return $this->home ();
+	}
+
+	function home ()
+	{
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ('main/signin');
+
+		$this->load->model ('SiteModel', 'sites');
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('LogModel', 'logs');
+
+                $site = $this->sites->get (CODEPOT_DEFAULT_SITEID);
+		if ($site === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+		if ($site === NULL) $site = $this->sites->getDefault ();
+
+		$latest_projects = $this->projects->getLatestProjects ($login['id'], CODEPOT_MAX_LATEST_PROJECTS);
+		if ($latest_projects === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$log_entries = $this->logs->getEntries (0, CODEPOT_MAX_LOGS_IN_SITE_HOME);
+		if ($log_entries === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$data['login'] = $login;
+		$data['latest_projects'] = $latest_projects;
+		$data['log_entries'] = $log_entries;
+		$data['site'] = $site;
+		//$data['user_name'] = '';
+		//$data['user_pass'] = '';
+		$this->load->view ($this->VIEW_HOME, $data);
 	}
 
 	function _edit_site ($site, $mode, $login)
@@ -65,8 +120,8 @@ class Site extends Controller
 				}
 				else
 				{
-					//redirect ('user/home/' . $site->id);
-					redirect ('user/home');
+					//redirect ('site/home/' . $site->id);
+					redirect ('site/home');
 				}
 			}
 			else
@@ -177,16 +232,16 @@ class Site extends Controller
 					else 
 					{
 						// the site has been deleted successfully.
-						// go back to the user home.	
-						redirect ('user/home');
+						// go back to the site home.	
+						redirect ('site/home');
 					}
 				}
 				else 
 				{
 					// the confirm checkbox is not checked.
 					// go back to the site home page.
-					//redirect ('user/home/' . $site->id);
-					redirect ('user/home');
+					//redirect ('site/home/' . $site->id);
+					redirect ('site/home');
 				}
 			}
 			else
@@ -238,6 +293,108 @@ class Site extends Controller
 			$this->_delete_site ($site, $login);
 		}
 	}
+
+	function log ($offset = 0)
+	{
+		$login = $this->login->getUser ();
+
+		$this->load->library ('pagination');
+		$this->load->model ('LogModel', 'logs');
+		
+		$num_log_entries = $this->logs->getNumEntries ();
+		if ($num_log_entries === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$pagecfg['base_url'] = site_url() . '/site/log/';
+		$pagecfg['total_rows'] = $num_log_entries;
+		$pagecfg['per_page'] = CODEPOT_MAX_LOGS_PER_PAGE; 
+		$pagecfg['uri_segment'] = 3;
+
+		$log_entries = $this->logs->getEntries ($offset, $pagecfg['per_page']);
+		if ($log_entries === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+
+		$this->pagination->initialize ($pagecfg);
+
+		$data['login'] = $login;
+		$data['log_entries'] = $log_entries;
+		$data['page_links'] = $this->pagination->create_links ();
+
+		$this->load->view ($this->VIEW_LOG, $data);
+	}
+
+	function projectlist ()
+	{
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ('main/signin');
+
+		$this->load->model ('ProjectModel', 'projects');
+
+		$projects = $this->projects->getMyProjects ($login['id']);
+		$other_projects = $this->projects->getOtherProjects ($login['id']);
+
+		if ($projects === FALSE || $other_projects === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			$data['login'] = $login;
+			$data['projects'] = $projects;
+			$data['other_projects'] = $other_projects;
+			$this->load->view ($this->VIEW_PROJECT_LIST, $data);
+		}
+	}
+
+	function preference ()
+	{
+		$login = $this->login->getUser();
+		if ($login['id'] == '') redirect ('main/signin');
+
+		$this->load->view (	
+			$this->VIEW_ERROR, 
+			array (
+				'login' => $login,
+				'message' => 'USER PREFERENCE NOT SUPPORTED YET'
+			)
+		);
+	}
+
+	function admin ()
+	{
+		$login = $this->login->getUser();
+		if ($login['id'] == '') redirect ('main/signin');
+
+		if ($login['sysadmin?'])
+		{
+			echo "...Site Administration...";
+		}
+		else
+		{
+			$this->load->view (	
+				$this->VIEW_ERROR, 
+				array (
+					'login' => $login,
+					'message' => 'NO PERMISSION'
+				)
+			);
+		}
+	}
+
 }
 
 ?>

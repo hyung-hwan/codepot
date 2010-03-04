@@ -44,7 +44,7 @@ class Main extends Controller
 				else
 				{
 					if ($user_url != "") redirect ($user_url);
-					else redirect ('user/home');
+					else redirect ('site/home');
 				}
 			}
 			else
@@ -74,7 +74,7 @@ class Main extends Controller
 	{
 		$this->login->deauthenticate ();
 		if ($url != "") redirect ($this->converter->HexToAscii($url));
-		else redirect ('user/home');
+		else redirect ('site/home');
 	}
 
 }

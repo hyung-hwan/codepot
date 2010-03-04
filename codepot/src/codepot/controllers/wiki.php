@@ -22,7 +22,7 @@ class Wiki extends Controller
 
 	}
 
-	function home ($projectid = "")
+	function home ($projectid = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('WikiModel', 'wikis');
@@ -62,7 +62,7 @@ class Wiki extends Controller
 		}
 	}
 
-	function show ($projectid, $name)
+	function _show_wiki ($projectid, $name, $create)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('WikiModel', 'wikis');
@@ -71,6 +71,13 @@ class Wiki extends Controller
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ('main/signin');
 		$data['login'] = $login;
+
+		if ($name == '')
+		{
+			$data['message'] = 'INVALID PARAMETERS';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
 
 		$name = $this->converter->HexToAscii ($name);
 
@@ -120,8 +127,18 @@ class Wiki extends Controller
 				}
 				else if ($wiki === NULL)
 				{
-					redirect ("wiki/create/{$projectid}/" . 
-						$this->converter->AsciiToHex($name));
+					if ($create)
+					{
+						redirect ("wiki/create/{$projectid}/" . 
+							$this->converter->AsciiToHex($name));
+					}
+					else
+					{
+						$data['message'] = 
+							$this->lang->line('MSG_NO_SUCH_WIKI_PAGE') . 
+							" - {$name}";
+						$this->load->view ($this->VIEW_ERROR, $data);
+					}
 				}
 				else
 				{
@@ -131,6 +148,16 @@ class Wiki extends Controller
 				}
 			}
 		}
+	}
+
+	function show ($projectid = '' , $name = '')
+	{
+		$this->_show_wiki ($projectid, $name, TRUE);
+	}
+
+	function show_r ($projectid = '' , $name = '')
+	{
+		$this->_show_wiki ($projectid, $name, FALSE);
 	}
 
 	function _edit_wiki ($projectid, $name, $mode)
@@ -228,7 +255,9 @@ class Wiki extends Controller
 					}
 					else if ($wiki == NULL)
 					{
-						$data['message'] = "NO SUCH WIKI PAGE - $name";
+						$data['message'] = 
+							$this->lang->line('MSG_NO_SUCH_WIKI_PAGE') . 
+							" - {$name}";
 						$this->load->view ($this->VIEW_ERROR, $data);
 					}
 					else
@@ -251,17 +280,17 @@ class Wiki extends Controller
 		}
 	}
 
-	function create ($projectid, $name = "")
+	function create ($projectid = '', $name = '')
 	{
-		return $this->_edit_wiki ($projectid, $name, "create");
+		return $this->_edit_wiki ($projectid, $name, 'create');
 	}
 
-	function update ($projectid, $name)
+	function update ($projectid = '', $name = '')
 	{
-		return $this->_edit_wiki ($projectid, $name, "update");
+		return $this->_edit_wiki ($projectid, $name, 'update');
 	}
 
-	function delete ($projectid, $name)
+	function delete ($projectid = '', $name = '')
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
@@ -326,12 +355,12 @@ class Wiki extends Controller
 						}
 						else
 						{
-							redirect ('wiki/home/' . $project->id);
+							redirect ("wiki/home/{$project->id}");
 						}
 					}
 					else 
 					{
-						redirect ('wiki/show/' . $project->id . '/' . 
+						redirect ("wiki/show/{$project->id}/" . 
 							$this->converter->AsciiToHex($wiki->name));
 					}
 				}
@@ -352,7 +381,9 @@ class Wiki extends Controller
 				}
 				else if ($wiki === NULL)
 				{
-					$data['message'] = "NO SUCH WIKI PAGE - $name";
+					$data['message'] = 
+						$this->lang->line('MSG_NO_SUCH_WIKI_PAGE') . 
+						" - {$name}";
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 				else

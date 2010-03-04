@@ -16,8 +16,8 @@
 	</div>
 
 	<div class="boxa">
-        <?= anchor ('user/home', $this->lang->line('Home')) ?>
-        <?= anchor ('user/projectlist', $this->lang->line('Projects')) ?>
+        <?= anchor ('site/home', $this->lang->line('Home')) ?>
+        <?= anchor ('site/projectlist', $this->lang->line('Projects')) ?>
 	</div>
 </div>
 
