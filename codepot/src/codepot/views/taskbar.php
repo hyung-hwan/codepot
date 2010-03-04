@@ -8,7 +8,7 @@ function show_taskbar ($con, $loginid, $issysadmin)
 
 	if (isset($loginid) && $loginid != '')
 	{
-		print anchor ('user/preference', htmlspecialchars($loginid));
+		print anchor ('site/preference', htmlspecialchars($loginid));
 
 		$hex = $con->converter->AsciiToHex (current_url());
 		print anchor ("main/signout/{$hex}", $con->lang->line('Sign out'));
@@ -37,10 +37,10 @@ function show_taskbar ($con, $loginid, $issysadmin)
 	print '</div>';
 
 	print '<div class="boxa">';
-	print anchor ('user/home', $con->lang->line('Home'));
-	print anchor ('user/projectlist', $con->lang->line('Projects'));
+	print anchor ('site/home', $con->lang->line('Home'));
+	print anchor ('site/projectlist', $con->lang->line('Projects'));
 	if ($issysadmin)
-		print anchor ('user/admin', $con->lang->line('System'));
+		print anchor ('site/admin', $con->lang->line('System'));
 	print '</div>';
 
 	print '</div>';

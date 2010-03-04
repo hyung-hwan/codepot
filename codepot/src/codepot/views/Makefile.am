@@ -7,6 +7,7 @@ www_DATA =  \
 	file_show.php \
 	footer.php \
 	index.html \
+	log.php \
 	login.php \
 	project_delete.php \
 	project_edit.php \
@@ -15,6 +16,7 @@ www_DATA =  \
 	projectbar.php \
 	site_edit.php \
 	site_delete.php \
+	site_home.php \
 	source_blame.php \
 	source_diff.php \
 	source_file.php \
@@ -22,8 +24,6 @@ www_DATA =  \
 	source_history.php \
 	source_revision.php \
 	taskbar.php \
-	user_home.php \
-	user_sitelog.php \
 	wiki_delete.php \
 	wiki_edit.php \
 	wiki_home.php \

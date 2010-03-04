@@ -79,7 +79,7 @@ if (!@$_REQUEST["manualorder"] && is_numeric($rev1) && is_numeric($rev2)) {
 $vars['indexurl'] = $config->getURL($rep, '', 'index');
 $vars['repurl'] = $config->getURL($rep, '', 'dir');
 
-$vars['codepot_userhomeurl'] = $config->getURL($rep, '', 'codepot_userhome');
+$vars['codepot_sitehomeurl'] = $config->getURL($rep, '', 'codepot_sitehome');
 $vars['codepot_projectlisturl'] = $config->getURL($rep, '', 'codepot_projectlist');
 $vars['codepot_indexurl'] = $config->getURL($rep, '', 'codepot_index');
 $vars['codepot_wikiurl'] = $config->getURL($rep, '', 'codepot_wiki');

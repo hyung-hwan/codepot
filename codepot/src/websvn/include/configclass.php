@@ -741,7 +741,7 @@ class WebSvnConfig {
     $codepot_base = dirname(dirname($_SERVER['PHP_SELF']));
     if ($codepot_base == '/') $codepot_base = '';
     if ($op == 'codepot_userhome')
-	$url = "{$codepot_base}/index.php/user/home";
+	$url = "{$codepot_base}/index.php/site/home";
     else if ($op == 'codepot_projectlist')
 	$url = "{$codepot_base}/index.php/user/projectlist";
     else if ($op == 'codepot_index' || $op == 'index') { 

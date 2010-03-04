@@ -3,96 +3,97 @@
  */
 
 /*----------------------------------------------- 
- * user home view 
+ * log view
  *-----------------------------------------------*/
-#user_home_mainarea_sidebar {
-	width: 24em;
-}
-
-#user_home_mainarea_sidebar_log_table {
-	border-collapse: collapse;
-}
-
-#user_home_mainarea_sidebar_log_table tr.odd {
-	background-color: #bbccef;
-}
-
-#user_home_mainarea_sidebar_log_table tr.odd td {
-	white-space: nowrap;
-}
-
-#user_home_mainarea_sidebar_log_table tr.odd td.date {
-	width: 1px;
-}
-
-#user_home_mainarea_sidebar_log_table tr.even {
-	background-color: inherit;
-}
-
-#user_home_mainarea_sidebar_log_table tr.even .description {
-	font-style: italic;
-}
-
-#user_home_mainarea_sidebar_log_table tr.even pre.message {
-	border: 0;
-	margin: 1px;
-	background-color: inherit;
-	white-space: pre-wrap;
-}
-
-/*----------------------------------------------- 
- * user sidelog view 
- *-----------------------------------------------*/
-#user_sitelog_mainarea_result {
+#log_mainarea_result {
 	overflow: auto;
 }
 
-#user_sitelog_mainarea_result_table {
+#log_mainarea_result_table {
 	border-collapse: collapse;
 }
 
-#user_sitelog_mainarea_result_table a {
+#log_mainarea_result_table a {
 	text-decoration: none;
 }
 
-#user_sitelog_mainarea_result_table td {
+#log_mainarea_result_table td {
 	vertical-align: top;
 	white-space: nowrap;
 }
 
-#user_sitelog_mainarea_result_table td.break {
+#log_mainarea_result_table td.break {
 	font-size: 0.5em;
 }
 
-#user_sitelog_mainarea_result_table td.date {
+#log_mainarea_result_table td.date {
 	font-weight: bold;
 	background-color: #bbccef;
 }
 
-#user_sitelog_mainarea_result_table td.time {
+#log_mainarea_result_table td.time {
 	width: 1px;
 	color: #777777;
 }
 
-#user_sitelog_mainarea_result_table td.details {
+#log_mainarea_result_table td.details {
 	white-space: normal;
 }
 
-#user_sitelog_mainarea_result_table td.details .description {
+#log_mainarea_result_table td.details .description {
 	/*font-style: italic;*/
 }
 
-#user_sitelog_mainarea_result_table td.details pre.message {
+#log_mainarea_result_table td.details pre.message {
 	border: 0;
 	margin: 1px;
 	background-color: inherit;
 	white-space: pre-wrap;
 }
 
-#user_sitelog_mainarea_result_table td.pages {
+#log_mainarea_result_table td.pages {
 	padding-top: 1em;
 	text-align: center;
 	font-weight: bold;
+}
+
+
+/*----------------------------------------------- 
+ * user home view 
+ *-----------------------------------------------*/
+#site_home_mainarea_sidebar {
+	width: 24em;
+}
+
+#site_home_mainarea_sidebar_log_table {
+	border-collapse: collapse;
+}
+
+#site_home_mainarea_sidebar_log_table tr.odd {
+	background-color: #bbccef;
+}
+
+#site_home_mainarea_sidebar_log_table tr.odd td {
+	white-space: nowrap;
+}
+
+#site_home_mainarea_sidebar_log_table tr.odd td.date {
+	width: 1px;
+}
+
+#site_home_mainarea_sidebar_log_table tr.even {
+	background-color: inherit;
+}
+
+#site_home_mainarea_sidebar_log_table tr.even .description {
+	font-style: italic;
+}
+
+#site_home_mainarea_sidebar_log_table tr.even pre.message {
+	border: 0;
+	margin: 1px;
+	background-color: inherit;
+	white-space: pre-wrap;
 }
 
 /*----------------------------------------------- 
@@ -116,12 +117,10 @@
 
 #project_home_mainarea_sidebar_log_table tr.even {
 	background-color: inherit;
-	/*font-size: 0.9em;*/
-	font-style: italic;
 }
 
 #project_home_mainarea_sidebar_log_table tr.even .description {
-	/*font-style: italic;*/
+	font-style: italic;
 }
 
 #project_home_mainarea_sidebar_log_table tr.even pre.message {

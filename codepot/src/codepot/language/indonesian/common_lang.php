@@ -15,6 +15,7 @@ $lang['Difference'] = 'Beda';
 $lang['Directory'] = 'Direktori';
 $lang['Download'] = 'Download';
 $lang['Edit'] = 'Rubah';
+$lang['Error'] = 'Error';
 $lang['Head revision'] = 'Kepala revisi';
 $lang['History'] = 'Sejarah';
 $lang['Home'] = 'Beranda';
@@ -54,15 +55,16 @@ $lang['Username'] = 'Nama pemakai';
 $lang['Wiki'] = 'Wiki';
 $lang['Wikis'] = 'Wiki';
 
-$lang['MSG_LOG_COMMIT_BY'] = 'committed by %s';
-$lang['MSG_LOG_CREATE_BY'] = 'created by %s';
-$lang['MSG_LOG_DELETE_BY'] = 'deleted by %s';
-$lang['MSG_LOG_UPDATE_BY'] = 'updated by %s';
+$lang['MSG_LOG_COMMIT_BY'] = 'Dicommit oleh %s';
+$lang['MSG_LOG_CREATE_BY'] = 'Dibuat oleh %s';
+$lang['MSG_LOG_DELETE_BY'] = 'Dihapus oleh %s';
+$lang['MSG_LOG_UPDATE_BY'] = 'Diupdate oleh %s';
 
 $lang['MSG_NO_DIFF'] = 'Tidak ada bedanya';
 $lang['MSG_NO_FILES_AVAIL'] = 'Tidak ada file tersedia';
 $lang['MSG_NO_SOURCE_CODE_AVAIL'] = 'Tidak ada kode sumber tersedia';
 $lang['MSG_NO_SUCH_PROJECT'] = 'No such project';
+$lang['MSG_NO_SUCH_WIKI_PAGE'] = 'No such wiki page';
 $lang['MSG_NO_WIKIS_AVAIL'] = 'Tidak ada halaman wiki tersedia';
 $lang['MSG_SURE_TO_DELETE_THIS'] = "Saya yakin untuk menghapus";
 ?>

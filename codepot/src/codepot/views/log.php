@@ -15,7 +15,7 @@
 
 <body>
 
-<div class="content" id="user_sitelog_content">
+<div class="content" id="log_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -25,12 +25,15 @@
 
 <?php
 
+if (!isset($project))  $project = NULL;
+if (!isset($site))  $site = NULL;
+
 $this->load->view (
         'projectbar',
         array (
-		'project' => NULL,
-		'site' => NULL,
-		'pageid' => 'sitelog',
+		'site' => $site,
+		'project' => $project,
+		'pageid' => ((isset($project) && $project != NULL)? 'project': 'sitelog'),
                 'ctxmenuitems' => array ()
         )
 );
@@ -38,21 +41,24 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="user_sitelog_mainarea">
+<div class="mainarea" id="log_mainarea">
 
-<div class="title" id="user_sitelog_mainarea_title">
+<div class="title" id="log_mainarea_title">
 <?= $this->lang->line ('Change log') ?>
 </div>
 
-<div id="user_sitelog_mainarea_result">
+<div id="log_mainarea_result">
 
-<table id="user_sitelog_mainarea_result_table">
+<table id="log_mainarea_result_table">
 <?php 
 	$curdate = '';
 	$xdot = $this->converter->AsciiToHex ('.');
 
 	$rowclasses = array ('odd', 'even');
 	$rowcount = 0;
+
+	$numcols = 4;
+	if (isset($project) && $project != NULL) $numcols--;
 
 	foreach ($log_entries as $log)
 	{
@@ -71,8 +77,8 @@ $this->load->view (
 
 		if ($curdate != $date)
 		{
-			print "<tr class='break'><td colspan=4 class='break'>&nbsp;</td></tr>";
-			print "<tr class='head'><td colspan=4 class='date'>$date</td></tr>";
+			print "<tr class='break'><td colspan='{$numcols}' class='break'>&nbsp;</td></tr>";
+			print "<tr class='head'><td colspan='{$numcols}' class='date'>$date</td></tr>";
 			$curdate = $date;
 			$rowcount = 0;
 		}
@@ -81,9 +87,12 @@ $this->load->view (
 		$rowcount++;
 		print '<td class="time">' . $time . '</td>';
 
-		print '<td class="projectid">';
-		print anchor ("/project/home/{$log['projectid']}", $log['projectid']);
-		print '</td>';
+		if (!isset($project) || $project == NULL)
+		{
+			print '<td class="projectid">';
+			print anchor ("/project/home/{$log['projectid']}", $log['projectid']);
+			print '</td>';
+		}
 
 
 		if ($log['type'] == 'code')
@@ -114,11 +123,15 @@ $this->load->view (
 			{
 				$uri = "/project/home/{$log['projectid']}";
 			}
-			else if ($log['type'] == 'wiki' || 
-			         $log['type'] == 'file')
+			else if ($log['type'] == 'wiki')
 			{
 				$hex = $this->converter->AsciiToHex ($log['message']);
-				$uri = "/{$log['type']}/show/{$log['projectid']}/{$hex}";
+				$uri = "/wiki/show_r/{$log['projectid']}/{$hex}";
+			}
+			else if ($log['type'] == 'file')
+			{
+				$hex = $this->converter->AsciiToHex ($log['message']);
+				$uri = "/file/show/{$log['projectid']}/{$hex}";
 			}
 
 			$trimmed = preg_replace("/(.{10}).+/u", "$1…", $log['message']);
@@ -145,16 +158,16 @@ $this->load->view (
 	}
 ?>
 <tr class='foot'>
-<td colspan=4 class='pages'><?= $page_links ?></td>
+<td colspan='<?=$numcols?>' class='pages'><?= $page_links ?></td>
 </table>
 
-</div> <!-- user_sitelog_mainarea_result -->
+</div> <!-- log_mainarea_result -->
 
-</div> <!-- user_sitelog_mainarea -->
+</div> <!-- log_mainarea -->
 
 <?php $this->load->view ('footer'); ?>
 
-</div> <!-- user_sitelog_content -->
+</div> <!-- log_content -->
 
 </body>
 </html>

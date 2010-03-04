@@ -1,6 +1,6 @@
 <html>
 
-<?php if (!isset($title)) $title = 'ERROR'; ?>
+<?php if (!isset($title)) $title = $this->lang->line('Error'); ?>
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -39,7 +39,9 @@ $this->load->view (
 <?= $message ?>
 </div>
 
-</div> <!-- project_error_taskbar -->
+<?php $this->load->view ('footer'); ?>
+
+</div> <!-- project_error_content -->
 
 </body>
 

@@ -12,7 +12,7 @@ function render_wiki()
 	creole_render_wiki (
 		"project_home_textpre", 
 		"project_home_textarea", 
-		"<?=dirname(dirname(dirname(current_url())))?>/wiki/show/<?=$project->id?>/"
+		"<?=site_url()?>/wiki/show/<?=$project->id?>/"
 	);
 }
 </script>
@@ -84,7 +84,7 @@ $this->load->view (
 
 <div class="box">
 <div class="boxtitle">
-<?= $this->lang->line('Change log') ?>
+<?= anchor ("/project/log/{$project->id}", $this->lang->line('Change log')) ?>
 </div>
 <table id="project_home_mainarea_sidebar_log_table">
 <?php 
@@ -137,11 +137,15 @@ $this->load->view (
 			{
 				$uri = "/project/home/{$log['projectid']}";
 			}
-			else if ($log['type'] == 'wiki' ||
-			         $log['type'] == 'file')
+			else if ($log['type'] == 'wiki')
 			{
 				$hex = $this->converter->AsciiToHex ($log['message']);
-				$uri = "/{$log['type']}/show/{$log['projectid']}/{$hex}";
+				$uri = "/wiki/show_r/{$log['projectid']}/{$hex}";
+			}
+			else if ($log['type'] == 'file')
+			{
+				$hex = $this->converter->AsciiToHex ($log['message']);
+				$uri = "/file/show/{$log['projectid']}/{$hex}";
 			}
 
 			$trimmed = preg_replace("/(.{20}).+/u", "$1…", $log['message']);
