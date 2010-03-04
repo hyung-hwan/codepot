@@ -8,7 +8,19 @@
 <title><?=htmlspecialchars($wiki->name)?></title>
 </head>
 
-<body>
+<script type="text/javascript">
+function render_wiki()
+{
+
+	creole_render_wiki (
+		"project_wiki_show_textpre", 
+		"project_wiki_show_textarea", 
+		"<?=site_url()?>/wiki/show/<?=$project->id?>/"
+	);
+}
+</script>
+
+<body onLoad="render_wiki()">
 
 <div class="content" id="project_wiki_show_content">
 
@@ -64,14 +76,6 @@ $this->load->view (
 <!---------------------------------------------------------------------------->
 
 </div> <!--  project_wiki_show_content -->
-
-<script type="text/javascript">
-creole_render_wiki (
-	"project_wiki_show_textpre", 
-	"project_wiki_show_textarea", 
-	""
-);
-</script>
 
 </body>
 

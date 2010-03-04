@@ -15,6 +15,7 @@ $lang['Difference'] = '차이점';
 $lang['Directory'] = '디렉토리';
 $lang['Download'] = '내려받기';
 $lang['Edit'] = '수정';
+$lang['Error'] = '오류';
 $lang['Head revision'] = '최신리비전';
 $lang['History'] = '변경기록';
 $lang['Home'] = '홈';
@@ -63,6 +64,7 @@ $lang['MSG_NO_DIFF'] = '차이점이 없습니다';
 $lang['MSG_NO_FILES_AVAIL'] = '사용가능한 파일이 없습니다';
 $lang['MSG_NO_SOURCE_CODE_AVAIL'] = '사용가능한 소스코드가 없습니다';
 $lang['MSG_NO_SUCH_PROJECT'] = '프로젝트가 없습니다';
+$lang['MSG_NO_SUCH_WIKI_PAGE'] = '위키페이지가 없습니다';
 $lang['MSG_NO_WIKIS_AVAIL'] = '사용가능한 위키페이지가 없습니다';
 $lang['MSG_SURE_TO_DELETE_THIS'] = '반드시 이것을 삭제하고 싶어요';
 ?>

@@ -9,9 +9,9 @@
 function render_wiki()
 {
 	creole_render_wiki (
-		"user_home_mainarea_textpre",
-		"user_home_mainarea_text",
-		"<?=dirname(dirname(current_url()))?>/user/home/"
+		"site_home_mainarea_textpre",
+		"site_home_mainarea_text",
+		"<?=site_url()?>/site/home/"
 	);
 }
 </script>
@@ -25,7 +25,7 @@ function render_wiki()
 
 <body onLoad="render_wiki()">
 
-<div class="content" id="user_home_content">
+<div class="content" id="site_home_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -58,9 +58,9 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="user_home_mainarea">
+<div class="mainarea" id="site_home_mainarea">
 
-<div class="sidebar" id="user_home_mainarea_sidebar">
+<div class="sidebar" id="site_home_mainarea_sidebar">
 
 <div class="box">
 <div class="boxtitle"><?=$this->lang->line('Latest projects')?></div>
@@ -81,9 +81,9 @@ foreach ($latest_projects as $project)
 
 <div class="box">
 <div class="boxtitle">
-<?= anchor ("/user/sitelog", $this->lang->line('Change log')) ?>
+<?= anchor ("/site/log", $this->lang->line('Change log')) ?>
 </div>
-<table id="user_home_mainarea_sidebar_log_table">
+<table id="site_home_mainarea_sidebar_log_table">
 <?php 
 	$xdot = $this->converter->AsciiToHex ('.');
 	foreach ($log_entries as $log)
@@ -146,11 +146,15 @@ foreach ($latest_projects as $project)
 			{
 				$uri = "/project/home/{$log['projectid']}";
 			}
-			else if ($log['type'] == 'wiki' ||
-			         $log['type'] == 'file')
+			else if ($log['type'] == 'wiki')
 			{
 				$hex = $this->converter->AsciiToHex ($log['message']);
-				$uri = "/{$log['type']}/show/{$log['projectid']}/{$hex}";
+				$uri = "/wiki/show_r/{$log['projectid']}/{$hex}";
+			}
+			else if ($log['type'] == 'file')
+			{
+				$hex = $this->converter->AsciiToHex ($log['message']);
+				$uri = "/file/show/{$log['projectid']}/{$hex}";
 			}
 
 			$trimmed = preg_replace("/(.{15}).+/u", "$1…", $log['message']);
@@ -179,21 +183,21 @@ foreach ($latest_projects as $project)
 </table>
 </div>
 
-</div> <!-- user_home_mainarea_sidebar -->
+</div> <!-- site_home_mainarea_sidebar -->
 
-<div id="user_home_mainarea_text">
-<pre id="user_home_mainarea_textpre" style="visibility: hidden">
+<div id="site_home_mainarea_text">
+<pre id="site_home_mainarea_textpre" style="visibility: hidden">
 <?php print htmlspecialchars($site->text); ?>
 </pre>
-</div> <!-- user_home_mainarea_text -->
+</div> <!-- site_home_mainarea_text -->
 
 <!----------------------------------------------------------->
 
-</div> <!-- user_home_mainarea -->
+</div> <!-- site_home_mainarea -->
 
 <?php $this->load->view ('footer'); ?>
 
-</div> <!-- user_home_content -->
+</div> <!-- site_home_content -->
 
 </body>
 </html>

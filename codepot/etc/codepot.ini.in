@@ -92,19 +92,19 @@ max_upload_size = "10000"
 max_latest_projects = "10"
 
 ;------------------------------------------------------------------------------
-; Maximum number of site log entries to show per page
+; Maximum number of log entries to show per details page
 ;------------------------------------------------------------------------------
-max_site_logs_per_page = "50"
+max_logs_per_page = "50"
 
 ;------------------------------------------------------------------------------
-; Maximum number of svn commits to show in the front page
+; Maximum number of log entries to show in the front page
 ;------------------------------------------------------------------------------
-max_svn_commits = "10"
+max_logs_in_site_home = "10"
 
 ;------------------------------------------------------------------------------
-; Maximum number of svn commits to show in the project home page
+; Maximum number of log entries to show in the project home page
 ;------------------------------------------------------------------------------
-max_svn_commits_in_project = "5"
+max_logs_in_project_home = "5"
 
 ;------------------------------------------------------------------------------
 ; directory to accomodate subversion repositories

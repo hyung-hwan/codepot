@@ -14,8 +14,15 @@ class LogModel extends Model
 
 		//$this->db->where ('type', 'code');
 		//$this->db->where ('action', 'commit');
+
 		if ($projectid != '') $this->db->where ('projectid', $projectid);
-		$num = $this->db->count_all ('log');
+		//$num = $this->db->count_all ('log');
+
+		$this->db->select ('count(id) as count');
+		$query = $this->db->get ('log');
+		$result = $query->result();
+		
+		$num = empty($result)? 0: $result[0]->count;
 
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() === FALSE) return FALSE;

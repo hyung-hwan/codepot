@@ -29,10 +29,9 @@ function load_ini ($file)
 		array ('sysadmin_userids',             'string',     ''),
 		array ('max_upload_size',              'string',     '10000'), // kbytes
 		array ('max_latest_projects',          'integer',    10),
-		array ('max_site_logs_per_page',       'integer',    50),
-
-		array ('max_svn_commits',              'integer',    10),
-		array ('max_svn_commits_in_project',   'integer',    5),
+		array ('max_logs_per_page',            'integer',    50),
+		array ('max_logs_in_site_home',        'integer',    10),
+		array ('max_logs_in_project_home',     'integer',    5),
 
 		array ('database_username',            'string',     ''),
 		array ('database_password',            'string',     ''),

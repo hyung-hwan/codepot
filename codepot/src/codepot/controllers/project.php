@@ -6,6 +6,7 @@ class Project extends Controller
 	var $VIEW_HOME = 'project_home';
 	var $VIEW_EDIT = 'project_edit';
 	var $VIEW_DELETE = 'project_delete';
+	var $VIEW_LOG = 'log';
 
 	function Project ()
 	{
@@ -47,7 +48,7 @@ class Project extends Controller
 		else
 		{
 			$log_entries = $this->logs->getEntries (
-				0, CODEPOT_MAX_SVN_COMMITS_IN_PROJECT, $projectid);
+				0, CODEPOT_MAX_LOGS_IN_PROJECT_HOME, $projectid);
 			if ($log_entries === FALSE)
 			{
 				$data['message'] = 'DATABASE ERROR';
@@ -158,7 +159,7 @@ class Project extends Controller
 		$this->_edit_project ($project, 'create', $login);
 	}
 
-	function update ($projectid)
+	function update ($projectid = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
@@ -223,8 +224,8 @@ class Project extends Controller
 					else 
 					{
 						// the project has been deleted successfully.
-						// go back to the user home.	
-						redirect ('user/projectlist');
+						// go back to the project list.	
+						redirect ('site/projectlist');
 					}
 				}
 				else 
@@ -252,7 +253,7 @@ class Project extends Controller
 		}
 	}
 
-	function delete ($projectid)
+	function delete ($projectid = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
@@ -284,6 +285,66 @@ class Project extends Controller
 		else
 		{
 			$this->_delete_project ($project, $login);
+		}
+	}
+
+	function log ($projectid = '', $offset = 0)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+
+		$login = $this->login->getUser ();
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else if ($project === NULL)
+		{
+			$data['login'] = $login;
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			$this->load->library ('pagination');
+			$this->load->model ('LogModel', 'logs');
+		
+			$num_log_entries = $this->logs->getNumEntries ($projectid);
+			if ($num_log_entries === FALSE)
+			{
+				$data['login'] = $login;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+				return;
+			}
+
+			$pagecfg['base_url'] = site_url() . "/project/log/{$projectid}/";
+			$pagecfg['total_rows'] = $num_log_entries;
+			$pagecfg['per_page'] = CODEPOT_MAX_LOGS_PER_PAGE; 
+			$pagecfg['uri_segment'] = 4;
+	
+			$log_entries = $this->logs->getEntries ($offset, $pagecfg['per_page'], $projectid);
+			if ($log_entries === FALSE)
+			{
+				$data['login'] = $login;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+				return;
+			}
+
+			$this->pagination->initialize ($pagecfg);
+
+			$data['project'] = $project;
+			$data['login'] = $login;
+			$data['log_entries'] = $log_entries;
+			$data['page_links'] = $this->pagination->create_links ();
+
+			$this->load->view ($this->VIEW_LOG, $data);
 		}
 	}
 }
