@@ -1,14 +1,14 @@
 <?php
 
-class Wiki extends Controller
+class Issue extends Controller
 {
 	var $VIEW_ERROR = 'error';
-	var $VIEW_HOME = 'wiki_home';
-	var $VIEW_SHOW = 'wiki_show';
-	var $VIEW_EDIT = 'wiki_edit';
-	var $VIEW_DELETE = 'wiki_delete';
+	var $VIEW_HOME = 'issue_home';
+	var $VIEW_SHOW = 'issue_show';
+	var $VIEW_EDIT = 'issue_edit';
+	var $VIEW_DELETE = 'issue_delete';
 
-	function Wiki ()
+	function Issue ()
 	{
 		parent::Controller ();
 
@@ -25,7 +25,7 @@ class Wiki extends Controller
 	function home ($projectid = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
-		$this->load->model ('WikiModel', 'wikis');
+		$this->load->model ('IssueModel', 'issues');
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
@@ -47,8 +47,8 @@ class Wiki extends Controller
 		}
 		else
 		{
-			$wikis = $this->wikis->getAll ($login['id'], $project);
-			if ($wikis === FALSE)
+			$issues = $this->issues->getAll ($login['id'], $project);
+			if ($issues === FALSE)
 			{
 				$data['message'] = 'DATABASE ERROR';
 				$this->load->view ($this->VIEW_ERROR, $data);
@@ -56,16 +56,16 @@ class Wiki extends Controller
 			else
 			{
 				$data['project'] = $project;
-				$data['wikis'] = $wikis;
+				$data['issues'] = $issues;
 				$this->load->view ($this->VIEW_HOME, $data);
 			}
 		}
 	}
 
-	function _show_wiki ($projectid, $name, $create)
+	function _show_issue ($projectid, $name, $create)
 	{
 		$this->load->model ('ProjectModel', 'projects');
-		$this->load->model ('WikiModel', 'wikis');
+		$this->load->model ('IssueModel', 'issues');
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
@@ -96,105 +96,52 @@ class Wiki extends Controller
 		}
 		else
 		{
-			if ($this->_is_reserved ($name, TRUE))
+			$issue = $this->issues->get ($login['id'], $project, $name);
+			if ($issue === FALSE)
 			{
-				$ex0 = $this->_trans_reserved ($name);
-				redirect ("{$ex0}/home/{$projectid}");
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
 			}
-			else
+			else if ($issue === NULL)
 			{
-				$ex = explode (':', $name);
-				$cnt = count($ex);
-				if ($cnt == 2)
+				if ($create)
 				{
-					if ($this->_is_reserved ($ex[0], TRUE))
-					{
-						$ex0 = $this->_trans_reserved ($ex[0]);
-						$ex1 = ($ex[1] == '')? $projectid: $ex[1];
-						redirect ("{$ex0}/home/{$ex1}");
-					}
-				}
-				else if ($cnt == 3)
-				{
-					if ($this->_is_reserved ($ex[0], TRUE) && 
-					    $ex[0] != '__PROJECT__' && $ex[0] != '__CODE__')
-					{
-						$ex0 = $this->_trans_reserved ($ex[0]);
-						$ex1 = ($ex[1] == '')? $projectid: $ex[1];
-						$ex2 = $this->converter->AsciiToHex ($ex[2]);
-						redirect ("{$ex0}/show/{$ex1}/{$ex2}");
-					}
-				}
-				else if ($cnt == 4)
-				{
-					if ($ex[0] == '__CODE__')
-					{
-						$ex0 = $this->_trans_reserved ($ex[0]);
-						$ex1 = ($ex[1] == '')? $projectid: $ex[1];
-						if ($ex[2] == 'file' || $ex[2] == 'history' || 
-						    $ex[2] == 'blame' || $ex[2] == 'diff')
-						{
-							$ex3 = $this->converter->AsciiToHex ($ex[3]);
-							redirect ("{$ex0}/{$ex[2]}/{$ex1}/{$ex3}");
-						}
-						else
-						{
-							$data['message'] = 
-								"WRONG ACTION NAME FOR CODE - {$name}";
-							$this->load->view ($this->VIEW_ERROR, $data);
-
-							return;
-						}
-					}
-				}
-
-				$wiki = $this->wikis->get ($login['id'], $project, $name);
-				if ($wiki === FALSE)
-				{
-					$data['message'] = 'DATABASE ERROR';
-					$this->load->view ($this->VIEW_ERROR, $data);
-				}
-				else if ($wiki === NULL)
-				{
-					if ($create)
-					{
-						redirect ("wiki/create/{$projectid}/" . 
-							$this->converter->AsciiToHex($name));
-					}
-					else
-					{
-						$data['message'] = 
-							$this->lang->line('MSG_NO_SUCH_WIKI_PAGE') . 
-							" - {$name}";
-						$this->load->view ($this->VIEW_ERROR, $data);
-					}
+					redirect ("issue/create/{$projectid}/". 
+						$this->converter->AsciiToHex($name));
 				}
 				else
 				{
-					$data['project'] = $project;
-					$data['wiki'] = $wiki;
-					$this->load->view ($this->VIEW_SHOW, $data);
+					$data['message'] = 
+						$this->lang->line('MSG_NO_SUCH_ISSUE') . 
+						" - {$name}";
+					$this->load->view ($this->VIEW_ERROR, $data);
 				}
+			}
+			else
+			{
+				$data['project'] = $project;
+				$data['issue'] = $issue;
+				$this->load->view ($this->VIEW_SHOW, $data);
 			}
 		}
 	}
 
 	function show ($projectid = '' , $name = '')
 	{
-		$this->_show_wiki ($projectid, $name, TRUE);
+		$this->_show_issue ($projectid, $name, TRUE);
 	}
 
 	function show_r ($projectid = '' , $name = '')
 	{
-		$this->_show_wiki ($projectid, $name, FALSE);
+		$this->_show_issue ($projectid, $name, FALSE);
 	}
 
-	function _edit_wiki ($projectid, $name, $mode)
+	function _edit_issue ($projectid, $name, $mode)
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
 		$this->load->model ('ProjectModel', 'projects');
-		$this->load->model ('WikiModel', 'wikis');
+		$this->load->model ('IssueModel', 'issues');
 
 		$login = $this->login->getUser ();
 		if ($login['id'] == '') redirect ('main');
@@ -224,11 +171,11 @@ class Wiki extends Controller
 		else
 		{
 			$this->form_validation->set_rules (
-				'wiki_projectid', 'project ID', 'required|alpha_dash|max_length[32]');
+				'issue_projectid', 'project ID', 'required|alpha_dash|max_length[32]');
 			$this->form_validation->set_rules (
-				'wiki_name', 'name', 'required|max_length[255]');
+				'issue_name', 'name', 'required|max_length[255]');
 			$this->form_validation->set_rules (
-				'wiki_text', 'text', 'required');
+				'issue_text', 'text', 'required');
 			$this->form_validation->set_error_delimiters (
 				'<span class="form_field_error">','</span>');
 
@@ -236,42 +183,33 @@ class Wiki extends Controller
 			$data['message'] = '';
 			$data['project'] = $project;
 
-			if ($this->input->post('wiki'))
+			if ($this->input->post('issue'))
 			{
-				$wiki->projectid = $this->input->post('wiki_projectid');
-				$wiki->name = $this->input->post('wiki_name');
-				$wiki->text = $this->input->post('wiki_text');
+				$issue->projectid = $this->input->post('issue_projectid');
+				$issue->name = $this->input->post('issue_name');
+				$issue->text = $this->input->post('issue_text');
 
 				if ($this->form_validation->run())
 				{
-					if ($this->_is_reserved ($wiki->name, FALSE))
+					$result = ($mode == 'update')?
+						$this->issues->update ($login['id'], $issue):
+						$this->issues->create ($login['id'], $issue);
+					if ($result === FALSE)
 					{
-						$data['message'] = "RESERVED WIKI NAME - {$wiki->name}";
-						$data['wiki'] = $wiki;
-						$this->load->view ($this->VIEW_EDIT, $data);
+						$data['message'] = 'DATABASE ERROR';
+						$data['issue'] = $issue;
+						$this->load->view ($this->VIEW_EDIT, $data);	
 					}
 					else
 					{
-						$result = ($mode == 'update')?
-							$this->wikis->update ($login['id'], $wiki):
-							$this->wikis->create ($login['id'], $wiki);
-						if ($result === FALSE)
-						{
-							$data['message'] = 'DATABASE ERROR';
-							$data['wiki'] = $wiki;
-							$this->load->view ($this->VIEW_EDIT, $data);	
-						}
-						else
-						{
-							redirect ("wiki/show/{$project->id}/" . 
-								$this->converter->AsciiToHex($wiki->name));
-						}
+						redirect ('issue/show/' . $project->id . '/' . 
+							$this->converter->AsciiToHex($issue->name));
 					}
 				}
 				else
 				{
 					$data['message'] = "Your input is not complete, Bro";
-					$data['wiki'] = $wiki;
+					$data['issue'] = $issue;
 					$this->load->view ($this->VIEW_EDIT, $data);	
 				}
 			}
@@ -279,32 +217,32 @@ class Wiki extends Controller
 			{
 				if ($mode == 'update')
 				{
-					$wiki = $this->wikis->get ($login['id'], $project, $name);
-					if ($wiki === FALSE)
+					$issue = $this->issues->get ($login['id'], $project, $name);
+					if ($issue === FALSE)
 					{
 						$data['message'] = 'DATABASE ERROR';
 						$this->load->view ($this->VIEW_ERROR, $data);
 					}
-					else if ($wiki == NULL)
+					else if ($issue == NULL)
 					{
 						$data['message'] = 
-							$this->lang->line('MSG_NO_SUCH_WIKI_PAGE') . 
+							$this->lang->line('MSG_NO_SUCH_ISSUE') . 
 							" - {$name}";
 						$this->load->view ($this->VIEW_ERROR, $data);
 					}
 					else
 					{
-						$data['wiki'] = $wiki;
+						$data['issue'] = $issue;
 						$this->load->view ($this->VIEW_EDIT, $data);	
 					}
 				}
 				else
 				{
-					$wiki->projectid = $projectid;
-					$wiki->name = $name;
-					$wiki->text = '';
+					$issue->projectid = $projectid;
+					$issue->name = $name;
+					$issue->text = '';
 
-					$data['wiki'] = $wiki;
+					$data['issue'] = $issue;
 					$this->load->view ($this->VIEW_EDIT, $data);	
 				}
 			}
@@ -312,39 +250,14 @@ class Wiki extends Controller
 		}
 	}
 
-	function _trans_reserved ($name)
-	{
-		return substr (strtolower ($name), 2, strlen($name) -  4);
-	}
-
-	function _is_reserved ($name, $exact)
-	{
-		if ($exact)
-		{
-			return $name == '__PROJECT__' ||
-			       $name == '__WIKI__' ||
-			       $name == '__FILE__' ||
-			       $name == '__CODE__' ||
-			       $name == '__ISSUE__';
-		}
-		else
-		{
-			return substr ($name, 0, 11) == '__PROJECT__' ||
-			       substr ($name, 0, 8) == '__WIKI__' ||
-			       substr ($name, 0, 8) == '__FILE__' ||
-			       substr ($name, 0, 8) == '__CODE__' ||
-			       substr ($name, 0, 9) == '__ISSUE__';
-		}
-	}
-
 	function create ($projectid = '', $name = '')
 	{
-		return $this->_edit_wiki ($projectid, $name, 'create');
+		return $this->_edit_issue ($projectid, $name, 'create');
 	}
 
 	function update ($projectid = '', $name = '')
 	{
-		return $this->_edit_wiki ($projectid, $name, 'update');
+		return $this->_edit_issue ($projectid, $name, 'update');
 	}
 
 	function delete ($projectid = '', $name = '')
@@ -352,7 +265,7 @@ class Wiki extends Controller
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
 		$this->load->model ('ProjectModel', 'projects');
-		$this->load->model ('WikiModel', 'wikis');
+		$this->load->model ('IssueModel', 'issues');
 
 		$login = $this->login->getUser ();
 		if ($login['id'] == '') redirect ('main');
@@ -379,73 +292,68 @@ class Wiki extends Controller
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
-		else if ($this->_is_reserved ($name, FALSE))
-		{
-			$data['message'] = "RESERVED WIKI PAGE - $name ";
-			$this->load->view ($this->VIEW_ERROR, $data);
-		}
 		else
 		{
 			$data['message'] = '';
 			$data['project'] = $project;
 
-			$this->form_validation->set_rules ('wiki_confirm', 'confirm', 'alpha');
+			$this->form_validation->set_rules ('issue_confirm', 'confirm', 'alpha');
 			$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
 
-			if($this->input->post('wiki'))
+			if($this->input->post('issue'))
 			{
-				$wiki->projectid = $this->input->post('wiki_projectid');
-				$wiki->name = $this->input->post('wiki_name');
-				$data['wiki_confirm'] = $this->input->post('wiki_confirm');
+				$issue->projectid = $this->input->post('issue_projectid');
+				$issue->name = $this->input->post('issue_name');
+				$data['issue_confirm'] = $this->input->post('issue_confirm');
 
 				if ($this->form_validation->run())
 				{
-					if ($data['wiki_confirm'] == 'yes')
+					if ($data['issue_confirm'] == 'yes')
 					{
-						$result = $this->wikis->delete ($login['id'], $wiki);
+						$result = $this->issues->delete ($login['id'], $issue);
 						if ($result === FALSE)
 						{
 							$data['message'] = 'DATABASE ERROR';
-							$data['wiki'] = $wiki;
+							$data['issue'] = $issue;
 							$this->load->view ($this->VIEW_DELETE, $data);
 						}
 						else
 						{
-							redirect ("wiki/home/{$project->id}");
+							redirect ("issue/home/{$project->id}");
 						}
 					}
 					else 
 					{
-						redirect ("wiki/show/{$project->id}/" . 
-							$this->converter->AsciiToHex($wiki->name));
+						redirect ("issue/show/{$project->id}/" . 
+							$this->converter->AsciiToHex($issue->name));
 					}
 				}
 				else
 				{
 					$data['message'] = "Your input is not complete, Bro.";
-					$data['wiki'] = $wiki;
+					$data['issue'] = $issue;
 					$this->load->view ($this->VIEW_DELETE, $data);
 				}
 			}
 			else
 			{
-				$wiki = $this->wikis->get ($login['id'], $project, $name);
-				if ($wiki === FALSE)
+				$issue = $this->issues->get ($login['id'], $project, $name);
+				if ($issue === FALSE)
 				{
 					$data['message'] = 'DATABASE ERROR';
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
-				else if ($wiki === NULL)
+				else if ($issue === NULL)
 				{
 					$data['message'] = 
-						$this->lang->line('MSG_NO_SUCH_WIKI_PAGE') . 
+						$this->lang->line('MSG_NO_SUCH_ISSUE') . 
 						" - {$name}";
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 				else
 				{
-					$data['wiki_confirm'] = 'no';
-					$data['wiki'] = $wiki;
+					$data['issue_confirm'] = 'no';
+					$data['issue'] = $issue;
 					$this->load->view ($this->VIEW_DELETE, $data);
 				}
 			}

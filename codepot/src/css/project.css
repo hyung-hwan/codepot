@@ -145,15 +145,15 @@
 /*----------------------------------------------- 
  * project source folder view 
  *-----------------------------------------------*/
-#project_source_folder_sidebar_info pre {
+#project_code_folder_sidebar_info pre {
 	white-space: pre-wrap;
 }
 
-#project_source_folder_mainarea_result {
+#project_code_folder_mainarea_result {
 	overflow: auto;
 }
 
-#project_source_folder_mainarea_result_table tr {
+#project_code_folder_mainarea_result_table tr {
 	vertical-align: top;
 	white-space: nowrap;
 }
@@ -161,30 +161,30 @@
 /*----------------------------------------------- 
  * project source file view 
  *-----------------------------------------------*/
-#project_source_file_mainarea_result {
+#project_code_file_mainarea_result {
 	position: relative;
 }
 
-#project_source_file_mainarea_result_pre {
+#project_code_file_mainarea_result_pre {
 	/* make it the same as font-size of info .title below */
 	padding-top: 0.8em;
 }
 
-#project_source_file_mainarea_result_info {
+#project_code_file_mainarea_result_info {
 	position: absolute;
 	top: 0;
 	right: 0;
 	width: 22em;
 }
 
-#project_source_file_mainarea_result_info pre {
+#project_code_file_mainarea_result_info pre {
 	overflow: auto;
 	border: 0;
 	margin: 0;
 	padding: 0;
 }
 
-#project_source_file_mainarea_result_info .title {
+#project_code_file_mainarea_result_info .title {
 	background-color: #7777FF;
 	border: 0;
 	margin: 0;
@@ -192,43 +192,43 @@
 	text-align: right;	
 }
 
-#project_source_file_mainarea_result_info .title a {
+#project_code_file_mainarea_result_info .title a {
 	color: white;
 	font-size: inherit;
 	background-color: inherit;
 }
 
-#project_source_file_mainarea_result_info .title a:hover {
+#project_code_file_mainarea_result_info .title a:hover {
 	background-color: inherit;
 }
 
 /*----------------------------------------------- 
  * project source blame view 
  *-----------------------------------------------*/
-#project_source_blame_mainarea_result {
+#project_code_blame_mainarea_result {
 	position: relative;
 }
 
-#project_source_blame_mainarea_result_pre {
+#project_code_blame_mainarea_result_pre {
 	/* make it the same as font-size of info .title below */
 	padding-top: 0.8em;
 }
 
-#project_source_blame_mainarea_result_info {
+#project_code_blame_mainarea_result_info {
 	position: absolute;
 	top: 0;
 	right: 0;
 	width: 22em;
 }
 
-#project_source_blame_mainarea_result_info pre {
+#project_code_blame_mainarea_result_info pre {
 	overflow: auto;
 	border: 0;
 	margin: 0;
 	padding: 0;
 }
 
-#project_source_blame_mainarea_result_info .title {
+#project_code_blame_mainarea_result_info .title {
 	background-color: #7777FF;
 	border: 0;
 	margin: 0;
@@ -236,29 +236,29 @@
 	text-align: right;	
 }
 
-#project_source_blame_mainarea_result_info .title a {
+#project_code_blame_mainarea_result_info .title a {
 	color: white;
 	font-size: inherit;
 	background-color: inherit;
 }
 
-#project_source_blame_mainarea_result_info .title a:hover {
+#project_code_blame_mainarea_result_info .title a:hover {
 	background-color: inherit;
 }
 
 /*----------------------------------------------- 
  * project source history view 
  *-----------------------------------------------*/
-#project_source_history_mainarea_result {
+#project_code_history_mainarea_result {
 	overflow: auto;
 }
 
-#project_source_history_mainarea_result_table tr {
+#project_code_history_mainarea_result_table tr {
 	vertical-align: top;
 	white-space: nowrap;
 }
 
-#project_source_history_mainarea_result_table_path_list {
+#project_code_history_mainarea_result_table_path_list {
 	/* the list in the 'paths' column */
 	margin: 0;
 	padding: 0;
@@ -266,14 +266,14 @@
 	white-space: nowrap;
 }
 
-#project_source_history_mainarea_result_table pre {
+#project_code_history_mainarea_result_table pre {
 	border: 0;
 	background-color: inherit;
 	padding: 0;
 	margin: 0;
 }
 
-#project_source_history_mainarea_result_table .title {
+#project_code_history_mainarea_result_table .title {
 	font-size: inherit;
 	font-weight: inherit;
 	font-style: italic;
@@ -285,11 +285,11 @@
  * project source revision view 
  *-----------------------------------------------*/
 
-#project_source_revision_mainarea_result {
+#project_code_revision_mainarea_result {
 	overflow: auto;
 }
 
-#project_source_revision_mainarea_result_msg {
+#project_code_revision_mainarea_result_msg {
 	border: 0;
 	padding: 0;	
 	background-color: inherit;
@@ -298,7 +298,7 @@
 	white-space: pre-wrap;
 }
 
-#project_source_revision_mainarea_result_table td.M {
+#project_code_revision_mainarea_result_table td.M {
 	white-space: nowrap;
 	background-image:url(images/page_white_edit.png);
 	background-position:2px 50%;
@@ -306,7 +306,7 @@
 	padding-left: 22px;
 }
 
-#project_source_revision_mainarea_result_table td.D {
+#project_code_revision_mainarea_result_table td.D {
 	white-space: nowrap;
 	background-image:url(images/page_white_delete.png);
 	background-position:2px 50%;
@@ -314,7 +314,7 @@
 	padding-left: 22px;
 }
 
-#project_source_revision_mainarea_result_table td.A {
+#project_code_revision_mainarea_result_table td.A {
 	white-space: nowrap;
 	background-image:url(images/page_white_add.png);
 	background-position:2px 50%;
@@ -322,7 +322,7 @@
 	padding-left: 22px;
 }
 
-#project_source_revision_mainarea_result_table td.R {
+#project_code_revision_mainarea_result_table td.R {
 	white-space: nowrap;
 	background-image:url(images/page_white_add.png);
 	background-position:2px 50%;
@@ -330,11 +330,11 @@
 	padding-left: 22px;
 }
 
-#project_source_revision_mainarea_result_sidebar {
+#project_code_revision_mainarea_result_sidebar {
 	/*overflow: auto;*/
 }
 
-#project_source_revision_mainarea_result_sidebar pre {
+#project_code_revision_mainarea_result_sidebar pre {
 	overflow: auto;
 	border: 0;
 	padding: 0;
@@ -343,33 +343,33 @@
 /*----------------------------------------------- 
  * project source diff view 
  *-----------------------------------------------*/
-#project_source_diff_mainarea_result {
+#project_code_diff_mainarea_result {
 	overflow: auto;
 }
 
-#project_source_diff_mainarea_result_table {
+#project_code_diff_mainarea_result_table {
 	border: 0;
 }
 
-#project_source_diff_mainarea_result_table tr.diff td pre {
+#project_code_diff_mainarea_result_table tr.diff td pre {
 	background-color: inherit;
 	border: 0;
 	margin: 0;
 	padding: 0;
 }
 
-#project_source_diff_mainarea_result_table tr.diff td.diff {
+#project_code_diff_mainarea_result_table tr.diff td.diff {
 	padding: 0;
 	padding-left:22px;
 	margin: 0;
 }
 
-#project_source_diff_mainarea_result_table tr.diff td.diffrow {
+#project_code_diff_mainarea_result_table tr.diff td.diffrow {
 	font-style: italic;
 	font-weight: bold;
 }
 
-#project_source_diff_mainarea_result_table tr.diff td.diffadded {
+#project_code_diff_mainarea_result_table tr.diff td.diffadded {
 	border:1px solid #cdf0cd;
 	background-color:#ddffdd;
 	background-image:url(images/bullet_add.png);
@@ -380,7 +380,7 @@
 	margin: 0;
 }
 
-#project_source_diff_mainarea_result_table tr.diff td.diffdeleted {
+#project_code_diff_mainarea_result_table tr.diff td.diffdeleted {
 	border:1px solid #e8d4bc;
 	background-color:#f8e4cc;
 	background-image:url(images/bullet_delete.png);
@@ -391,7 +391,7 @@
 	margin: 0;
 }
 
-#project_source_diff_mainarea_result_table tr.diff td.diffchanged {
+#project_code_diff_mainarea_result_table tr.diff td.diffchanged {
 	border:1px solid #f0f0bc;
 	background-color:#ffffcc;
 	background-image:url(images/bullet_yellow.png);

@@ -36,7 +36,8 @@ function show_projectbar ($con, $site, $project, $pageid, $ctxmenuitems)
 		$menuitems = array (
 			array ("project/home/{$project->id}", $con->lang->line('Overview')),
 			array ("wiki/home/{$project->id}", $con->lang->line('Wiki')),
-			array ("source/home/{$project->id}", $con->lang->line('Code')),
+			array ("issue/home/{$project->id}", $con->lang->line('Issues')),
+			array ("code/home/{$project->id}", $con->lang->line('Code')),
 			array ("file/home/{$project->id}", $con->lang->line('Files'))
 		);
 
@@ -54,7 +55,7 @@ function show_projectbar ($con, $site, $project, $pageid, $ctxmenuitems)
 			$extra = ($menuid == $pageid)? 'class="selected"': '';
 			$menulink = $item[0];
 
-			if ($menuid == 'source')
+			if ($menuid == 'code')
 			{
 				if (CODEPOT_ENABLE_WEBSVN === TRUE ||
 				    !function_exists('svn_ls')) $menulink = $websvn;

@@ -9,7 +9,7 @@
 
 <body>
 
-<div class="content" id="project_source_revision_content">
+<div class="content" id="project_code_revision_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -22,7 +22,7 @@ $this->load->view (
 	'projectbar',
 	array (
 		'site' => NULL,
-		'pageid' => 'source',
+		'pageid' => 'code',
 		'ctxmenuitems' => array ()
 	)
 );
@@ -30,13 +30,13 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="project_source_revision_mainarea">
+<div class="mainarea" id="project_code_revision_mainarea">
 
 <?php
 $history = $file['history'];
 ?>
 
-<div class="title" id="project_source_revision_mainarea_title">
+<div class="title" id="project_code_revision_mainarea_title">
 <?php
 	if ($revision <= 0)
 	{
@@ -50,7 +50,7 @@ $history = $file['history'];
 	}
 
 	print anchor (
-		"/source/revision/{$project->id}{$revreqroot}",
+		"code/revision/{$project->id}{$revreqroot}",
 		htmlspecialchars($project->name));
 
 	$exps = explode ('/', $headpath);
@@ -63,7 +63,7 @@ $history = $file['history'];
 
 		print '/';
 		print anchor (
-			"source/revision/{$project->id}/{$xpar}{$revreq}",
+			"code/revision/{$project->id}/{$xpar}{$revreq}",
 			htmlspecialchars($exps[$i]));
 	}
 
@@ -75,36 +75,36 @@ $history = $file['history'];
 ?>
 </div>
 
-<div class="menu" id="project_source_revision_mainarea_menu">
+<div class="menu" id="project_code_revision_mainarea_menu">
 <?php
 	$xpar = $this->converter->AsciiToHex(($headpath == '')? '.': $headpath);
 	if ($revision > 0 && $revision < $next_revision)
 	{
-		print anchor ("source/revision/{$project->id}/{$xpar}", $this->lang->line('Head revision'));
+		print anchor ("code/revision/{$project->id}/{$xpar}", $this->lang->line('Head revision'));
 		print ' | ';
 	}
-	print anchor ("source/history/{$project->id}/{$xpar}", $this->lang->line('History'));
+	print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
 ?>
-</div> <!-- project_source_revision_mainarea_menu -->
+</div> <!-- project_code_revision_mainarea_menu -->
 
-<div class="infostrip" id="project_source_revision_mainarea_infostrip">
-	<?=anchor ("source/revision/{$project->id}/${xpar}/{$prev_revision}", '<<')?> 
+<div class="infostrip" id="project_code_revision_mainarea_infostrip">
+	<?=anchor ("code/revision/{$project->id}/${xpar}/{$prev_revision}", '<<')?> 
 	<?=$this->lang->line('Revision')?>: <?=$history['rev']?> 
-	<?=anchor ("source/revision/{$project->id}/${xpar}/{$next_revision}", '>>')?> | 
+	<?=anchor ("code/revision/{$project->id}/${xpar}/{$next_revision}", '>>')?> | 
 	<?=$this->lang->line('Author')?>: <?=htmlspecialchars($history['author'])?> | 
 	<?=$this->lang->line('Last updated on')?>: <?=date('r', strtotime($history['date']))?>
 </div>
 
 
-<div id="project_source_revision_mainarea_result">
+<div id="project_code_revision_mainarea_result">
 
 <div class="title">Message</div>
-<pre id="project_source_revision_mainarea_result_msg">
+<pre id="project_code_revision_mainarea_result_msg">
 <?=htmlspecialchars($history['msg'])?>
 </pre>
 
 <div class="title">Files updated</div>
-<table id="project_source_revision_mainarea_result_table">
+<table id="project_code_revision_mainarea_result_table">
 <?php 
 	/*
 	print '<tr class="heading">';
@@ -123,14 +123,14 @@ $history = $file['history'];
 		$xpar = $this->converter->AsciiToHex ($p['path']);
 
 		print "<td class='{$p['action']}'>";
-		print anchor ("source/file/{$project->id}/{$xpar}/{$history['rev']}", htmlspecialchars($p['path']));
+		print anchor ("code/file/{$project->id}/{$xpar}/{$history['rev']}", htmlspecialchars($p['path']));
 		print '</td>';
 
 		/*
 		print '<td>';
-		print anchor ("source/blame/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Blame'));
+		print anchor ("code/blame/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Blame'));
 		print ' ';
-		print anchor ("source/diff/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Difference'));
+		print anchor ("code/diff/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Difference'));
 		print '</td>';
 		*/
 
@@ -138,9 +138,9 @@ $history = $file['history'];
 	}
 ?>
 </table>
-</div> <!-- project_source_revision_mainarea_body -->
+</div> <!-- project_code_revision_mainarea_body -->
 
-</div> <!-- project_source_revision_mainarea -->
+</div> <!-- project_code_revision_mainarea -->
 
 
 <!---------------------------------------------------------------------------->
@@ -150,7 +150,7 @@ $history = $file['history'];
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_source_revision_content -->
+</div> <!--  project_code_revision_content -->
 
 </body>
 

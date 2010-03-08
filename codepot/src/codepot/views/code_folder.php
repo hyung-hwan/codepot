@@ -9,7 +9,7 @@
 
 <body>
 
-<div class="content" id="project_source_folder_content">
+<div class="content" id="project_code_folder_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -22,7 +22,7 @@ $this->load->view (
 	'projectbar',
 	array (
 		'site' => NULL,
-		'pageid' => 'source',
+		'pageid' => 'code',
 		'ctxmenuitems' => array ()
 	)
 );
@@ -31,18 +31,18 @@ $this->load->view (
 <!---------------------------------------------------------------------------->
 
 
-<div class="sidebar" id="project_source_folder_sidebar">
-	<div class="box" id="project_source_folder_sidebar_info">
+<div class="sidebar" id="project_code_folder_sidebar">
+	<div class="box" id="project_code_folder_sidebar_info">
 		<div class="boxtitle"><?=$this->lang->line('Revision')?>: <?=$file['created_rev']?></div>
 		<pre><?=$file['logmsg']?></pre>
 	</div>
-</div> <!-- project_source_folder_sidebar -->
+</div> <!-- project_code_folder_sidebar -->
 
 
 <!---------------------------------------------------------------------------->
 
 
-<div class="mainarea" id="project_source_folder_mainarea">
+<div class="mainarea" id="project_code_folder_mainarea">
 
 <div class="title">
 <?php
@@ -60,7 +60,7 @@ $this->load->view (
 	// print the main anchor for the root folder. 
 	// let the anchor text be the project name.
 	print anchor (
-		"/source/file/{$project->id}{$revreqroot}", 
+		"code/file/{$project->id}{$revreqroot}", 
 		htmlspecialchars($project->name));
 
 	// explode non-root folder parts to anchors
@@ -73,7 +73,7 @@ $this->load->view (
 		$par .= '/' . $exps[$i];
 		$xpar = $this->converter->AsciiToHex ($par);
 		print anchor (
-			"source/file/{$project->id}/{$xpar}{$revreq}",
+			"code/file/{$project->id}/{$xpar}{$revreq}",
 			htmlspecialchars($exps[$i]));
 	}
 
@@ -99,24 +99,24 @@ $this->load->view (
 
 	if (count($file['content']) <= 0)
 	{
-		 print $this->lang->line('MSG_NO_SOURCE_CODE_AVAIL');
+		 print $this->lang->line('MSG_NO_CODE_AVAIL');
 	}
 	else 
 	{
-		print '<div class="menu" id="project_source_folder_mainarea_menu">';
+		print '<div class="menu" id="project_code_folder_mainarea_menu">';
 		$xpar = $this->converter->AsciiTohex ($headpath);
 		if ($revision > 0 && $revision < $next_revision)
 		{
-			print anchor ("source/file/{$project->id}", $this->lang->line('Head revision'));
+			print anchor ("code/file/{$project->id}", $this->lang->line('Head revision'));
 			print ' | ';
 		}
-		print anchor ("source/history/{$project->id}/{$xpar}", $this->lang->line('History'));
+		print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
 		print '</div>';
 
 		usort ($file['content'], 'comp_files');
 
-		print '<div id="project_source_folder_mainarea_result">';
-		print '<table id="project_source_folder_mainarea_result_table">';
+		print '<div id="project_code_folder_mainarea_result">';
+		print '<table id="project_code_folder_mainarea_result_table">';
 		print '<tr class="heading">';
 		print '<th>' . $this->lang->line('Name') . '</th>';
 		print '<th>' . $this->lang->line('Revision') . '</th>';
@@ -141,7 +141,7 @@ $this->load->view (
        		         	print "<tr class='{$rowclass}'>";
 				print '<td>';
 				print anchor (
-					"source/file/{$project->id}/{$hexpath}{$revreq}",
+					"code/file/{$project->id}/{$hexpath}{$revreq}",
 					htmlspecialchars($f['name']));
 				print '</td>';
 				print '<td>';
@@ -166,7 +166,7 @@ $this->load->view (
        		         	print "<tr class='{$rowclass}'>";
 				print '<td>';
 				print anchor (
-					"source/file/{$project->id}/{$hexpath}{$revreq}",
+					"code/file/{$project->id}/{$hexpath}{$revreq}",
 					htmlspecialchars($f['name']));
 				print '</td>';
 				print '<td>';
@@ -185,12 +185,12 @@ $this->load->view (
 
 				print '<td>';
 				print anchor (
-					"source/blame/{$project->id}/{$hexpath}{$revreq}",
+					"code/blame/{$project->id}/{$hexpath}{$revreq}",
 					$this->lang->line('Blame'));
 				print '</td>';
 				print '<td>';
 				print anchor (
-					"source/diff/{$project->id}/{$hexpath}{$revreq}",
+					"code/diff/{$project->id}/{$hexpath}{$revreq}",
 					$this->lang->line('Difference'));
 				print '</td>';
 				print '</tr>';
@@ -201,7 +201,7 @@ $this->load->view (
 	}
 ?>
 
-</div> <!-- project_source_folder_mainarea -->
+</div> <!-- project_code_folder_mainarea -->
 
 
 <!---------------------------------------------------------------------------->
@@ -210,7 +210,7 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_source_folder_content -->
+</div> <!--  project_code_folder_content -->
 
 </body>
 
