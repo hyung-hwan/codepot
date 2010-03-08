@@ -1,16 +1,16 @@
 <?php
 
-class Source extends Controller
+class Code extends Controller
 {
 	var $VIEW_ERROR = 'error';
-	var $VIEW_FOLDER = 'source_folder';
-	var $VIEW_FILE = 'source_file';
-	var $VIEW_BLAME = 'source_blame';
-	var $VIEW_HISTORY = 'source_history';
-	var $VIEW_REVISION = 'source_revision';
-	var $VIEW_DIFF = 'source_diff';
+	var $VIEW_FOLDER = 'code_folder';
+	var $VIEW_FILE = 'code_file';
+	var $VIEW_BLAME = 'code_blame';
+	var $VIEW_HISTORY = 'code_history';
+	var $VIEW_REVISION = 'code_revision';
+	var $VIEW_DIFF = 'code_diff';
 
-	function Source ()
+	function Code ()
 	{
 		parent::Controller ();
 		$this->load->helper ('url');
@@ -39,6 +39,7 @@ class Source extends Controller
 
 		$path = $this->converter->HexToAscii ($path);
 		if ($path == '.') $path = ''; /* treat a period specially */
+		$path = $this->_normalize_path ($path);
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -113,6 +114,7 @@ class Source extends Controller
 
 		$path = $this->converter->HexToAscii ($path);
 		if ($path == '.') $path = ''; /* treat a period specially */
+		$path = $this->_normalize_path ($path);
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -174,6 +176,7 @@ class Source extends Controller
 
 		$path = $this->converter->HexToAscii ($path);
 		if ($path == '.') $path = ''; /* treat a period specially */
+		$path = $this->_normalize_path ($path);
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -225,6 +228,7 @@ class Source extends Controller
 
 		$path = $this->converter->HexToAscii ($path);
 		if ($path == '.') $path = ''; /* treat a period specially */
+		$path = $this->_normalize_path ($path);
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -275,6 +279,8 @@ class Source extends Controller
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
+		$path = $this->_normalize_path ($path);
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -318,4 +324,12 @@ class Source extends Controller
 			}
 		}
 	}
+
+	function _normalize_path ($path)
+	{
+		$path = preg_replace('/[\/]+/', '/', $path);
+		if ($path == '/') $path = '';
+		return $path;
+	}
+
 }

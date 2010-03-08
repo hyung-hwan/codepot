@@ -314,6 +314,8 @@ class Site extends Controller
 		$pagecfg['total_rows'] = $num_log_entries;
 		$pagecfg['per_page'] = CODEPOT_MAX_LOGS_PER_PAGE; 
 		$pagecfg['uri_segment'] = 3;
+		$pagecfg['first_link'] = $this->lang->line('First');
+		$pagecfg['last_link'] = $this->lang->line('Last');
 
 		$log_entries = $this->logs->getEntries ($offset, $pagecfg['per_page']);
 		if ($log_entries === FALSE)

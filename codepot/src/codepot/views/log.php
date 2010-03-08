@@ -90,7 +90,7 @@ $this->load->view (
 		if (!isset($project) || $project == NULL)
 		{
 			print '<td class="projectid">';
-			print anchor ("/project/home/{$log['projectid']}", $log['projectid']);
+			print anchor ("project/home/{$log['projectid']}", $log['projectid']);
 			print '</td>';
 		}
 
@@ -99,7 +99,7 @@ $this->load->view (
 		{
 			print '<td class="obejct">';
 			print anchor (	
-				"/source/revision/{$log['projectid']}/{$xdot}/{$code['rev']}", 
+				"code/revision/{$log['projectid']}/{$xdot}/{$code['rev']}", 
 				"r{$code['rev']}");
 			print '</td>';
 

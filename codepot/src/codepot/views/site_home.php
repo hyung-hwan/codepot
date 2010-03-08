@@ -68,11 +68,15 @@ $this->load->view (
 <?php
 foreach ($latest_projects as $project)
 {
-	//$cap = "{$project->name} ({$project->id})";
-	$cap = "{$project->name}";
-	$anc = anchor ("project/home/{$project->id}", htmlspecialchars($cap));
-	//$date = date ('Y/m/d', strtotime($project->createdon));
-	//print "<tr><td>{$anc}</td><td>{$date}</td></tr>";
+	if (strcasecmp ($project->name, $project->id) != 0)
+		$cap = "{$project->name} ($project->id)";
+	else $cap = $project->name;
+
+	//$sum = preg_replace("/(.{15}).+/u", "$1…", $project->summary);
+	//$sum = htmlspecialchars ($sum);
+
+	$anc = anchor ("project/home/{$project->id}", 
+		htmlspecialchars($cap), "title='{$project->summary}'");
 	print "<li>{$anc}</li>";
 }
 ?>
@@ -99,14 +103,14 @@ foreach ($latest_projects as $project)
 			print '<td class="projectid">';
 			/*
 			print anchor (
-				"/source/file/{$x['repo']}/{$xdot}/{$x['rev']}", 
+				"code/file/{$x['repo']}/{$xdot}/{$x['rev']}", 
 				$x['repo']);
 			*/
-			print anchor ("/project/home/{$x['repo']}", $x['repo']);
+			print anchor ("project/home/{$x['repo']}", $x['repo']);
 			print '</td>';
 			print '<td class="object">';
 			print anchor (	
-				"/source/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
+				"code/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
 				"r{$x['rev']}");
 			print '</td>';
 
