@@ -101,7 +101,7 @@ $this->load->view (
 			print '</td>';
 			print '<td class="object">';
 			print anchor (	
-				"/source/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
+				"code/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
 				"r{$x['rev']}");
 			print '</td>';
 

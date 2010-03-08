@@ -15,7 +15,7 @@
 
 <body onload="prettyPrint()">
 
-<div class="content" id="project_source_blame_content">
+<div class="content" id="project_code_blame_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -28,7 +28,7 @@ $this->load->view (
 	'projectbar',
 	array (
 		'site' => NULL,
-		'pageid' => 'source',
+		'pageid' => 'code',
 		'ctxmenuitems' => array ()
 	)
 );
@@ -36,9 +36,9 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="project_source_blame_mainarea">
+<div class="mainarea" id="project_code_blame_mainarea">
 
-<div class="title" id="project_source_blame_mainarea_title">
+<div class="title" id="project_code_blame_mainarea_title">
 <?php
 	if ($revision <= 0)
 	{
@@ -52,7 +52,7 @@ $this->load->view (
 	}
 
 	print anchor (
-		"/source/file/{$project->id}{$revreqroot}",
+		"code/file/{$project->id}{$revreqroot}",
 		htmlspecialchars($project->name));
 
 	$exps = explode ('/', $headpath);
@@ -67,13 +67,13 @@ $this->load->view (
 		if ($i == $expsize - 1)
 		{
 			print anchor (
-				"source/blame/{$project->id}/{$xpar}{$revreq}",
+				"code/blame/{$project->id}/{$xpar}{$revreq}",
 				htmlspecialchars($exps[$i]));
 		}
 		else
 		{
 			print anchor (
-				"source/file/{$project->id}/{$xpar}{$revreq}",
+				"code/file/{$project->id}/{$xpar}{$revreq}",
 				htmlspecialchars($exps[$i]));
 		}
 	}
@@ -84,44 +84,44 @@ $this->load->view (
 		print htmlspecialchars($file['fullpath']);
 	}
 ?>
-</div> <!-- project_source_blame_mainarea_title -->
+</div> <!-- project_code_blame_mainarea_title -->
 
-<div class="menu" id="project_source_blame_mainarea_menu">
+<div class="menu" id="project_code_blame_mainarea_menu">
 <?php
 $xpar = $this->converter->AsciiToHex ($headpath);
 
 if ($file['created_rev'] != $file['head_rev'])
 {
-	print anchor ("source/file/{$project->id}/${xpar}", $this->lang->line('Head revision'));
+	print anchor ("code/blame/{$project->id}/${xpar}", $this->lang->line('Head revision'));
 	print ' | ';
 }
 
-print anchor ("source/file/{$project->id}/${xpar}{$revreq}", $this->lang->line('Details'));
+print anchor ("code/file/{$project->id}/${xpar}{$revreq}", $this->lang->line('Details'));
 print ' | ';
-print anchor ("source/diff/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Difference'));
+print anchor ("code/diff/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Difference'));
 print ' | ';
-print anchor ("source/history/{$project->id}/{$xpar}", $this->lang->line('History'));
+print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
 
 ?>
-</div> <!-- project_source_blame_mainarea_menu -->
+</div> <!-- project_code_blame_mainarea_menu -->
 
-<div class="infostrip" id="project_source_blame_mainarea_infostrip">
-	<?=anchor ("source/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<')?> 
+<div class="infostrip" id="project_code_blame_mainarea_infostrip">
+	<?=anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<')?> 
 	<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
-	<?=anchor ("source/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>')?> |
+	<?=anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>')?> |
 	<?=$this->lang->line('Author')?>: <?=htmlspecialchars($file['last_author'])?> |
 	<?=$this->lang->line('Size')?>: <?=$file['size']?> |
 	<?=$this->lang->line('Last updated on')?>: <?=$file['time']?>
 </div>
 
-<div id="project_source_blame_mainarea_result">
+<div id="project_code_blame_mainarea_result">
 
 <?php 
 	$fileext = substr(strrchr($file['name'], '.'), 1);
 	if ($fileext == "") $fileext = "html"
 ?>
 
-<pre class="prettyprint lang-<?=$fileext?>" id="project_source_blame_mainarea_result_pre">
+<pre class="prettyprint lang-<?=$fileext?>" id="project_code_blame_mainarea_result_pre">
 <?php
 
 	$content = $file['content'];
@@ -140,7 +140,7 @@ print anchor ("source/history/{$project->id}/{$xpar}", $this->lang->line('Histor
 			$rev_padded = str_pad ($rev, 6, ' ', STR_PAD_LEFT);
 	
 			$xpar = $this->converter->AsciiTohex ($headpath);
-			$rev_padded = anchor ("/source/blame/{$project->id}/{$xpar}/{$rev}", $rev_padded);
+			$rev_padded = anchor ("code/blame/{$project->id}/{$xpar}/{$rev}", $rev_padded);
 		}
 		else
 		{
@@ -167,11 +167,11 @@ print anchor ("source/history/{$project->id}/{$xpar}", $this->lang->line('Histor
 ?>
 </pre>
 
-<div id="project_source_blame_mainarea_result_info">
+<div id="project_code_blame_mainarea_result_info">
 <script language='javascript'>
 function toggle_logmsg()
 {
-	var x = document.getElementById ('project_source_blame_mainarea_result_info_logmsg');	
+	var x = document.getElementById ('project_code_blame_mainarea_result_info_logmsg');	
 	if (x) x.style.visibility = (x.style.visibility == 'visible')? 'hidden': 'visible';
 	return false;
 }
@@ -180,14 +180,14 @@ function toggle_logmsg()
 <div class="title">
 <a href='#' onClick='toggle_logmsg()'><?= $this->lang->line('Message') ?></a>
 </div>
-<pre id="project_source_blame_mainarea_result_info_logmsg" style="visibility: visible">
+<pre id="project_code_blame_mainarea_result_info_logmsg" style="visibility: visible">
 <?= $file['logmsg'] ?>
 </pre>
-</div> <!-- project_source_blame_mainarea_result_info -->
+</div> <!-- project_code_blame_mainarea_result_info -->
 
-</div> <!-- project_source_blame_mainarea_result -->
+</div> <!-- project_code_blame_mainarea_result -->
 
-</div> <!-- project_source_blame_mainarea -->
+</div> <!-- project_code_blame_mainarea -->
 
 <!---------------------------------------------------------------------------->
 
@@ -196,7 +196,7 @@ function toggle_logmsg()
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_source_blame_content -->
+</div> <!--  project_code_blame_content -->
 
 </body>
 

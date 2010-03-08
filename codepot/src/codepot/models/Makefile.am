@@ -2,6 +2,7 @@ wwwdir=$(WWWDIR)/codepot/models
 www_DATA =  \
 	filemodel.php \
 	index.html \
+	issuemodel.php \
 	ldaploginmodel.php \
 	loginmodel.php \
 	logmodel.php \

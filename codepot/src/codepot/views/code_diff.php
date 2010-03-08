@@ -15,7 +15,7 @@
 
 <body onload="prettyPrint()">
 
-<div class="content" id="project_source_diff_content">
+<div class="content" id="project_code_diff_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -28,7 +28,7 @@ $this->load->view (
 	'projectbar',
 	array (
 		'site' => NULL,
-		'pageid' => 'source',
+		'pageid' => 'code',
 		'ctxmenuitems' => array ()
 	)
 );
@@ -36,9 +36,9 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="project_source_diff_mainarea">
+<div class="mainarea" id="project_code_diff_mainarea">
 
-<div class="title" id="project_source_diff_mainarea_title">
+<div class="title" id="project_code_diff_mainarea_title">
 <?php
 	if ($revision1 <= 0)
 	{
@@ -52,7 +52,7 @@ $this->load->view (
 	}
 
 	print anchor (
-		"/source/file/{$project->id}{$revreqroot}",
+		"code/file/{$project->id}{$revreqroot}",
 		htmlspecialchars($project->name));
 
 	$exps = explode ('/', $headpath);
@@ -63,38 +63,38 @@ $this->load->view (
 		$par .= "/{$exps[$i]}";
 
 		$xpar = $this->converter->AsciiToHex ($par);
-		$xpar = "source/file/{$project->id}/{$xpar}{$revreq}";
+		$xpar = "code/file/{$project->id}/{$xpar}{$revreq}";
 
 		print '/';
 		print anchor ($xpar, htmlspecialchars($exps[$i]));
 	}
 ?>
-</div> <!-- project_source_diff_mainarea_title -->
+</div> <!-- project_code_diff_mainarea_title -->
 
-<div class="menu" id="project_source_diff_mainarea_menu">
+<div class="menu" id="project_code_diff_mainarea_menu">
 <?php
 	$xpar = $this->converter->AsciiTohex ($headpath);
 	print anchor (
-		"source/file/{$project->id}/{$xpar}{$revreq}",
+		"code/file/{$project->id}/{$xpar}{$revreq}",
 		$this->lang->line('Details'));
 	print ' | ';
 	print anchor (
-		"source/blame/{$project->id}/{$xpar}{$revreq}",
+		"code/blame/{$project->id}/{$xpar}{$revreq}",
 		$this->lang->line('Blame'));
 	print ' | ';
 	print anchor (
-		"source/history/{$project->id}/{$xpar}",
+		"code/history/{$project->id}/{$xpar}",
 		$this->lang->line('History'));
 ?>
-</div> <!-- project_source_diff_mainarea_menu -->
+</div> <!-- project_code_diff_mainarea_menu -->
 
 <?php 
 	$fileext = substr(strrchr($file['name'], '.'), 1);
 	if ($fileext == "") $fileext = "html"
 ?>
 
-<div id="project_source_diff_mainarea_result">
-<table id="project_source_diff_mainarea_result_table">
+<div id="project_code_diff_mainarea_result">
+<table id="project_code_diff_mainarea_result_table">
 <?php
 
 	/*
@@ -108,7 +108,7 @@ $this->load->view (
 
 	$currev = $file['created_rev'];
 	$prevrev = $file['against']['prev_rev'];
-	$prevanc = "source/diff/{$project->id}/{$xpar}/{$currev}/{$prevrev}";
+	$prevanc = "code/diff/{$project->id}/{$xpar}/{$currev}/{$prevrev}";
 	print anchor ($prevanc, '<<');
 	print '&nbsp;&nbsp;&nbsp;';
 
@@ -118,7 +118,7 @@ $this->load->view (
 
 	$currev = $file['created_rev'];
 	$nextrev = $file['against']['next_rev'];
-	$nextanc = "source/diff/{$project->id}/{$xpar}/{$currev}/{$nextrev}";
+	$nextanc = "code/diff/{$project->id}/{$xpar}/{$currev}/{$nextrev}";
 	print '&nbsp;&nbsp;&nbsp;';
 	print anchor ($nextanc, '>>');
 
@@ -128,7 +128,7 @@ $this->load->view (
 
 	$currev = $file['against']['created_rev'];
 	$prevrev = $file['prev_rev'];
-	$prevanc = "source/diff/{$project->id}/{$xpar}/{$prevrev}/{$currev}";
+	$prevanc = "code/diff/{$project->id}/{$xpar}/{$prevrev}/{$currev}";
 	print anchor ($prevanc, '<<');
 	print '&nbsp;&nbsp;&nbsp;';
 
@@ -138,7 +138,7 @@ $this->load->view (
 
 	$currev = $file['against']['created_rev'];
 	$nextrev = $file['next_rev'];
-	$nextanc = "source/diff/{$project->id}/{$xpar}/{$nextrev}/{$currev}";
+	$nextanc = "code/diff/{$project->id}/{$xpar}/{$nextrev}/{$currev}";
 	print '&nbsp;&nbsp;&nbsp;';
 	print anchor ($nextanc, '>>');
 
@@ -152,13 +152,13 @@ $this->load->view (
 
 		print '<th>';
 		print anchor (
-			"source/file/{$project->id}/{$xpar}/{$file['against']['created_rev']}",
+			"code/file/{$project->id}/{$xpar}/{$file['against']['created_rev']}",
 			htmlspecialchars ($file['against']['fullpath']));
 		print '</th>';
 
 		print '<th>';
 		print anchor (
-			"source/file/{$project->id}/{$xpar}/{$file['created_rev']}",
+			"code/file/{$project->id}/{$xpar}/{$file['created_rev']}",
 			htmlspecialchars ($file['fullpath']));
 		print '</th>';
 
@@ -220,7 +220,7 @@ $this->load->view (
 </table>
 </div>
 
-</div> <!-- project_source_diff_mainarea -->
+</div> <!-- project_code_diff_mainarea -->
 
 
 <!---------------------------------------------------------------------------->
@@ -230,7 +230,7 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_source_diff_content -->
+</div> <!--  project_code_diff_content -->
 
 </body>
 

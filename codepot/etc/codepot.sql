@@ -50,6 +50,27 @@ CREATE TABLE wiki (
 		ON DELETE RESTRICT ON UPDATE CASCADE
 ) charset=utf8 engine=InnoDB;	
 
+CREATE TABLE issue (
+	projectid     VARCHAR(32)   NOT NULL,
+#	id            BIGINT        NOT NULL AUTO_INCREMENT,
+	id            BIGINT        NOT NULL,
+	summary       VARCHAR(255)  NOT NULL,
+	type          VARCHAR(32)   NOT NULL,
+	status        VARCHAR(32)   NOT NULL,
+	assignedto    VARCHAR(255)  NOT NULL,
+	description   TEXT          NOT NULL,
+
+	createdon  DATETIME,
+	updatedon  DATETIME,
+	createdby  VARCHAR(32),
+	updatedby  VARCHAR(32),
+
+	PRIMARY KEY (projectid, id),
+	UNIQUE KEY issue_id (projectid, summary),
+
+	CONSTRAINT issue_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+) charset=utf8 engine=InnoDB;	
 
 CREATE TABLE file (
 	projectid   VARCHAR(32)   NOT NULL,

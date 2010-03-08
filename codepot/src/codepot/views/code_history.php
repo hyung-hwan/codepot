@@ -9,7 +9,7 @@
 
 <body>
 
-<div class="content" id="project_source_history_content">
+<div class="content" id="project_code_history_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -22,7 +22,7 @@ $this->load->view (
 	'projectbar',
 	array (
 		'site' => NULL,
-		'pageid' => 'source',
+		'pageid' => 'code',
 		'ctxmenuitems' => array ()
 	)
 );
@@ -30,9 +30,9 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="project_source_history_mainarea">
+<div class="mainarea" id="project_code_history_mainarea">
 
-<div class="title" id="project_source_history_mainarea_title">
+<div class="title" id="project_code_history_mainarea_title">
 <?php
 	if ($revision <= 0)
 	{
@@ -47,7 +47,7 @@ $this->load->view (
 
 	// print the anchor for the root nolder with a project name
 	print anchor (
-		"/source/history/{$project->id}{$revreqroot}",
+		"code/history/{$project->id}{$revreqroot}",
 		htmlspecialchars($project->name));
 
 	// explodes part of the full path name into an array 
@@ -61,17 +61,17 @@ $this->load->view (
 		$par .= '/' . $exps[$i];
 		$xpar = $this->converter->AsciiToHex ($par);
 		print anchor (
-			"source/history/{$project->id}/{$xpar}{$revreq}",
+			"code/history/{$project->id}/{$xpar}{$revreq}",
 			htmlspecialchars($exps[$i]));
 	}
 ?>
 </div>
 
-<div class="menu" id="project_source_history_mainarea_menu">
-</div> <!-- project_source_history_mainarea_menu -->
+<div class="menu" id="project_code_history_mainarea_menu">
+</div> <!-- project_code_history_mainarea_menu -->
 
-<div id="project_source_history_mainarea_result">
-<table id="project_source_history_mainarea_result_table">
+<div id="project_code_history_mainarea_result">
+<table id="project_code_history_mainarea_result_table">
 <tr class='heading'>
 	<th><?=$this->lang->line('Revision')?></th>
 	<th><?=$this->lang->line('Author')?></th>
@@ -95,7 +95,7 @@ $this->load->view (
 		$xfullpath = $this->converter->AsciiToHex (
 			($fullpath == '')? '.': $fullpath);
 
-		print anchor ("/source/file/{$project->id}/{$xfullpath}/{$h['rev']}", $h['rev']);
+		print anchor ("code/file/{$project->id}/{$xfullpath}/{$h['rev']}", $h['rev']);
 		print '</td>';
 
 		print '<td>';
@@ -117,17 +117,17 @@ $this->load->view (
 		if ($file['type'] == 'file')	
 		{
 			print '<td>';
-			print anchor ("/source/blame/{$project->id}/{$xfullpath}/{$h['rev']}", 
+			print anchor ("code/blame/{$project->id}/{$xfullpath}/{$h['rev']}", 
 				$this->lang->line('Blame'));
 			print ' ';
-			print anchor ("/source/diff/{$project->id}/{$xfullpath}/{$h['rev']}", 
+			print anchor ("code/diff/{$project->id}/{$xfullpath}/{$h['rev']}", 
 				$this->lang->line('Difference'));
 			print '</td>';
 		}
 		else if ($file['type'] == 'dir')
 		{
 			print '<td>';
-			print anchor ("/source/revision/{$project->id}/{$xfullpath}/{$h['rev']}", 
+			print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", 
 				$this->lang->line('Details'));
 			print '</td>';
 		}
@@ -165,9 +165,9 @@ $this->load->view (
 	}
 ?>
 </table>
-</div> <!-- project_source_history_mainarea_body -->
+</div> <!-- project_code_history_mainarea_body -->
 
-</div> <!-- project_source_history_mainarea -->
+</div> <!-- project_code_history_mainarea -->
 
 
 <!---------------------------------------------------------------------------->
@@ -177,7 +177,7 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_source_history_content -->
+</div> <!--  project_code_history_content -->
 
 </body>
 

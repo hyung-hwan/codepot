@@ -1,12 +1,20 @@
 wwwdir=$(WWWDIR)/codepot/views
 www_DATA =  \
 	error.php \
+	code_blame.php \
+	code_diff.php \
+	code_file.php \
+	code_folder.php \
+	code_history.php \
+	code_revision.php \
 	file_delete.php \
 	file_edit.php \
 	file_home.php \
 	file_show.php \
 	footer.php \
 	index.html \
+	issue_edit.php \
+	issue_home.php \
 	log.php \
 	login.php \
 	project_delete.php \
@@ -17,12 +25,6 @@ www_DATA =  \
 	site_edit.php \
 	site_delete.php \
 	site_home.php \
-	source_blame.php \
-	source_diff.php \
-	source_file.php \
-	source_folder.php \
-	source_history.php \
-	source_revision.php \
 	taskbar.php \
 	wiki_delete.php \
 	wiki_edit.php \
