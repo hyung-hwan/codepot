@@ -52,12 +52,12 @@ CREATE TABLE wiki (
 
 CREATE TABLE issue (
 	projectid     VARCHAR(32)   NOT NULL,
-#	id            BIGINT        NOT NULL AUTO_INCREMENT,
 	id            BIGINT        NOT NULL,
 	summary       VARCHAR(255)  NOT NULL,
 	type          VARCHAR(32)   NOT NULL,
 	status        VARCHAR(32)   NOT NULL,
-	assignedto    VARCHAR(255)  NOT NULL,
+	owner         VARCHAR(255)  NOT NULL,
+	priority      VARCHAR(32)   NOT NULL,
 	description   TEXT          NOT NULL,
 
 	createdon  DATETIME,
@@ -66,7 +66,8 @@ CREATE TABLE issue (
 	updatedby  VARCHAR(32),
 
 	PRIMARY KEY (projectid, id),
-	UNIQUE KEY issue_id (projectid, summary),
+	KEY issue_status_type_summary (projectid, status, type, summary),
+	KEY issue_summary (projectid, summary),
 
 	CONSTRAINT issue_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE

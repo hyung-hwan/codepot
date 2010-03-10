@@ -133,6 +133,11 @@ $this->load->view (
 				$hex = $this->converter->AsciiToHex ($log['message']);
 				$uri = "/file/show/{$log['projectid']}/{$hex}";
 			}
+			else if ($log['type'] == 'issue')
+			{
+				$hex = $this->converter->AsciiToHex ($log['message']);
+				$uri = "/issue/show/{$log['projectid']}/{$hex}";
+			}
 
 			$trimmed = preg_replace("/(.{10}).+/u", "$1…", $log['message']);
 			if ($uri != '')
