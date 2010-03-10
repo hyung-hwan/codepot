@@ -20,11 +20,14 @@
 <!---------------------------------------------------------------------------->
 
 <?php
+if (!isset($project))  $project = NULL;
+if (!isset($site))  $site = NULL;
+
 $this->load->view (
         'projectbar',
         array (
-                'site' => NULL,
-                'project' => NULL,
+                'site' => $site,
+                'project' => $project,
                 'pageid' => '',
                 'ctxmenuitems' => array ()
         )

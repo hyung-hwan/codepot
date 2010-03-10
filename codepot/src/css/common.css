@@ -80,12 +80,12 @@ body {
 
 .content .projectbar .ctxmenu {
 	float: right;
-	padding-top: 0.1em 0em 0.1em 0em;
+	padding: 0.1em 0em 0.1em 0em;
 }
 
 .content .projectbar .fixedmenu {
 	float: none;
-	padding-top: 0.1em 0em 0.1em 0em;
+	padding: 0.1em 0em 0.1em 0em;
 }
 
 .content .projectbar a {
@@ -236,7 +236,7 @@ body {
 }
 
 .content .mainarea table tr td.code {
-	white-space: nowarp;
+	white-space: nowrap;
 }
 
 .content .mainarea table tr td.code pre {

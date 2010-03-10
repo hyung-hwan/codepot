@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
-<title><?=htmlspecialchars($project->name)?></title>
+<title><?=htmlspecialchars($project->id)?></title>
 </head>
 
 <body>
@@ -46,8 +46,12 @@ else
 	print '<ul>';
 	foreach ($issues as $issue) 
 	{
-		$hexname = $this->converter->AsciiToHex ($issue->name);
-		print '<li>' . anchor ("issue/show/{$project->id}/{$hexname}", htmlspecialchars($issue->name)) .'</li>';
+		$hexid = $this->converter->AsciiToHex ($issue->id);
+		print '<li>';
+		print anchor ("issue/show/{$project->id}/{$hexid}", htmlspecialchars($issue->id));
+		print ': ';
+		print htmlspecialchars($issue->summary);
+		print '</li>';
 	}
 	print '</ul>';
 }

@@ -160,6 +160,11 @@ foreach ($latest_projects as $project)
 				$hex = $this->converter->AsciiToHex ($log['message']);
 				$uri = "/file/show/{$log['projectid']}/{$hex}";
 			}
+			else if ($log['type'] == 'issue')
+			{
+				$hex = $this->converter->AsciiToHex ($log['message']);
+				$uri = "/issue/show/{$log['projectid']}/{$hex}";
+			}
 
 			$trimmed = preg_replace("/(.{15}).+/u", "$1…", $log['message']);
 			if ($uri != '')

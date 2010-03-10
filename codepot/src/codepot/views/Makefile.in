@@ -176,8 +176,10 @@ www_DATA = \
 	file_show.php \
 	footer.php \
 	index.html \
+	issue_delete.php \
 	issue_edit.php \
 	issue_home.php \
+	issue_show.php \
 	log.php \
 	login.php \
 	project_delete.php \

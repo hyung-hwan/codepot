@@ -62,7 +62,7 @@ class Issue extends Controller
 		}
 	}
 
-	function _show_issue ($projectid, $name, $create)
+	function show ($projectid = '', $id = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('IssueModel', 'issues');
@@ -72,14 +72,14 @@ class Issue extends Controller
 			redirect ('main/signin');
 		$data['login'] = $login;
 
-		if ($name == '')
+		if ($id == '')
 		{
 			$data['message'] = 'INVALID PARAMETERS';
 			$this->load->view ($this->VIEW_ERROR, $data);
 			return;
 		}
 
-		$name = $this->converter->HexToAscii ($name);
+		$id = $this->converter->HexToAscii ($id);
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -96,7 +96,7 @@ class Issue extends Controller
 		}
 		else
 		{
-			$issue = $this->issues->get ($login['id'], $project, $name);
+			$issue = $this->issues->get ($login['id'], $project, $id);
 			if ($issue === FALSE)
 			{
 				$data['message'] = 'DATABASE ERROR';
@@ -104,18 +104,10 @@ class Issue extends Controller
 			}
 			else if ($issue === NULL)
 			{
-				if ($create)
-				{
-					redirect ("issue/create/{$projectid}/". 
-						$this->converter->AsciiToHex($name));
-				}
-				else
-				{
-					$data['message'] = 
-						$this->lang->line('MSG_NO_SUCH_ISSUE') . 
-						" - {$name}";
-					$this->load->view ($this->VIEW_ERROR, $data);
-				}
+				$data['message'] = 
+					$this->lang->line('MSG_NO_SUCH_ISSUE') . 
+					" - {$id}";
+				$this->load->view ($this->VIEW_ERROR, $data);
 			}
 			else
 			{
@@ -126,17 +118,7 @@ class Issue extends Controller
 		}
 	}
 
-	function show ($projectid = '' , $name = '')
-	{
-		$this->_show_issue ($projectid, $name, TRUE);
-	}
-
-	function show_r ($projectid = '' , $name = '')
-	{
-		$this->_show_issue ($projectid, $name, FALSE);
-	}
-
-	function _edit_issue ($projectid, $name, $mode)
+	function _edit_issue ($projectid, $id, $mode)
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
@@ -147,7 +129,7 @@ class Issue extends Controller
 		if ($login['id'] == '') redirect ('main');
 		$data['login'] = $login;
 
-		$name = $this->converter->HexToAscii ($name);
+		$id = $this->converter->HexToAscii ($id);
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -173,9 +155,17 @@ class Issue extends Controller
 			$this->form_validation->set_rules (
 				'issue_projectid', 'project ID', 'required|alpha_dash|max_length[32]');
 			$this->form_validation->set_rules (
-				'issue_name', 'name', 'required|max_length[255]');
+				'issue_summary', 'summary', 'required|max_length[255]');
 			$this->form_validation->set_rules (
-				'issue_text', 'text', 'required');
+				'issue_status', 'status', 'required');
+			$this->form_validation->set_rules (
+				'issue_type', 'type', 'required');
+			$this->form_validation->set_rules (
+				'issue_priority', 'priority', 'required');
+			$this->form_validation->set_rules (
+				'issue_owner', 'owner', 'required');
+			$this->form_validation->set_rules (
+				'issue_description', 'description', 'required');
 			$this->form_validation->set_error_delimiters (
 				'<span class="form_field_error">','</span>');
 
@@ -186,15 +176,20 @@ class Issue extends Controller
 			if ($this->input->post('issue'))
 			{
 				$issue->projectid = $this->input->post('issue_projectid');
-				$issue->name = $this->input->post('issue_name');
-				$issue->text = $this->input->post('issue_text');
+				$issue->id = $this->input->post('issue_id');
+				$issue->summary = $this->input->post('issue_summary');
+				$issue->description = $this->input->post('issue_description');
+				$issue->type = $this->input->post('issue_type');
+				$issue->status = $this->input->post('issue_status');
+				$issue->priority = $this->input->post('issue_priority');
+				$issue->owner = $this->input->post('issue_owner');
 
 				if ($this->form_validation->run())
 				{
-					$result = ($mode == 'update')?
+					$id = ($mode == 'update')?
 						$this->issues->update ($login['id'], $issue):
 						$this->issues->create ($login['id'], $issue);
-					if ($result === FALSE)
+					if ($id === FALSE)
 					{
 						$data['message'] = 'DATABASE ERROR';
 						$data['issue'] = $issue;
@@ -202,8 +197,8 @@ class Issue extends Controller
 					}
 					else
 					{
-						redirect ('issue/show/' . $project->id . '/' . 
-							$this->converter->AsciiToHex($issue->name));
+						redirect ("issue/show/{$project->id}/" . 
+							$this->converter->AsciiToHex((string)$id));
 					}
 				}
 				else
@@ -217,7 +212,7 @@ class Issue extends Controller
 			{
 				if ($mode == 'update')
 				{
-					$issue = $this->issues->get ($login['id'], $project, $name);
+					$issue = $this->issues->get ($login['id'], $project, $id);
 					if ($issue === FALSE)
 					{
 						$data['message'] = 'DATABASE ERROR';
@@ -227,7 +222,7 @@ class Issue extends Controller
 					{
 						$data['message'] = 
 							$this->lang->line('MSG_NO_SUCH_ISSUE') . 
-							" - {$name}";
+							" - {$id}";
 						$this->load->view ($this->VIEW_ERROR, $data);
 					}
 					else
@@ -239,8 +234,13 @@ class Issue extends Controller
 				else
 				{
 					$issue->projectid = $projectid;
-					$issue->name = $name;
-					$issue->text = '';
+					$issue->id = $id;
+					$issue->summary = '';
+					$issue->type = '';
+					$issue->status = '';
+					$issue->owner = '';
+					$issue->priority = '';
+					$issue->description = '';
 
 					$data['issue'] = $issue;
 					$this->load->view ($this->VIEW_EDIT, $data);	
@@ -250,17 +250,17 @@ class Issue extends Controller
 		}
 	}
 
-	function create ($projectid = '', $name = '')
+	function create ($projectid = '', $id = '')
 	{
-		return $this->_edit_issue ($projectid, $name, 'create');
+		return $this->_edit_issue ($projectid, $id, 'create');
 	}
 
-	function update ($projectid = '', $name = '')
+	function update ($projectid = '', $id = '')
 	{
-		return $this->_edit_issue ($projectid, $name, 'update');
+		return $this->_edit_issue ($projectid, $id, 'update');
 	}
 
-	function delete ($projectid = '', $name = '')
+	function delete ($projectid = '', $id = '')
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
@@ -271,7 +271,7 @@ class Issue extends Controller
 		if ($login['id'] == '') redirect ('main');
 		$data['login'] = $login;
 
-		$name = $this->converter->HexToAscii ($name);
+		$id = $this->converter->HexToAscii ($id);
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -303,7 +303,7 @@ class Issue extends Controller
 			if($this->input->post('issue'))
 			{
 				$issue->projectid = $this->input->post('issue_projectid');
-				$issue->name = $this->input->post('issue_name');
+				$issue->id = $this->input->post('issue_id');
 				$data['issue_confirm'] = $this->input->post('issue_confirm');
 
 				if ($this->form_validation->run())
@@ -325,7 +325,7 @@ class Issue extends Controller
 					else 
 					{
 						redirect ("issue/show/{$project->id}/" . 
-							$this->converter->AsciiToHex($issue->name));
+							$this->converter->AsciiToHex($issue->id));
 					}
 				}
 				else
@@ -337,7 +337,7 @@ class Issue extends Controller
 			}
 			else
 			{
-				$issue = $this->issues->get ($login['id'], $project, $name);
+				$issue = $this->issues->get ($login['id'], $project, $id);
 				if ($issue === FALSE)
 				{
 					$data['message'] = 'DATABASE ERROR';
@@ -347,7 +347,7 @@ class Issue extends Controller
 				{
 					$data['message'] = 
 						$this->lang->line('MSG_NO_SUCH_ISSUE') . 
-						" - {$name}";
+						" - {$id}";
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 				else
