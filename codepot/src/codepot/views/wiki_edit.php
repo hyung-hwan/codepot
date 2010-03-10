@@ -18,7 +18,6 @@
 <!---------------------------------------------------------------------------->
 
 <?php
-$hexname = $this->converter->AsciiToHex ($wiki->name);
 $this->load->view (
 	'projectbar',
 	array (
@@ -35,7 +34,7 @@ $this->load->view (
 
 <?php if ($message != "") print '<div id="wiki_edit_message" class="form_message">'.htmlspecialchars($message).'</div>'; ?>
 
-<?=form_open("wiki/{$mode}/".$project->id.'/'.$this->converter->AsciiToHex($wiki->name))?>
+<?=form_open("wiki/{$mode}/{$project->id}/".$this->converter->AsciiToHex($wiki->name))?>
 	<?=form_fieldset()?>
 		<div>
 			<div>

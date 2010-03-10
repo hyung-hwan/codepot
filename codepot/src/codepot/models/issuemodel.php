@@ -37,12 +37,23 @@ class IssueModel extends Model
 	{
 		// TODO: check if userid can do this..
 		$this->db->trans_start ();
+
+		$this->db->where ('projectid', $issue->projectid);
+		$this->db->select ('MAX(id) as maxid');
+		$query = $this->db->get ('issue');
+		$result = $query->result();
+		$maxid = (empty($result) || $result[0] == NULL)? 0: $result[0]->maxid;
+
+		$newid = $maxid + 1;
+
 		$this->db->set ('projectid', $issue->projectid);
+		$this->db->set ('id', $newid);
 		$this->db->set ('summary', $issue->summary);
 		$this->db->set ('type', $issue->type);
 		$this->db->set ('status', $issue->status);
+		$this->db->set ('owner', $issue->owner);
+		$this->db->set ('priority', $issue->priority);
 		$this->db->set ('description', $issue->description);
-		$this->db->set ('assignedto', $issue->assignedto);
 		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
 		$this->db->set ('createdby', $userid);
@@ -54,12 +65,13 @@ class IssueModel extends Model
 		$this->db->set ('action',    'create');
 		$this->db->set ('projectid', $issue->projectid);
 		$this->db->set ('userid',    $userid);
-		//$this->db->set ('message',   'LAST_INSERT_ID()');
-		$this->db->set ('message',   'CONVERT(LAST_INSERT_ID(),CHAR)');
+		$this->db->set ('message',   $newid);
                 $this->db->insert ('log');
 
 		$this->db->trans_complete ();
-                return $this->db->trans_status();
+                if ($this->db->trans_status() === FALSE) return FALSE;
+
+		return $newid;
 	}
 
 	function update ($userid, $issue)
@@ -72,7 +84,8 @@ class IssueModel extends Model
 		$this->db->set ('type', $issue->type);
 		$this->db->set ('status', $issue->status);
 		$this->db->set ('description', $issue->description);
-		$this->db->set ('assignedto', $issue->assignedto);
+		$this->db->set ('owner', $issue->owner);
+		$this->db->set ('priority', $issue->priority);
 		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue');
@@ -86,7 +99,9 @@ class IssueModel extends Model
                 $this->db->insert ('log');
 
 		$this->db->trans_complete ();
-                return $this->db->trans_status();
+                if ($this->db->trans_status() === FALSE) return FALSE;
+
+		return $issue->id;
 	}
 
 	function delete ($userid, $issue)

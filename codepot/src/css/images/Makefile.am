@@ -14,7 +14,6 @@ www_DATA =  \
 	diff.png \
 	e-node.png \
 	exclamation.png \
-	favicon.ico \
 	file.png \
 	filec.png \
 	filedb.png \
@@ -39,8 +38,7 @@ www_DATA =  \
 	textbg.png \
 	toggledown.png \
 	toggleup.png \
-	up.png \
-	xml.gif
+	up.png 
 
 EXTRA_DIST = $(www_DATA)
 
