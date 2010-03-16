@@ -48,6 +48,7 @@ class File extends Controller
 			$files = $this->files->getAll ($login['id'], $project);
 			if ($files === FALSE)
 			{
+				$data['project'] = $project;
 				$data['message'] = 'DATABASE ERROR';
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
@@ -90,6 +91,7 @@ class File extends Controller
 			$file = $this->files->get ($login['id'], $project, $name);
 			if ($file === FALSE)
 			{
+				$data['project'] = $project;
 				$data['message'] = 'DATABASE ERROR';
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
@@ -137,6 +139,7 @@ class File extends Controller
 			$file = $this->files->get ($login['id'], $project, $name);
 			if ($file === FALSE)
 			{
+				$data['project'] = $project;
 				$data['message'] = 'DATABASE ERROR';
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
@@ -152,6 +155,7 @@ class File extends Controller
 				$data = @file_get_contents ($path);
 				if ($data === FALSE)
 				{
+					$data['project'] = $project;
 					$data['message'] = "CANNOT GET FILE - {$file->name}";
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
@@ -192,6 +196,7 @@ class File extends Controller
 		else if (!$login['sysadmin?'] && 
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
+			$data['project'] = $project;
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
@@ -385,12 +390,13 @@ class File extends Controller
 		else if (!$login['sysadmin?'] && 
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
+			$data['project'] = $project;
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
 		{
-			$data['message'] = "";
+			$data['message'] = '';
 			$data['project'] = $project;
 
 			$this->form_validation->set_rules ('file_confirm', 'confirm', 'alpha');
@@ -415,12 +421,12 @@ class File extends Controller
 						}
 						else
 						{
-							redirect ('file/home/' . $project->id);
+							redirect ("file/home/{$project->id}");
 						}
 					}
 					else 
 					{
-						redirect ('file/update/' . $project->id . '/' . 
+						redirect ("file/show/{$project->id}/" . 
 							$this->converter->AsciiToHex($file->name));
 					}
 				}

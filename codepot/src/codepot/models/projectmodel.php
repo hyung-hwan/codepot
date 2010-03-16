@@ -14,6 +14,12 @@ class ProjectModel extends Model
 
 		$this->db->where ('id', (string)$id);
 		$query = $this->db->get ('project');
+		//if ($query === FALSE) 
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
 
 		$result = $query->result ();
 		if (empty($result))

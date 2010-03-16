@@ -59,6 +59,7 @@ class Code extends Controller
 			$file = $this->subversion->getFile ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
+				$data['project'] = $project;
 				$data['message'] = 'Failed to get file';
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
@@ -67,6 +68,7 @@ class Code extends Controller
 				$head_rev = $this->subversion->getHeadRev ($projectid, $path);
 				if ($head_rev === FALSE)
 				{
+					$data['project'] = $project;
 					$data['message'] = 'Failed to get head revision';
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
@@ -134,6 +136,7 @@ class Code extends Controller
 			$file = $this->subversion->getBlame ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
+				$data['project'] = $project;
 				$data['message'] = 'Failed to get file content';
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
@@ -142,6 +145,7 @@ class Code extends Controller
 				$head_rev = $this->subversion->getHeadRev ($projectid, $path);
 				if ($head_rev === FALSE)
 				{
+					$data['project'] = $project;
 					$data['message'] = 'Failed to get head revision';
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
@@ -196,6 +200,7 @@ class Code extends Controller
 			$file = $this->subversion->getHistory ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
+				$data['project'] = $project;
 				$data['message'] = 'Failed to get log content';
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
@@ -248,6 +253,7 @@ class Code extends Controller
 			$file = $this->subversion->getRevHistory ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
+				$data['project'] = $project;
 				$data['message'] = 'Failed to get log content';
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
@@ -300,6 +306,7 @@ class Code extends Controller
 			$file = $this->subversion->getDiff ($projectid, $path, $rev1, $rev2);
 			if ($file === FALSE)
 			{
+				$data['project'] = $project;
 				$data['message'] = 'Failed to get diff';
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}

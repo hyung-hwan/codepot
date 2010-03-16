@@ -184,6 +184,7 @@ class Project extends Controller
 		else if (!$login['sysadmin?'] &&
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
+			$data['project'] = $project;
 			$data['login'] = $login;
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
@@ -218,7 +219,6 @@ class Project extends Controller
 					if ($result === FALSE)
 					{
 						$data['message'] = 'DATABASE ERROR';
-						$data['project'] = $project;
 						$this->load->view ($this->VIEW_DELETE, $data);
 					}
 					else 
@@ -232,7 +232,7 @@ class Project extends Controller
 				{
 					// the confirm checkbox is not checked.
 					// go back to the project home page.
-					redirect ('project/home/' . $project->id);
+					redirect ("project/home/{$project->id}");
 				}
 			}
 			else
@@ -279,6 +279,7 @@ class Project extends Controller
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
 			$data['login'] = $login;
+			$data['project'] = $project;
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
@@ -318,6 +319,7 @@ class Project extends Controller
 			if ($num_log_entries === FALSE)
 			{
 				$data['login'] = $login;
+				$data['project'] = $project;
 				$data['message'] = 'DATABASE ERROR';
 				$this->load->view ($this->VIEW_ERROR, $data);
 				return;
@@ -334,6 +336,7 @@ class Project extends Controller
 			if ($log_entries === FALSE)
 			{
 				$data['login'] = $login;
+				$data['project'] = $project;
 				$data['message'] = 'DATABASE ERROR';
 				$this->load->view ($this->VIEW_ERROR, $data);
 				return;

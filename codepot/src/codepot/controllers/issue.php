@@ -47,6 +47,19 @@ class Issue extends Controller
 		}
 		else
 		{
+			if ($this->input->post('filter'))
+			{
+				$filter->status = $this->input->post('filter_status');
+				$filter->owner = $this->input->post('filter_owner');
+				$data['filter'] = $filter;
+			}
+			else
+			{
+				$filter->status = '';
+				$filter->owner = '';
+				$data['filter'] = $filter;
+			}
+
 			$issues = $this->issues->getAll ($login['id'], $project);
 			if ($issues === FALSE)
 			{
@@ -62,7 +75,7 @@ class Issue extends Controller
 		}
 	}
 
-	function show ($projectid = '', $id = '')
+	function show ($projectid = '', $hexid = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('IssueModel', 'issues');
@@ -72,14 +85,14 @@ class Issue extends Controller
 			redirect ('main/signin');
 		$data['login'] = $login;
 
-		if ($id == '')
+		if ($hexid == '')
 		{
 			$data['message'] = 'INVALID PARAMETERS';
 			$this->load->view ($this->VIEW_ERROR, $data);
 			return;
 		}
 
-		$id = $this->converter->HexToAscii ($id);
+		$id = $this->converter->HexToAscii ($hexid);
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -96,14 +109,37 @@ class Issue extends Controller
 		}
 		else
 		{
+			if ($this->input->post('issue_change'))
+			{
+				$change->type = $this->input->post('issue_change_type');
+				$change->status = $this->input->post('issue_change_status');
+				$change->owner = $this->input->post('issue_change_owner');
+				$change->priority = $this->input->post('issue_change_priority');
+				$change->comment = $this->input->post('issue_change_comment');
+
+				if ($this->issues->change ($login['id'], $project, $id, $change) === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = 'DATABASE ERROR';
+					$this->load->view ($this->VIEW_ERROR, $data);
+				}
+				else
+				{
+					redirect ("/issue/show/{$projectid}/{$hexid}");
+				}
+				return;
+			}
+
 			$issue = $this->issues->get ($login['id'], $project, $id);
 			if ($issue === FALSE)
 			{
+				$data['project'] = $project;
 				$data['message'] = 'DATABASE ERROR';
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
 			else if ($issue === NULL)
 			{
+				$data['project'] = $project;
 				$data['message'] = 
 					$this->lang->line('MSG_NO_SUCH_ISSUE') . 
 					" - {$id}";
@@ -118,7 +154,7 @@ class Issue extends Controller
 		}
 	}
 
-	function _edit_issue ($projectid, $id, $mode)
+	function _edit_issue ($projectid, $hexid, $mode)
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
@@ -129,7 +165,7 @@ class Issue extends Controller
 		if ($login['id'] == '') redirect ('main');
 		$data['login'] = $login;
 
-		$id = $this->converter->HexToAscii ($id);
+		$id = $this->converter->HexToAscii ($hexid);
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -147,6 +183,7 @@ class Issue extends Controller
 		else if (!$login['sysadmin?'] && 
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
+			$data['project'] = $project;
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
@@ -197,8 +234,7 @@ class Issue extends Controller
 					}
 					else
 					{
-						redirect ("issue/show/{$project->id}/" . 
-							$this->converter->AsciiToHex((string)$id));
+						redirect ("issue/show/{$project->id}/{$hexid}");
 					}
 				}
 				else
@@ -250,17 +286,17 @@ class Issue extends Controller
 		}
 	}
 
-	function create ($projectid = '', $id = '')
+	function create ($projectid = '', $hexid = '')
 	{
-		return $this->_edit_issue ($projectid, $id, 'create');
+		return $this->_edit_issue ($projectid, $hexid, 'create');
 	}
 
-	function update ($projectid = '', $id = '')
+	function update ($projectid = '', $hexid = '')
 	{
-		return $this->_edit_issue ($projectid, $id, 'update');
+		return $this->_edit_issue ($projectid, $hexid, 'update');
 	}
 
-	function delete ($projectid = '', $id = '')
+	function delete ($projectid = '', $hexid = '')
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
@@ -271,7 +307,7 @@ class Issue extends Controller
 		if ($login['id'] == '') redirect ('main');
 		$data['login'] = $login;
 
-		$id = $this->converter->HexToAscii ($id);
+		$id = $this->converter->HexToAscii ($hexid);
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -289,6 +325,7 @@ class Issue extends Controller
 		else if (!$login['sysadmin?'] && 
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
+			$data['project'] = $project;
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
@@ -324,8 +361,7 @@ class Issue extends Controller
 					}
 					else 
 					{
-						redirect ("issue/show/{$project->id}/" . 
-							$this->converter->AsciiToHex($issue->id));
+						redirect ("issue/show/{$project->id}/{$hexid}");
 					}
 				}
 				else
