@@ -54,11 +54,12 @@ CREATE TABLE issue (
 	projectid     VARCHAR(32)   NOT NULL,
 	id            BIGINT        NOT NULL,
 	summary       VARCHAR(255)  NOT NULL,
+	description   TEXT          NOT NULL,
+
 	type          VARCHAR(32)   NOT NULL,
 	status        VARCHAR(32)   NOT NULL,
 	owner         VARCHAR(255)  NOT NULL,
 	priority      VARCHAR(32)   NOT NULL,
-	description   TEXT          NOT NULL,
 
 	createdon  DATETIME,
 	updatedon  DATETIME,
@@ -72,6 +73,28 @@ CREATE TABLE issue (
 	CONSTRAINT issue_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
 ) charset=utf8 engine=InnoDB;	
+
+CREATE TABLE issue_change (
+	projectid VARCHAR(32)  NOT NULL,
+	id        BIGINT       NOT NULL,
+	sno       BIGINT       NOT NULL,
+	
+	type      VARCHAR(32)  NOT NULL,
+	status    VARCHAR(32)  NOT NULL,
+	owner     VARCHAR(255) NOT NULL,
+	priority  VARCHAR(32)  NOT NULL,
+	message   TEXT         NOT NULL,
+
+	updatedon DATETIME,
+	updatedby VARCHAR(32),
+
+	PRIMARY KEY (projectid, id, sno),
+	KEY issue_update_time (projectid, id, updatedon),
+
+	CONSTRAINT issue_update_id FOREIGN KEY (projectid,id) REFERENCES issue(projectid,id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+
+) charset=utf8 engine=InnoDB;
 
 CREATE TABLE file (
 	projectid   VARCHAR(32)   NOT NULL,

@@ -38,17 +38,17 @@ $this->load->view (
 <?=form_open("issue/{$mode}/{$project->id}/".$this->converter->AsciiToHex($issue->id))?>
 	<?=form_fieldset()?>
 		<div>
-			<div>
-				<?=form_label($this->lang->line('ID').': ', 'issue_id')?>
-				<?=form_error('issue_id');?>
-			</div>
-			<div>
-				<?php 
-					$extra = ($mode == 'update')? 'readonly="readonly"': ''; 
-					$extra .= 'maxlength="80" size="40"';
-				?>
-				<?=form_input('issue_id', set_value('issue_id', $issue->id), $extra)?>
-			</div>
+			<?php if ($mode == 'create'): ?>
+				<?=form_hidden('issue_id', set_value('issue_id', $issue->id))?>
+			<?php else: ?>
+				<div>
+					<?=form_label($this->lang->line('ID').': ', 'issue_id')?>
+					<?=form_error('issue_id');?>
+				</div>
+				<div>
+					<?=form_input('issue_id', set_value('issue_id', $issue->id), 'readonly="readonly"')?>
+				</div>
+			<?php endif; ?>
 		</div>
 
 		<div>
@@ -57,7 +57,7 @@ $this->load->view (
 				<?=form_error('issue_summary');?>
 			</div>
 			<div>
-				<?=form_input('issue_summary', set_value('issue_summary', $issue->summary))?>
+				<?=form_input('issue_summary', set_value('issue_summary', $issue->summary), 'size="80"')?>
 			</div>
 		</div>
 
@@ -83,21 +83,22 @@ $this->load->view (
 
 		<div>
 			<div>
-				<?=form_label($this->lang->line('Status').': ', 'issue_status')?>
-				<?=form_error('issue_status');?>
-			</div>
-			<div>
-				<?=form_input('issue_status', set_value('issue_status', $issue->status))?>
-			</div>
-		</div>
-
-		<div>
-			<div>
 				<?=form_label($this->lang->line('Priority').': ', 'issue_priority')?>
 				<?=form_error('issue_priority');?>
 			</div>
 			<div>
 				<?=form_input('issue_priority', set_value('issue_priority', $issue->priority))?>
+			</div>
+		</div>
+
+
+		<div>
+			<div>
+				<?=form_label($this->lang->line('Status').': ', 'issue_status')?>
+				<?=form_error('issue_status');?>
+			</div>
+			<div>
+				<?=form_input('issue_status', set_value('issue_status', $issue->status))?>
 			</div>
 		</div>
 

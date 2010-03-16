@@ -122,24 +122,27 @@ $this->load->view (
 			if ($log['type'] == 'project')
 			{
 				$uri = "/project/home/{$log['projectid']}";
+				$trimmed = preg_replace("/(.{10}).+/u", "$1…", $log['message']);
 			}
 			else if ($log['type'] == 'wiki')
 			{
 				$hex = $this->converter->AsciiToHex ($log['message']);
 				$uri = "/wiki/show_r/{$log['projectid']}/{$hex}";
+				$trimmed = preg_replace("/(.{10}).+/u", "$1…", $log['message']);
 			}
 			else if ($log['type'] == 'file')
 			{
 				$hex = $this->converter->AsciiToHex ($log['message']);
 				$uri = "/file/show/{$log['projectid']}/{$hex}";
+				$trimmed = preg_replace("/(.{10}).+/u", "$1…", $log['message']);
 			}
 			else if ($log['type'] == 'issue')
 			{
 				$hex = $this->converter->AsciiToHex ($log['message']);
 				$uri = "/issue/show/{$log['projectid']}/{$hex}";
+				$trimmed = $this->lang->line('Issue') . " {$log['message']}";
 			}
 
-			$trimmed = preg_replace("/(.{10}).+/u", "$1…", $log['message']);
 			if ($uri != '')
 			{
 				print anchor (

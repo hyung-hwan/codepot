@@ -205,6 +205,7 @@ wwwdir = $(WWWDIR)/css
 SUBDIRS = images
 www_DATA = \
 	common.css \
+	jquery-ui.css \
 	project.css \
 	websvn.css 
 

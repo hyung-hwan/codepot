@@ -50,6 +50,7 @@ class Wiki extends Controller
 			$wikis = $this->wikis->getAll ($login['id'], $project);
 			if ($wikis === FALSE)
 			{
+				$data['project'] = $project;
 				$data['message'] = 'DATABASE ERROR';
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
@@ -139,6 +140,7 @@ class Wiki extends Controller
 						}
 						else
 						{
+							$data['project'] = $project;
 							$data['message'] = 
 								"WRONG ACTION NAME FOR CODE - {$name}";
 							$this->load->view ($this->VIEW_ERROR, $data);
@@ -151,6 +153,7 @@ class Wiki extends Controller
 				$wiki = $this->wikis->get ($login['id'], $project, $name);
 				if ($wiki === FALSE)
 				{
+					$data['project'] = $project;
 					$data['message'] = 'DATABASE ERROR';
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
@@ -163,6 +166,7 @@ class Wiki extends Controller
 					}
 					else
 					{
+						$data['project'] = $project;
 						$data['message'] = 
 							$this->lang->line('MSG_NO_SUCH_WIKI_PAGE') . 
 							" - {$name}";
@@ -218,6 +222,7 @@ class Wiki extends Controller
 		else if (!$login['sysadmin?'] && 
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
+			$data['project'] = $project;
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
@@ -376,11 +381,13 @@ class Wiki extends Controller
 		else if (!$login['sysadmin?'] && 
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
+			$data['project'] = $project;
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if ($this->_is_reserved ($name, FALSE))
 		{
+			$data['project'] = $project;
 			$data['message'] = "RESERVED WIKI PAGE - $name ";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
