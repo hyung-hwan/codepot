@@ -7,10 +7,12 @@ function show_projectbar ($con, $site, $project, $pageid, $ctxmenuitems)
 
 	if (isset($project)) 
 	{
-		if (strcasecmp ($project->name, $project->id) == 0)
-			print $project->name;
+		if ($project->name == '')
+			print $project->id;
+		else if (strcasecmp ($project->name, $project->id) == 0)
+			print htmlspecialchars($project->name);
 		else
-			print "{$project->name} ({$project->id})";
+			print htmlspecialchars($project->name) . " ({$project->id})";
 	}
 	else if (isset($site) && $site->name != '') 
 		print htmlspecialchars($site->name);

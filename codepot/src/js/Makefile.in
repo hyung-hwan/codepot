@@ -204,7 +204,9 @@ top_srcdir = @top_srcdir@
 wwwdir = $(WWWDIR)/js
 SUBDIRS = prettify
 www_DATA = \
-	creole.js 
+	creole.js  \
+	jquery.min.js \
+	jquery-ui.min.js
 
 EXTRA_DIST = $(www_DATA)
 all: all-recursive
