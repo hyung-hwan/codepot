@@ -29,7 +29,7 @@ class IssueModel extends Model
 
 		$this->db->where ('projectid', $project->id);
 		$this->db->where ('id', $id);
-		$this->db->order_by ('sno', 'desc');
+		$this->db->order_by ('sno', 'asc');
 		$query = $this->db->get ('issue_change');
 
 		$this->db->trans_complete ();
@@ -41,10 +41,41 @@ class IssueModel extends Model
 		return $result[0];
 	}
 
+	function getNumEntries ($userid, $project)
+	{
+		$this->db->trans_start ();
+
+		$this->db->where ('projectid', $project->id);
+		$this->db->select ('count(id) as count');
+		$query = $this->db->get ('issue');
+		$result = $query->result();
+		
+		$num = empty($result)? 0: $result[0]->count;
+
+		$this->db->trans_complete ();
+		if ($this->db->trans_status() === FALSE) return FALSE;
+
+		return $num;
+	}
+
+	function getEntries ($userid, $offset, $limit, $project)
+	{
+		$this->db->trans_start ();
+
+		$this->db->where ('projectid', $project->id);
+		$this->db->order_by ('id', 'desc');
+		$query = $this->db->get ('issue', $limit, $offset);
+		$this->db->trans_complete ();
+
+		if ($this->db->trans_status() === FALSE) return FALSE;
+		return $query->result ();
+	}
+
 	function getAll ($userid, $project)
 	{
 		$this->db->trans_start ();
 		$this->db->where ('projectid', $project->id);
+		$this->db->order_by ('id', 'desc');
 		$query = $this->db->get ('issue');
 		$this->db->trans_complete ();
 
@@ -111,6 +142,31 @@ class IssueModel extends Model
 		return $newid;
 	}
 
+	function update_partial ($userid, $issue)
+	{
+		$this->db->trans_start ();
+		$this->db->where ('projectid', $issue->projectid);
+		$this->db->where ('id', $issue->id);
+		$this->db->set ('summary', $issue->summary);
+		$this->db->set ('description', $issue->description);
+		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedby', $userid);
+		$this->db->update ('issue');
+
+                $this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'issue');
+		$this->db->set ('action',    'update');
+		$this->db->set ('projectid', $issue->projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $issue->id);
+                $this->db->insert ('log');
+
+		$this->db->trans_complete ();
+                if ($this->db->trans_status() === FALSE) return FALSE;
+
+		return $issue->id;
+	}
+
 	function update ($userid, $issue)
 	{
 		// TODO: check if userid can do this..
@@ -127,9 +183,9 @@ class IssueModel extends Model
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue');
 
-		$this->db->set ('projectid', $issue->projectid);
-		$this->db->set ('id', $issue->id);
-		$this->db->set ('sno', 1);
+		$this->db->where ('projectid', $issue->projectid);
+		$this->db->where ('id', $issue->id);
+		$this->db->where ('sno', 1);
 		$this->db->set ('type', $issue->type);
 		$this->db->set ('status', $issue->status);
 		$this->db->set ('owner', $issue->owner);
@@ -206,17 +262,86 @@ class IssueModel extends Model
 		return $id;
 	}
 
+	function undo_last_change ($userid, $project, $id)
+	{
+		$this->db->trans_start ();
+
+		$this->db->where ('projectid', $project->id);
+		$this->db->where ('id', $id);
+		$this->db->select ('MAX(sno) as maxsno');
+		$query = $this->db->get ('issue_change');
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+		$result = $query->result();
+		if (!empty($result))
+		{
+			$maxsno = $result[0]->maxsno;
+			if ($maxsno > 1)
+			{	
+				$this->db->where ('projectid', $project->id);
+				$this->db->where ('id', $id);
+				$this->db->where ('sno', $maxsno);
+				$this->db->delete ('issue_change');
+
+				$this->db->where ('projectid', $project->id);
+				$this->db->where ('id', $id);
+				$this->db->select ('MAX(sno) as maxsno');
+				$query = $this->db->get ('issue_change');
+				if ($this->db->trans_status() === FALSE) 
+				{
+					$this->db->trans_complete ();
+					return FALSE;
+				}
+				$result = $query->result();
+				if (!empty($result))
+				{
+					$maxsno = $result[0]->maxsno;
+					$this->db->where ('projectid', $project->id);
+					$this->db->where ('id', $id);
+					$this->db->where ('sno', $maxsno);
+					$query = $this->db->get ('issue_change');
+					if ($this->db->trans_status() === FALSE) 
+					{
+						$this->db->trans_complete ();
+						return FALSE;
+					}
+					$result = $query->result();
+					if (!empty($result))
+					{
+						$change = $result[0];
+						$this->db->where ('projectid', $project->id);
+						$this->db->where ('id', $id);
+						$this->db->set ('type', $change->type);
+						$this->db->set ('status', $change->status);
+						$this->db->set ('owner', $change->owner);
+						$this->db->set ('priority', $change->priority);
+						$this->db->set ('updatedon', $change->updatedon);
+						$this->db->set ('updatedby', $change->updatedby);
+						$this->db->update ('issue');
+					}
+				}
+			}
+		}
+
+		$this->db->trans_complete ();
+                return $this->db->trans_status();
+	}
+
 	function delete ($userid, $issue)
 	{
 		// TODO: check if userid can do this..
 		$this->db->trans_start ();
-		$this->db->where ('projectid', $issue->projectid);
-		$this->db->where ('id', $issue->id);
-		$this->db->delete ('issue');
 
 		$this->db->where ('projectid', $issue->projectid);
 		$this->db->where ('id', $issue->id);
 		$this->db->delete ('issue_change');
+
+		$this->db->where ('projectid', $issue->projectid);
+		$this->db->where ('id', $issue->id);
+		$this->db->delete ('issue');
 
                 $this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('type',      'issue');
@@ -224,8 +349,8 @@ class IssueModel extends Model
 		$this->db->set ('projectid', $issue->projectid);
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   $issue->id);
-
                 $this->db->insert ('log');
+
 		$this->db->trans_complete ();
                 return $this->db->trans_status();
 	}
