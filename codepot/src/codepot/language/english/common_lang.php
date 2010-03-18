@@ -1,9 +1,12 @@
 <?php
 $lang['Author'] = 'Author';
 $lang['Blame'] = 'Blame';
+$lang['Cancel'] = 'Cancel';
+$lang['Change'] = 'Change';
 $lang['Change log'] = 'Change log';
 $lang['Code'] = 'Code';
 $lang['Code changes'] = 'Code changes';
+$lang['Comment'] = 'Comment';
 $lang['Create'] = 'Create';
 $lang['Created by'] = 'Created by';
 $lang['Created on'] = 'Created on';
@@ -37,6 +40,7 @@ $lang['New'] = 'New';
 $lang['Last updated by'] = 'Last updated by';
 $lang['Last updated on'] = 'Last updated on';
 $lang['Latest projects'] = 'Latest projects';
+$lang['OK'] = 'OK';
 $lang['Other projects'] = 'Other projects';
 $lang['Overview'] = 'Overview';
 $lang['Owner'] = 'Owner';
@@ -58,6 +62,7 @@ $lang['Tag'] = 'Tag';
 $lang['Text'] = 'Text';
 $lang['Time'] = 'Time';
 $lang['Type'] = 'Type';
+$lang['Undo'] = 'Undo';
 $lang['Update'] = 'Update';
 $lang['Username'] = 'Username';
 $lang['Wiki'] = 'Wiki';
@@ -65,6 +70,7 @@ $lang['Wikis'] = 'Wikis';
 
 
 $lang['MSG_LOG_COMMIT_BY'] = 'Committed by %s';
+$lang['MSG_LOG_CHANGE_BY'] = 'Changed by %s';
 $lang['MSG_LOG_CREATE_BY'] = 'Created by %s';
 $lang['MSG_LOG_DELETE_BY'] = 'Deleted by %s';
 $lang['MSG_LOG_UPDATE_BY'] = 'Updated by %s';

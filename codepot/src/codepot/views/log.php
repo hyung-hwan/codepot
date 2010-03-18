@@ -167,6 +167,7 @@ $this->load->view (
 ?>
 <tr class='foot'>
 <td colspan='<?=$numcols?>' class='pages'><?= $page_links ?></td>
+</tr>
 </table>
 
 </div> <!-- log_mainarea_result -->

@@ -396,3 +396,7 @@ pre.prettyprint .nocode a:hover {
 	color: red;
 }
 
+.content span.quoted {
+	color: #bb2322;
+	font-style: italic;
+}

@@ -1,0 +1,163 @@
+
+/*---------------------------------------------
+ * issue home
+ *---------------------------------------------*/
+#project_issue_home_mainarea_result {
+	overflow: auto;
+}
+
+#project_issue_home_mainarea_result_table {
+	border-collapse: collapse;
+	width: 100%;
+	font-size: inherit;
+}
+
+#project_issue_home_mainarea_result_table td.pages {
+        padding-top: 1em;
+        text-align: center;
+        font-weight: bold;
+}
+
+.project_issue_home_mainarea_result_table_id {
+	white-space: nowrap;
+	width: 1px;
+}
+
+.project_issue_home_mainarea_result_table_type {
+	white-space: nowrap;
+	width: 1px;
+}
+
+.project_issue_home_mainarea_result_table_status {
+	white-space: nowrap;
+	width: 1px;
+}
+
+.project_issue_home_mainarea_result_table_priority {
+	white-space: nowrap;
+	width: 1px;
+}
+
+.project_issue_home_mainarea_result_table_owner {
+	white-space: nowrap;
+	width: 1px;
+}
+
+.project_issue_home_mainarea_result_table_summary {
+	white-space: nowrap;
+}
+
+
+/*---------------------------------------------
+ * issue show
+ *---------------------------------------------*/
+#project_issue_show_mainarea_change_form {
+	font-size: .9em;
+}
+
+#project_issue_show_mainarea_change_form div {
+	padding: 0.3em;
+}
+
+#project_issue_show_mainarea_change_form input {
+	padding: 1px;
+}
+
+#project_issue_show_mainarea_change_form select {
+	padding: 1px;
+}
+
+#project_issue_show_mainarea_change_form textarea {
+	display: block;
+	padding: 1px;
+	font-size: inherit;
+	font-family: inherit;
+	width: 100%;
+}
+
+#project_issue_show_mainarea_changes {
+	margin-top: 1em;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	overflow: auto;
+}
+
+#project_issue_show_mainarea_changes .infostrip {
+	margin-bottom: 0.5em;
+}
+
+#project_issue_show_mainarea_changes .infostrip .title {
+	float: left;
+}
+
+#project_issue_show_mainarea_changes_table {
+	border-collapse: collapse;
+	width: 100%;
+	font-size: inherit;
+}
+
+#project_issue_show_mainarea_changes_table td.project_issue_show_mainarea_changes_table_date {
+	width: 1px;
+	white-space: nowrap;
+	vertical-align: top;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+	border-bottom: 1px solid lightgray;
+}
+
+#project_issue_show_mainarea_changes_table td.project_issue_show_mainarea_changes_table_updater {
+	width: 1px;
+	white-space: nowrap;
+	vertical-align: top;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+	border-bottom: 1px solid lightgray;
+}
+
+#project_issue_show_mainarea_changes_table td.project_issue_show_mainarea_changes_table_details {
+	white-space: nowrap;
+	vertical-align: top;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+	border-bottom: 1px solid lightgray;
+}
+
+.project_issue_show_mainarea_changes_list {
+	background-color: #F1F1FF;
+}
+
+.project_issue_show_mainarea_changes_list ul {
+	list-style: square;
+}
+
+.project_issue_show_mainarea_changes_list ul li {
+	padding-bottom: 0.3em;
+}
+
+.project_issue_show_mainarea_changes_comment p {
+	margin-top: 0;
+}
+
+
+/*---------------------------------------------
+ * issue edit
+ *---------------------------------------------*/
+#project_issue_edit_mainarea_type {
+	padding-bottom: 0.3em;
+}
+
+#project_issue_edit_mainarea form textarea {
+	display: block;
+	padding: 1px;
+	font-size: inherit;
+	font-family: inherit;
+	width: 100%;
+}
+
+#project_issue_summary {
+	width: 100%;
+}
+
+#project_issue_edit_mainarea_buttons {
+	padding-top: 0.5em;
+}

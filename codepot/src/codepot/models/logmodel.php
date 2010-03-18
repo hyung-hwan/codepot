@@ -40,9 +40,10 @@ class LogModel extends Model
 		$this->db->order_by ('createdon', 'desc');
 		$query = $this->db->get ('log', $limit, $offset);
 
-		$result = $query->result ();
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() === FALSE) return FALSE;
+
+		$result = $query->result ();
 
 		$count = 0;
 		$commits = array ();

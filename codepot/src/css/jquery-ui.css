@@ -332,7 +332,7 @@
 	text-decoration:none;
 	display:block;
 	padding:.2em .4em;
-	line-height:1.5;
+	/*line-height:1.5;*/
 }
 .ui-menu .ui-menu-item a.ui-state-hover,
 .ui-menu .ui-menu-item a.ui-state-active {
