@@ -1,9 +1,12 @@
 <?php
 $lang['Author'] = 'Pengarang	';
 $lang['Blame'] = 'Menyalahkan';
+$lang['Cancel'] = 'Cancel';
+$lang['Change'] = 'Change';
 $lang['Change log'] = 'Change log';
 $lang['Code'] = 'Kode';
 $lang['Code changes'] = 'Kode changes'
+$lang['Comment'] = 'Comment';
 $lang['Create'] = 'Dibuat';
 $lang['Created by'] = 'Dibuat oleh';
 $lang['Created on'] = 'Waktu dibuat';
@@ -37,6 +40,7 @@ $lang['New'] = 'Baru';
 $lang['Last updated by'] = 'Terakhir memperbaharui oleh';
 $lang['Last updated on'] = 'Waktu memperbaharui terakhir';
 $lang['Latest projects'] = 'Proyek terakhir';
+$lang['OK projects'] = 'OK';
 $lang['Other projects'] = 'Proyek lain';
 $lang['Overview'] = 'Ringkasan';
 $lang['Owner'] = 'Owner';
@@ -58,12 +62,14 @@ $lang['Tag'] = 'Label';
 $lang['Text'] = 'Teks';
 $lang['Time'] = 'Waktu';
 $lang['Type'] = 'Type';
+$lang['Undo'] = 'Undo';
 $lang['Update'] = 'Memperbaharui';
 $lang['Username'] = 'Nama pemakai';
 $lang['Wiki'] = 'Wiki';
 $lang['Wikis'] = 'Wiki';
 
 $lang['MSG_LOG_COMMIT_BY'] = 'Dicommit oleh %s';
+$lang['MSG_LOG_CHANGE_BY'] = 'Change oleh %s';
 $lang['MSG_LOG_CREATE_BY'] = 'Dibuat oleh %s';
 $lang['MSG_LOG_DELETE_BY'] = 'Dihapus oleh %s';
 $lang['MSG_LOG_UPDATE_BY'] = 'Diupdate oleh %s';

@@ -12,7 +12,7 @@ function render_wiki()
 	creole_render_wiki (
 		"project_file_show_textpre", 
 		"project_file_show_textarea", 
-		"<?=dirname(dirname(dirname(dirname(current_url()))))?>/wiki/show/<?=$project->id?>/"
+		"<?=site_url()?>/wiki/show/<?=$project->id?>/"
 	);
 }
 </script>

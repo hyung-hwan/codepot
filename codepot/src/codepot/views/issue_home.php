@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/issue.css" />
 
 <script type="text/javascript" src="<?=base_url()?>/js/jquery.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>/js/jquery-ui.min.js"></script>
@@ -20,7 +20,7 @@ $(
 				buttons: { 
 					'Ok': function () { 
 						$('#filter_owner').val ($('#jq_owner').val());
-						$('#filter_status').val ($('#jq_status').val());
+						$('#filter_summary').val ($('#jq_status').val());
 						$(this).dialog('close'); 
 					}
 				},
@@ -32,7 +32,7 @@ $(
 		$("#project_issue_home_mainarea_filter_open").button().click (
 			function () { 
 				$('#jq_owner').val ($('#filter_owner').val());
-				$('#jq_status').val ($('#filter_status').val());
+				$('#jq_status').val ($('#filter_summary').val());
 				$('#project_issue_home_mainarea_options').dialog('open'); 
 			}
 		);
@@ -40,7 +40,7 @@ $(
 );
 </script>
 
-<title><?=htmlspecialchars($project->id)?></title>
+<title><?=htmlspecialchars($project->name)?></title>
 </head>
 
 <body>
@@ -76,8 +76,8 @@ $this->load->view (
 
 		<input type="hidden" id="filter_owner" name="filter_owner" value='<?=$filter->owner?>' />
 
-		<?=form_label ($this->lang->line('Status'), 'form_status')?>
-		<?=form_input('filter_status', set_value('filter_status', $filter->status), 'id="filter_status"')?>
+		<?=form_label ($this->lang->line('Summary'), 'form_summary')?>
+		<?=form_input('filter_summary', set_value('filter_summary', $filter->summary), 'id="filter_summary"')?>
 
 
 		<?=form_submit('filter', 'Search')?>
@@ -104,21 +104,62 @@ if (empty($issues))
 }
 else
 {
-	print '<ul>';
-	foreach ($issues as $issue) 
+	print '<table id="project_issue_home_mainarea_result_table">';
+	print '<tr class="heading">';
+	print '<th class="project_issue_home_mainarea_result_table_id">' . $this->lang->line('ID') . '</th>';
+	print '<th class="project_issue_home_mainarea_result_table_type">' . $this->lang->line('Type') . '</th>';
+	print '<th class="project_issue_home_mainarea_result_table_status">' . $this->lang->line('Status') . '</th>';
+	print '<th class="project_issue_home_mainarea_result_table_priority">' . $this->lang->line('Priority') . '</th>';
+	print '<th class="project_issue_home_mainarea_result_table_owner">' . $this->lang->line('Owner') . '</th>';
+	print '<th class="project_issue_home_mainarea_result_table_summary">' . $this->lang->line('Summary') . '</th>';
+	print '</tr>';
+
+	$rowclasses = array ('odd', 'even'); $rowno = 1;
+	foreach ($issues as $issue)
 	{
 		$hexid = $this->converter->AsciiToHex ($issue->id);
-		print '<li>';
+
+		$rowclass = $rowclasses[++$rowno % 2];
+		print "<tr class='{$rowclass}'>";
+
+		print '<td class="project_issue_home_mainarea_result_table_id">';
 		print anchor ("issue/show/{$project->id}/{$hexid}", htmlspecialchars($issue->id));
-		print ': ';
-		print htmlspecialchars($issue->summary);
+		print '</td>';
 
+		print '<td class="project_issue_home_mainarea_result_table_type">';
+		print (htmlspecialchars(
+			array_key_exists($issue->type, $issue_type_array)?
+				$issue_type_array[$issue->type]: $issue->type));
+		print '</td>';
+
+		print '<td class="project_issue_home_mainarea_result_table_status">';
+		print (htmlspecialchars(
+			array_key_exists($issue->status, $issue_status_array)?
+				$issue_status_array[$issue->status]: $issue->status));
+		print '</td>';
+
+		print '<td class="project_issue_home_mainarea_result_table_priority">';
+		print (htmlspecialchars(
+			array_key_exists($issue->priority, $issue_priority_array)?
+				$issue_priority_array[$issue->priority]: $issue->priority));
+		print '</td>';
+
+		print '<td class="project_issue_home_mainarea_result_table_owner">';
 		print htmlspecialchars($issue->owner);
-		print htmlspecialchars($issue->createdby);
+		print '</td>';
 
-		print '</li>';
+		print '<td class="project_issue_home_mainarea_result_table_summary">';
+		print htmlspecialchars($issue->summary);
+		print '</td>';
+
+		print '</tr>';
 	}
-	print '</ul>';
+
+	print '<tr class="foot">';
+	print "<td colspan='6' class='pages'>{$page_links}</td>";
+	print '</tr>';
+
+	print '</table>';
 }
 ?>
 </div> <!-- project_issue_home_mainarea_result -->
