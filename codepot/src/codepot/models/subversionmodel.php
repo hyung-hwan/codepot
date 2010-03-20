@@ -42,11 +42,15 @@ class SubversionModel extends Model
 			$list = @svn_ls ($url, $rev, FALSE, TRUE);
 			if ($list === FALSE) return FALSE;
 
-			$log = @svn_log ($url, 
-				$info[0]['revision'], 
-				$info[0]['revision'],
-				1, SVN_DISCOVER_CHANGED_PATHS);
-			if ($log === FALSE) return FALSE;
+			if ($info[0]['revision'] <= 0) $log = array();
+			else
+			{
+				$log = @svn_log ($url, 
+					$info[0]['revision'], 
+					$info[0]['revision'],
+					1, SVN_DISCOVER_CHANGED_PATHS);
+				if ($log === FALSE) return FALSE;
+			}
 
 			$fileinfo['fullpath'] = substr (
 				$info[0]['url'], strlen($info[0]['repos']));

@@ -177,6 +177,8 @@ body {
 
 .content .mainarea form textarea {
 	border: 1px solid #BBCCDD;
+	font-family: inherit;
+	font-size: inherit;
 }
 
 .content .mainarea .icon {

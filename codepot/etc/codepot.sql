@@ -83,7 +83,7 @@ CREATE TABLE issue_change (
 	status    VARCHAR(32)  NOT NULL,
 	owner     VARCHAR(255) NOT NULL,
 	priority  VARCHAR(32)  NOT NULL,
-	message   TEXT         NOT NULL,
+	comment   TEXT         NOT NULL,
 
 	updatedon DATETIME,
 	updatedby VARCHAR(32),
