@@ -97,7 +97,7 @@ $this->load->view (
 
 		if ($log['type'] == 'code')
 		{
-			print '<td class="obejct">';
+			print '<td class="object">';
 			print anchor (	
 				"code/revision/{$log['projectid']}/{$xdot}/{$code['rev']}", 
 				"r{$code['rev']}");
@@ -116,7 +116,7 @@ $this->load->view (
 		}
 		else
 		{
-			print '<td class="obejct">';
+			print '<td class="object">';
 
 			$uri = '';
 			if ($log['type'] == 'project')
