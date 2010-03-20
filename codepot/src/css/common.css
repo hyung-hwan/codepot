@@ -51,14 +51,16 @@ body {
 
 .content .taskbar form input[type="text"] {
 	font-weight: bold;
-	background-color: #FFFF99;
-	border: 1px solid #FFFF99;
+	/*background-color: #FFFF99;
+	border: 1px solid #FFFF99;*/
+	border: 1px solid #FFFFFF;
 }
 
 .content .taskbar form input[type="password"] {
 	font-weight: bold;
-	background-color: #FFFF99;
-	border: 1px solid #FFFF99;
+	/*background-color: #FFFF99;
+	border: 1px solid #FFFF99;*/
+	border: 1px solid #FFFFFF;
 }
 
 .content .taskbar form input[type="submit"] {
@@ -76,6 +78,7 @@ body {
 	font-weight: bold;
 	text-transform: uppercase;
 	margin-bottom: 0.2em;
+	white-space: nowrap;
 }
 
 .content .projectbar .ctxmenu {
