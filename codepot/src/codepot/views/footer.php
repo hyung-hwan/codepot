@@ -1,4 +1,9 @@
 <div class="footer">
-Powered by Codepot <?=CODEPOT_VERSION?><br/>
-Copyright © 2009-2010 Hyung-Hwan Chung 
+
+<?php if (CODEPOT_FOOTER == ''): ?>
+	Codepot <?=CODEPOT_VERSION?> by Hyung-Hwan Chung 
+<?php else: ?>
+	<?=CODEPOT_FOOTER?>
+<?php endif; ?>
+
 </div>
