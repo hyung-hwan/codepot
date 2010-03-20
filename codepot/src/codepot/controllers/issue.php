@@ -12,13 +12,19 @@ class Issue extends Controller
 	var $TYPE_REQUEST      = 'request';
 	var $TYPE_OTHER        = 'other';
 
+	// a newly created issue is set to 'new'.
 	var $STATUS_NEW        = 'new';
+	var $STATUS_OTHER      = 'other';  // other to default
+
+	// the issue created is either accepted or rejected
 	var $STATUS_ACCEPTED   = 'accepted';
-	var $STATUS_REJECTED   = 'rejected';
-	var $STATUS_FIXED      = 'fixed';
-	var $STATUS_WONTFIX    = 'wontfix';
-	var $STATUS_DUPLICATE  = 'duplicate';
-	var $STATUS_OTHER      = 'other';
+	var $STATUS_REJECTED   = 'rejected'; 
+
+	// one accepted, it is worked on and be resolved eventually.
+	var $STATUS_STARTED    = 'started';
+	// the work can be stalled for various reasons during progress
+	var $STATUS_STALLED    = 'stalled'; 
+	var $STATUS_RESOLVED   = 'resolved';
 
 	var $PRIORITY_CRITICAL = 'critical';
 	var $PRIORITY_HIGH     = 'high';
@@ -40,7 +46,7 @@ class Issue extends Controller
 		$this->lang->load ('issue', CODEPOT_LANG);
 	}
 
-	function home ($projectid = '', $offset = 0)
+	function home ($projectid = '', $filter = '', $offset = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('IssueModel', 'issues');
@@ -65,23 +71,60 @@ class Issue extends Controller
 		}
 		else
 		{
-			if ($this->input->post('filter'))
+			if ($filter == '')
 			{
-				$filter->summary = $this->input->post('filter_summary');
-				$filter->owner = $this->input->post('filter_owner');
-				$data['filter'] = $filter;
+				$search->type = '';
+				$search->status = '';
+				$search->priority = '';
+				$search->owner = '';
+				$search->summary = '';
 			}
 			else
 			{
-				$filter->summary = '';
-				$filter->owner = '';
-				$data['filter'] = $filter;
+				parse_str ($this->converter->HexToAscii($filter), $search);
+				if (!array_key_exists ('type', $search)) $search['type'] = '';
+				if (!array_key_exists ('status', $search)) $search['status'] = '';
+				if (!array_key_exists ('priority', $search)) $search['priority'] = '';
+				if (!array_key_exists ('owner', $search)) $search['owner'] = '';
+				if (!array_key_exists ('summary', $search)) $search['summary'] = '';
+
+				$search = (object) $search;
 			}
 
+			$data['search'] = $search;
 
 			$this->load->library ('pagination');
 
-			$num_entries = $this->issues->getNumEntries ($login['id'], $project);
+
+			if ($filter == '' && $offset == '')
+			{
+				$offset = 0;
+				$pagecfg['base_url'] = site_url() . "/issue/home/{$projectid}/";
+				$pagecfg['uri_segment'] = 4;
+			}
+			else if ($filter != '' && $offset == '')
+			{
+				if (is_numeric($filter))
+				{
+					$offset = (integer) $filter;
+					$pagecfg['base_url'] = site_url() . "/issue/home/{$projectid}/";
+					$pagecfg['uri_segment'] = 4;
+				}
+				else
+				{
+					$offset = 0;
+					$pagecfg['base_url'] = site_url() . "/issue/home/{$projectid}/{$filter}/";
+					$pagecfg['uri_segment'] = 5;
+				}
+			}
+			else 
+			{
+				$offset = (integer) $offset;
+				$pagecfg['base_url'] = site_url() . "/issue/home/{$projectid}/{$filter}/";
+				$pagecfg['uri_segment'] = 5;
+			}
+
+			$num_entries = $this->issues->getNumEntries ($login['id'], $project, $search);
 			if ($num_entries === FALSE)
 			{
 				$data['project'] = $project;
@@ -90,15 +133,13 @@ class Issue extends Controller
 				return;
 			}
 
-			$pagecfg['base_url'] = site_url() . "/issue/home/{$projectid}/";
 			$pagecfg['total_rows'] = $num_entries;
 			$pagecfg['per_page'] = CODEPOT_MAX_ISSUES_PER_PAGE;
-			$pagecfg['uri_segment'] = 4;
 			$pagecfg['first_link'] = $this->lang->line('First');
 			$pagecfg['last_link'] = $this->lang->line('Last');
 
 			//$issues = $this->issues->getAll ($login['id'], $project);
-			$issues = $this->issues->getEntries ($login['id'], $offset, $pagecfg['per_page'], $project);
+			$issues = $this->issues->getEntries ($login['id'], $offset, $pagecfg['per_page'], $project, $search);
 			if ($issues === FALSE)
 			{
 				$data['project'] = $project;
@@ -112,6 +153,7 @@ class Issue extends Controller
 				$data['issue_type_array'] = $this->_get_type_array();
 				$data['issue_status_array'] = $this->_get_status_array();
 				$data['issue_priority_array'] = $this->_get_priority_array();
+				$data['total_num_issues'] = $num_entries;
 				$data['project'] = $project;
 				$data['issues'] = $issues;
 				$this->load->view ($this->VIEW_HOME, $data);
@@ -492,18 +534,18 @@ class Issue extends Controller
 		return array (
 			$this->STATUS_NEW       => 
 				$this->lang->line('ISSUE_STATUS_NEW'),
+			$this->STATUS_OTHER     => 
+				$this->lang->line('ISSUE_STATUS_OTHER'),
 			$this->STATUS_ACCEPTED  => 
 				$this->lang->line('ISSUE_STATUS_ACCEPTED'),
 			$this->STATUS_REJECTED  => 
 				$this->lang->line('ISSUE_STATUS_REJECTED'),
-			$this->STATUS_FIXED     => 
-				$this->lang->line('ISSUE_STATUS_FIXED'),
-			$this->STATUS_WONTFIX   => 
-				$this->lang->line('ISSUE_STATUS_WONTFIX'),
-			$this->STATUS_DUPLICATE => 
-				$this->lang->line('ISSUE_STATUS_DUPLICATE'),
-			$this->STATUS_OTHER     => 
-				$this->lang->line('ISSUE_STATUS_OTHER')
+			$this->STATUS_STARTED => 
+				$this->lang->line('ISSUE_STATUS_STARTED'),
+			$this->STATUS_STALLED   => 
+				$this->lang->line('ISSUE_STATUS_STALLED'),
+			$this->STATUS_RESOLVED  => 
+				$this->lang->line('ISSUE_STATUS_RESOLVED')
 		);
 	}
 

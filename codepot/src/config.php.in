@@ -49,7 +49,9 @@ function load_ini ($file)
 		array ('svnrepo_dir',                  'string',      CODEPOT_DEPOT_DIR.'/svnrepo'),
 		array ('file_dir',                     'string',      CODEPOT_DEPOT_DIR.'/files'),
 
-		array ('log_threshold',                'integer',     0)
+		array ('log_threshold',                'integer',     0),
+
+		array ('footer',                       'string',      '')
 	);
 
 	foreach ($xcfgs as $x)

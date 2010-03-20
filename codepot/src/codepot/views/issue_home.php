@@ -10,34 +10,46 @@
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/jquery-ui.css" />
 
 <script type="text/javascript">
-$(
-	function () { 
-		$("#project_issue_home_mainarea_options").dialog (
-			{
-				title: 'Options',
-				autoOpen: false,
-				modal: true,
-				buttons: { 
-					'Ok': function () { 
-						$('#filter_owner').val ($('#jq_owner').val());
-						$('#filter_summary').val ($('#jq_status').val());
-						$(this).dialog('close'); 
-					}
-				},
-				close: function() {}
-			} 
-		); 
-
-
-		$("#project_issue_home_mainarea_filter_open").button().click (
-			function () { 
-				$('#jq_owner').val ($('#filter_owner').val());
-				$('#jq_status').val ($('#filter_summary').val());
-				$('#project_issue_home_mainarea_options').dialog('open'); 
-			}
-		);
+function AsciiToHex (x) {
+        var r="";
+	for(i=0; i<x.length; i++)
+	{
+		var tmp = x.charCodeAt(i).toString(16);
+		if (tmp.length == 1) r += "0";
+		r += tmp;
 	}
-);
+	return r;
+}
+
+$(function () { 
+	$("#project_issue_home_mainarea_search_form").dialog ({
+		title: '<?=$this->lang->line('Search')?>',
+		autoOpen: false,
+		modal: true,
+		width: '80%',
+		buttons: { 
+			'<?=$this->lang->line('Cancel')?>': function () { 
+				$(this).dialog('close'); 
+			},
+			'<?=$this->lang->line('OK')?>': function () { 
+				$(this).dialog('close'); 
+				var filter = AsciiToHex($('#issue_search_form').serialize());
+				var url='<?=site_url()?>/issue/home/<?=$project->id?>/' + filter;	
+
+				$('body').append('<form id="magic_form" method="get" action="'+url+'"></form>');
+				$('#magic_form').submit();
+			}
+		},
+		close: function() {}
+	}); 
+
+
+	$("#project_issue_home_mainarea_search_button").button().click (
+		function () { 
+			$('#project_issue_home_mainarea_search_form').dialog('open'); 
+		}
+	);
+});
 </script>
 
 <title><?=htmlspecialchars($project->name)?></title>
@@ -60,7 +72,7 @@ $this->load->view (
 		'site' => NULL,
 		'pageid' => 'issue',
 		'ctxmenuitems' => array (
-			array ("issue/create/{$project->id}", $this->lang->line('New')) 
+			array ("issue/create/{$project->id}", $this->lang->line('New'), 'project_issue_home_new')
 		)
 	)
 ); 
@@ -71,27 +83,62 @@ $this->load->view (
 <div class="mainarea" id="project_issue_home_mainarea">
 <div class="title"><?=$this->lang->line('Issues')?></div>
 
-<div id="project_issue_home_mainarea_filter">
-	<?=form_open("issue/home/{$project->id}/")?>
-
-		<input type="hidden" id="filter_owner" name="filter_owner" value='<?=$filter->owner?>' />
-
-		<?=form_label ($this->lang->line('Summary'), 'form_summary')?>
-		<?=form_input('filter_summary', set_value('filter_summary', $filter->summary), 'id="filter_summary"')?>
-
-
-		<?=form_submit('filter', 'Search')?>
-		<a id="project_issue_home_mainarea_filter_open" href='#'>Options</a>
-
-	<?=form_close()?>
+<div class="infostrip">
+<?php printf ($this->lang->line('ISSUE_MSG_TOTAL_NUM_ISSUES'), $total_num_issues); ?> | 
+<a id="project_issue_home_mainarea_search_button" href='#'><?=$this->lang->line('Search')?></a>
 </div>
 
-<div id="project_issue_home_mainarea_options">
-	<form>
-		<label for="jq_owner"><?=$this->lang->line('Owner')?></label>
-		<input type="text" id="jq_owner" name="jq_owner" />
-		<label for="jq_status"><?=$this->lang->line('Status')?></label>
-		<input type="text" id="jq_status" name="jq_status" />
+<div id="project_issue_home_mainarea_search_form">
+	<?php
+		$issue_type_array[''] = $this->lang->line('All');
+		$issue_status_array[''] = $this->lang->line('All');
+		$issue_priority_array[''] = $this->lang->line('All');
+	?>
+	<form id="issue_search_form">
+		<div>
+			<?=form_label ($this->lang->line('Type'), 'type')
+			?>
+			<?=form_dropdown('type',
+				$issue_type_array,
+				set_value('type', $search->type), 
+				'id="issue_search_type"')
+			?>
+	
+			<?=form_label ($this->lang->line('Status'), 'status')
+			?>
+			<?=form_dropdown('status',
+				$issue_status_array,
+				set_value('status', $search->status), 'id="status"')
+			?>
+
+			<?=form_label ($this->lang->line('Priority'), 'priority')
+			?>
+			<?=form_dropdown('priority',
+				$issue_priority_array,
+				set_value('priority', $search->priority),
+				'id="issue_search_priority"')
+			?>
+		</div>
+
+
+		<div>
+			<?=form_label ($this->lang->line('Owner'), 'owner')
+			?>
+			<?=form_input('owner',
+				set_value('owner', $search->owner),
+				'id="issue_search_owner"')
+			?>
+		</div>
+
+		<div>
+			<?=form_label ($this->lang->line('Summary'), 'summary')
+			?>
+			<?=form_input('summary',
+				set_value('summary', $search->summary),
+				'id="issue_search_summary" size="50"')
+			?>
+		</div>
+
 	</form>
 </div>
 
@@ -114,41 +161,39 @@ else
 	print '<th class="project_issue_home_mainarea_result_table_summary">' . $this->lang->line('Summary') . '</th>';
 	print '</tr>';
 
-	$rowclasses = array ('odd', 'even'); $rowno = 1;
 	foreach ($issues as $issue)
 	{
 		$hexid = $this->converter->AsciiToHex ($issue->id);
 
-		$rowclass = $rowclasses[++$rowno % 2];
-		print "<tr class='{$rowclass}'>";
+		print "<tr class='{$issue->status}'>";
 
-		print '<td class="project_issue_home_mainarea_result_table_id">';
+		print '<td class="id">';
 		print anchor ("issue/show/{$project->id}/{$hexid}", htmlspecialchars($issue->id));
 		print '</td>';
 
-		print '<td class="project_issue_home_mainarea_result_table_type">';
+		print '<td class="type">';
 		print (htmlspecialchars(
 			array_key_exists($issue->type, $issue_type_array)?
 				$issue_type_array[$issue->type]: $issue->type));
 		print '</td>';
 
-		print '<td class="project_issue_home_mainarea_result_table_status">';
+		print '<td class="status">';
 		print (htmlspecialchars(
 			array_key_exists($issue->status, $issue_status_array)?
 				$issue_status_array[$issue->status]: $issue->status));
 		print '</td>';
 
-		print '<td class="project_issue_home_mainarea_result_table_priority">';
+		print '<td class="priority">';
 		print (htmlspecialchars(
 			array_key_exists($issue->priority, $issue_priority_array)?
 				$issue_priority_array[$issue->priority]: $issue->priority));
 		print '</td>';
 
-		print '<td class="project_issue_home_mainarea_result_table_owner">';
+		print '<td class="owner">';
 		print htmlspecialchars($issue->owner);
 		print '</td>';
 
-		print '<td class="project_issue_home_mainarea_result_table_summary">';
+		print '<td class="summary">';
 		print htmlspecialchars($issue->summary);
 		print '</td>';
 

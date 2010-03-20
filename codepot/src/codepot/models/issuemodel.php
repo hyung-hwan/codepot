@@ -41,11 +41,16 @@ class IssueModel extends Model
 		return $result[0];
 	}
 
-	function getNumEntries ($userid, $project)
+	function getNumEntries ($userid, $project, $search)
 	{
 		$this->db->trans_start ();
 
 		$this->db->where ('projectid', $project->id);
+		if ($search->type != '') $this->db->where ('type', $search->type);
+		if ($search->status != '') $this->db->where ('status', $search->status);
+		if ($search->priority != '') $this->db->where ('priority', $search->priority);
+		if ($search->owner != '') $this->db->like ('owner', $search->owner);
+		if ($search->summary != '') $this->db->like ('summary', $search->summary);
 		$this->db->select ('count(id) as count');
 		$query = $this->db->get ('issue');
 		$result = $query->result();
@@ -58,11 +63,16 @@ class IssueModel extends Model
 		return $num;
 	}
 
-	function getEntries ($userid, $offset, $limit, $project)
+	function getEntries ($userid, $offset, $limit, $project, $search)
 	{
 		$this->db->trans_start ();
 
 		$this->db->where ('projectid', $project->id);
+		if ($search->type != '') $this->db->where ('type', $search->type);
+		if ($search->status != '') $this->db->where ('status', $search->status);
+		if ($search->priority != '') $this->db->where ('priority', $search->priority);
+		if ($search->owner != '') $this->db->like ('owner', $search->owner);
+		if ($search->summary != '') $this->db->like ('summary', $search->summary);
 		$this->db->order_by ('id', 'desc');
 		$query = $this->db->get ('issue', $limit, $offset);
 		$this->db->trans_complete ();

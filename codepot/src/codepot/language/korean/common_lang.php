@@ -1,4 +1,5 @@
 <?php
+$lang['All'] = '모두';
 $lang['Author'] = '저자';
 $lang['Blame'] = '책임전가';
 $lang['Cancel'] = '취소';
@@ -51,6 +52,7 @@ $lang['Project'] = '프로젝트';
 $lang['Projects'] = '프로젝트';
 $lang['Repository'] = '저장소';
 $lang['Revision'] = '리비전';
+$lang['Search'] = '찾기';
 $lang['Sign in'] = '로그인';
 $lang['Sign out'] = '로그아웃';
 $lang['Size'] = '크기';

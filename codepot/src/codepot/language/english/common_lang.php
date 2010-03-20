@@ -1,4 +1,5 @@
 <?php
+$lang['All'] = 'All';
 $lang['Author'] = 'Author';
 $lang['Blame'] = 'Blame';
 $lang['Cancel'] = 'Cancel';
@@ -51,6 +52,7 @@ $lang['Project'] = 'Project';
 $lang['Projects'] = 'Projects';
 $lang['Repository'] = 'Repository';
 $lang['Revision'] = 'Revision';
+$lang['Search'] = 'Search';
 $lang['Sign in'] = 'Sign in';
 $lang['Sign out'] = 'Sign out';
 $lang['Size'] = 'Size';

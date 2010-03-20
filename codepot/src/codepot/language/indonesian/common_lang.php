@@ -1,5 +1,6 @@
 <?php
-$lang['Author'] = 'Pengarang	';
+$lang['All'] = 'Semua';
+$lang['Author'] = 'Pengarang';
 $lang['Blame'] = 'Menyalahkan';
 $lang['Cancel'] = 'Cancel';
 $lang['Change'] = 'Change';
@@ -51,6 +52,7 @@ $lang['Project'] = 'Proyek';
 $lang['Projects'] = 'Proyek';
 $lang['Repository'] = 'Repository';
 $lang['Revision'] = 'Revisi';
+$lang['Search'] = 'Search';
 $lang['Sign in'] = 'Masuk';
 $lang['Sign out'] = 'Keluar';
 $lang['Size'] = 'Ukuran';

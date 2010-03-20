@@ -25,7 +25,8 @@ function show_projectbar ($con, $site, $project, $pageid, $ctxmenuitems)
 	{
 		foreach ($ctxmenuitems as $item)
 		{
-        		print anchor ($item[0], $item[1]);
+			$extra = (count($item) >= 3)? "id='{$item[2]}'": '';
+        		print anchor ($item[0], $item[1], $extra);
 		}
 	}
 	else print '&nbsp;';
