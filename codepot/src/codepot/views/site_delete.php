@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/site.css" />
 <title><?=htmlspecialchars($site->name)?></title>
 </head>
 
@@ -33,12 +33,12 @@ $this->load->view (
 
 <?php if ($message != "") print "<div id='site_create_message' class='form_message'>$message</div>"; ?>
 
-<?=form_open('site/delete/'.$site->id)?>
+<?=form_open("site/delete/{$site->id}")?>
 	<?=form_fieldset()?>
 		<div>
 			<div>
 				<?=form_checkbox('site_confirm', 'yes', set_checkbox('site_confirm', $site_confirm))?>
-				<?=$this->lang->line('MSG_SURE_TO_DELETE_THIS')?> - <?=htmlspecialchars($site->name)?>
+				<?=$this->lang->line('MSG_SURE_TO_DELETE_THIS')?> - <?=htmlspecialchars($site->name)?> (<?=$site->id?>)
 				<?=form_error('site_confirm')?>
 			</div>
 		</div>

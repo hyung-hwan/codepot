@@ -3,11 +3,13 @@
 class Site extends Controller 
 {
 	var $VIEW_ERROR = 'error';
+	var $VIEW_SHOW = 'site_show';
 	var $VIEW_HOME = 'site_home';
 	var $VIEW_EDIT = 'site_edit';
 	var $VIEW_DELETE = 'site_delete';
 	var $VIEW_LOG = 'log';
         var $VIEW_PROJECT_LIST = 'project_list';
+        var $VIEW_SITE_ADMINHOME = 'site_adminhome';
 
 	function Site ()
 	{
@@ -37,13 +39,24 @@ class Site extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('LogModel', 'logs');
 
-                $site = $this->sites->get (CODEPOT_DEFAULT_SITEID);
+                $site = $this->sites->get ($this->config->config['language']);
 		if ($site === FALSE)
 		{
 			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
 			return;
+		}
+		if ($site === NULL && CODEPOT_DEFAULT_SITE_LANGUAGE != '') 
+		{
+                	$site = $this->sites->get (CODEPOT_DEFAULT_SITE_LANGUAGE);
+			if ($site === FALSE)
+			{
+				$data['login'] = $login;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+				return;
+			}
 		}
 		if ($site === NULL) $site = $this->sites->getDefault ();
 
@@ -72,6 +85,60 @@ class Site extends Controller
 		//$data['user_name'] = '';
 		//$data['user_pass'] = '';
 		$this->load->view ($this->VIEW_HOME, $data);
+	}
+
+	function adminhome ()
+	{
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ('main/signin');
+
+		$this->load->model ('SiteModel', 'sites');
+
+		$sites = $this->sites->getAll ($login['id']);
+
+		if ($sites === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			$data['login'] = $login;
+			$data['sites'] = $sites;
+			$this->load->view ($this->VIEW_SITE_ADMINHOME, $data);
+		}
+	}
+
+	function show ($siteid)
+	{
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ('main/signin');
+
+		$this->load->model ('SiteModel', 'sites');
+
+		$data['login'] = $login;
+
+                $site = $this->sites->get ($siteid);
+		if ($site === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		if ($site === NULL)
+		{
+			$data['message'] = "NO SUCH SITE - {$siteid}";
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$data['site'] = $site;
+		$this->load->view ($this->VIEW_SHOW, $data);
 	}
 
 	function _edit_site ($site, $mode, $login)
@@ -120,8 +187,7 @@ class Site extends Controller
 				}
 				else
 				{
-					//redirect ('site/home/' . $site->id);
-					redirect ('site/home');
+					redirect ("site/show/{$site->id}");
 				}
 			}
 			else
@@ -232,16 +298,15 @@ class Site extends Controller
 					else 
 					{
 						// the site has been deleted successfully.
-						// go back to the site home.	
-						redirect ('site/home');
+						// go back to the site admin home.	
+						redirect ('site/adminhome');
 					}
 				}
 				else 
 				{
 					// the confirm checkbox is not checked.
-					// go back to the site home page.
-					//redirect ('site/home/' . $site->id);
-					redirect ('site/home');
+					// go back to the site adminhome page.
+					redirect ('site/adminhome');
 				}
 			}
 			else

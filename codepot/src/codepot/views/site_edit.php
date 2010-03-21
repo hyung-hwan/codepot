@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/site.css" />
 <title><?=htmlspecialchars($site->name)?></title>
 </head>
 
@@ -39,20 +39,23 @@ $this->load->view (
 	if ($mode == 'update') $formurl .= '/'.$site->id;
 ?>
 
-<?=form_open($formurl)?>
+<?=form_open($formurl, 'id="site_edit_form"')?>
 	<?=form_fieldset()?>
 		<div>
 			<div>
-				<?=form_label($this->lang->line('ID').': ', 'site_id')?>
+				<?=form_label($this->lang->line('Language').': ', 'site_id')?>
 				<?=form_error('site_id')?>
 			</div>
 			<div>
 				<?php
 					$extra = ($mode == 'update')? 'readonly="readonly"': '';
-					$extra .= 'maxlength="32" size="16"';
+					$extra .= 'maxlength="32" size="16" class="id"';
 				?>
 
-				<?=form_input('site_id', set_value('site_id', $site->id), $extra)?>
+				<?=form_input('site_id', 
+					set_value('site_id', $site->id), 
+					$extra)
+				?>
 			</div>
 		</div>
 
@@ -62,8 +65,10 @@ $this->load->view (
 				<?=form_error('site_name')?>
 			</div>
 			<div>
-				<?php $extra = 'maxlength="80" size="40"'; ?>
-				<?=form_input('site_name', set_value('site_name', $site->name), $extra)?>
+				<?=form_input('site_name', 
+					set_value('site_name', $site->name), 
+					'maxlength="80" size="40" class="name"');
+				?>
 			</div>
 		</div>
 
@@ -73,7 +78,10 @@ $this->load->view (
 				<?=form_error('site_text')?>
 			</div>
 			<div>
-				<?=form_textarea('site_text', set_value('site_text', $site->text))?>
+				<?=form_textarea('site_text', 
+					set_value('site_text', $site->text),
+					'class="text"')
+				?>
 			</div>
 		</div>
 
