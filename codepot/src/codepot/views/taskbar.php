@@ -39,10 +39,8 @@ function show_taskbar ($con, $loginid, $issysadmin)
 	print '<div class="boxa">';
 	print anchor ('site/home', $con->lang->line('Home'));
 	print anchor ('site/projectlist', $con->lang->line('Projects'));
-	/*
 	if ($issysadmin)
-		print anchor ('site/admin', $con->lang->line('System'));
-	*/
+		print anchor ('site/adminhome', $con->lang->line('Administration'));
 	print '</div>';
 
 	print '</div>';

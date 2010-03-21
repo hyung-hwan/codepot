@@ -1,4 +1,5 @@
 <?php
+$lang['Administration'] = '관리';
 $lang['All'] = '모두';
 $lang['Author'] = '저자';
 $lang['Blame'] = '책임전가';
@@ -30,7 +31,11 @@ $lang['Home'] = '홈';
 $lang['ID'] = '아이디';
 $lang['Issue'] = '이슈';
 $lang['Issues'] = '이슈';
+$lang['Language'] = '언어';
 $lang['Last'] = '마지막';
+$lang['Last updated by'] = '최종수정인';
+$lang['Last updated on'] = '최종수정시간';
+$lang['Latest projects'] = '최근 프로젝트';
 $lang['MD5'] = 'MD5';
 $lang['Member'] = '구성원';
 $lang['Members'] = '구성원';
@@ -38,9 +43,6 @@ $lang['Message'] = '메시지';
 $lang['My projects'] = '내 프로젝트';
 $lang['Name'] = '이름';
 $lang['New'] = '신규';
-$lang['Last updated by'] = '최종수정인';
-$lang['Last updated on'] = '최종수정시간';
-$lang['Latest projects'] = '최근 프로젝트';
 $lang['OK'] = '확인';
 $lang['Other projects'] = '다른 프로젝트';
 $lang['Overview'] = '개요';
