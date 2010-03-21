@@ -1,4 +1,5 @@
 <?php
+$lang['Administration'] = 'Administration';
 $lang['All'] = 'Semua';
 $lang['Author'] = 'Pengarang';
 $lang['Blame'] = 'Menyalahkan';
@@ -30,7 +31,11 @@ $lang['Home'] = 'Beranda';
 $lang['ID'] = 'ID';
 $lang['Issue'] = 'Issue';
 $lang['Issues'] = 'Issue';
+$lang['Language'] = 'Bahasa';
 $lang['Last'] = 'Terakhir';
+$lang['Last updated by'] = 'Terakhir memperbaharui oleh';
+$lang['Last updated on'] = 'Waktu memperbaharui terakhir';
+$lang['Latest projects'] = 'Proyek terakhir';
 $lang['MD5'] = 'MD5';
 $lang['Member'] = 'Anggota';
 $lang['Members'] = 'Anggota';
@@ -38,9 +43,6 @@ $lang['Message'] = 'Pesan';
 $lang['My projects'] = 'Proyek saya';
 $lang['Name'] = 'Nama';
 $lang['New'] = 'Baru';
-$lang['Last updated by'] = 'Terakhir memperbaharui oleh';
-$lang['Last updated on'] = 'Waktu memperbaharui terakhir';
-$lang['Latest projects'] = 'Proyek terakhir';
 $lang['OK projects'] = 'OK';
 $lang['Other projects'] = 'Proyek lain';
 $lang['Overview'] = 'Ringkasan';

@@ -10,8 +10,8 @@ class SiteModel extends Model
 
 	function getDefault ()
 	{
-		$site->id = CODEPOT_DEFAULT_SITEID;
-		$site->name = CODEPOT_DEFAULT_BANNER;
+		$site->id = CODEPOT_DEFAULT_SITE_LANGUAGE;
+		$site->name = CODEPOT_DEFAULT_SITE_NAME;
 		$site->text = '';
 		$site->updatedby = '';
 		$site->createdby = '';
@@ -46,6 +46,15 @@ class SiteModel extends Model
 		if ($this->db->trans_status() === FALSE) return FALSE;
 
 		return $result[0];
+	}
+
+	function getAll ($userid)
+	{
+		$this->db->trans_start ();
+		$query = $this->db->get ('site');
+		$this->db->trans_complete ();
+		if ($this->db->trans_status() === FALSE) return FALSE;
+		return $query->result ();
 	}
 
 	function create ($userid, $site)

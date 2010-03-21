@@ -187,9 +187,11 @@ www_DATA = \
 	project_home.php \
 	project_list.php \
 	projectbar.php \
+	site_adminhome.php \
 	site_edit.php \
 	site_delete.php \
 	site_home.php \
+	site_show.php \
 	taskbar.php \
 	wiki_delete.php \
 	wiki_edit.php \

@@ -298,7 +298,7 @@ class Issue extends Controller
 				" - {$projectid}";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
-		else if (!$login['sysadmin?'] && 
+		else if (!$login['sysadmin?'] && $mode != 'create' &&
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
 			$data['project'] = $project;
@@ -307,6 +307,8 @@ class Issue extends Controller
 		}
 		else
 		{
+			{
+			}
 			$this->form_validation->set_rules (
 				'issue_projectid', 'project ID', 'required|alpha_dash|max_length[32]');
 			$this->form_validation->set_rules (

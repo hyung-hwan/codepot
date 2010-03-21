@@ -1,4 +1,5 @@
 <?php
+$lang['Administration'] = 'Administration';
 $lang['All'] = 'All';
 $lang['Author'] = 'Author';
 $lang['Blame'] = 'Blame';
@@ -30,7 +31,11 @@ $lang['Home'] = 'Home';
 $lang['ID'] = 'ID';
 $lang['Issue'] = 'Issue';
 $lang['Issues'] = 'Issues';
+$lang['Language'] = 'Language';
 $lang['Last'] = 'Last';
+$lang['Last updated by'] = 'Last updated by';
+$lang['Last updated on'] = 'Last updated on';
+$lang['Latest projects'] = 'Latest projects';
 $lang['MD5'] = 'MD5';
 $lang['Member'] = 'Member';
 $lang['Members'] = 'Members';
@@ -38,9 +43,6 @@ $lang['Message'] = 'Message';
 $lang['My projects'] = 'My projects';
 $lang['Name'] = 'Name';
 $lang['New'] = 'New';
-$lang['Last updated by'] = 'Last updated by';
-$lang['Last updated on'] = 'Last updated on';
-$lang['Latest projects'] = 'Latest projects';
 $lang['OK'] = 'OK';
 $lang['Other projects'] = 'Other projects';
 $lang['Overview'] = 'Overview';

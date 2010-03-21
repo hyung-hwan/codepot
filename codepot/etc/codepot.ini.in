@@ -1,12 +1,12 @@
 ;------------------------------------------------------------------------------
-; default site ID
+; default site language
 ;------------------------------------------------------------------------------
-default_siteid = "default";
+default_site_language = "english";
 
 ;------------------------------------------------------------------------------
-; banner to display when no project id is available
+; default site name
 ;------------------------------------------------------------------------------
-default_banner = "@PACKAGE@"
+default_site_name = "@PACKAGE@"
 
 ;------------------------------------------------------------------------------
 ; database settings

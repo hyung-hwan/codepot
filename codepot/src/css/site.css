@@ -1,0 +1,59 @@
+/*----------------------------------------------- 
+ * site home view 
+ *-----------------------------------------------*/
+#site_home_mainarea_sidebar {
+	width: 24em;
+}
+
+#site_home_mainarea_sidebar_log_table {
+	border-collapse: collapse;
+}
+
+#site_home_mainarea_sidebar_log_table tr.odd {
+	background-color: #bbccef;
+}
+
+#site_home_mainarea_sidebar_log_table tr.odd td {
+	white-space: nowrap;
+}
+
+#site_home_mainarea_sidebar_log_table tr.odd td.date {
+	width: 1px;
+}
+
+#site_home_mainarea_sidebar_log_table tr.even {
+	background-color: inherit;
+}
+
+#site_home_mainarea_sidebar_log_table tr.even .description {
+	font-style: italic;
+}
+
+#site_home_mainarea_sidebar_log_table tr.even pre.message {
+	border: 0;
+	margin: 1px;
+	background-color: inherit;
+	white-space: pre-wrap;
+}
+
+#site_home_mainarea_sidebar_log_table td.date {
+	width: 1px;
+}
+
+#site_home_mainarea_sidebar_log_table td.project {
+	width: 1px;
+}
+
+/*----------------------------------------------- 
+ * site adminhome view 
+ *-----------------------------------------------*/
+#site_adminhome_mainarea .infostrip span.title {
+	float: left;
+}
+
+/*----------------------------------------------- 
+ * site edit view 
+ *-----------------------------------------------*/
+#site_edit_form .text {
+	width: 100%;
+}

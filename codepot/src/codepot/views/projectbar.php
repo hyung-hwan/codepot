@@ -16,7 +16,7 @@ function show_projectbar ($con, $site, $project, $pageid, $ctxmenuitems)
 	}
 	else if (isset($site) && $site->name != '') 
 		print htmlspecialchars($site->name);
-	else print htmlspecialchars(CODEPOT_DEFAULT_BANNER);
+	else print htmlspecialchars(CODEPOT_DEFAULT_SITE_NAME);
 
 	print "</div>";
 

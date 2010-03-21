@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/site.css" />
 <script type="text/javascript" src="<?=base_url()?>/js/creole.js"></script>
 <script type="text/javascript">
 function render_wiki()
@@ -35,23 +35,13 @@ function render_wiki()
 
 <?php
 
-if ($login['sysadmin?'])
-{
-	$ctxmenuitems = array (
-		array ("site/create", $this->lang->line('Create')),
-		array ("site/update/{$site->id}", $this->lang->line('Edit')),
-		array ("site/delete/{$site->id}", $this->lang->line('Delete'))
-	);
-}
-else $ctxmenuitems = array ();
-
 $this->load->view (
         'projectbar',
         array (
 		'project' => NULL,
 		'site' => $site,
 		'pageid' => 'site',
-                'ctxmenuitems' => $ctxmenuitems
+                'ctxmenuitems' => NULL
         )
 );
 ?>
