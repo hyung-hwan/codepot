@@ -78,10 +78,10 @@ body {
 }
 
 .content .projectbar .title {
-	font-size: 2em;
+	font-size: 1.8em;
 	font-weight: bold;
 	text-transform: uppercase;
-	margin-bottom: 0.2em;
+	margin-bottom: 0.1em;
 	white-space: nowrap;
 }
 
