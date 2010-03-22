@@ -31,6 +31,7 @@ if (!isset($site))  $site = NULL;
 $this->load->view (
         'projectbar',
         array (
+		'banner' => NULL,
 		'site' => $site,
 		'project' => $project,
 		'pageid' => ((isset($project) && $project != NULL)? 'project': 'sitelog'),

@@ -35,6 +35,7 @@ $hexname = $this->converter->AsciiToHex ($file->name);
 $this->load->view (
 	'projectbar',
 	array (
+		'banner' => NULL,
 		'site' => NULL,
 		'pageid' => 'file',
 		'ctxmenuitems' => array (

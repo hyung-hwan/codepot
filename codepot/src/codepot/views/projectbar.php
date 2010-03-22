@@ -1,11 +1,15 @@
 <div class="projectbar">
 
 <?php
-function show_projectbar ($con, $site, $project, $pageid, $ctxmenuitems)
+function show_projectbar ($con, $banner, $site, $project, $pageid, $ctxmenuitems)
 {
 	print "<div class='title'>";
 
-	if (isset($project)) 
+	if (isset($banner))
+	{
+		print htmlspecialchars($banner);
+	}
+	else if (isset($project)) 
 	{
 		if ($project->name == '')
 			print $project->id;
@@ -15,7 +19,9 @@ function show_projectbar ($con, $site, $project, $pageid, $ctxmenuitems)
 			print htmlspecialchars($project->name) . " ({$project->id})";
 	}
 	else if (isset($site) && $site->name != '') 
+	{
 		print htmlspecialchars($site->name);
+	}
 	else print htmlspecialchars(CODEPOT_DEFAULT_SITE_NAME);
 
 	print "</div>";
@@ -34,7 +40,7 @@ function show_projectbar ($con, $site, $project, $pageid, $ctxmenuitems)
 
 	print '<div class="fixedmenu">';
 
-	if (isset($project))
+	if (isset($project) && $pageid != '')
 	{
 		$menuitems = array (
 			array ("project/home/{$project->id}", $con->lang->line('Overview')),
@@ -67,12 +73,28 @@ function show_projectbar ($con, $site, $project, $pageid, $ctxmenuitems)
 			print anchor ($menulink, $item[1], $extra);
 		}
 	}
+	else if (isset($site) && $pageid != '')
+	{
+		$menuitems = array (
+			array ("site/catalog", $con->lang->line('Sites'))
+		);
+
+		foreach ($menuitems as $item)
+		{
+			$menuid = substr ($item[0], 0, strpos($item[0], '/'));
+			$extra = ($menuid == $pageid)? 'class="selected"': '';
+			$menulink = $item[0];
+
+			print anchor ($menulink, $item[1], $extra);
+		}
+	}
+		
 	else print '&nbsp;';
 
 	print '</div>';
 }
 
-show_projectbar ($this, $site, $project, $pageid, $ctxmenuitems);
+show_projectbar ($this, $banner, $site, $project, $pageid, $ctxmenuitems);
 ?>
 
 </div>

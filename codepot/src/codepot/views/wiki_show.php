@@ -35,6 +35,7 @@ $hexname = $this->converter->AsciiToHex ($wiki->name);
 $this->load->view (
 	'projectbar',
 	array (
+		'banner' => NULL,
 		'site' => NULL,
 		'pageid' => 'wiki',
 		'ctxmenuitems' => array (

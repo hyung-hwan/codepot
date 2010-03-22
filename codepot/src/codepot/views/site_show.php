@@ -36,7 +36,7 @@ function render_wiki()
 if ($login['sysadmin?'])
 {
 	$ctxmenuitems = array (
-		array ("site/create", $this->lang->line('Create')),
+		//array ("site/create", $this->lang->line('New')),
 		array ("site/update/{$site->id}", $this->lang->line('Edit')),
 		array ("site/delete/{$site->id}", $this->lang->line('Delete'))
 	);
@@ -46,6 +46,7 @@ else $ctxmenuitems = array ();
 $this->load->view (
         'projectbar',
         array (
+		'banner' => $this->lang->line('Administration'),
 		'project' => NULL,
 		'site' => $site,
 		'pageid' => 'site',
@@ -57,6 +58,10 @@ $this->load->view (
 <!---------------------------------------------------------------------------->
 
 <div class="mainarea" id="site_show_mainarea">
+
+<div class="title">
+<?=htmlspecialchars($site->name)?> (<?=htmlspecialchars($site->id)?>)
+</div>
 
 <div id="site_show_mainarea_text">
 <pre id="site_show_mainarea_textpre" style="visibility: hidden">

@@ -2,7 +2,8 @@ wwwdir=$(WWWDIR)/codepot/language/korean
 www_DATA =  \
 	common_lang.php \
 	issue_lang.php \
-	index.html
+	index.html \
+	site_lang.php 
 
 EXTRA_DIST = $(www_DATA)
 
