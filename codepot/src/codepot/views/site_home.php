@@ -11,7 +11,7 @@ function render_wiki()
 	creole_render_wiki (
 		"site_home_mainarea_textpre",
 		"site_home_mainarea_text",
-		"<?=site_url()?>/site/home/"
+		"<?=site_url()?>/site/wiki/"
 	);
 }
 </script>
