@@ -7,9 +7,9 @@ class Site extends Controller
 	var $VIEW_HOME = 'site_home';
 	var $VIEW_EDIT = 'site_edit';
 	var $VIEW_DELETE = 'site_delete';
+        var $VIEW_CATALOG = 'site_catalog';
 	var $VIEW_LOG = 'log';
         var $VIEW_PROJECT_LIST = 'project_list';
-        var $VIEW_SITE_ADMINHOME = 'site_adminhome';
 
 	function Site ()
 	{
@@ -18,10 +18,12 @@ class Site extends Controller
 		$this->load->helper ('url');
 		$this->load->helper ('form');
 		$this->load->library ('Converter', 'converter');
+		$this->load->library ('WikiHelper', 'wikihelper');
 		$this->load->model (CODEPOT_LOGIN_MODEL, 'login');
 
 		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG);
+		$this->lang->load ('site', CODEPOT_LANG);
 	}
 
 	function index ()
@@ -87,7 +89,7 @@ class Site extends Controller
 		$this->load->view ($this->VIEW_HOME, $data);
 	}
 
-	function adminhome ()
+	function catalog ()
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
@@ -107,7 +109,7 @@ class Site extends Controller
 		{
 			$data['login'] = $login;
 			$data['sites'] = $sites;
-			$this->load->view ($this->VIEW_SITE_ADMINHOME, $data);
+			$this->load->view ($this->VIEW_CATALOG, $data);
 		}
 	}
 
@@ -298,15 +300,15 @@ class Site extends Controller
 					else 
 					{
 						// the site has been deleted successfully.
-						// go back to the site admin home.	
-						redirect ('site/adminhome');
+						// go back to the site catalog page.	
+						redirect ('site/catalog');
 					}
 				}
 				else 
 				{
 					// the confirm checkbox is not checked.
-					// go back to the site adminhome page.
-					redirect ('site/adminhome');
+					// go back to the site catalog page.
+					redirect ('site/catalog');
 				}
 			}
 			else
@@ -427,38 +429,28 @@ class Site extends Controller
 		}
 	}
 
-	function preference ()
+	function wiki ($xlink)
 	{
-		$login = $this->login->getUser();
-		if ($login['id'] == '') redirect ('main/signin');
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ('main/signin');
 
-		$this->load->view (	
-			$this->VIEW_ERROR, 
-			array (
-				'login' => $login,
-				'message' => 'USER PREFERENCE NOT SUPPORTED YET'
-			)
-		);
-	}
+		$data['login'] = $login;
 
-	function admin ()
-	{
-		$login = $this->login->getUser();
-		if ($login['id'] == '') redirect ('main/signin');
+		$linkname = $this->converter->HexToAscii ($xlink);
 
-		if ($login['sysadmin?'])
+		$link = $this->wikihelper->parseLink ($linkname, NULL, $this->converter);
+		if ($link === FALSE || $link === NULL)
 		{
-			echo "...Site Administration...";
+			$data['message'] = "INVALID LINK - {$linkname}";
+			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
 		{
-			$this->load->view (	
-				$this->VIEW_ERROR, 
-				array (
-					'login' => $login,
-					'message' => 'NO PERMISSION'
-				)
-			);
+			if ($link->extra === NULL)
+				redirect ("{$link->type}/{$link->target}/{$link->projectid}");
+			else
+				redirect ("{$link->type}/{$link->target}/{$link->projectid}/{$link->extra}");
 		}
 	}
 

@@ -15,6 +15,7 @@ class Wiki extends Controller
 		$this->load->helper ('url');
 		$this->load->helper ('form');
 		$this->load->library ('Converter', 'converter');
+		$this->load->library ('WikiHelper', 'wikihelper');
 		$this->load->model (CODEPOT_LOGIN_MODEL, 'login');
 
 		$this->load->library ('Language', 'lang');
@@ -97,88 +98,51 @@ class Wiki extends Controller
 		}
 		else
 		{
-			if ($this->_is_reserved ($name, TRUE))
+			$link = $this->wikihelper->parseLink ($name, $projectid, $this->converter);
+			if ($link === FALSE)
 			{
-				$ex0 = $this->_trans_reserved ($name);
-				redirect ("{$ex0}/home/{$projectid}");
+				$data['project'] = $project;
+				$data['message'] = "INVALID LINK - {$name}";
+				$this->load->view ($this->VIEW_ERROR, $data);
+				return;
 			}
-			else
+			else if ($link !== NULL)
 			{
-				$ex = explode (':', $name);
-				$cnt = count($ex);
-				if ($cnt == 2)
-				{
-					if ($this->_is_reserved ($ex[0], TRUE))
-					{
-						$ex0 = $this->_trans_reserved ($ex[0]);
-						$ex1 = ($ex[1] == '')? $projectid: $ex[1];
-						redirect ("{$ex0}/home/{$ex1}");
-					}
-				}
-				else if ($cnt == 3)
-				{
-					if ($this->_is_reserved ($ex[0], TRUE) && 
-					    $ex[0] != '__PROJECT__' && $ex[0] != '__CODE__')
-					{
-						$ex0 = $this->_trans_reserved ($ex[0]);
-						$ex1 = ($ex[1] == '')? $projectid: $ex[1];
-						$ex2 = $this->converter->AsciiToHex ($ex[2]);
-						redirect ("{$ex0}/show/{$ex1}/{$ex2}");
-					}
-				}
-				else if ($cnt == 4)
-				{
-					if ($ex[0] == '__CODE__')
-					{
-						$ex0 = $this->_trans_reserved ($ex[0]);
-						$ex1 = ($ex[1] == '')? $projectid: $ex[1];
-						if ($ex[2] == 'file' || $ex[2] == 'history' || 
-						    $ex[2] == 'blame' || $ex[2] == 'diff')
-						{
-							$ex3 = $this->converter->AsciiToHex ($ex[3]);
-							redirect ("{$ex0}/{$ex[2]}/{$ex1}/{$ex3}");
-						}
-						else
-						{
-							$data['project'] = $project;
-							$data['message'] = 
-								"WRONG ACTION NAME FOR CODE - {$name}";
-							$this->load->view ($this->VIEW_ERROR, $data);
+				if ($link->extra === NULL)
+					redirect ("{$link->type}/{$link->target}/{$link->projectid}");
+				else
+					redirect ("{$link->type}/{$link->target}/{$link->projectid}/{$link->extra}");
+				return;
+			}
 
-							return;
-						}
-					}
-				}
-
-				$wiki = $this->wikis->get ($login['id'], $project, $name);
-				if ($wiki === FALSE)
+			$wiki = $this->wikis->get ($login['id'], $project, $name);
+			if ($wiki === FALSE)
+			{
+				$data['project'] = $project;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else if ($wiki === NULL)
+			{
+				if ($create)
 				{
-					$data['project'] = $project;
-					$data['message'] = 'DATABASE ERROR';
-					$this->load->view ($this->VIEW_ERROR, $data);
-				}
-				else if ($wiki === NULL)
-				{
-					if ($create)
-					{
-						redirect ("wiki/create/{$projectid}/" . 
-							$this->converter->AsciiToHex($name));
-					}
-					else
-					{
-						$data['project'] = $project;
-						$data['message'] = 
-							$this->lang->line('MSG_NO_SUCH_WIKI_PAGE') . 
-							" - {$name}";
-						$this->load->view ($this->VIEW_ERROR, $data);
-					}
+					redirect ("wiki/create/{$projectid}/" . 
+						$this->converter->AsciiToHex($name));
 				}
 				else
 				{
 					$data['project'] = $project;
-					$data['wiki'] = $wiki;
-					$this->load->view ($this->VIEW_SHOW, $data);
+					$data['message'] = 
+						$this->lang->line('MSG_NO_SUCH_WIKI_PAGE') . 
+						" - {$name}";
+					$this->load->view ($this->VIEW_ERROR, $data);
 				}
+			}
+			else
+			{
+				$data['project'] = $project;
+				$data['wiki'] = $wiki;
+				$this->load->view ($this->VIEW_SHOW, $data);
 			}
 		}
 	}
@@ -314,31 +278,6 @@ class Wiki extends Controller
 				}
 			}
 
-		}
-	}
-
-	function _trans_reserved ($name)
-	{
-		return substr (strtolower ($name), 2, strlen($name) -  4);
-	}
-
-	function _is_reserved ($name, $exact)
-	{
-		if ($exact)
-		{
-			return $name == '__PROJECT__' ||
-			       $name == '__WIKI__' ||
-			       $name == '__FILE__' ||
-			       $name == '__CODE__' ||
-			       $name == '__ISSUE__';
-		}
-		else
-		{
-			return substr ($name, 0, 11) == '__PROJECT__' ||
-			       substr ($name, 0, 8) == '__WIKI__' ||
-			       substr ($name, 0, 8) == '__FILE__' ||
-			       substr ($name, 0, 8) == '__CODE__' ||
-			       substr ($name, 0, 9) == '__ISSUE__';
 		}
 	}
 

@@ -4,6 +4,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+
+<script type="text/javascript" src="<?=base_url()?>/js/jquery.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>/js/jquery-ui.min.js"></script>
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/jquery-ui.css" />
+
+<script type="text/javascript">
+$(function () {
+	$('#project_list_mainarea_result').tabs();
+});
+</script>
+
 <?php
 	$caption = $this->lang->line('Projects');
 	if ($login['id'] != '') $caption .= "({$login['id']})";
@@ -25,6 +36,7 @@
 $this->load->view (
         'projectbar',
         array (
+		'banner' => NULL,
 		'site' => NULL,
 		'project' => NULL,
 		'pageid' => '',
@@ -39,7 +51,29 @@ $this->load->view (
 
 <div class="mainarea" id="project_list_mainarea">
 
-<div class="title"><?=$this->lang->line('My projects')?></div>
+<?php
+$num_projects = count($projects);
+$num_other_projects = count($other_projects);
+?>
+
+<div id="project_list_mainarea_result">
+<ul>
+<?php if ($login['id'] != '' || $num_projects > 0): ?>
+<li>
+	<a href='#project_list_mainarea_result_my_projects'>
+		<?=$this->lang->line('My projects')?> (<?=$num_projects?>)
+	</a>
+</li>
+<?php endif; ?>
+<li>
+	<a href='#project_list_mainarea_result_other_projects'>
+		<?=$this->lang->line('Other projects')?> (<?=$num_other_projects?>)
+	</a>
+</li>
+</ul>
+
+<?php if ($login['id'] != '' || $num_projects > 0): ?>
+<div id="project_list_mainarea_result_my_projects">
 <ul>
 <?php 
 foreach ($projects as $project) 
@@ -51,8 +85,10 @@ foreach ($projects as $project)
 }
 ?>
 </ul>
+</div>
+<?php endif; ?>
 
-<div class="title"><?=$this->lang->line('Other projects')?></div>
+<div id="project_list_mainarea_result_other_projects">
 <ul>
 <?php 
 foreach ($other_projects as $project) 
@@ -63,6 +99,9 @@ foreach ($other_projects as $project)
 }
 ?>
 </ul>
+</div>
+
+</div> <!-- project_list_mainarea_result -->
 
 </div> <!-- project_list_mainarea -->
 

@@ -379,13 +379,26 @@
 }
 
 /*----------------------------------------------- 
- * project source diff view 
+ * project list view 
  *-----------------------------------------------*/
-#project_wiki_show_textarea table th {
-	background-color: #bbccdd;
+#project_list_mainarea_result {
+	background: none;
+	border: none;
+	background-color: inherit;
+	padding: 0;
 }
 
-#project_wiki_show_textarea table td {
-	vertical-align: top;
-	border-bottom: 1px dashed #bbccdd;
+#project_list_mainarea_result ul {
+}
+
+#project_list_mainarea_result ul li {
+	padding-left: 0.2em;
+}
+
+#project_list_mainarea_result_my_projects {
+	padding: 0;
+}
+
+#project_list_mainarea_result_other_projects {
+	padding: 0;
 }

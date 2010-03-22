@@ -5,23 +5,12 @@
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/site.css" />
 
-<script type="text/javascript" src="<?=base_url()?>/js/jquery.min.js"></script>
-<script type="text/javascript" src="<?=base_url()?>/js/jquery-ui.min.js"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/jquery-ui.css" />
-
-
-<script type="text/javascript">
-$(function () {
-	$('#site_new_button').button();
-});
-</script>
-
 <title><?=htmlspecialchars($this->lang->line('Administration'))?></title>
 </head>
 
 <body>
 
-<div class="content" id="site_adminhome_content">
+<div class="content" id="site_catalog_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -30,27 +19,27 @@ $(function () {
 <!---------------------------------------------------------------------------->
 
 <?php
+$site->id = '';
+$site->name = '';
+$site->text = '';
+
 $this->load->view (
         'projectbar',
         array (
-		'site' => NULL,
+		'banner' => $this->lang->line('Administration'),
+		'site' => $site,
 		'project' => NULL,
-		'pageid' => '',
-                'ctxmenuitems' => NULL
+		'pageid' => 'site',
+                'ctxmenuitems' => array (
+			array ('site/create', $this->lang->line('New'))
+		)
         )
 );
 ?>
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="site_adminhome_mainarea">
-
-<div class="title"><?=$this->lang->line('Administration')?></div>
-
-<div class="infostrip">
-<span class="title">Front Pages</span>
-<?php print anchor ('site/create', $this->lang->line('New'), 'id="site_new_button"'); ?>
-</div>
+<div class="mainarea" id="site_catalog_mainarea">
 
 <ul>
 <?php 
@@ -63,7 +52,7 @@ foreach ($sites as $site)
 ?>
 </ul>
 
-</div> <!-- site_adminhome_mainarea -->
+</div> <!-- site_catalog_mainarea -->
 
 <!---------------------------------------------------------------------------->
 
@@ -72,7 +61,7 @@ foreach ($sites as $site)
 <!---------------------------------------------------------------------------->
 
 
-</div> <!-- site_adminhome_content -->
+</div> <!-- site_catalog_content -->
 
 
 </body>

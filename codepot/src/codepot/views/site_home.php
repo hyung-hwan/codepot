@@ -38,9 +38,10 @@ function render_wiki()
 $this->load->view (
         'projectbar',
         array (
+		'banner' => NULL,
 		'project' => NULL,
 		'site' => $site,
-		'pageid' => 'site',
+		'pageid' => '',
                 'ctxmenuitems' => NULL
         )
 );
