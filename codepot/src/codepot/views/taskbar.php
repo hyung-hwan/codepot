@@ -40,7 +40,7 @@ function show_taskbar ($con, $loginid, $issysadmin)
 	print anchor ('site/home', $con->lang->line('Home'));
 	print anchor ('site/projectlist', $con->lang->line('Projects'));
 	if ($issysadmin)
-		print anchor ('site/adminhome', $con->lang->line('Administration'));
+		print anchor ('site/catalog', $con->lang->line('Administration'));
 	print '</div>';
 
 	print '</div>';

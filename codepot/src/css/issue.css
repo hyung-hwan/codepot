@@ -163,18 +163,9 @@
 	background-color: #F1F1FF;
 }
 
-.project_issue_show_mainarea_changes_list ul {
-	list-style: square;
-}
-
 .project_issue_show_mainarea_changes_list ul li {
 	padding-bottom: 0.3em;
 }
-
-.project_issue_show_mainarea_changes_comment p {
-	margin-top: 0;
-}
-
 
 /*---------------------------------------------
  * issue edit

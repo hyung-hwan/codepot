@@ -316,7 +316,8 @@ var Url = {
             replaceRegex: /(^|\n)[ \t]*[*#]/g, replaceString: '$1' },
 
         table: { tag: 'table', capture: 0,
-            regex: /(^|\n)(\|.*?[ \t]*(\n|$))+/ },
+            regex: /(^|\n)(\|.*?[ \t]*(\n|$))+/, 
+            attrs: { 'class': 'wiki' } },
         tr: { tag: 'tr', capture: 2, regex: /(^|\n)(\|.*?)\|?[ \t]*(\n|$)/ },
         th: { tag: 'th', regex: /\|+=([^|]*)/, capture: 1 },
         td: { tag: 'td', capture: 1,
@@ -327,7 +328,8 @@ var Url = {
 
         singleLine: { regex: /.+/, capture: 0 },
         paragraph: { tag: 'p', capture: 0,
-            regex: /(^|\n)([ \t]*\S.*(\n|$))+/ },
+            regex: /(^|\n)([ \t]*\S.*(\n|$))+/,
+            attrs: { 'class': 'wiki' } },
         text: { capture: 0, regex: /(^|\n)([ \t]*[^\s].*(\n|$))+/ },
 
         strong: { tag: 'strong', capture: 1,

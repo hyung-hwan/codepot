@@ -21,7 +21,8 @@
 $this->load->view (
 	'projectbar',
 	array (
-		'site' => NULL,
+		'banner' => $this->lang->line('Administration'),
+		'site' => $site,
 		'project' => NULL,
 		'pageid' => 'site',
 		'ctxmenuitems' => array ()

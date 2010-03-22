@@ -20,6 +20,7 @@
 $this->load->view (
 	'projectbar',
 	array (
+		'banner' => NULL,
 		'site' => NULL,
 		'pageid' => 'project',
 		'ctxmenuitems' => array ()

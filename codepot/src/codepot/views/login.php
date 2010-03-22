@@ -28,6 +28,7 @@
 $this->load->view (
 	'projectbar',
 	array (
+		'banner' => NULL,	
 		'site' => NULL,
 		'project' => NULL,
 		'pageid' => '',

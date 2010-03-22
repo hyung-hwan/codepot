@@ -26,6 +26,7 @@ if (!isset($site))  $site = NULL;
 $this->load->view (
         'projectbar',
         array (
+		'banner' => NULL,
                 'site' => $site,
                 'project' => $project,
                 'pageid' => '',
@@ -37,9 +38,9 @@ $this->load->view (
 <!---------------------------------------------------------------------------->
 <div class="mainarea" id="project_error_mainarea">
 <div class="title" id="project_error_title">
-<?= $title ?>
+<?= htmlspecialchars($title) ?>
 </div>
-<?= $message ?>
+<?= htmlspecialchars($message) ?>
 </div>
 
 <?php $this->load->view ('footer'); ?>

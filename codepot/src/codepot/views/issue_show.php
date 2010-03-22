@@ -159,6 +159,7 @@ $hexid = $this->converter->AsciiToHex ($issue->id);
 $this->load->view (
 	'projectbar',
 	array (
+		'banner' => NULL,
 		'site' => NULL,
 		'pageid' => 'issue',
 		'ctxmenuitems' => array (

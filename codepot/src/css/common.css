@@ -9,6 +9,10 @@ body {
 	font-family: sans-serif;
 }
 
+.content ul {
+	list-style: square;
+}
+
 .content .taskbar {
 	font-size: 0.9em;
 	font-weight: bold;
@@ -251,6 +255,24 @@ body {
 	background-color: inherit;
 }
 
+.content .mainarea table.wiki th {
+        background-color: #bbccdd;
+}
+
+.content .mainarea table.wiki td {
+        vertical-align: top;
+        border-bottom: 1px dashed #bbccdd;
+}
+
+.content .mainarea p.wiki {
+	/* use the default for normal cases */
+}
+
+.content .mainarea table p.wiki {
+	/* no margin-top within tables */
+	margin-top: 0;
+}
+
 .content .mainarea pre.prettyprint {
 	/* anything that make prettyprint area different from other pres? */
 	background-color: #FFFFFF;
@@ -308,10 +330,19 @@ pre.prettyprint .nocode a:hover {
 
 .content .infostrip {
 	font-size: 0.9em;
+
         background: #E5ECF9 none repeat scroll 0 0;
+        border: #D4DBE8 1px solid; 
+        /*background: #DDDDDD none repeat scroll 0 0;
+	border: 1px solid #CCCCCC;*/
+
 	margin: 0.3em 0em 0em 0em;
 	padding: 0.3em 0.3em 0.3em 0.3em;
 	text-align: right;
+	-moz-border-radius-bottomleft:2px;
+	-moz-border-radius-bottomright:2px;
+	-moz-border-radius-topleft:2px;
+	-moz-border-radius-topright:2px;
 }
 
 .content .infostrip a {
@@ -329,9 +360,17 @@ pre.prettyprint .nocode a:hover {
         padding:8px 8px 8px 8px;
         margin: 1px 1px 2px 1px;
         display:block;
-        border: none;
-        background: #E5ECF9 none repeat scroll 0 0;
 	overflow: auto;
+
+        background: #E5ECF9 none repeat scroll 0 0;
+        border: #D4DBE8 1px solid; 
+        /* background: #DDDDDD none repeat scroll 0 0;
+        border: #CCCCCC 1px solid; */
+
+	-moz-border-radius-bottomleft:2px;
+	-moz-border-radius-bottomright:2px;
+	-moz-border-radius-topleft:2px;
+	-moz-border-radius-topright:2px;
 }
 
 .content .sidebar .boxtitle {
@@ -359,10 +398,6 @@ pre.prettyprint .nocode a:hover {
 .content .sidebar ul {
 	margin: 0.2em 0 0.2em 0;
 	padding: 0.2em 0 0.2em 1em;
-}
-
-.content .sidebar ul li {
-	list-style: square;
 }
 
 .content .sidebar a {
