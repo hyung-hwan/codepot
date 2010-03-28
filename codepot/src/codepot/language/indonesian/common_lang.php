@@ -40,6 +40,7 @@ $lang['MD5'] = 'MD5';
 $lang['Member'] = 'Anggota';
 $lang['Members'] = 'Anggota';
 $lang['Message'] = 'Pesan';
+$lang['My issues'] = 'Issue saya';
 $lang['My projects'] = 'Proyek saya';
 $lang['Name'] = 'Nama';
 $lang['New'] = 'Baru';

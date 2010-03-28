@@ -75,16 +75,13 @@ $(function () {
 	*/
 	/*$("#issue_change_owner").combobox();*/
 
-	$("#project_issue_show_mainarea_change_form").dialog (
+	$("#issue_show_mainarea_change_form").dialog (
 		{
 			title: '<?=$this->lang->line('Change')?>',
 			autoOpen: false,
 			modal: true,
 			width: '85%',
 			buttons: { 
-				'<?=$this->lang->line('Cancel')?>': function () { 
-					$(this).dialog('close'); 
-				},
 				'<?=$this->lang->line('OK')?>': function () { 
 					var comment = $('#issue_change_comment');
 					if (comment.val().trim().length <= 0)
@@ -98,33 +95,36 @@ $(function () {
 					{
 						$(this).dialog('close'); 
 						$('#issue_change').val ('change');
-						$('#project_issue_change_form').submit ();
+						$('#issue_change_form').submit ();
 					}
+				},
+				'<?=$this->lang->line('Cancel')?>': function () { 
+					$(this).dialog('close'); 
 				}
 			},
 			close: function() { }
 		} 
 	); 
 
-	$("#project_issue_show_mainarea_change_form_open").button().click (
+	$("#issue_show_mainarea_change_form_open").button().click (
 		function () { 
-			$('#project_issue_show_mainarea_change_form').dialog('open'); 
+			$('#issue_show_mainarea_change_form').dialog('open'); 
 		}
 	);
 
-	$("#project_issue_show_mainarea_undo_change_confirm").dialog (
+	$("#issue_show_mainarea_undo_change_confirm").dialog (
 		{
 			title: '<?=$this->lang->line('Undo')?>',
 			resizable: false,
 			autoOpen: false,
 			modal: true,
 			buttons: { 
-				'<?=$this->lang->line('Cancel')?>': function () { 
-					$(this).dialog('close'); 
-				},
 				'<?=$this->lang->line('OK')?>': function () { 
 					$('#issue_change').val ('undo');
-					$('#project_issue_change_form').submit ();
+					$('#issue_change_form').submit ();
+					$(this).dialog('close'); 
+				},
+				'<?=$this->lang->line('Cancel')?>': function () { 
 					$(this).dialog('close'); 
 				}
 			},
@@ -132,9 +132,9 @@ $(function () {
 		} 
 	);
 
-	$("#project_issue_show_mainarea_undo_change").button().click (
+	$("#issue_show_mainarea_undo_change").button().click (
 		function () { 
-			$('#project_issue_show_mainarea_undo_change_confirm').dialog('open'); 
+			$('#issue_show_mainarea_undo_change_confirm').dialog('open'); 
 		}
 	);
 
@@ -146,7 +146,7 @@ $(function () {
 
 <body onLoad="render_wiki()">
 
-<div class="content" id="project_issue_show_content">
+<div class="content" id="issue_show_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -174,13 +174,13 @@ $this->load->view (
 <!---------------------------------------------------------------------------->
 
 
-<div class="mainarea" id="project_issue_show_mainarea">
+<div class="mainarea" id="issue_show_mainarea">
 <div class="title">
 	<?=$this->lang->line('Issue')?> <?=htmlspecialchars($issue->id)?>: 
 	<?=htmlspecialchars($issue->summary)?>
 </div>
 
-<div class="infostrip" id="project_issue_show_mainarea_infostrip">
+<div class="infostrip" id="issue_show_mainarea_infostrip">
 	<?php
 		print $this->lang->line('Type');
 		print ': '; 
@@ -213,20 +213,21 @@ $this->load->view (
 			print ' | ';
 		}
 	?>
-	<a id="project_issue_show_mainarea_change_form_open" href="#"><?=$this->lang->line('Change')?></a>
+	<a id="issue_show_mainarea_change_form_open" href="#"><?=$this->lang->line('Change')?></a>
 </div>
 
-<div id="project_issue_show_mainarea_description">
-<pre id="project_issue_show_mainarea_description_pre" style="visibility: hidden">
+<div id="issue_show_mainarea_description">
+<pre id="issue_show_mainarea_description_pre" style="visibility: hidden">
 <?php print htmlspecialchars($issue->description); ?>
 </pre>
-</div> <!-- project_issue_mainarea_description -->
+</div> <!-- issue_show_mainarea_description -->
 
-<div id="project_issue_show_mainarea_changes">
+<div id="issue_show_mainarea_changes">
 <?php
 	$commentno = 0;
 
-	$msgfmt_changed = $this->lang->line ('ISSUE_MSG_CHANGED_X_FROM_Y_TO_Z');
+	$msgfmt_changed_from_to = $this->lang->line ('ISSUE_MSG_CHANGED_X_FROM_Y_TO_Z');
+	$msgfmt_changed_to = $this->lang->line ('ISSUE_MSG_CHANGED_X_TO_Z');
 	$count = count($issue->changes);
 	if ($count > 1) 
 	{
@@ -234,13 +235,13 @@ $this->load->view (
 		print '<span class="title">';
 		print $this->lang->line('Change log');
 		print '</span>';
-		print '<a id="project_issue_show_mainarea_undo_change" href="#">';
+		print '<a id="issue_show_mainarea_undo_change" href="#">';
 		print $this->lang->line('Undo');
 		print '</a>';
 		print '</div>';
 	}
 
-	print '<table id="project_issue_show_mainarea_changes_table">';
+	print '<table id="issue_show_mainarea_changes_table">';
 	while ($count > 1)
 	{
 		$new = $issue->changes[--$count];
@@ -248,7 +249,7 @@ $this->load->view (
 
 		print "<tr>";
 		
-		print '<td class="project_issue_show_mainarea_changes_table_date">'; 
+		print '<td class="date">'; 
 		print '<span title="';
 		print date ('Y-m-d H:s:i', strtotime($new->updatedon));
 		print '">';
@@ -256,26 +257,26 @@ $this->load->view (
 		print '</span>';
 		print '</td>';
 
-		print '<td class="project_issue_show_mainarea_changes_table_updater">'; 
+		print '<td class="updater">'; 
 		print htmlspecialchars($new->updatedby);
 		print '</td>';
 
-		print '<td class="project_issue_show_mainarea_changes_table_details">';
+		print '<td class="details">';
 		if ($new->comment != "")
 		{
-			print "<div id='project_issue_show_mainarea_changes_comment_{$commentno}' class='project_issue_show_mainarea_changes_comment'>";
-			print "<pre id='project_issue_show_mainarea_changes_comment_pre_{$commentno}'>";
+			print "<div id='issue_show_mainarea_changes_comment_{$commentno}' class='issue_show_mainarea_changes_comment'>";
+			print "<pre id='issue_show_mainarea_changes_comment_pre_{$commentno}'>";
 			print htmlspecialchars($new->comment);
 			print '</pre>';	
 			print '</div>';
 			$commentno++;
 		}
 
-		print '<div class="project_issue_show_mainarea_changes_list">';
+		print '<div class="list">';
 		print '<ul>';
 		if ($new->type != $old->type)
 		{
-			printf ("<li>{$msgfmt_changed}</li>", 
+			printf ("<li>{$msgfmt_changed_from_to}</li>", 
 				strtolower($this->lang->line('Type')),
 				htmlspecialchars(
 					array_key_exists($old->type, $issue_type_array)? 
@@ -287,7 +288,7 @@ $this->load->view (
 
 		if ($new->status != $old->status)
 		{
-			printf ("<li>{$msgfmt_changed}</li>", 
+			printf ("<li>{$msgfmt_changed_from_to}</li>", 
 				strtolower($this->lang->line('Status')),
 				htmlspecialchars(
 					array_key_exists($old->status, $issue_status_array)? 
@@ -299,7 +300,7 @@ $this->load->view (
 
 		if ($new->priority != $old->priority)
 		{
-			printf ("<li>{$msgfmt_changed}</li>", 
+			printf ("<li>{$msgfmt_changed_from_to}</li>", 
 				strtolower($this->lang->line('Priority')),
 				htmlspecialchars(
 					array_key_exists($old->priority, $issue_priority_array)? 
@@ -311,9 +312,18 @@ $this->load->view (
 
 		if ($new->owner != $old->owner)
 		{
-			printf ("<li>{$msgfmt_changed}</li>", 
-				strtolower($this->lang->line('Owner')),
-				htmlspecialchars($old->owner), htmlspecialchars($new->owner));
+			if ($old->owner == '')
+			{
+				printf ("<li>{$msgfmt_changed_to}</li>", 
+					strtolower($this->lang->line('Owner')),
+					htmlspecialchars($new->owner));
+			}
+			else
+			{
+				printf ("<li>{$msgfmt_changed_from_to}</li>", 
+					strtolower($this->lang->line('Owner')),
+					htmlspecialchars($old->owner), htmlspecialchars($new->owner));
+			}
 		}
 		print '</ul>';
 		print '</div>';
@@ -326,9 +336,9 @@ $this->load->view (
 
 </div>
 
-<div id="project_issue_show_mainarea_change_form">
+<div id="issue_show_mainarea_change_form">
 
-	<?=form_open("issue/show/{$project->id}/{$hexid}/", 'id="project_issue_change_form"')?>
+	<?=form_open("issue/show/{$project->id}/{$hexid}/", 'id="issue_change_form"')?>
 
 		<input type='hidden' name='issue_change' id='issue_change' value='change' />
 
@@ -367,7 +377,22 @@ $this->load->view (
 			<?=form_label ($this->lang->line('Owner'),
 				'issue_change_owner')
 			?>
-			<?=form_input('issue_change_owner',
+
+			<?php
+			$tmp = explode (',', $project->members);
+			$owner_array = array ();
+			$found = FALSE;
+			foreach ($tmp as $t) 
+			{
+				if ($issue->owner == $t) $found = TRUE;
+				$owner_array[$t] = $t;
+			}
+			if ($found === FALSE) $owner_array[$issue->owner] = $issue->owner;
+			?>
+			
+			<?=form_dropdown (
+				'issue_change_owner', 
+				$owner_array,
 				set_value('issue_change_owner', $issue->owner),
 				'id="issue_change_owner"')
 			?>
@@ -387,14 +412,14 @@ $this->load->view (
 			?>
 		</div>
 	<?=form_close()?>
-</div> <!-- project_issue_show_change_form -->
+</div> <!-- issue_show_change_form -->
 
 
-<div id="project_issue_show_mainarea_undo_change_confirm">
+<div id="issue_show_mainarea_undo_change_confirm">
 	<?=$this->lang->line ('ISSUE_MSG_CONFIRM_UNDO')?>
 </div>
 
-</div> <!-- project_issue_show_mainarea -->
+</div> <!-- issue_show_mainarea -->
 
 <!---------------------------------------------------------------------------->
 
@@ -402,7 +427,7 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_issue_show_content -->
+</div> <!--  issue_show_content -->
 
 <script type="text/javascript">
 function render_wiki()
@@ -410,8 +435,8 @@ function render_wiki()
 	<?php $creole_base = site_url() . "/wiki/show/{$project->id}/"; ?>
 
 	creole_render_wiki (
-		"project_issue_show_mainarea_description_pre", 
-		"project_issue_show_mainarea_description", 
+		"issue_show_mainarea_description_pre", 
+		"issue_show_mainarea_description", 
 		"<?=$creole_base?>"
 	);
 
@@ -421,9 +446,9 @@ function render_wiki()
 		for ($xxx = 0; $xxx < $commentno; $xxx++)
 		{
 			print "creole_render_wiki (
-					'project_issue_show_mainarea_changes_comment_pre_{$xxx}', 
-					'project_issue_show_mainarea_changes_comment_{$xxx}', 
-					'{$creole_base}');";
+				'issue_show_mainarea_changes_comment_pre_{$xxx}', 
+				'issue_show_mainarea_changes_comment_{$xxx}', 
+				'{$creole_base}');";
 		}
 	}
 	?>

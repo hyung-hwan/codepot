@@ -70,11 +70,11 @@ class Main extends Controller
 		redirect ('main/index');
 	}
 
-	function signout ($url = "")
+	function signout ($xurl = "")
 	{
 		$this->login->deauthenticate ();
-		if ($url != "") redirect ($this->converter->HexToAscii($url));
-		else redirect ('site/home');
+		$url = ($xurl != "")? $this->converter->HexToAscii($xurl): 'site/home';
+		redirect ($url);
 	}
 
 }

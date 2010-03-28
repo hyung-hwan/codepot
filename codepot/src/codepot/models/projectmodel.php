@@ -48,6 +48,40 @@ class ProjectModel extends Model
 		return $result[0];
 	}
 
+	function getNumEntries ($userid, $search)
+	{
+		$this->db->trans_start ();
+
+		$this->db->select ('count(id) as count');
+		$this->db->order_by ('name', 'asc');
+		if ($search->id != '') $this->db->like ('id', $search->id);
+		if ($search->name != '') $this->db->like ('name', $search->name);
+		if ($search->summary != '') $this->db->like ('summary', $search->summary);
+		$query = $this->db->get ('project');
+		$result = $query->result();
+		
+		$num = empty($result)? 0: $result[0]->count;
+
+		$this->db->trans_complete ();
+		if ($this->db->trans_status() === FALSE) return FALSE;
+
+		return $num;
+	}
+
+	function getEntries ($userid, $offset, $limit, $search)
+	{
+		$this->db->trans_start ();
+		$this->db->order_by ('name', 'asc');
+		if ($search->id != '') $this->db->like ('id', $search->id);
+		if ($search->name != '') $this->db->like ('name', $search->name);
+		if ($search->summary != '') $this->db->like ('summary', $search->summary);
+		$query = $this->db->get ('project', $limit, $offset);
+		$this->db->trans_complete ();
+		if ($this->db->trans_status() === FALSE) return FALSE;
+		return $query->result ();
+	}
+
+
 	function create ($userid, $project, $api_base_url)
 	{
 		// TODO: check if userid can do this..
@@ -104,10 +138,18 @@ class ProjectModel extends Model
 
 			$cfgdir = CODEPOT_CFG_DIR;
 			$repodir = CODEPOT_SVNREPO_DIR;
+
+			if (@svn_repos_create ("{$repodir}/{$project->id}") === FALSE)
+			{
+				$this->db->trans_rollback ();
+				return FALSE;
+			}
+
 			$cmd = "'{$cfgdir}/repo.sh' make '{$repodir}' '{$project->id}' '{$cfgdir}' '{$api}'";
 			exec (escapeshellcmd($cmd), $output = array(), $retval);
 			if ($retval != 0) 
 			{
+				$this->deleteDirectory ("{$repodir}/{$project->id}");
 				$this->db->trans_rollback ();
 				return FALSE;
 			}

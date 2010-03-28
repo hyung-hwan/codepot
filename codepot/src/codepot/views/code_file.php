@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/code.css" />
 <script type="text/javascript" src="<?=base_url()?>/js/prettify/prettify.js"></script>
 <script type="text/javascript" src="<?=base_url()?>/js/prettify/lang-css.js"></script>
 <script type="text/javascript" src="<?=base_url()?>/js/prettify/lang-lisp.js"></script>
@@ -15,7 +15,7 @@
 
 <body onload="prettyPrint()">
 
-<div class="content" id="project_code_file_content">
+<div class="content" id="code_file_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -37,9 +37,9 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="project_code_file_mainarea">
+<div class="mainarea" id="code_file_mainarea">
 
-<div class="title" id="project_code_file_mainarea_title">
+<div class="title" id="code_file_mainarea_title">
 <?php
 	if ($revision <= 0)
 	{
@@ -76,9 +76,9 @@ $this->load->view (
 		print htmlspecialchars($file['fullpath']);
 	}
 ?>
-</div> <!-- project_code_file_mainarea_title -->
+</div> <!-- code_file_mainarea_title -->
 
-<div class="menu" id="project_code_file_mainarea_menu">
+<div class="menu" id="code_file_mainarea_menu">
 <?php
 	$xpar = $this->converter->AsciiToHex ($headpath);
 
@@ -102,9 +102,9 @@ $this->load->view (
 		"code/history/{$project->id}/{$xpar}", 
 		$this->lang->line('History'));
 ?>
-</div> <!-- project_code_file_mainarea_menu -->
+</div> <!-- code_file_mainarea_menu -->
 
-<div class="infostrip" id="project_code_file_mainarea_infostrip">
+<div class="infostrip" id="code_file_mainarea_infostrip">
 	<?=anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<')?> 
 	<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
 	<?=anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>')?> |
@@ -113,14 +113,14 @@ $this->load->view (
 	<?=$this->lang->line('Last updated on')?>: <?=$file['time']?> 
 </div>
 
-<div id="project_code_file_mainarea_result">
+<div id="code_file_mainarea_result">
 
 <?php 
 $fileext = substr(strrchr($file['name'], '.'), 1);
 if ($fileext == '') $fileext = "html"
 ?>
 
-<pre class="prettyprint lang-<?=$fileext?>" id="project_code_file_mainarea_result_pre">
+<pre class="prettyprint lang-<?=$fileext?>" id="code_file_mainarea_result_pre">
 <?php
 	// print htmlspecialchars($file['content']);
 
@@ -147,11 +147,11 @@ if ($fileext == '') $fileext = "html"
 </pre>
 
 
-<div id="project_code_file_mainarea_result_info">
+<div id="code_file_mainarea_result_info">
 <script language='javascript'>
 function toggle_logmsg()
 {
-	var x = document.getElementById ('project_code_file_mainarea_result_info_logmsg');	
+	var x = document.getElementById ('code_file_mainarea_result_info_logmsg');	
 	if (x) x.style.visibility = (x.style.visibility == 'visible')? 'hidden': 'visible';
 	return false;
 }
@@ -160,14 +160,14 @@ function toggle_logmsg()
 <div class="title">
 <a href='#' onClick='toggle_logmsg()'><?= $this->lang->line('Message') ?></a>
 </div>
-<pre id="project_code_file_mainarea_result_info_logmsg" style="visibility: visible">
+<pre id="code_file_mainarea_result_info_logmsg" style="visibility: visible">
 <?= $file['logmsg'] ?>
 </pre>
-</div> <!-- project_code_file_mainarea_result_info -->
+</div> <!-- code_file_mainarea_result_info -->
 
-</div> <!-- project_code_file_mainarea_result -->
+</div> <!-- code_file_mainarea_result -->
 
-</div> <!-- project_code_file_mainarea -->
+</div> <!-- code_file_mainarea -->
 
 
 <!---------------------------------------------------------------------------->
@@ -176,7 +176,7 @@ function toggle_logmsg()
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_code_file_content -->
+</div> <!--  code_file_content -->
 
 </body>
 

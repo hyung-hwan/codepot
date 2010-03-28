@@ -3,15 +3,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/file.css" />
 <script type="text/javascript" src="<?=base_url()?>/js/creole.js"></script>
 
 <script type="text/javascript">
 function render_wiki()
 {
 	creole_render_wiki (
-		"project_file_show_textpre", 
-		"project_file_show_textarea", 
+		"file_show_textpre", 
+		"file_show_textarea", 
 		"<?=site_url()?>/wiki/show/<?=$project->id?>/"
 	);
 }
@@ -22,7 +22,7 @@ function render_wiki()
 
 <body onLoad="render_wiki()">
 
-<div class="content" id="project_file_show_content">
+<div class="content" id="file_show_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -49,7 +49,7 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="sidebar" id="project_file_show_sidebar">
+<div class="sidebar" id="file_show_sidebar">
 
 <div class="box">
 <ul>
@@ -68,16 +68,16 @@ $this->load->view (
 
 </div>
 
-<div class="mainarea" id="project_file_show_mainarea">
+<div class="mainarea" id="file_show_mainarea">
 <div class="title"><?=htmlspecialchars($file->name)?></div>
 
-<div id="project_file_show_textarea">
-<pre id="project_file_show_textpre" style="visibility: hidden">
+<div id="file_show_textarea">
+<pre id="file_show_textpre" style="visibility: hidden">
 <?php print htmlspecialchars($file->description); ?>
 </pre>
-</div> <!-- project_file_show_textarea -->
+</div> <!-- file_show_textarea -->
 
-</div> <!-- project_file_show_mainarea -->
+</div> <!-- file_show_mainarea -->
 
 
 <!---------------------------------------------------------------------------->
@@ -86,7 +86,7 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_file_show_content -->
+</div> <!--  file_show_content -->
 
 </body>
 
