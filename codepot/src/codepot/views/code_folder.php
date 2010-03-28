@@ -3,13 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/code.css" />
 <title><?=htmlspecialchars($project->name)?></title>
 </head>
 
 <body>
 
-<div class="content" id="project_code_folder_content">
+<div class="content" id="code_folder_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -32,18 +32,18 @@ $this->load->view (
 <!---------------------------------------------------------------------------->
 
 
-<div class="sidebar" id="project_code_folder_sidebar">
-	<div class="box" id="project_code_folder_sidebar_info">
+<div class="sidebar" id="code_folder_sidebar">
+	<div class="box" id="code_folder_sidebar_info">
 		<div class="boxtitle"><?=$this->lang->line('Revision')?>: <?=$file['created_rev']?></div>
 		<pre><?=$file['logmsg']?></pre>
 	</div>
-</div> <!-- project_code_folder_sidebar -->
+</div> <!-- code_folder_sidebar -->
 
 
 <!---------------------------------------------------------------------------->
 
 
-<div class="mainarea" id="project_code_folder_mainarea">
+<div class="mainarea" id="code_folder_mainarea">
 
 <div class="title">
 <?php
@@ -104,7 +104,7 @@ $this->load->view (
 	}
 	else 
 	{
-		print '<div class="menu" id="project_code_folder_mainarea_menu">';
+		print '<div class="menu" id="code_folder_mainarea_menu">';
 		$xpar = $this->converter->AsciiTohex ($headpath);
 		if ($revision > 0 && $revision < $next_revision)
 		{
@@ -116,8 +116,8 @@ $this->load->view (
 
 		usort ($file['content'], 'comp_files');
 
-		print '<div id="project_code_folder_mainarea_result">';
-		print '<table id="project_code_folder_mainarea_result_table">';
+		print '<div id="code_folder_mainarea_result">';
+		print '<table id="code_folder_mainarea_result_table">';
 		print '<tr class="heading">';
 		print '<th>' . $this->lang->line('Name') . '</th>';
 		print '<th>' . $this->lang->line('Revision') . '</th>';
@@ -202,7 +202,7 @@ $this->load->view (
 	}
 ?>
 
-</div> <!-- project_code_folder_mainarea -->
+</div> <!-- code_folder_mainarea -->
 
 
 <!---------------------------------------------------------------------------->
@@ -211,7 +211,7 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_code_folder_content -->
+</div> <!--  code_folder_content -->
 
 </body>
 

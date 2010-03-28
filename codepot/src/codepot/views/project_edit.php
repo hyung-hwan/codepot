@@ -21,7 +21,7 @@
 $this->load->view (
 	'projectbar',
 	array (
-		'banner' => NULL,
+		'banner' => (($mode != 'create')? NULL: $this->lang->line('Projects')),
 		'site' => NULL,
 		'project' => (($mode != 'create')? $project: NULL),
 		'pageid' => 'project',
@@ -85,7 +85,16 @@ $this->load->view (
 				<?=form_error('project_description')?>
 			</div>
 			<div>
-				<?=form_textarea('project_description', set_value('project_description', $project->description))?>
+				<?php
+					$xdata = array (
+						'name' => 'project_description',
+						'value' => set_value ('project_description', $project->description),
+						'id' => 'project_edit_mainarea_description',
+						'rows' => 20,
+						'cols' => 80
+					);
+					print form_textarea ($xdata);
+				?>
 			</div>
 		</div>
 
@@ -95,7 +104,16 @@ $this->load->view (
 				<?=form_error('project_members')?>
 			</div>
 			<div>
-				<?=form_textarea('project_members', set_value ('project_members', $project->members))?>
+				<?php
+					$xdata = array (
+						'name' => 'project_members',
+						'value' => set_value ('project_members', $project->members),
+						'id' => 'project_edit_mainarea_members',
+						'rows' => 2,
+						'cols' => 80
+					);
+					print form_textarea ($xdata);
+				?>
 			</div>
 		</div>
 

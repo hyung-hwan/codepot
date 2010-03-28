@@ -3,13 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/wiki.css" />
 <title><title><?=htmlspecialchars($wiki->name)?></title></title>
 </head>
 
 <body>
 
-<div class="content" id="project_wiki_delete_content">
+<div class="content" id="wiki_delete_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -66,7 +66,7 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-</div>  <!-- project_wiki_delete_content -->
+</div>  <!-- wiki_delete_content -->
 
 </body>
 

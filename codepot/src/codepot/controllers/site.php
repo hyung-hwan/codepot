@@ -9,7 +9,7 @@ class Site extends Controller
 	var $VIEW_DELETE = 'site_delete';
         var $VIEW_CATALOG = 'site_catalog';
 	var $VIEW_LOG = 'log';
-        var $VIEW_PROJECT_LIST = 'project_list';
+        var $VIEW_USER_HOME = 'user_home';
 
 	function Site ()
 	{
@@ -403,29 +403,44 @@ class Site extends Controller
 		$this->load->view ($this->VIEW_LOG, $data);
 	}
 
-	function projectlist ()
+	function userhome ()
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ('main/signin');
 
+		$this->load->library ('IssueHelper', 'issuehelper');
+		$this->lang->load ('issue', CODEPOT_LANG);
+
 		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('IssueModel', 'issues');
 
-		$projects = $this->projects->getMyProjects ($login['id']);
-		$other_projects = $this->projects->getOtherProjects ($login['id']);
-
-		if ($projects === FALSE || $other_projects === FALSE)
+		if ($login['id'] == '')
 		{
-			$data['login'] = $login;
-			$data['message'] = 'DATABASE ERROR';
-			$this->load->view ($this->VIEW_ERROR, $data);
+			redirect ('site/home');
 		}
 		else
 		{
-			$data['login'] = $login;
-			$data['projects'] = $projects;
-			$data['other_projects'] = $other_projects;
-			$this->load->view ($this->VIEW_PROJECT_LIST, $data);
+			$projects = $this->projects->getMyProjects ($login['id']);
+
+			$issues = $this->issues->getMyIssues (
+				$login['id'], $this->issuehelper->_get_open_status_array($this->lang));
+			if ($projects === FALSE || $issues === FALSE)
+			{
+				$data['login'] = $login;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else
+			{
+				$data['login'] = $login;
+				$data['projects'] = $projects;
+				$data['issues'] = $issues;
+				$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
+				$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
+				$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
+				$this->load->view ($this->VIEW_USER_HOME, $data);
+			}
 		}
 	}
 
