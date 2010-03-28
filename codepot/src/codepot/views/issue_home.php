@@ -22,15 +22,12 @@ function AsciiToHex (x) {
 }
 
 $(function () { 
-	$("#project_issue_home_mainarea_search_form").dialog ({
+	$("#issue_home_mainarea_search_form").dialog ({
 		title: '<?=$this->lang->line('Search')?>',
 		autoOpen: false,
 		modal: true,
 		width: '80%',
 		buttons: { 
-			'<?=$this->lang->line('Cancel')?>': function () { 
-				$(this).dialog('close'); 
-			},
 			'<?=$this->lang->line('OK')?>': function () { 
 				$(this).dialog('close'); 
 				var filter = AsciiToHex($('#issue_search_form').serialize());
@@ -38,15 +35,18 @@ $(function () {
 
 				$('body').append('<form id="magic_form" method="get" action="'+url+'"></form>');
 				$('#magic_form').submit();
+			},
+			'<?=$this->lang->line('Cancel')?>': function () { 
+				$(this).dialog('close'); 
 			}
 		},
 		close: function() {}
 	}); 
 
 
-	$("#project_issue_home_mainarea_search_button").button().click (
+	$("#issue_home_mainarea_search_button").button().click (
 		function () { 
-			$('#project_issue_home_mainarea_search_form').dialog('open'); 
+			$('#issue_home_mainarea_search_form').dialog('open'); 
 		}
 	);
 });
@@ -57,7 +57,7 @@ $(function () {
 
 <body>
 
-<div class="content" id="project_issue_home_content">
+<div class="content" id="issue_home_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -73,7 +73,7 @@ $this->load->view (
 		'site' => NULL,
 		'pageid' => 'issue',
 		'ctxmenuitems' => array (
-			array ("issue/create/{$project->id}", $this->lang->line('New'), 'project_issue_home_new')
+			array ("issue/create/{$project->id}", $this->lang->line('New'), 'issue_home_new')
 		)
 	)
 ); 
@@ -81,15 +81,15 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="project_issue_home_mainarea">
+<div class="mainarea" id="issue_home_mainarea">
 <div class="title"><?=$this->lang->line('Issues')?></div>
 
 <div class="infostrip">
 <?php printf ($this->lang->line('ISSUE_MSG_TOTAL_NUM_ISSUES'), $total_num_issues); ?> | 
-<a id="project_issue_home_mainarea_search_button" href='#'><?=$this->lang->line('Search')?></a>
+<a id="issue_home_mainarea_search_button" href='#'><?=$this->lang->line('Search')?></a>
 </div>
 
-<div id="project_issue_home_mainarea_search_form">
+<div id="issue_home_mainarea_search_form">
 	<?php
 		$issue_type_array[''] = $this->lang->line('All');
 		$issue_status_array[''] = $this->lang->line('All');
@@ -144,7 +144,7 @@ $this->load->view (
 </div>
 
 
-<div id="project_issue_home_mainarea_result">
+<div id="issue_home_mainarea_result">
 <?php
 if (empty($issues))
 {
@@ -152,14 +152,14 @@ if (empty($issues))
 }
 else
 {
-	print '<table id="project_issue_home_mainarea_result_table">';
+	print '<table id="issue_home_mainarea_result_table">';
 	print '<tr class="heading">';
-	print '<th class="project_issue_home_mainarea_result_table_id">' . $this->lang->line('ID') . '</th>';
-	print '<th class="project_issue_home_mainarea_result_table_type">' . $this->lang->line('Type') . '</th>';
-	print '<th class="project_issue_home_mainarea_result_table_status">' . $this->lang->line('Status') . '</th>';
-	print '<th class="project_issue_home_mainarea_result_table_priority">' . $this->lang->line('Priority') . '</th>';
-	print '<th class="project_issue_home_mainarea_result_table_owner">' . $this->lang->line('Owner') . '</th>';
-	print '<th class="project_issue_home_mainarea_result_table_summary">' . $this->lang->line('Summary') . '</th>';
+	print '<th class="id">' . $this->lang->line('ID') . '</th>';
+	print '<th class="type">' . $this->lang->line('Type') . '</th>';
+	print '<th class="status">' . $this->lang->line('Status') . '</th>';
+	print '<th class="priority">' . $this->lang->line('Priority') . '</th>';
+	print '<th class="owner">' . $this->lang->line('Owner') . '</th>';
+	print '<th class="summary">' . $this->lang->line('Summary') . '</th>';
 	print '</tr>';
 
 	foreach ($issues as $issue)
@@ -208,9 +208,9 @@ else
 	print '</table>';
 }
 ?>
-</div> <!-- project_issue_home_mainarea_result -->
+</div> <!-- issue_home_mainarea_result -->
 
-</div> <!-- project_issue_home_mainarea -->
+</div> <!-- issue_home_mainarea -->
 
 <!---------------------------------------------------------------------------->
 
@@ -219,7 +219,7 @@ else
 <!---------------------------------------------------------------------------->
 
 
-</div> <!-- project_issue_home_content -->
+</div> <!-- issue_home_content -->
 
 </body>
 </html>

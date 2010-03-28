@@ -3,13 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/code.css" />
 <title><?=htmlspecialchars($project->name)?></title>
 </head>
 
 <body>
 
-<div class="content" id="project_code_revision_content">
+<div class="content" id="code_revision_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -31,13 +31,13 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="project_code_revision_mainarea">
+<div class="mainarea" id="code_revision_mainarea">
 
 <?php
 $history = $file['history'];
 ?>
 
-<div class="title" id="project_code_revision_mainarea_title">
+<div class="title" id="code_revision_mainarea_title">
 <?php
 	if ($revision <= 0)
 	{
@@ -76,7 +76,7 @@ $history = $file['history'];
 ?>
 </div>
 
-<div class="menu" id="project_code_revision_mainarea_menu">
+<div class="menu" id="code_revision_mainarea_menu">
 <?php
 	$xpar = $this->converter->AsciiToHex(($headpath == '')? '.': $headpath);
 	if ($revision > 0 && $revision < $next_revision)
@@ -86,9 +86,9 @@ $history = $file['history'];
 	}
 	print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
 ?>
-</div> <!-- project_code_revision_mainarea_menu -->
+</div> <!-- code_revision_mainarea_menu -->
 
-<div class="infostrip" id="project_code_revision_mainarea_infostrip">
+<div class="infostrip" id="code_revision_mainarea_infostrip">
 	<?=anchor ("code/revision/{$project->id}/${xpar}/{$prev_revision}", '<<')?> 
 	<?=$this->lang->line('Revision')?>: <?=$history['rev']?> 
 	<?=anchor ("code/revision/{$project->id}/${xpar}/{$next_revision}", '>>')?> | 
@@ -97,15 +97,15 @@ $history = $file['history'];
 </div>
 
 
-<div id="project_code_revision_mainarea_result">
+<div id="code_revision_mainarea_result">
 
 <div class="title">Message</div>
-<pre id="project_code_revision_mainarea_result_msg">
+<pre id="code_revision_mainarea_result_msg">
 <?=htmlspecialchars($history['msg'])?>
 </pre>
 
 <div class="title">Files updated</div>
-<table id="project_code_revision_mainarea_result_table">
+<table id="code_revision_mainarea_result_table">
 <?php 
 	/*
 	print '<tr class="heading">';
@@ -139,9 +139,9 @@ $history = $file['history'];
 	}
 ?>
 </table>
-</div> <!-- project_code_revision_mainarea_body -->
+</div> <!-- code_revision_mainarea_body -->
 
-</div> <!-- project_code_revision_mainarea -->
+</div> <!-- code_revision_mainarea -->
 
 
 <!---------------------------------------------------------------------------->
@@ -151,7 +151,7 @@ $history = $file['history'];
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_code_revision_content -->
+</div> <!-- code_revision_content -->
 
 </body>
 

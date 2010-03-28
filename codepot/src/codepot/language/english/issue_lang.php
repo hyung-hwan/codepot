@@ -17,8 +17,8 @@ $lang['ISSUE_PRIORITY_MEDIUM'] = 'Medium';
 $lang['ISSUE_PRIORITY_LOW'] = 'Low';
 $lang['ISSUE_PRIORITY_OTHER'] = 'Other';
 
+$lang['ISSUE_MSG_CHANGED_X_TO_Z'] = "Changed <span class='quoted'>%s</span> to <span class='quoted'>%s</span>";
 $lang['ISSUE_MSG_CHANGED_X_FROM_Y_TO_Z'] = "Changed <span class='quoted'>%s</span> from <span class='quoted'>%s</span> to <span class='quoted'>%s</span>";
 $lang['ISSUE_MSG_CONFIRM_UNDO'] = 'Are you sure to undo the last change?';
 $lang['ISSUE_MSG_TOTAL_NUM_ISSUES'] = 'Total %d issues';
-
 ?>

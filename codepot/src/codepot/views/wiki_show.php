@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/wiki.css" />
 <script type="text/javascript" src="<?=base_url()?>/js/creole.js"></script>
 <title><?=htmlspecialchars($wiki->name)?></title>
 </head>
@@ -13,8 +13,8 @@ function render_wiki()
 {
 
 	creole_render_wiki (
-		"project_wiki_show_textpre", 
-		"project_wiki_show_textarea", 
+		"wiki_show_textpre", 
+		"wiki_show_textarea", 
 		"<?=site_url()?>/wiki/show/<?=$project->id?>/"
 	);
 }
@@ -22,7 +22,7 @@ function render_wiki()
 
 <body onLoad="render_wiki()">
 
-<div class="content" id="project_wiki_show_content">
+<div class="content" id="wiki_show_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -49,7 +49,7 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="sidebar" id="project_wiki_show_sidebar">
+<div class="sidebar" id="wiki_show_sidebar">
 <div class="box">
 <ul>
 <li><?=$this->lang->line('Created on')?> <?= $wiki->createdon ?></li>
@@ -59,16 +59,16 @@ $this->load->view (
 </div>
 </div>
 
-<div class="mainarea" id="project_wiki_show_mainarea">
+<div class="mainarea" id="wiki_show_mainarea">
 <div class="title"><?=htmlspecialchars($wiki->name)?></div>
 
-<div id="project_wiki_show_textarea">
-<pre id="project_wiki_show_textpre" style="visibility: hidden">
+<div id="wiki_show_textarea">
+<pre id="wiki_show_textpre" style="visibility: hidden">
 <?php print htmlspecialchars($wiki->text); ?>
 </pre>
-</div> <!-- project_wiki_show_textarea -->
+</div> <!-- wiki_show_textarea -->
 
-</div> <!-- project_wiki_show_mainarea -->
+</div> <!-- wiki_show_mainarea -->
 
 <!---------------------------------------------------------------------------->
 
@@ -76,7 +76,7 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_wiki_show_content -->
+</div> <!--  wiki_show_content -->
 
 </body>
 

@@ -1,0 +1,260 @@
+/*----------------------------------------------- 
+ * project source folder view 
+ *-----------------------------------------------*/
+#code_folder_sidebar_info pre {
+	white-space: pre-wrap;
+}
+
+#code_folder_mainarea_result {
+	overflow: auto;
+}
+
+#code_folder_mainarea_result_table tr {
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+/*----------------------------------------------- 
+ * project source file view 
+ *-----------------------------------------------*/
+#code_file_mainarea_result {
+	position: relative;
+}
+
+#code_file_mainarea_result_pre {
+	/* make it the same as font-size of info .title below */
+	padding-top: 0.8em;
+}
+
+#code_file_mainarea_result_info {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 22em;
+}
+
+#code_file_mainarea_result_info pre {
+	overflow: auto;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+#code_file_mainarea_result_info .title {
+	background-color: #7777FF;
+	border: 0;
+	margin: 0;
+	font-size: 0.8em;
+	text-align: right;	
+}
+
+#code_file_mainarea_result_info .title a {
+	color: white;
+	font-size: inherit;
+	background-color: inherit;
+}
+
+#code_file_mainarea_result_info .title a:hover {
+	background-color: inherit;
+}
+
+/*----------------------------------------------- 
+ * project source blame view 
+ *-----------------------------------------------*/
+#code_blame_mainarea_result {
+	position: relative;
+}
+
+#code_blame_mainarea_result_pre {
+	/* make it the same as font-size of info .title below */
+	padding-top: 0.8em;
+}
+
+#code_blame_mainarea_result_info {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 22em;
+}
+
+#code_blame_mainarea_result_info pre {
+	overflow: auto;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+#code_blame_mainarea_result_info .title {
+	background-color: #7777FF;
+	border: 0;
+	margin: 0;
+	font-size: 0.8em;
+	text-align: right;	
+}
+
+#code_blame_mainarea_result_info .title a {
+	color: white;
+	font-size: inherit;
+	background-color: inherit;
+}
+
+#code_blame_mainarea_result_info .title a:hover {
+	background-color: inherit;
+}
+
+/*----------------------------------------------- 
+ * project source history view 
+ *-----------------------------------------------*/
+#code_history_mainarea_result {
+	overflow: auto;
+}
+
+#code_history_mainarea_result_table tr {
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+#code_history_mainarea_result_table_path_list {
+	/* the list in the 'paths' column */
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	white-space: nowrap;
+}
+
+#code_history_mainarea_result_table pre {
+	border: 0;
+	background-color: inherit;
+	padding: 0;
+	margin: 0;
+}
+
+#code_history_mainarea_result_table .title {
+	font-size: inherit;
+	font-weight: inherit;
+	font-style: italic;
+	text-align: center;
+	background-color: #AABBFF;
+}
+
+/*----------------------------------------------- 
+ * project source revision view 
+ *-----------------------------------------------*/
+
+#code_revision_mainarea_result {
+	overflow: auto;
+}
+
+#code_revision_mainarea_result_msg {
+	border: 0;
+	padding: 0;	
+	background-color: inherit;
+	margin: 0;
+	margin-bottom: 1em;
+	white-space: pre-wrap;
+}
+
+#code_revision_mainarea_result_table td.M {
+	white-space: nowrap;
+	background-image:url(images/page_white_edit.png);
+	background-position:2px 50%;
+	background-repeat:no-repeat;
+	padding-left: 22px;
+}
+
+#code_revision_mainarea_result_table td.D {
+	white-space: nowrap;
+	background-image:url(images/page_white_delete.png);
+	background-position:2px 50%;
+	background-repeat:no-repeat;
+	padding-left: 22px;
+}
+
+#code_revision_mainarea_result_table td.A {
+	white-space: nowrap;
+	background-image:url(images/page_white_add.png);
+	background-position:2px 50%;
+	background-repeat:no-repeat;
+	padding-left: 22px;
+}
+
+#code_revision_mainarea_result_table td.R {
+	white-space: nowrap;
+	background-image:url(images/page_white_add.png);
+	background-position:2px 50%;
+	background-repeat:no-repeat;
+	padding-left: 22px;
+}
+
+#code_revision_mainarea_result_sidebar {
+	/*overflow: auto;*/
+}
+
+#code_revision_mainarea_result_sidebar pre {
+	overflow: auto;
+	border: 0;
+	padding: 0;
+}
+
+/*----------------------------------------------- 
+ * project source diff view 
+ *-----------------------------------------------*/
+#code_diff_mainarea_result {
+	overflow: auto;
+}
+
+#code_diff_mainarea_result_table {
+	border: 0;
+}
+
+#code_diff_mainarea_result_table tr.diff td pre {
+	background-color: inherit;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+#code_diff_mainarea_result_table tr.diff td.diff {
+	padding: 0;
+	padding-left:22px;
+	margin: 0;
+}
+
+#code_diff_mainarea_result_table tr.diff td.diffrow {
+	font-style: italic;
+	font-weight: bold;
+}
+
+#code_diff_mainarea_result_table tr.diff td.diffadded {
+	border:1px solid #cdf0cd;
+	background-color:#ddffdd;
+	background-image:url(images/bullet_add.png);
+	background-repeat:no-repeat;
+	background-position: 2px 50%;
+	padding: 0;
+	padding-left:22px;
+	margin: 0;
+}
+
+#code_diff_mainarea_result_table tr.diff td.diffdeleted {
+	border:1px solid #e8d4bc;
+	background-color:#f8e4cc;
+	background-image:url(images/bullet_delete.png);
+	background-position: 2px 50%;
+	background-repeat:no-repeat;
+	padding: 0;
+	padding-left:22px;
+	margin: 0;
+}
+
+#code_diff_mainarea_result_table tr.diff td.diffchanged {
+	border:1px solid #f0f0bc;
+	background-color:#ffffcc;
+	background-image:url(images/bullet_yellow.png);
+	background-repeat:no-repeat;
+	background-position: 2px 50%;
+	padding: 0;
+	padding-left:22px;
+	margin: 0;
+}
+

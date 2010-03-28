@@ -3,13 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/file.css" />
 <title><?=htmlspecialchars($project->name)?></title>
 </head>
 
 <body>
 
-<div class="content" id="project_file_home_content">
+<div class="content" id="file_home_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -33,10 +33,10 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="project_file_home_mainarea">
+<div class="mainarea" id="file_home_mainarea">
 <div class="title"><?=$this->lang->line('Files')?></div>
 
-<div id="project_file_home_mainarea_result">
+<div id="file_home_mainarea_result">
 <?php
 if (empty($files))
 {
@@ -57,7 +57,7 @@ else
 
         usort ($files, 'comp_files');
 
-	print '<table id="project_file_home_mainarea_result_table">';
+	print '<table id="file_home_mainarea_result_table">';
 	print '<tr class="heading">';
 	print '<th>' . $this->lang->line('Tag') . '</th>';
 	print '<th>' . $this->lang->line('Name') . '</th>';
@@ -99,7 +99,7 @@ else
 }
 ?>
 </div>
-</div> <!-- project_file_home_mainarea -->
+</div> <!-- file_home_mainarea -->
 
 <!---------------------------------------------------------------------------->
 
@@ -107,7 +107,7 @@ else
 
 <!---------------------------------------------------------------------------->
 
-</div> <!-- project_file_home_content -->
+</div> <!-- file_home_content -->
 
 </body>
 </html>

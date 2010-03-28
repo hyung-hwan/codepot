@@ -34,7 +34,8 @@ POST_UNINSTALL = :
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/configure ac/aux/install-sh ac/aux/missing
+	$(top_srcdir)/configure ac/aux/install-sh ac/aux/missing \
+	config.guess config.sub
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/ac/m4/as-ac-expand.m4 \
 	$(top_srcdir)/configure.ac
@@ -112,6 +113,7 @@ CYGPATH_W = @CYGPATH_W@
 DATADIR = @DATADIR@
 DEFS = @DEFS@
 DEPOTDIR = @DEPOTDIR@
+DOCDIR = @DOCDIR@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -123,6 +125,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LD = @LD@
 LIBDIR = @LIBDIR@
+LIBEXECDIR = @LIBEXECDIR@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LOCALSTATEDIR = @LOCALSTATEDIR@
@@ -194,8 +197,8 @@ top_srcdir = @top_srcdir@
 wwwdir = @wwwdir@
 ACLOCAL_AMFLAGS = -I ac/m4
 AUTOMAKE_OPTION = foreign
-SUBDIRS = etc src DEBIAN
-EXTRA_DIST = README mkmf.sh
+SUBDIRS = etc src 
+EXTRA_DIST = README mkmf.sh DEBIAN
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -696,13 +699,8 @@ deb: dist-gzip
 		--with-cachedir=/var/cache/codepot
 	rm -rf "/var/tmp/$(PACKAGE)-$(VERSION)"
 	cd "$(PACKAGE)-$(VERSION)"; make install DESTDIR="/var/tmp/$(PACKAGE)-$(VERSION)"
-	mkdir -p "/var/tmp/$(PACKAGE)-$(VERSION)/DEBIAN"
-	cp "$(PACKAGE)-$(VERSION)/DEBIAN/control" "/var/tmp/$(PACKAGE)-$(VERSION)/DEBIAN/control"
-	cp "$(PACKAGE)-$(VERSION)/DEBIAN/postinst" "/var/tmp/$(PACKAGE)-$(VERSION)/DEBIAN/postinst"
-	cp "$(PACKAGE)-$(VERSION)/DEBIAN/postrm" "/var/tmp/$(PACKAGE)-$(VERSION)/DEBIAN/postrm"
-	cp "$(PACKAGE)-$(VERSION)/DEBIAN/conffiles" "/var/tmp/$(PACKAGE)-$(VERSION)/DEBIAN/conffiles"
-	chmod 0755 "/var/tmp/$(PACKAGE)-$(VERSION)/DEBIAN/postinst"
-	chmod 0755 "/var/tmp/$(PACKAGE)-$(VERSION)/DEBIAN/postrm"
+	cd "$(PACKAGE)-$(VERSION)/DEBIAN"; make install DESTDIR="/var/tmp/$(PACKAGE)-$(VERSION)"
+#	cd "/var/tmp/$(PACKAGE)-$(VERSION)"; find . -type f -a ! -path '*/DEBIAN/*' -exec md5sum {} \; > "/var/tmp/$(PACKAGE)-$(VERSION)/DEBIAN/md5sums"
 	fakeroot dpkg -b "/var/tmp/$(PACKAGE)-$(VERSION)"
 	$(RM) -r "/var/tmp/$(PACKAGE)-$(VERSION)"
 	$(RM) -r "$(PACKAGE)-$(VERSION)"

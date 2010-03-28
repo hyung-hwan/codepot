@@ -40,6 +40,7 @@ $lang['MD5'] = 'MD5';
 $lang['Member'] = '구성원';
 $lang['Members'] = '구성원';
 $lang['Message'] = '메시지';
+$lang['My issues'] = '내 이슈';
 $lang['My projects'] = '내 프로젝트';
 $lang['Name'] = '이름';
 $lang['New'] = '신규';

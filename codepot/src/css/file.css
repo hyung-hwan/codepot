@@ -1,0 +1,12 @@
+/*-----------------------------------------------
+ * file home view
+ *-----------------------------------------------*/
+#file_home_mainarea_result {
+	overflow: auto;
+}
+
+#file_home_mainarea_result_table tr {
+	vertical-align: top;
+	white-space: nowrap;
+}
+

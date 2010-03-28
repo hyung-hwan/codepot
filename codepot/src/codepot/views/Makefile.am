@@ -19,10 +19,10 @@ www_DATA =  \
 	issue_show.php \
 	log.php \
 	login.php \
+	project_catalog.php \
 	project_delete.php \
 	project_edit.php \
 	project_home.php \
-	project_list.php \
 	projectbar.php \
 	site_catalog.php \
 	site_edit.php \
@@ -30,6 +30,7 @@ www_DATA =  \
 	site_home.php \
 	site_show.php \
 	taskbar.php \
+	user_home.php \
 	wiki_delete.php \
 	wiki_edit.php \
 	wiki_home.php \

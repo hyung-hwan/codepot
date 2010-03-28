@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/wiki.css" />
 <title><?=htmlspecialchars($wiki->name)?></title>
 </head>
 
@@ -45,7 +45,7 @@ $this->load->view (
 			<div>
 				<?php 
 					$extra = ($mode == 'update')? 'readonly="readonly"': ''; 
-					$extra .= 'maxlength="80" size="40"';
+					$extra .= 'maxlength="80" size="40" id="wiki_edit_mainarea_name"';
 				?>
 				<?=form_input('wiki_name', set_value('wiki_name', $wiki->name), $extra)?>
 			</div>
@@ -57,7 +57,16 @@ $this->load->view (
 				<?=form_error('wiki_text');?>
 			</div>
 			<div>
-				<?=form_textarea('wiki_text', set_value('wiki_text', $wiki->text))?>
+				<?php
+					$xdata = array (
+						'name' => 'wiki_text',
+						'value' => set_value ('wiki_text', $wiki->text),
+						'id' => 'wiki_edit_mainarea_text',
+						'rows' => 20,
+						'cols' => 80
+					);
+					print form_textarea ($xdata);
+				?>
 			</div>
 		</div>
 		

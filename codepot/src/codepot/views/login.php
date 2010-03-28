@@ -17,7 +17,7 @@
 
 	<div class="boxa">
         <?= anchor ('site/home', $this->lang->line('Home')) ?>
-        <?= anchor ('site/projectlist', $this->lang->line('Projects')) ?>
+        <?= anchor ('project/catalog', $this->lang->line('Projects')) ?>
 	</div>
 </div>
 

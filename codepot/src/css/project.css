@@ -107,15 +107,42 @@
 }
 
 /*----------------------------------------------- 
- * project file home view 
+ * project file edit view 
  *-----------------------------------------------*/
-#project_file_home_mainarea_result {
+#project_edit_mainarea_description {
+	width: 100%;
+}
+
+#project_edit_mainarea_members {
+	width: 100%;
+}
+
+/*----------------------------------------------- 
+ * project catalog view 
+ *-----------------------------------------------*/
+#project_catalog_mainarea_result {
 	overflow: auto;
 }
 
-#project_file_home_mainarea_result_table tr {
-	vertical-align: top;
+#project_catalog_mainarea_result_table {
+	width: 100%;
+}
+
+#project_catalog_mainarea_result_table td {
 	white-space: nowrap;
+	vertical-align: top;
+}
+
+#project_catalog_mainarea_result_table td.id {
+	width: 1px;
+}
+
+#project_catalog_mainarea_result_table td.name {
+	width: 1px;
+}
+
+#project_catalog_mainarea_result_table td.summary {
+	white-space: pre-wrap;
 }
 
 /*----------------------------------------------- 
@@ -400,5 +427,9 @@
 }
 
 #project_list_mainarea_result_other_projects {
+	padding: 0;
+}
+
+#project_list_mainarea_result_my_issues {
 	padding: 0;
 }

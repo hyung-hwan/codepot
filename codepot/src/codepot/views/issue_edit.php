@@ -32,12 +32,12 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="project_issue_edit_mainarea">
+<div class="mainarea" id="issue_edit_mainarea">
 
 <?php 
 	if ($message != "") 
 	{
-		print '<div id="project_issue_edit_message" class="form_message">';
+		print '<div id="issue_edit_message" class="form_message">';
 		print htmlspecialchars($message);
 		print '</div>'; 
 	}
@@ -53,7 +53,7 @@ $this->load->view (
 			<?=form_hidden('issue_owner', set_value('issue_owner', $issue->owner))?>
 		</div>
 
-		<div id='project_issue_edit_mainarea_type'>
+		<div id='issue_edit_mainarea_type'>
 		<?php
 		if ($mode == 'update')
 		{
@@ -72,7 +72,7 @@ $this->load->view (
 		?>
 		</div>
 
-		<div id='project_issue_edit_mainarea_summary'>
+		<div id='issue_edit_mainarea_summary'>
 			<div>
 				<?=form_label($this->lang->line('Summary').': ', 'issue_summary')?>
 				<?=form_error('issue_summary');?>
@@ -85,7 +85,7 @@ $this->load->view (
 			</div>
 		</div>
 
-		<div id='project_issue_edit_mainarea_description'>
+		<div id='issue_edit_mainarea_description'>
 			<div>
 				<?=form_label($this->lang->line('Description').': ', 'issue_description')?>
 				<?=form_error('issue_description');?>
@@ -104,7 +104,7 @@ $this->load->view (
 			</div>
 		</div>
 
-		<div id='project_issue_edit_mainarea_buttons'>
+		<div id='issue_edit_mainarea_buttons'>
 			<?php $caption = ($mode == 'update')? $this->lang->line('Update'): $this->lang->line('Create'); ?>
 			<?=form_submit('issue', $caption)?>
 		</div>
@@ -112,7 +112,7 @@ $this->load->view (
 	<?=form_fieldset_close()?>
 <?=form_close();?>
 
-</div> <!-- project_issue_edit_mainarea -->
+</div> <!-- issue_edit_mainarea -->
 
 <!---------------------------------------------------------------------------->
 

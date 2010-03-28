@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/code.css" />
 <script type="text/javascript" src="<?=base_url()?>/js/prettify/prettify.js"></script>
 <script type="text/javascript" src="<?=base_url()?>/js/prettify/lang-css.js"></script>
 <script type="text/javascript" src="<?=base_url()?>/js/prettify/lang-lisp.js"></script>
@@ -15,7 +15,7 @@
 
 <body onload="prettyPrint()">
 
-<div class="content" id="project_code_diff_content">
+<div class="content" id="code_diff_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -37,9 +37,9 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="project_code_diff_mainarea">
+<div class="mainarea" id="code_diff_mainarea">
 
-<div class="title" id="project_code_diff_mainarea_title">
+<div class="title" id="code_diff_mainarea_title">
 <?php
 	if ($revision1 <= 0)
 	{
@@ -70,9 +70,9 @@ $this->load->view (
 		print anchor ($xpar, htmlspecialchars($exps[$i]));
 	}
 ?>
-</div> <!-- project_code_diff_mainarea_title -->
+</div> <!-- code_diff_mainarea_title -->
 
-<div class="menu" id="project_code_diff_mainarea_menu">
+<div class="menu" id="code_diff_mainarea_menu">
 <?php
 	$xpar = $this->converter->AsciiTohex ($headpath);
 	print anchor (
@@ -87,15 +87,15 @@ $this->load->view (
 		"code/history/{$project->id}/{$xpar}",
 		$this->lang->line('History'));
 ?>
-</div> <!-- project_code_diff_mainarea_menu -->
+</div> <!-- code_diff_mainarea_menu -->
 
 <?php 
 	$fileext = substr(strrchr($file['name'], '.'), 1);
 	if ($fileext == "") $fileext = "html"
 ?>
 
-<div id="project_code_diff_mainarea_result">
-<table id="project_code_diff_mainarea_result_table">
+<div id="code_diff_mainarea_result">
+<table id="code_diff_mainarea_result_table">
 <?php
 
 	/*
@@ -221,7 +221,7 @@ $this->load->view (
 </table>
 </div>
 
-</div> <!-- project_code_diff_mainarea -->
+</div> <!-- code_diff_mainarea -->
 
 
 <!---------------------------------------------------------------------------->
@@ -231,7 +231,7 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_code_diff_content -->
+</div> <!-- code_diff_content -->
 
 </body>
 

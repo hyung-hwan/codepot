@@ -93,6 +93,30 @@ class IssueModel extends Model
 		return $query->result ();
 	}
 
+	function getMyIssues ($userid, $filter)
+	{
+		$this->db->trans_start ();
+		$this->db->where ('owner', $userid);
+
+		//$this->db->order_by ('id', 'desc');
+		if (is_array($filter))
+		{
+			$cond = '';
+			foreach ($filter as $k => $v)
+			{
+				if ($cond != '') $cond .= ' OR ';
+				$cond .= "status = '{$k}'";
+			}
+			if ($cond != '') $this->db->where ("($cond)");
+		}
+
+		$query = $this->db->get ('issue');
+		$this->db->trans_complete ();
+
+		if ($this->db->trans_status() === FALSE) return FALSE;
+		return $query->result ();
+	}
+
 	function create ($userid, $issue)
 	{
 		// TODO: check if userid can do this..

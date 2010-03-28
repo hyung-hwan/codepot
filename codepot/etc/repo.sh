@@ -45,13 +45,13 @@ make_repo() {
 		chmod 0755 "${repodir}/post-commit"
 	#}
 
-	svnadmin create "${repodir}/${reponame}" && {
+	#svnadmin create "${repodir}/${reponame}" && { 
 		oldpwd="`pwd`"
 		cd "${repodir}/${reponame}/hooks"
 		ln -sf ../../start-commit start-commit
 		ln -sf ../../post-commit post-commit
 		cd "${oldpwd}"
-	}
+	#}
 
 	return 0;
 }

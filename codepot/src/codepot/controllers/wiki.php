@@ -213,7 +213,7 @@ class Wiki extends Controller
 
 				if ($this->form_validation->run())
 				{
-					if ($this->_is_reserved ($wiki->name, FALSE))
+					if ($this->wikihelper->_is_reserved ($wiki->name, FALSE))
 					{
 						$data['message'] = "RESERVED WIKI NAME - {$wiki->name}";
 						$data['wiki'] = $wiki;
@@ -324,7 +324,7 @@ class Wiki extends Controller
 			$data['message'] = "NO PERMISSION - $projectid";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
-		else if ($this->_is_reserved ($name, FALSE))
+		else if ($this->wikihelper->_is_reserved ($name, FALSE))
 		{
 			$data['project'] = $project;
 			$data['message'] = "RESERVED WIKI PAGE - $name ";

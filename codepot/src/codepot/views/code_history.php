@@ -3,13 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/code.css" />
 <title><?=htmlspecialchars($project->name)?></title>
 </head>
 
 <body>
 
-<div class="content" id="project_code_history_content">
+<div class="content" id="code_history_content">
 
 <!---------------------------------------------------------------------------->
 
@@ -31,9 +31,9 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="mainarea" id="project_code_history_mainarea">
+<div class="mainarea" id="code_history_mainarea">
 
-<div class="title" id="project_code_history_mainarea_title">
+<div class="title" id="code_history_mainarea_title">
 <?php
 	if ($revision <= 0)
 	{
@@ -68,11 +68,11 @@ $this->load->view (
 ?>
 </div>
 
-<div class="menu" id="project_code_history_mainarea_menu">
-</div> <!-- project_code_history_mainarea_menu -->
+<div class="menu" id="code_history_mainarea_menu">
+</div> <!-- code_history_mainarea_menu -->
 
-<div id="project_code_history_mainarea_result">
-<table id="project_code_history_mainarea_result_table">
+<div id="code_history_mainarea_result">
+<table id="code_history_mainarea_result_table">
 <tr class='heading'>
 	<th><?=$this->lang->line('Revision')?></th>
 	<th><?=$this->lang->line('Author')?></th>
@@ -166,9 +166,9 @@ $this->load->view (
 	}
 ?>
 </table>
-</div> <!-- project_code_history_mainarea_body -->
+</div> <!-- code_history_mainarea_body -->
 
-</div> <!-- project_code_history_mainarea -->
+</div> <!-- code_history_mainarea -->
 
 
 <!---------------------------------------------------------------------------->
@@ -178,7 +178,7 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  project_code_history_content -->
+</div> <!--  code_history_content -->
 
 </body>
 

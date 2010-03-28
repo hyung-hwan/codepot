@@ -184,7 +184,7 @@ foreach ($latest_projects as $project)
 	}
 ?>
 </table>
-</div>
+</div> <!-- box -->
 
 </div> <!-- site_home_mainarea_sidebar -->
 

@@ -8,30 +8,6 @@ class Issue extends Controller
 	var $VIEW_EDIT = 'issue_edit';
 	var $VIEW_DELETE = 'issue_delete';
 
-	var $TYPE_DEFECT       = 'defect';
-	var $TYPE_REQUEST      = 'request';
-	var $TYPE_OTHER        = 'other';
-
-	// a newly created issue is set to 'new'.
-	var $STATUS_NEW        = 'new';
-	var $STATUS_OTHER      = 'other';  // other to default
-
-	// the issue created is either accepted or rejected
-	var $STATUS_ACCEPTED   = 'accepted';
-	var $STATUS_REJECTED   = 'rejected'; 
-
-	// one accepted, it is worked on and be resolved eventually.
-	var $STATUS_STARTED    = 'started';
-	// the work can be stalled for various reasons during progress
-	var $STATUS_STALLED    = 'stalled'; 
-	var $STATUS_RESOLVED   = 'resolved';
-
-	var $PRIORITY_CRITICAL = 'critical';
-	var $PRIORITY_HIGH     = 'high';
-	var $PRIORITY_MEDIUM   = 'medium';
-	var $PRIORITY_LOW      = 'low';
-	var $PRIORITY_OTHER    = 'other';
-
 	function Issue ()
 	{
 		parent::Controller ();
@@ -42,6 +18,7 @@ class Issue extends Controller
 		$this->load->model (CODEPOT_LOGIN_MODEL, 'login');
 
 		$this->load->library ('Language', 'lang');
+		$this->load->library ('IssueHelper', 'issuehelper');
 		$this->lang->load ('common', CODEPOT_LANG);
 		$this->lang->load ('issue', CODEPOT_LANG);
 	}
@@ -150,9 +127,9 @@ class Issue extends Controller
 			{
 				$this->pagination->initialize ($pagecfg);
 				$data['page_links'] = $this->pagination->create_links ();
-				$data['issue_type_array'] = $this->_get_type_array();
-				$data['issue_status_array'] = $this->_get_status_array();
-				$data['issue_priority_array'] = $this->_get_priority_array();
+				$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
+				$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
+				$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
 				$data['total_num_issues'] = $num_entries;
 				$data['project'] = $project;
 				$data['issues'] = $issues;
@@ -262,9 +239,9 @@ class Issue extends Controller
 			}
 			else
 			{
-				$data['issue_type_array'] = $this->_get_type_array();
-				$data['issue_status_array'] = $this->_get_status_array();
-				$data['issue_priority_array'] = $this->_get_priority_array();
+				$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
+				$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
+				$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
 				$data['project'] = $project;
 				$data['issue'] = $issue;
 				$this->load->view ($this->VIEW_SHOW, $data);
@@ -307,8 +284,6 @@ class Issue extends Controller
 		}
 		else
 		{
-			{
-			}
 			$this->form_validation->set_rules (
 				'issue_projectid', 'project ID', 'required|alpha_dash|max_length[32]');
 			$this->form_validation->set_rules (
@@ -327,9 +302,9 @@ class Issue extends Controller
 			$data['mode'] = $mode;
 			$data['message'] = '';
 			$data['project'] = $project;
-			$data['issue_type_array'] = $this->_get_type_array();
-			$data['issue_status_array'] = $this->_get_status_array();
-			$data['issue_priority_array'] = $this->_get_priority_array();
+			$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
+			$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
+			$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
 
 			if ($this->input->post('issue'))
 			{
@@ -395,10 +370,11 @@ class Issue extends Controller
 					$issue->id = $id;
 					$issue->summary = '';
 					$issue->description = '';
-					$issue->type = $this->TYPE_DEFECT;
-					$issue->status = $this->STATUS_NEW;
-					$issue->priority = $this->PRIORITY_OTHER;
-					$issue->owner = '';
+					$issue->type = $this->issuehelper->TYPE_DEFECT;
+					$issue->status = $this->issuehelper->STATUS_NEW;
+					$issue->priority = $this->issuehelper->PRIORITY_OTHER;
+					$members = explode (',', $project->members);
+					$issue->owner = (count($members) > 0)? $members[0]: '';
 
 					$data['issue'] = $issue;
 					$this->load->view ($this->VIEW_EDIT, $data);	
@@ -519,52 +495,4 @@ class Issue extends Controller
 		}
 	}
 
-	function _get_type_array ()
-	{
-		return array (
-			$this->TYPE_DEFECT  => 
-				$this->lang->line('ISSUE_TYPE_DEFECT'),
-			$this->TYPE_REQUEST => 
-				$this->lang->line('ISSUE_TYPE_REQUEST'),
-			$this->TYPE_OTHER   => 
-				$this->lang->line('ISSUE_TYPE_OTHER')
-		);
-	}
-
-	function _get_status_array ()
-	{
-		return array (
-			$this->STATUS_NEW       => 
-				$this->lang->line('ISSUE_STATUS_NEW'),
-			$this->STATUS_OTHER     => 
-				$this->lang->line('ISSUE_STATUS_OTHER'),
-			$this->STATUS_ACCEPTED  => 
-				$this->lang->line('ISSUE_STATUS_ACCEPTED'),
-			$this->STATUS_REJECTED  => 
-				$this->lang->line('ISSUE_STATUS_REJECTED'),
-			$this->STATUS_STARTED => 
-				$this->lang->line('ISSUE_STATUS_STARTED'),
-			$this->STATUS_STALLED   => 
-				$this->lang->line('ISSUE_STATUS_STALLED'),
-			$this->STATUS_RESOLVED  => 
-				$this->lang->line('ISSUE_STATUS_RESOLVED')
-		);
-	}
-
-	function _get_priority_array ()
-	{
-		return array (
-			$this->PRIORITY_CRITICAL => 
-				$this->lang->line('ISSUE_PRIORITY_CRITICAL'),
-			$this->PRIORITY_HIGH     => 
-				$this->lang->line('ISSUE_PRIORITY_HIGH'),
-			$this->PRIORITY_MEDIUM   => 
-				$this->lang->line('ISSUE_PRIORITY_MEDIUM'),
-			$this->PRIORITY_LOW      => 
-				$this->lang->line('ISSUE_PRIORITY_LOW'),
-			$this->PRIORITY_OTHER    => 
-				$this->lang->line('ISSUE_PRIORITY_OTHER')
-		);
-
-	}
 }

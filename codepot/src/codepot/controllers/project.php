@@ -6,6 +6,7 @@ class Project extends Controller
 	var $VIEW_HOME = 'project_home';
 	var $VIEW_EDIT = 'project_edit';
 	var $VIEW_DELETE = 'project_delete';
+	var $VIEW_CATALOG = 'project_catalog';
 	var $VIEW_LOG = 'log';
 
 	function Project ()
@@ -19,6 +20,94 @@ class Project extends Controller
 
 		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG);
+		$this->lang->load ('project', CODEPOT_LANG);
+	}
+
+	function catalog ($filter = '', $offset = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+	
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ('main/signin');
+		$data['login'] = $login;
+
+		if ($filter == '')
+		{
+			$search->id = '';
+			$search->name = '';
+			$search->summary = '';
+		}
+		else
+		{
+			parse_str ($this->converter->HexToAscii($filter), $search);
+			if (!array_key_exists ('id', $search)) $search['id'] = '';
+			if (!array_key_exists ('name', $search)) $search['name'] = '';
+			if (!array_key_exists ('summary', $search)) $search['summary'] = '';
+
+			$search = (object) $search;
+		}
+
+		$data['search'] = $search;
+
+		$this->load->library ('pagination');
+
+
+		if ($filter == '' && $offset == '')
+		{
+			$offset = 0;
+			$pagecfg['base_url'] = site_url() . "/project/catalog/";
+			$pagecfg['uri_segment'] = 3;
+		}
+		else if ($filter != '' && $offset == '')
+		{
+			if (is_numeric($filter))
+			{
+				$offset = (integer) $filter;
+				$pagecfg['base_url'] = site_url() . "/project/catalog/";
+				$pagecfg['uri_segment'] = 3;
+			}
+			else
+			{
+				$offset = 0;
+				$pagecfg['base_url'] = site_url() . "/project/catalog/{$filter}/";
+				$pagecfg['uri_segment'] = 4;
+			}
+		}
+		else 
+		{
+			$offset = (integer) $offset;
+			$pagecfg['base_url'] = site_url() . "/project/catalog/{$filter}/";
+			$pagecfg['uri_segment'] = 4;
+		}
+
+		$num_entries = $this->projects->getNumEntries ($login['id'], $search);
+		if ($num_entries === FALSE)
+		{
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$pagecfg['total_rows'] = $num_entries;
+		$pagecfg['per_page'] = CODEPOT_MAX_PROJECTS_PER_PAGE;
+		$pagecfg['first_link'] = $this->lang->line('First');
+		$pagecfg['last_link'] = $this->lang->line('Last');
+
+		$projects = $this->projects->getEntries ($login['id'], $offset, $pagecfg['per_page'], $search);
+		if ($projects === FALSE)
+		{
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			$this->pagination->initialize ($pagecfg);
+			$data['page_links'] = $this->pagination->create_links ();
+			$data['total_num_projects'] = $num_entries;
+			$data['projects'] = $projects;
+			$this->load->view ($this->VIEW_CATALOG, $data);
+		}
 	}
 
 	function home ($projectid = "")
@@ -224,8 +313,8 @@ class Project extends Controller
 					else 
 					{
 						// the project has been deleted successfully.
-						// go back to the project list.	
-						redirect ('site/projectlist');
+						// go to the project catalog.	
+						redirect ('project/catalog');
 					}
 				}
 				else 
