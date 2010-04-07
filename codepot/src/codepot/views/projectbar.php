@@ -51,7 +51,7 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 
 	print '<div class="fixedmenu">';
 
-	if ($type == 'project')
+	if ($type == 'project' && isset($project))
 	{
 		$menuitems = array (
 			array ("project/home/{$project->id}", $con->lang->line('Overview')),

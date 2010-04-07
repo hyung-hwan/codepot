@@ -13,6 +13,7 @@ dnl check common tools
 AC_CHECK_TOOL(LD, ld)
 AC_CHECK_TOOL(GREP, grep)
 AC_CHECK_TOOL(RM, rm)
+AC_CHECK_TOOL(RMDIR, rmdir)
 AC_CHECK_TOOL(SED, sed)
 
 RM="$RM -f"
