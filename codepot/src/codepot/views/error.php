@@ -20,16 +20,22 @@
 <!---------------------------------------------------------------------------->
 
 <?php
-if (!isset($project))  $project = NULL;
-if (!isset($site))  $site = NULL;
+if (isset($project)) { $pagetype = 'project';  $pageobj = $project; }
+else if (isset($site)) { $pagetype = 'site'; $pageobj = $site; }
+else if (isset($user)) { $pagetype = 'user'; $pageobj = $user; }
+else { $pagetype = ''; $pageobj = NULL; }
 
 $this->load->view (
         'projectbar',
         array (
 		'banner' => NULL,
-                'site' => $site,
-                'project' => $project,
-                'pageid' => '',
+		
+		'page' => array (
+			'type' => $pagetype,
+			'id' => '',
+			$pagetype => $pageobj
+		),
+
                 'ctxmenuitems' => array ()
         )
 );

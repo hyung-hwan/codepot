@@ -1,16 +1,21 @@
 <div class="projectbar">
 
 <?php
-function show_projectbar ($con, $banner, $site, $project, $pageid, $ctxmenuitems)
+function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 {
 	print "<div class='title'>";
+
+	$type = $page['type'];
+	$id = $page['id'];
 
 	if (isset($banner))
 	{
 		print htmlspecialchars($banner);
 	}
-	else if (isset($project)) 
+	else if ($type == 'project')
 	{
+		$project = $page[$type];
+
 		if ($project->name == '')
 			print $project->id;
 		else if (strcasecmp ($project->name, $project->id) == 0)
@@ -18,9 +23,15 @@ function show_projectbar ($con, $banner, $site, $project, $pageid, $ctxmenuitems
 		else
 			print htmlspecialchars($project->name) . " ({$project->id})";
 	}
-	else if (isset($site) && $site->name != '') 
+	else if ($type == 'site')
 	{
+		$site = $page[$type];
 		print htmlspecialchars($site->name);
+	}
+	else if ($type == 'user')
+	{
+		$user = $page[$type];
+		print htmlspecialchars($user->id);
 	}
 	else print htmlspecialchars(CODEPOT_DEFAULT_SITE_NAME);
 
@@ -40,7 +51,7 @@ function show_projectbar ($con, $banner, $site, $project, $pageid, $ctxmenuitems
 
 	print '<div class="fixedmenu">';
 
-	if (isset($project) && $pageid != '')
+	if ($type == 'project')
 	{
 		$menuitems = array (
 			array ("project/home/{$project->id}", $con->lang->line('Overview')),
@@ -61,7 +72,7 @@ function show_projectbar ($con, $banner, $site, $project, $pageid, $ctxmenuitems
 		foreach ($menuitems as $item)
 		{
 			$menuid = substr ($item[0], 0, strpos($item[0], '/'));
-			$extra = ($menuid == $pageid)? 'class="selected"': '';
+			$extra = ($menuid == $id)? 'class="selected"': '';
 			$menulink = $item[0];
 
 			if ($menuid == 'code')
@@ -73,16 +84,33 @@ function show_projectbar ($con, $banner, $site, $project, $pageid, $ctxmenuitems
 			print anchor ($menulink, $item[1], $extra);
 		}
 	}
-	else if (isset($site) && $pageid != '')
+	else if ($type == 'site')
 	{
 		$menuitems = array (
-			array ("site/catalog", $con->lang->line('Sites'))
+			array ("site/catalog", $con->lang->line('Sites')),
+			array ("site/log", $con->lang->line('Log'))
 		);
 
 		foreach ($menuitems as $item)
 		{
-			$menuid = substr ($item[0], 0, strpos($item[0], '/'));
-			$extra = ($menuid == $pageid)? 'class="selected"': '';
+			$menuid = substr ($item[0], strpos($item[0], '/') + 1);
+			$extra = ($menuid == $id)? 'class="selected"': '';
+			$menulink = $item[0];
+
+			print anchor ($menulink, $item[1], $extra);
+		}
+	}
+	else if ($type == 'user')
+	{
+		$menuitems = array (
+			array ("user/home", $con->lang->line('Overview')),
+			array ("user/log", $con->lang->line('Log'))
+		);
+
+		foreach ($menuitems as $item)
+		{
+			$menuid = substr ($item[0], strpos($item[0], '/') + 1);
+			$extra = ($menuid == $id)? 'class="selected"': '';
 			$menulink = $item[0];
 
 			print anchor ($menulink, $item[1], $extra);
@@ -94,7 +122,7 @@ function show_projectbar ($con, $banner, $site, $project, $pageid, $ctxmenuitems
 	print '</div>';
 }
 
-show_projectbar ($this, $banner, $site, $project, $pageid, $ctxmenuitems);
+show_projectbar ($this, $banner, $page, $ctxmenuitems);
 ?>
 
 </div>

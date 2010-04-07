@@ -12,8 +12,8 @@
 
 $config['lang_avail'] = array(
 	'en'    => 'english',
-	'ko'    => 'korean',
-	'id'    => 'indonesian'
+	//'id'    => 'indonesian',
+	'ko'    => 'korean'
 );
 
 // define the default language code. This language MUST be supported!

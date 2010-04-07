@@ -36,8 +36,13 @@ $this->load->view (
 	'projectbar',
 	array (
 		'banner' => NULL,
-		'site' => NULL,
-		'pageid' => 'file',
+
+		'page' => array (
+			'type' => 'project',
+			'id' => 'file',
+			'project' => $project,
+		),
+
 		'ctxmenuitems' => array (
 			array ("file/create/{$project->id}", $this->lang->line('New')),
 			array ("file/update/{$project->id}/{$hexname}", $this->lang->line('Edit')),
