@@ -27,3 +27,12 @@ deb: dist-gzip
 	$(RM) -r "$(PACKAGE)-$(VERSION)"
 	mv -f "/var/tmp/$(PACKAGE)-$(VERSION).deb" .
 
+rpm: dist
+	rm -rf "@abs_top_builddir@/RPM/BUILD"
+	mkdir -p "@abs_top_builddir@/RPM/BUILD"
+	mkdir -p "@abs_top_builddir@/RPM/SOURCES"
+	mkdir -p "@abs_top_builddir@/RPM/SRPMS"
+	mkdir -p "@abs_top_builddir@/RPM/RPMS"
+	cp codepot-@VERSION@.tar.gz "@abs_top_builddir@/RPM/SOURCES"
+        rpmbuild --define "_topdir @abs_top_builddir@/RPM" \
+                -ba codepot.spec --target=@build_cpu@

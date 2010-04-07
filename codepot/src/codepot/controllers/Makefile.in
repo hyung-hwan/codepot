@@ -173,6 +173,7 @@ www_DATA = \
 	main.php \
 	project.php \
 	site.php \
+	user.php \
 	wiki.php
 
 EXTRA_DIST = $(www_DATA)
