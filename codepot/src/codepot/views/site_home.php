@@ -38,10 +38,14 @@ function render_wiki()
 $this->load->view (
         'projectbar',
         array (
-		'banner' => NULL,
-		'project' => NULL,
-		'site' => $site,
-		'pageid' => '',
+		'banner' => $site->name,
+
+		'page' => array (
+			'type' => ($login['sysadmin?']? 'site': ''),
+			'id' => '',
+			'site' => ($login['sysadmin?']? $site: NULL)
+                ),
+
                 'ctxmenuitems' => NULL
         )
 );

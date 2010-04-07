@@ -11,7 +11,7 @@
 
 <script type="text/javascript">
 $(function () {
-	$('#user_home_mainarea_result').tabs();
+	$('#user_home_mainarea_result').accordion();
 });
 </script>
 
@@ -29,13 +29,19 @@ $(function () {
 <!---------------------------------------------------------------------------->
 
 <?php
+$user->id = $login['id'];
+
 $this->load->view (
         'projectbar',
         array (
-		'banner' => $login['id'],
-		'site' => NULL,
-		'project' => NULL,
-		'pageid' => '',
+		'banner' => NULL,
+
+		'page' => array (
+			'type' => 'user',
+			'id' => 'issues',
+			'user' => $user,
+		),
+
                 'ctxmenuitems' => array ()
         )
 );
@@ -48,24 +54,17 @@ $this->load->view (
 <?php
 $num_projects = count($projects);
 $num_issues = count($issues);
+$num_activities = 0;
 ?>
 
 <div id="user_home_mainarea_result">
 
-<ul>
-	<li>
-		<a href='#user_home_mainarea_result_my_projects'>
-			<?=$this->lang->line('My projects')?> (<?=$num_projects?>)
-		</a>
-	</li>
-	<li>
-		<a href='#user_home_mainarea_result_my_issues'>
-			<?=$this->lang->line('My issues')?> (<?=$num_issues?>)
-		</a>
-	</li>
-</ul>
-
-<div id="user_home_mainarea_result_my_projects">
+<h3>
+	<a href='#user_home_mainarea_result_projects'>
+		<?=$this->lang->line('Projects')?> (<?=$num_projects?>)
+	</a>
+</h3>
+<div id="user_home_mainarea_result_projects">
 <ul>
 <?php 
 foreach ($projects as $project) 
@@ -79,7 +78,12 @@ foreach ($projects as $project)
 </ul>
 </div>
 
-<div id="user_home_mainarea_result_my_issues">
+<h3>
+	<a href='#user_home_mainarea_result_issues'>
+		<?=$this->lang->line('Open issues')?> (<?=$num_issues?>)
+	</a>
+</h3>
+<div id="user_home_mainarea_result_issues">
 <ul>
 <?php 
 foreach ($issues as $issue) 

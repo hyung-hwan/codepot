@@ -22,8 +22,13 @@ $this->load->view (
 	'projectbar',
 	array (
 		'banner' => NULL,
-		'site' => NULL,
-		'pageid' => 'file',
+
+		'page' => array (
+			'type' => 'project',
+			'id' => 'file',
+			'project' => $project,
+		),
+
 		'ctxmenuitems' => array (
 			array ("file/create/{$project->id}", $this->lang->line('New')) 
 		)

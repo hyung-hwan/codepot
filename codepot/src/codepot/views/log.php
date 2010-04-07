@@ -4,12 +4,49 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+
+<?php if ($login['sysadmin?'] && isset($site)): ?>
+
+<script type="text/javascript" src="<?=base_url()?>/js/jquery.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>/js/jquery-ui.min.js"></script>
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/jquery-ui.css" />
+
+<script type="text/javascript">
+$(function () {
+	$("#purge_confirm").dialog({
+		resizable: false,
+		autoOpen: false,
+		height:140,
+		modal: true,
+		buttons: {
+			'<?=$this->lang->line('OK')?>': function() {
+				$(this).dialog('close');
+				$('#purge_log').val ('yes');
+				$('#purge_form').submit();
+			},
+			'<?=$this->lang->line('Cancel')?>': function() {
+				$(this).dialog('close');
+				$('#purge_log').val ('no');
+			}
+		}
+	});
+        $("#log_mainarea_purge").button().click(
+		function () {
+			$('#purge_confirm').dialog('open');	
+		}
+	);
+});
 </script>
+
+<?php endif; ?>
 
 <?php
 	$caption = $this->lang->line('Home');
 	if ($login['id'] != '') $caption .= "({$login['id']})";
 ?>
+
+
+
 <title><?=htmlspecialchars($caption)?></title>
 </head>
 
@@ -25,16 +62,56 @@
 
 <?php
 
-if (!isset($project))  $project = NULL;
-if (!isset($site))  $site = NULL;
+if (isset($project)) 
+{ 
+	$pagetype = 'project';
+	$pageid = ''; 
+	$pageobj = $project; 
+	$banner = NULL;
+}
+else if (isset($site)) 
+{ 
+	if ($login['sysadmin?'])
+	{
+		$pagetype = 'site';
+		$pageid = 'log';
+		$pageobj = $site; 
+		$banner = NULL;
+	}
+	else
+	{
+		$pagetype = '';
+		$pageid = '';
+		$pageobj = NULL;
+		$banner = $site->name;
+	}
+}
+else if (isset($user)) 
+{ 
+	$pagetype = 'user';
+	$pageid = ''; 
+	$pageobj = $user; 
+	$banner = NULL;
+}
+else 
+{ 
+	$pagetype = '';
+	$pageid = '';
+	$pageobj = NULL; 
+	$banner = NULL;
+}
 
 $this->load->view (
         'projectbar',
         array (
-		'banner' => NULL,
-		'site' => $site,
-		'project' => $project,
-		'pageid' => ((isset($project) && $project != NULL)? 'project': 'sitelog'),
+		'banner' => $banner,
+
+		'page' => array (
+			'type' => $pagetype,
+			'id' => $pageid,
+			$pagetype => $pageobj	
+		),
+
                 'ctxmenuitems' => array ()
         )
 );
@@ -47,6 +124,24 @@ $this->load->view (
 <div class="title" id="log_mainarea_title">
 <?= $this->lang->line ('Change log') ?>
 </div>
+
+<?php if ($login['sysadmin?'] && isset($site)): ?>
+	<?=form_open("site/log", 'id="purge_form"')?>
+		<input type='hidden' name='purge_log' id='purge_log' value='' />
+	<?=form_close()?>
+
+	<div id="purge_confirm" title="<?= $this->lang->line('Purge') ?>">
+	<p>
+		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+		Are you sure?
+	</p>
+	</div>
+
+	<div class="infostrip">
+	<a id="log_mainarea_purge" href="#"><?= $this->lang->line('Purge') ?></a>
+	</div>
+
+<?php endif; ?>
 
 <div id="log_mainarea_result">
 
@@ -94,7 +189,6 @@ $this->load->view (
 			print anchor ("project/home/{$log['projectid']}", $log['projectid']);
 			print '</td>';
 		}
-
 
 		if ($log['type'] == 'code')
 		{

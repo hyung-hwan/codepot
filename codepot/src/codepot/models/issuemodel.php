@@ -101,13 +101,7 @@ class IssueModel extends Model
 		//$this->db->order_by ('id', 'desc');
 		if (is_array($filter))
 		{
-			$cond = '';
-			foreach ($filter as $k => $v)
-			{
-				if ($cond != '') $cond .= ' OR ';
-				$cond .= "status = '{$k}'";
-			}
-			if ($cond != '') $this->db->where ("($cond)");
+			$this->db->where_in ('status', array_keys($filter));
 		}
 
 		$query = $this->db->get ('issue');

@@ -160,8 +160,13 @@ $this->load->view (
 	'projectbar',
 	array (
 		'banner' => NULL,
-		'site' => NULL,
-		'pageid' => 'issue',
+
+		'page' => array (
+			'type' => 'project',
+			'id' => 'issue',
+			'project' => $project,
+		),
+
 		'ctxmenuitems' => array (
 			array ("issue/create/{$project->id}", $this->lang->line('New')),
 			array ("issue/update/{$project->id}/{$hexid}", $this->lang->line('Edit')),

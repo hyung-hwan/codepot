@@ -22,9 +22,13 @@ $this->load->view (
 	'projectbar',
 	array (
 		'banner' => $this->lang->line('Administration'),
-		'site' => $site,
-		'project' => NULL,
-		'pageid' => 'site',
+
+		'page' => array (
+			'type' => 'site',
+			'id' => 'catalog',
+			'project' => $site,
+		),
+
 		'ctxmenuitems' => array ()
 	)
 );

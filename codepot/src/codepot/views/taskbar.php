@@ -8,7 +8,7 @@ function show_taskbar ($con, $loginid, $issysadmin)
 
 	if (isset($loginid) && $loginid != '')
 	{
-		print anchor ('site/userhome', htmlspecialchars($loginid));
+		print anchor ('user/home', htmlspecialchars($loginid));
 
 		$hex = $con->converter->AsciiToHex (current_url());
 		print anchor ("main/signout/{$hex}", $con->lang->line('Sign out'));

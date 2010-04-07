@@ -15,7 +15,10 @@ class LogModel extends Model
 		//$this->db->where ('type', 'code');
 		//$this->db->where ('action', 'commit');
 
-		if ($projectid != '') $this->db->where ('projectid', $projectid);
+		if (is_array($projectid))
+			$this->db->where_in ('projectid', $projectid);
+		else if ($projectid != '') 
+			$this->db->where ('projectid', $projectid);
 		//$num = $this->db->count_all ('log');
 
 		$this->db->select ('count(id) as count');
@@ -36,7 +39,11 @@ class LogModel extends Model
 
 		//$this->db->where ('type', 'code');
 		//$this->db->where ('action', 'commit');
-		if ($projectid != '') $this->db->where ('projectid', $projectid);
+		if (is_array($projectid))
+			$this->db->where_in ('projectid', $projectid);
+		else if ($projectid != '') 
+			$this->db->where ('projectid', $projectid);
+
 		$this->db->order_by ('createdon', 'desc');
 		$query = $this->db->get ('log', $limit, $offset);
 
@@ -131,6 +138,28 @@ class LogModel extends Model
 		$this->db->trans_begin ();
 
 		$this->db->where ('id', $log->id);
+		$this->db->delete ('log');
+
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+		else
+		{
+			$this->db->trans_commit ();
+			return TRUE;
+		}
+	}
+
+	function purge ()
+	{
+		$this->db->trans_begin ();
+
+		$now = time();
+		$one_month_ago = $now - (24 * 60 * 60 * 30);
+		$this->db->where ('createdon <=', 
+			date ("Y-m-d H:i:s", $one_month_ago));
 		$this->db->delete ('log');
 
 		if ($this->db->trans_status() === FALSE)

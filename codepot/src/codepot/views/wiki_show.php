@@ -36,8 +36,13 @@ $this->load->view (
 	'projectbar',
 	array (
 		'banner' => NULL,
-		'site' => NULL,
-		'pageid' => 'wiki',
+
+		'page' => array (
+			'type' => 'project',
+			'id' => 'wiki',
+			'project' => $project,
+		),
+
 		'ctxmenuitems' => array (
 			array ("wiki/create/{$project->id}", $this->lang->line('New')),
 			array ("wiki/update/{$project->id}/{$hexname}", $this->lang->line('Edit')),

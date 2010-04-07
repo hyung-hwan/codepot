@@ -70,9 +70,12 @@ $this->load->view (
 	'projectbar', 
 	array (
 		'banner' => $this->lang->line('Projects'),
-		'site' => NULL,
-		'project' => NULL,
-		'pageid' => '',
+
+		'page' => array (
+			'type' => '',
+			'id' => ''
+		),
+
 		'ctxmenuitems' => array (
 			array ("project/create", $this->lang->line('New'), 'project_catalog_new')
 		)

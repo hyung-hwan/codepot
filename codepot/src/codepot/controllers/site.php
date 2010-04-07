@@ -9,7 +9,6 @@ class Site extends Controller
 	var $VIEW_DELETE = 'site_delete';
         var $VIEW_CATALOG = 'site_catalog';
 	var $VIEW_LOG = 'log';
-        var $VIEW_USER_HOME = 'user_home';
 
 	function Site ()
 	{
@@ -367,7 +366,34 @@ class Site extends Controller
 
 		$this->load->library ('pagination');
 		$this->load->model ('LogModel', 'logs');
-		
+		$this->load->model ('SiteModel', 'sites');
+
+                $site = $this->sites->get ($this->config->config['language']);
+		if ($site === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+		if ($site === NULL && CODEPOT_DEFAULT_SITE_LANGUAGE != '') 
+		{
+                	$site = $this->sites->get (CODEPOT_DEFAULT_SITE_LANGUAGE);
+			if ($site === FALSE)
+			{
+				$data['login'] = $login;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+				return;
+			}
+		}
+
+		if ($login['sysadmin?'] && 
+		    $this->input->post('purge_log') == 'yes')
+		{
+			$this->logs->purge ();
+		}
+
 		$num_log_entries = $this->logs->getNumEntries ();
 		if ($num_log_entries === FALSE)
 		{
@@ -393,55 +419,14 @@ class Site extends Controller
 			return;
 		}
 
-
 		$this->pagination->initialize ($pagecfg);
 
+		$data['site'] = $site;
 		$data['login'] = $login;
 		$data['log_entries'] = $log_entries;
 		$data['page_links'] = $this->pagination->create_links ();
 
 		$this->load->view ($this->VIEW_LOG, $data);
-	}
-
-	function userhome ()
-	{
-		$login = $this->login->getUser ();
-		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
-
-		$this->load->library ('IssueHelper', 'issuehelper');
-		$this->lang->load ('issue', CODEPOT_LANG);
-
-		$this->load->model ('ProjectModel', 'projects');
-		$this->load->model ('IssueModel', 'issues');
-
-		if ($login['id'] == '')
-		{
-			redirect ('site/home');
-		}
-		else
-		{
-			$projects = $this->projects->getMyProjects ($login['id']);
-
-			$issues = $this->issues->getMyIssues (
-				$login['id'], $this->issuehelper->_get_open_status_array($this->lang));
-			if ($projects === FALSE || $issues === FALSE)
-			{
-				$data['login'] = $login;
-				$data['message'] = 'DATABASE ERROR';
-				$this->load->view ($this->VIEW_ERROR, $data);
-			}
-			else
-			{
-				$data['login'] = $login;
-				$data['projects'] = $projects;
-				$data['issues'] = $issues;
-				$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
-				$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
-				$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
-				$this->load->view ($this->VIEW_USER_HOME, $data);
-			}
-		}
 	}
 
 	function wiki ($xlink)

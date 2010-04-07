@@ -81,6 +81,7 @@ AS_AC_EXPAND(CACHEDIR, $cachedir)
 
 AC_CONFIG_FILES([
 	Makefile 
+	codepot.spec
 	etc/Makefile
 	etc/codepot.ini
 	etc/codepot.a2ldap

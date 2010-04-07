@@ -1,0 +1,81 @@
+%define _prefix /usr
+%define _sysconfdir /etc
+
+Summary: Codepot code repository manager
+Name: @PACKAGE_NAME@
+Version: @PACKAGE_VERSION@
+Release: 1
+License: GPL
+Source0: %{name}-%{version}.tar.gz
+
+Requires: httpd php php-ldap php-mysql 
+
+BuildRequires:
+BuildRoot: %{_tmppath}/%{name}-%{version}-root
+
+%descriptoin
+Codepot code repository manager
+
+%prep
+%setup -q
+
+%build
+./configure \
+	--prefix=/usr \
+	--sysconfdir=/etc \
+	--with-wwwdir=/var/www/html/codepot \
+	--with-cfgdir=/etc/codepot \
+	--with-depotdir=/var/lib/codepot \
+	--with-logdir=/var/log/codepot \
+	--with-cachedir=/var/cache/codepot
+make
+
+%install
+make install DESTDIR=$RPM_BUILD_ROOT
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-, root, root)
+
+%pre
+exit 0
+
+%post
+# create directories not handled by make install
+[ -d "@CACHEDIR@" ] || { mkdir -p "@CACHEDIR@" && cachedir=1; } 
+[ -d "@LOGDIR@" ] || { mkdir -p "@LOGDIR@" && logdir=1; }
+[ -d "@DEPOTDIR@/svnrepo" ] || { mkdir -p "@DEPOTDIR@/svnrepo" && svnrepodir=1; } 
+[ -d "@DEPOTDIR@/files" ] || { mkdir -p "@DEPOTDIR@/files" && filesdir=1; }
+
+GROUP=apache:apache
+[ "${cachedir}" = "1" ] && {
+	chgrp -R "${GROUP}" "@CACHEDIR@"
+	chmod 0775 "@CACHEDIR@"
+}
+[ "${logdir}" = "1" ] && {
+	chgrp -R "${GROUP}" "@LOGDIR@"
+	chmod 0775 "@LOGDIR@"
+}
+[ "${svnrepodir}" = "1" ] && {
+	chgrp -R "${GROUP}" "@DEPOTDIR@/svnrepo"
+	chmod 0775 "@DEPOTDIR@/svnrepo"
+}
+[ "${filesdir}" = "1" ] && {
+	chgrp -R "${GROUP}" "@DEPOTDIR@/files"
+	chmod 0775 "@DEPOTDIR@/files"
+}
+
+exit 0
+
+%preun
+exit 0
+
+%postun
+[ -d "@CACHEDIR@" ] && rmdir "@CACHEDIR@" 2>/dev/null
+[ -d "@LOGDIR@" ] && rmdir "@LOGDIR@" 2>/dev/null
+[ -d "@DEPOTDIR@/svnrepo" ] && rmdir "@DEPOTDIR@/svnrepo" 2>/dev/null
+[ -d "@DEPOTDIR@/files" ] && rmdir "@DEPOTDIR@/files" 2>/dev/null
+[ -d "@DEPOTDIR@" ] && rmdir "@DEPOTDIR@" 2>/dev/null
+exit 0
