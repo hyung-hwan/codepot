@@ -5,6 +5,20 @@ SUBDIRS = etc src
 
 EXTRA_DIST = README mkmf.sh DEBIAN
 
+install-data-hook:
+	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@"
+	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@/svnrepo"
+	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@/files"
+	$(INSTALL) -d "$(DESTDIR)@LOGDIR@"
+	$(INSTALL) -d "$(DESTDIR)@CACHEDIR@"
+
+uninstall-hook:
+	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/svnrepo"
+	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/files"
+	$(RMDIR) "$(DESTDIR)@DEPOTDIR@"
+	$(RMDIR) "$(DESTDIR)@LOGDIR@"
+	$(RMDIR) "$(DESTDIR)@CACHEDIR@"
+
 distclean-local:
 	$(RM) -r autom4te.cache config.h.in~ "$(PACKAGE)-$(VERSION)"
 
@@ -34,5 +48,4 @@ rpm: dist
 	mkdir -p "@abs_top_builddir@/RPM/SRPMS"
 	mkdir -p "@abs_top_builddir@/RPM/RPMS"
 	cp codepot-@VERSION@.tar.gz "@abs_top_builddir@/RPM/SOURCES"
-        rpmbuild --define "_topdir @abs_top_builddir@/RPM" \
-                -ba codepot.spec --target=@build_cpu@
+	rpmbuild --define "_topdir @abs_top_builddir@/RPM" -ba codepot.spec 

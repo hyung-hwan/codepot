@@ -143,6 +143,7 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PREFIX = @PREFIX@
 RM = @RM@
+RMDIR = @RMDIR@
 SBINDIR = @SBINDIR@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -619,7 +620,8 @@ info: info-recursive
 info-am:
 
 install-data-am:
-
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-recursive
 
 install-dvi-am:
@@ -665,9 +667,11 @@ ps: ps-recursive
 ps-am:
 
 uninstall-am:
-
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all \
-	ctags-recursive install-am install-strip tags-recursive
+	ctags-recursive install-am install-data-am install-strip \
+	tags-recursive uninstall-am
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am am--refresh check check-am clean clean-generic \
@@ -676,15 +680,29 @@ uninstall-am:
 	distclean distclean-generic distclean-hdr distclean-local \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am
+	install-data install-data-am install-data-hook install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
+	tags-recursive uninstall uninstall-am uninstall-hook
 
+
+install-data-hook:
+	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@"
+	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@/svnrepo"
+	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@/files"
+	$(INSTALL) -d "$(DESTDIR)@LOGDIR@"
+	$(INSTALL) -d "$(DESTDIR)@CACHEDIR@"
+
+uninstall-hook:
+	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/svnrepo"
+	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/files"
+	$(RMDIR) "$(DESTDIR)@DEPOTDIR@"
+	$(RMDIR) "$(DESTDIR)@LOGDIR@"
+	$(RMDIR) "$(DESTDIR)@CACHEDIR@"
 
 distclean-local:
 	$(RM) -r autom4te.cache config.h.in~ "$(PACKAGE)-$(VERSION)"
@@ -715,8 +733,7 @@ rpm: dist
 	mkdir -p "@abs_top_builddir@/RPM/SRPMS"
 	mkdir -p "@abs_top_builddir@/RPM/RPMS"
 	cp codepot-@VERSION@.tar.gz "@abs_top_builddir@/RPM/SOURCES"
-        rpmbuild --define "_topdir @abs_top_builddir@/RPM" \
-                -ba codepot.spec --target=@build_cpu@
+	rpmbuild --define "_topdir @abs_top_builddir@/RPM" -ba codepot.spec 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
