@@ -88,6 +88,7 @@ $lang['MSG_NO_DIFF'] = 'Tidak ada bedanya';
 $lang['MSG_NO_CODE_AVAIL'] = 'Tidak ada kode sumber tersedia';
 $lang['MSG_NO_FILES_AVAIL'] = 'Tidak ada file tersedia';
 $lang['MSG_NO_ISSUES_AVAIL'] = 'Tidak ada issue';
+$lang['MSG_NO_SUCH_FILE'] = 'No such file';
 $lang['MSG_NO_SUCH_ISSUE'] = 'No such issue';
 $lang['MSG_NO_SUCH_PROJECT'] = 'No such project';
 $lang['MSG_NO_SUCH_WIKI_PAGE'] = 'No such wiki page';

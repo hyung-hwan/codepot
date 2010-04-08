@@ -9,6 +9,26 @@ body {
 	font-family: sans-serif;
 }
 
+.content h1 {
+	font-size: 1.3em;
+	font-weight: bold;
+}
+
+.content h2 {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.content h3 {
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+.content h4 {
+	font-size: 1.0em;
+	font-weight: bold;
+}
+
 .content ul {
 	list-style: square;
 }
@@ -78,10 +98,9 @@ body {
 }
 
 .content .projectbar .title {
-	font-size: 1.8em;
+	font-size: 1.6em;
 	font-weight: bold;
 	text-transform: uppercase;
-	margin-bottom: 0.1em;
 	white-space: nowrap;
 }
 
@@ -181,7 +200,7 @@ body {
 
 .content .mainarea form textarea {
 	border: 1px solid #BBCCDD;
-	font-family: inherit;
+	font-family: monospace;
 	font-size: inherit;
 }
 
@@ -198,12 +217,11 @@ body {
 }
 
 .content .mainarea tt {
+	/*
 	padding: .1em .1em .1em .1em;
 	background-color: #F1F1FF;
-}
-
-.content .mainarea tt:hover {
-	background-color: inherit;
+	*/
+	font-size: inherit;
 }
 
 .content .mainarea table {

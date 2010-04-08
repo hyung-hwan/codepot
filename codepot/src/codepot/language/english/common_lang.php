@@ -89,6 +89,7 @@ $lang['MSG_NO_DIFF'] = 'No difference found';
 $lang['MSG_NO_CODE_AVAIL'] = 'No source code available';
 $lang['MSG_NO_FILES_AVAIL'] = 'No files available';
 $lang['MSG_NO_ISSUES_AVAIL'] = 'No outstanding issues';
+$lang['MSG_NO_SUCH_FILE'] = 'No such file';
 $lang['MSG_NO_SUCH_ISSUE'] = 'No such issue';
 $lang['MSG_NO_SUCH_PROJECT'] = 'No such project';
 $lang['MSG_NO_SUCH_WIKI_PAGE'] = 'No such wiki page';
