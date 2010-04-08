@@ -97,8 +97,11 @@ class File extends Controller
 			}
 			else if ($file === NULL)
 			{
-				redirect ('file/create/'. $projectid . '/' . 
-					$this->converter->AsciiToHex($name));
+				$data['project'] = $project;
+				$data['message'] =
+					$this->lang->line('MSG_NO_SUCH_FILE').
+					" - {$name}";
+				$this->load->view ($this->VIEW_ERROR, $data);
 			}
 			else
 			{

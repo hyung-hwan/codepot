@@ -88,6 +88,7 @@ $lang['MSG_NO_DIFF'] = '차이점이 없습니다';
 $lang['MSG_NO_CODE_AVAIL'] = '소스코드가 없습니다';
 $lang['MSG_NO_FILES_AVAIL'] = '파일이 없습니다';
 $lang['MSG_NO_ISSUES_AVAIL'] = '이슈항목이 없습니다';
+$lang['MSG_NO_SUCH_FILE'] = '파일이 없습니다';
 $lang['MSG_NO_SUCH_ISSUE'] = '이슈항목이 없습니다';
 $lang['MSG_NO_SUCH_PROJECT'] = '프로젝트가 없습니다';
 $lang['MSG_NO_SUCH_WIKI_PAGE'] = '위키페이지가 없습니다';
