@@ -46,6 +46,9 @@ function load_ini ($file)
 		array ('ldap_server_protocol_version', 'integer',    3),
 		array ('ldap_userid_format',           'string',     '${userid}'),
 		array ('ldap_password_format',         'string',     '${password}'),
+		array ('ldap_mail_attribute_name',     'string',     ''),
+		array ('ldap_admin_binddn',            'string',     ''),
+		array ('ldap_admin_password',          'string',     ''),
 
 		array ('svnrepo_dir',                  'string',      CODEPOT_DEPOT_DIR.'/svnrepo'),
 		array ('file_dir',                     'string',      CODEPOT_DEPOT_DIR.'/files'),
