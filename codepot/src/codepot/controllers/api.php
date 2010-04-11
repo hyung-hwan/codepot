@@ -20,7 +20,6 @@ class API extends Controller
 
 		if (!isset($projectid) || !isset($userid)) return 'NO';
 
-		// TODO: access control - may allow localhost only
 		$this->load->model ('ProjectModel', 'projects');
 		print ($this->projects->projectHasMember ($projectid, $userid) === FALSE)? 'NO': 'YES';
 	}
@@ -31,7 +30,6 @@ class API extends Controller
 
 		if (!isset($projectid) || !isset($userid)) return 'NO';
 
-		// TODO: access control - may allow localhost only
 		$this->load->model ('ProjectModel', 'projects');
 		print ($this->projects->projectIsOwnedBy ($projectid, $userid) === FALSE)? 'NO': 'YES';
 	}
@@ -42,9 +40,18 @@ class API extends Controller
 
 		if (!isset($repo) || !isset($rev)) return;
 
-		// TODO: access control - may allow localhost only
 		$this->load->model ('LogModel', 'logs');
 		$this->logs->writeCodeCommit ($type, $repo, $rev, '');
+
+
+		/*
+		$this->load->library ('email');
+		$this->email->from ('xxxx');
+		$this->email->to ('xxxx');
+		$this->email->subject ('xxxx');
+		$this->email->message ('xxxx');
+		$this->email->send ();
+		*/
 	}
 }
 

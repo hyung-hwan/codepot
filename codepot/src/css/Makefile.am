@@ -7,6 +7,7 @@ www_DATA =  \
 	file.css \
 	issue.css \
 	jquery-ui.css \
+	log.css \
 	project.css \
 	site.css \
 	user.css \
