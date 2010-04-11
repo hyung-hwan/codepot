@@ -22,6 +22,7 @@ class LoginModel extends Model
 		if ($server1 != $server2) 
 		{
 			$userid = '';
+			$email = '';
 			$issysadmin = FALSE;
 		}
 		else
@@ -29,17 +30,21 @@ class LoginModel extends Model
 			$userid = $this->session->userdata('userid');
 			if ($userid === NULL) $userid = '';
 
+			$email = $this->session->userdata('email');
+			if ($email === NULL) $email = '';
+
 			$issysadmin = $this->session->userdata('sysadmin?');
 			if ($issysadmin === NULL) $issysadmin = FALSE;
 		}
 
 		return array (
 			'id' => $userid, 
+			'email' => $email,
 			'sysadmin?' => $issysadmin
 		);
 	}
 
-	function authenticate ($userid, $password)
+	function authenticate ($userid, $password, $email = '')
 	{
 		$server = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'];
 
@@ -58,9 +63,11 @@ class LoginModel extends Model
 			array (
 				'userid' => $userid,
 				'server' => $server,
+				'email' => $email,
 				'sysadmin?' => $sysadmin
 			)
 		);
+
 		return TRUE;
 	}
 

@@ -1,14 +1,16 @@
 
 <?php 
-function show_taskbar ($con, $loginid, $issysadmin)
+function show_taskbar ($con, $login)
 { 
 	print '<div class="taskbar">';
 
 	print '<div class="boxb">';
 
-	if (isset($loginid) && $loginid != '')
+	if (isset($login['id']) && $login['id'] != '')
 	{
-		print anchor ('user/home', htmlspecialchars($loginid));
+		$title = (isset($login['email']) && $login['email'] != '')?
+			('title=' . htmlspecialchars($login['email'])): '';
+		print anchor ('user/home', htmlspecialchars($login['id']), $title);
 
 		$hex = $con->converter->AsciiToHex (current_url());
 		print anchor ("main/signout/{$hex}", $con->lang->line('Sign out'));
@@ -39,14 +41,14 @@ function show_taskbar ($con, $loginid, $issysadmin)
 	print '<div class="boxa">';
 	print anchor ('site/home', $con->lang->line('Home'));
 	print anchor ('project/catalog', $con->lang->line('Projects'));
-	if ($issysadmin)
+	if ($login['sysadmin?'])
 		print anchor ('site/catalog', $con->lang->line('Administration'));
 	print '</div>';
 
 	print '</div>';
 }
 
-show_taskbar ($this, $login['id'], $login['sysadmin?']);
+show_taskbar ($this, $login);
 ?>
 
 

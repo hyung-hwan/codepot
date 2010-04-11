@@ -1,0 +1,72 @@
+/*
+ * This file contains specific IDs for furthur customization.
+ */
+
+/*----------------------------------------------- 
+ * log view
+ *-----------------------------------------------*/
+#log_mainarea_result {
+	overflow: auto;
+}
+
+#log_mainarea_result_table {
+	/*border-collapse: collapse;*/
+	width: 100%;
+}
+
+#log_mainarea_result_table a {
+	text-decoration: none;
+}
+
+#log_mainarea_result_table td {
+	vertical-align: top;
+	white-space: nowrap;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+#log_mainarea_result_table td.break {
+	font-size: 0.5em;
+}
+
+#log_mainarea_result_table td.date {
+	font-weight: bold;
+	background-color: #bbccef;
+}
+
+#log_mainarea_result_table td.time {
+	width: 1px;
+	color: #777777;
+}
+
+#log_mainarea_result_table td.projectid {
+	width: 1px;
+}
+
+#log_mainarea_result_table td.object {
+	width: 1px;
+}
+
+#log_mainarea_result_table td.details {
+	white-space: normal;
+}
+
+#log_mainarea_result_table td.details .description {
+	/*font-style: italic;*/
+}
+
+#log_mainarea_result_table td.details pre.message {
+	border: 0;
+	margin: 1px;
+	background-color: inherit;
+	white-space: -moz-pre-wrap;
+	white-space: -o-pre-wrap;
+	white-space: pre-wrap;
+}
+
+#log_mainarea_result_table td.pages {
+	padding-top: 1em;
+	text-align: center;
+	font-weight: bold;
+}
+

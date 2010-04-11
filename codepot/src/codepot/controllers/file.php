@@ -153,6 +153,24 @@ class File extends Controller
 			}
 			else
 			{
+				$path = CODEPOT_FILE_DIR . '/' . $file->encname;
+				$mtime = @filemtime ($path);
+				if ($mtime === FALSE) $mtime = time();
+				header("Last-Modified: " . gmdate("D, d M Y H:i:s", $mtime) . " GMT");
+				//header("Expires: 0");
+				header("Content-Type: application/octet-stream");
+				header("Content-Disposition: attachment; filename={$name}");
+				header("Content-Transfer-Encoding: binary");
+				flush ();
+				$x = @readfile($path);
+				if ($x === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = "CANNOT GET FILE - {$file->name}";
+					$this->load->view ($this->VIEW_ERROR, $data);
+				}
+
+				/*
 				$this->load->helper('download');	
 				$path = CODEPOT_FILE_DIR . '/' . $file->encname;
 				$data = @file_get_contents ($path);
@@ -166,6 +184,7 @@ class File extends Controller
 				{
 					force_download ($name, $data); 	
 				}
+				*/
 			}
 		}
 	}
