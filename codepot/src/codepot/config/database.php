@@ -37,7 +37,7 @@
 $active_group = "default";
 $active_record = TRUE;
 
-$db['default']['hostname'] = "localhost";
+$db['default']['hostname'] = CODEPOT_DATABASE_HOSTNAME;
 $db['default']['username'] = CODEPOT_DATABASE_USERNAME;
 $db['default']['password'] = CODEPOT_DATABASE_PASSWORD;
 $db['default']['database'] = CODEPOT_DATABASE_NAME;
@@ -49,6 +49,19 @@ $db['default']['cache_on'] = FALSE;
 $db['default']['cachedir'] = "";
 $db['default']['char_set'] = "utf8";
 $db['default']['dbcollat'] = "utf8_general_ci";
+
+$db['auth-mysql']['hostname'] = CODEPOT_AUTH_MYSQL_HOSTNAME;
+$db['auth-mysql']['username'] = CODEPOT_AUTH_MYSQL_USERNAME;
+$db['auth-mysql']['password'] = CODEPOT_AUTH_MYSQL_PASSWORD;
+$db['auth-mysql']['database'] = CODEPOT_AUTH_MYSQL_NAME;
+$db['auth-mysql']['dbdriver'] = "mysql";
+$db['auth-mysql']['dbprefix'] = CODEPOT_AUTH_MYSQL_PREFIX;
+$db['auth-mysql']['pconnect'] = FALSE;
+$db['auth-mysql']['db_debug'] = FALSE;
+$db['auth-mysql']['cache_on'] = FALSE;
+$db['auth-mysql']['cachedir'] = "";
+$db['auth-mysql']['char_set'] = "utf8";
+$db['auth-mysql']['dbcollat'] = "utf8_general_ci";
 
 /* End of file database.php */
 /* Location: ./system/application/config/database.php */

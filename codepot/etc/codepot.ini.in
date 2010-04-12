@@ -11,11 +11,12 @@ default_site_name = "@PACKAGE@"
 ;------------------------------------------------------------------------------
 ; database settings
 ;------------------------------------------------------------------------------
-database_username =
-database_password = 
-database_name = 
-database_driver = 
-database_prefix = 
+database_hostname = "localhost"
+database_username = ""
+database_password = ""
+database_name = ""
+database_driver = ""
+database_prefix = ""
 
 ;------------------------------------------------------------------------------
 ; ldap settings

@@ -48,4 +48,4 @@ rpm: dist
 	mkdir -p "@abs_top_builddir@/RPM/SRPMS"
 	mkdir -p "@abs_top_builddir@/RPM/RPMS"
 	cp codepot-@VERSION@.tar.gz "@abs_top_builddir@/RPM/SOURCES"
-	rpmbuild --define "_topdir @abs_top_builddir@/RPM" -ba codepot.spec 
+	rpmbuild --define "_topdir @abs_top_builddir@/RPM" -ba codepot.spec --target noarch

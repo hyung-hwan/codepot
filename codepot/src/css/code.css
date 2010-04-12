@@ -28,9 +28,14 @@
 
 #code_file_mainarea_result_info {
 	position: absolute;
-	top: 0;
-	right: 0;
+	top: 5;
+	right: 5;
 	width: 22em;
+	background: #E5ECF9 none repeat scroll 0 0;
+	border: #D4DBE8 1px solid;
+	overflow: auto;
+	padding: 0.2em 0.4em 0.2em 0.4em;
+	font-size: 0.9em;
 }
 
 #code_file_mainarea_result_info pre {
@@ -38,24 +43,20 @@
 	border: 0;
 	margin: 0;
 	padding: 0;
+	background-color: inherit;
+	white-space: -moz-pre-wrap;
+	white-space: -o-pre-wrap;
+	white-space: pre-wrap;
 }
 
 #code_file_mainarea_result_info .title {
-	background-color: #7777FF;
-	border: 0;
-	margin: 0;
-	font-size: 0.8em;
-	text-align: right;	
-}
-
-#code_file_mainarea_result_info .title a {
-	color: white;
+	background-color: #8888FF;
+	color: #FFFFFF;
+	border: #D4DBE8 1px solid;
+	margin: 0.3em 0 0.3em 0;
+	padding: 0.1em 0.1em 0.1em 0.1em;
 	font-size: inherit;
-	background-color: inherit;
-}
-
-#code_file_mainarea_result_info .title a:hover {
-	background-color: inherit;
+	text-transform: uppercase;
 }
 
 /*----------------------------------------------- 
@@ -72,9 +73,14 @@
 
 #code_blame_mainarea_result_info {
 	position: absolute;
-	top: 0;
-	right: 0;
+	top: 5;
+	right: 5;
 	width: 22em;
+	background: #E5ECF9 none repeat scroll 0 0;
+	border: #D4DBE8 1px solid;
+	overflow: auto;
+	padding: 0.2em 0.4em 0.2em 0.4em;
+	font-size: 0.9em;
 }
 
 #code_blame_mainarea_result_info pre {
@@ -82,24 +88,20 @@
 	border: 0;
 	margin: 0;
 	padding: 0;
+	background-color: inherit;
+	white-space: -moz-pre-wrap;
+	white-space: -o-pre-wrap;
+	white-space: pre-wrap;
 }
 
 #code_blame_mainarea_result_info .title {
-	background-color: #7777FF;
-	border: 0;
-	margin: 0;
-	font-size: 0.8em;
-	text-align: right;	
-}
-
-#code_blame_mainarea_result_info .title a {
-	color: white;
+	background-color: #8888FF;
+	color: #FFFFFF;
+	border: #D4DBE8 1px solid;
+	margin: 0.3em 0 0.3em 0;
+	padding: 0.1em 0.1em 0.1em 0.1em;
 	font-size: inherit;
-	background-color: inherit;
-}
-
-#code_blame_mainarea_result_info .title a:hover {
-	background-color: inherit;
+	text-transform: uppercase;
 }
 
 /*----------------------------------------------- 
@@ -127,6 +129,9 @@
 	background-color: inherit;
 	padding: 0;
 	margin: 0;
+	white-space: -moz-pre-wrap;
+	white-space: -o-pre-wrap;
+	white-space: pre-wrap;
 }
 
 #code_history_mainarea_result_table .title {

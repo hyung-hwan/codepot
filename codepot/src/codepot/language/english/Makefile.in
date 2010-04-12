@@ -166,6 +166,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 wwwdir = $(WWWDIR)/codepot/language/english
 www_DATA = \
+	code_lang.php \
 	common_lang.php \
 	issue_lang.php \
 	index.html \
