@@ -10,6 +10,36 @@
 <script type="text/javascript" src="<?=base_url()?>/js/prettify/lang-lua.js"></script>
 <script type="text/javascript" src="<?=base_url()?>/js/prettify/lang-sql.js"></script>
 <script type="text/javascript" src="<?=base_url()?>/js/prettify/lang-vb.js"></script>
+
+<script type="text/javascript" src="<?=base_url()?>/js/jquery.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>/js/jquery-ui.min.js"></script>
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/jquery-ui.css" />
+
+<script type="text/javascript">
+$(function () {
+	if ($("#code_file_mainarea_result_info").is(":visible"))
+		btn_label = "<?=$this->lang->line('CODE_HIDE_DETAILS')?>";
+	else
+		btn_label = "<?=$this->lang->line('CODE_SHOW_DETAILS')?>";
+	
+	btn = $("#code_file_mainarea_details_button").button({"label": btn_label}).click (function () {
+		
+		if ($("#code_file_mainarea_result_info").is(":visible"))
+		{
+			$("#code_file_mainarea_result_info").hide();
+			$("#code_file_mainarea_details_button").button(
+				"option", "label", "<?=$this->lang->line('CODE_SHOW_DETAILS')?>");
+		}
+		else
+		{
+			$("#code_file_mainarea_result_info").show();
+			$("#code_file_mainarea_details_button").button(
+				"option", "label", "<?=$this->lang->line('CODE_HIDE_DETAILS')?>");
+		}
+	});
+});
+</script>
+
 <title><?=htmlspecialchars($project->name)?></title>
 </head>
 
@@ -113,9 +143,8 @@ $this->load->view (
 	<?=anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<')?> 
 	<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
 	<?=anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>')?> |
-	<?=$this->lang->line('Author')?>: <?=htmlspecialchars($file['last_author'])?> |
 	<?=$this->lang->line('Size')?>: <?=$file['size']?> |
-	<?=$this->lang->line('Last updated on')?>: <?=$file['time']?> 
+	<a id="code_file_mainarea_details_button" href='#'><?=$this->lang->line('Details')?></a>
 </div>
 
 <div id="code_file_mainarea_result">
@@ -153,20 +182,33 @@ if ($fileext == '') $fileext = "html"
 
 
 <div id="code_file_mainarea_result_info">
-<script language='javascript'>
-function toggle_logmsg()
-{
-	var x = document.getElementById ('code_file_mainarea_result_info_logmsg');	
-	if (x) x.style.visibility = (x.style.visibility == 'visible')? 'hidden': 'visible';
-	return false;
-}
-</script>
+<div class="title"><?= $this->lang->line('CODE_COMMIT') ?></div>
+<?php printf ($this->lang->line('CODE_MSG_COMMITTED_BY_ON'), $file['last_author'], $file['time']); ?>
 
-<div class="title">
-<a href='#' onClick='toggle_logmsg()'><?= $this->lang->line('Message') ?></a>
-</div>
-<pre id="code_file_mainarea_result_info_logmsg" style="visibility: visible">
+<div class="title"><?= $this->lang->line('Message') ?></div>
+<pre id="code_file_mainarea_result_info_logmsg">
 <?= $file['logmsg'] ?>
+</pre>
+
+<?php
+if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+{
+	print '<div class="title">';
+	print $this->lang->line('CODE_PROPERTIES');
+	print '</div>';
+
+	print '<ul id="code_file_mainarea_result_info_property_list">';
+	foreach ($file['properties'] as $pn => $pv)
+	{
+		print '<li>';
+		print htmlspecialchars($pn);
+		print ' - ';
+		print htmlspecialchars($pv);
+		print '</li>';
+	}
+	print '</ul>';
+}
+?>
 </pre>
 </div> <!-- code_file_mainarea_result_info -->
 

@@ -7,9 +7,21 @@ class SubversionModel extends Model
 		parent::Model ();
 	}
 
+	function _canonical_path($path) 
+	{
+		$canonical = preg_replace('|/\.?(?=/)|','',$path);
+		while (($collapsed = preg_replace('|/[^/]+/\.\./|','/',$canonical,1)) !== $canonical) 
+		{
+			$canonical = $collapsed;
+		}
+		$canonical = preg_replace('|^/\.\./|','/',$canonical);
+		return $canonical;
+	}
+
 	function getFile ($projectid, $path, $rev = SVN_REVISION_HEAD)
 	{
-		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$info = @svn_info ($url, FALSE, $rev);
 		if ($info === FALSE || count($info) != 1) return FALSE;
@@ -31,10 +43,20 @@ class SubversionModel extends Model
 				1, SVN_DISCOVER_CHANGED_PATHS);
 			if ($log === FALSE) return FALSE;
 
+			$prop = @svn_proplist ($url, FALSE, $rev);
+			if ($prop === FALSE) return FALSE;
+
+			if (array_key_exists ($url, $prop))
+			{
+				$fileinfo['properties'] = $prop[$url];
+			}
+			else $fileinfo['properties'] = NULL;
+
 			$fileinfo['fullpath'] = substr (
 				$info[0]['url'], strlen($info[0]['repos']));
 			$fileinfo['content'] = $str;
 			$fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
+
 			return $fileinfo;
 		}
 		else if ($info[0]['kind'] == SVN_NODE_DIR) 
@@ -51,6 +73,13 @@ class SubversionModel extends Model
 					1, SVN_DISCOVER_CHANGED_PATHS);
 				if ($log === FALSE) return FALSE;
 			}
+
+			$prop = @svn_proplist ($url, FALSE, $rev);
+			if ($prop === FALSE) return FALSE;
+
+			if (array_key_exists ($url, $prop))
+				$fileinfo['properties'] = $prop[$url];
+			else $fileinfo['properties'] = NULL;
 
 			$fileinfo['fullpath'] = substr (
 				$info[0]['url'], strlen($info[0]['repos']));
@@ -69,7 +98,8 @@ class SubversionModel extends Model
 
 	function getBlame ($projectid, $path, $rev = SVN_REVISION_HEAD)
 	{
-		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$info = @svn_info ($url, FALSE, $rev);
 		if ($info === FALSE || count($info) != 1) return FALSE;
@@ -100,7 +130,8 @@ class SubversionModel extends Model
 
 	function getHistory ($projectid, $path, $rev = SVN_REVISION_HEAD)
 	{
-		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$info = @svn_info ($url, FALSE, $rev);
 		if ($info === FALSE || count($info) != 1) return FALSE;
@@ -134,7 +165,8 @@ class SubversionModel extends Model
 
 	function getRevHistory ($projectid, $path, $rev)
 	{
-		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$info = @svn_info ($url, FALSE, $rev);
 		if ($info === FALSE || count($info) != 1) return FALSE;
@@ -420,7 +452,8 @@ class SubversionModel extends Model
 	//
 	function getDiff ($projectid, $path, $rev1, $rev2)
 	{
-		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$lsinfo1 = @svn_ls ($url, $rev1, FALSE, TRUE);
 		if ($lsinfo1 === FALSE || count($lsinfo1) != 1) return FALSE;
@@ -504,7 +537,8 @@ class SubversionModel extends Model
 
 	function getPrevRev ($projectid, $path, $rev)
 	{
-		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$log = @svn_log (
 			$url, $rev, SVN_REVISION_INITIAL, 2,
@@ -520,7 +554,8 @@ class SubversionModel extends Model
 
 	function getNextRev ($projectid, $path, $rev)
 	{
-		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$log = @svn_log (
 			$url, SVN_REVISION_HEAD, $rev, 0,
@@ -557,7 +592,8 @@ class SubversionModel extends Model
 
 	function getHeadRev ($projectid, $path)
 	{
-		$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$log = @svn_log (
 			$url, SVN_REVISION_HEAD, SVN_REVISION_INITIAL, 1,

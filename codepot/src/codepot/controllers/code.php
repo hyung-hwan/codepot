@@ -20,6 +20,7 @@ class Code extends Controller
 
 		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG); 
+		$this->lang->load ('code', CODEPOT_LANG); 
 	}
 
 	function home ($projectid = '', $subdir = '', $rev = SVN_REVISION_HEAD)
