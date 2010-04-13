@@ -26,13 +26,13 @@ $(function () {
 		
 		if ($("#code_file_mainarea_result_info").is(":visible"))
 		{
-			$("#code_file_mainarea_result_info").hide();
+			$("#code_file_mainarea_result_info").hide("blind",{},200);
 			$("#code_file_mainarea_details_button").button(
 				"option", "label", "<?=$this->lang->line('CODE_SHOW_DETAILS')?>");
 		}
 		else
 		{
-			$("#code_file_mainarea_result_info").show();
+			$("#code_file_mainarea_result_info").show("blind",{},200);
 			$("#code_file_mainarea_details_button").button(
 				"option", "label", "<?=$this->lang->line('CODE_HIDE_DETAILS')?>");
 		}

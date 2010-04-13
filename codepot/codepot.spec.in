@@ -45,7 +45,6 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/codepot/codepot.ini
 /etc/codepot/codepot.sql 
 /etc/codepot/codepot.a2ldap
-/etc/codepot/repo.sh
 /etc/codepot/start-commit
 /etc/codepot/pre-commit
 /etc/codepot/post-commit
