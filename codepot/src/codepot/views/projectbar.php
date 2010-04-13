@@ -61,25 +61,11 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 			array ("file/home/{$project->id}", $con->lang->line('Files'))
 		);
 
-		$langcodes = array (
-			"english"    => "en",
-			"indonesian" => "id",
-			"korean"     => "ko"
-		);
-
-		$lang = $langcodes[CODEPOT_LANG];
-		$websvn = base_url() . "websvn/listing.php?langchoice={$lang}&repname={$project->id}";
 		foreach ($menuitems as $item)
 		{
 			$menuid = substr ($item[0], 0, strpos($item[0], '/'));
 			$extra = ($menuid == $id)? 'class="selected"': '';
 			$menulink = $item[0];
-
-			if ($menuid == 'code')
-			{
-				if (CODEPOT_ENABLE_WEBSVN === TRUE ||
-				    !function_exists('svn_ls')) $menulink = $websvn;
-			}
 
 			print anchor ($menulink, $item[1], $extra);
 		}

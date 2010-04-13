@@ -105,7 +105,9 @@ $this->load->view (
 		print '</td>';
 
 		print '<td>';
-		print htmlspecialchars($h['author']);
+		// Repository migration from googlecode reveales that it did not put 
+		// 'author' for initial project creation. So I've added the following check.
+		if (array_key_exists('author', $h)) print htmlspecialchars($h['author']);
 		print '</td>';
 
 		print '<td><code>';

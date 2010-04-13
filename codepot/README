@@ -87,6 +87,7 @@ LICENSE
    CodeIgniter 1.7.2                            See src/system/license.txt
    Google code prettify                         Apache License 2.0
    JavaScript Creole 1.0 Wiki Markup Parser     See src/js/creole.js
-   WebSVN 2.1.0                                 See src/websvn/license.txt
+   jQuery JavaScript Library v1.4.2             See http://jquery.org/license
+   jQuery UI 1.8                                MIT or GPL
    ------------------------------------------------------------------------
 

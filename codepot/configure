@@ -3120,7 +3120,7 @@ cachedir=$cachedir
 
 
 
-ac_config_files="$ac_config_files Makefile codepot.spec etc/Makefile etc/codepot.ini etc/codepot.a2ldap DEBIAN/Makefile DEBIAN/control DEBIAN/postinst DEBIAN/postrm src/config.php src/codepot/config/Makefile src/codepot/controllers/Makefile src/codepot/errors/Makefile src/codepot/helpers/Makefile src/codepot/hooks/Makefile src/codepot/language/english/Makefile src/codepot/language/indonesian/Makefile src/codepot/language/korean/Makefile src/codepot/language/Makefile src/codepot/libraries/Makefile src/codepot/models/Makefile src/codepot/views/Makefile src/codepot/Makefile src/css/images/Makefile src/css/Makefile src/js/prettify/Makefile src/js/Makefile src/system/cache/Makefile src/system/codeigniter/Makefile src/system/database/drivers/mssql/Makefile src/system/database/drivers/mysql/Makefile src/system/database/drivers/mysqli/Makefile src/system/database/drivers/oci8/Makefile src/system/database/drivers/odbc/Makefile src/system/database/drivers/postgre/Makefile src/system/database/drivers/sqlite/Makefile src/system/database/drivers/Makefile src/system/database/Makefile src/system/fonts/Makefile src/system/helpers/Makefile src/system/language/english/Makefile src/system/language/korean/Makefile src/system/language/Makefile src/system/libraries/Makefile src/system/logs/Makefile src/system/plugins/Makefile src/system/scaffolding/images/Makefile src/system/scaffolding/views/Makefile src/system/scaffolding/Makefile src/system/Makefile src/websvn/cache/Makefile src/websvn/doc/Makefile src/websvn/include/Makefile src/websvn/languages/Makefile src/websvn/lib/geshi/Makefile src/websvn/lib/Makefile src/websvn/temp/Makefile src/websvn/templates/calm/images/Makefile src/websvn/templates/calm/star-light/smilies/Makefile src/websvn/templates/calm/star-light/src/Makefile src/websvn/templates/calm/star-light/Makefile src/websvn/templates/calm/Makefile src/websvn/templates/Makefile src/websvn/Makefile src/Makefile"
+ac_config_files="$ac_config_files Makefile codepot.spec etc/Makefile etc/codepot.ini etc/codepot.a2ldap DEBIAN/Makefile DEBIAN/control DEBIAN/postinst DEBIAN/postrm src/config.php src/codepot/config/Makefile src/codepot/controllers/Makefile src/codepot/errors/Makefile src/codepot/helpers/Makefile src/codepot/hooks/Makefile src/codepot/language/english/Makefile src/codepot/language/indonesian/Makefile src/codepot/language/korean/Makefile src/codepot/language/Makefile src/codepot/libraries/Makefile src/codepot/models/Makefile src/codepot/views/Makefile src/codepot/Makefile src/css/images/Makefile src/css/Makefile src/js/prettify/Makefile src/js/Makefile src/system/cache/Makefile src/system/codeigniter/Makefile src/system/database/drivers/mssql/Makefile src/system/database/drivers/mysql/Makefile src/system/database/drivers/mysqli/Makefile src/system/database/drivers/oci8/Makefile src/system/database/drivers/odbc/Makefile src/system/database/drivers/postgre/Makefile src/system/database/drivers/sqlite/Makefile src/system/database/drivers/Makefile src/system/database/Makefile src/system/fonts/Makefile src/system/helpers/Makefile src/system/language/english/Makefile src/system/language/korean/Makefile src/system/language/Makefile src/system/libraries/Makefile src/system/logs/Makefile src/system/plugins/Makefile src/system/scaffolding/images/Makefile src/system/scaffolding/views/Makefile src/system/scaffolding/Makefile src/system/Makefile src/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -3856,20 +3856,6 @@ do
     "src/system/scaffolding/views/Makefile") CONFIG_FILES="$CONFIG_FILES src/system/scaffolding/views/Makefile" ;;
     "src/system/scaffolding/Makefile") CONFIG_FILES="$CONFIG_FILES src/system/scaffolding/Makefile" ;;
     "src/system/Makefile") CONFIG_FILES="$CONFIG_FILES src/system/Makefile" ;;
-    "src/websvn/cache/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/cache/Makefile" ;;
-    "src/websvn/doc/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/doc/Makefile" ;;
-    "src/websvn/include/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/include/Makefile" ;;
-    "src/websvn/languages/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/languages/Makefile" ;;
-    "src/websvn/lib/geshi/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/lib/geshi/Makefile" ;;
-    "src/websvn/lib/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/lib/Makefile" ;;
-    "src/websvn/temp/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/temp/Makefile" ;;
-    "src/websvn/templates/calm/images/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/templates/calm/images/Makefile" ;;
-    "src/websvn/templates/calm/star-light/smilies/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/templates/calm/star-light/smilies/Makefile" ;;
-    "src/websvn/templates/calm/star-light/src/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/templates/calm/star-light/src/Makefile" ;;
-    "src/websvn/templates/calm/star-light/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/templates/calm/star-light/Makefile" ;;
-    "src/websvn/templates/calm/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/templates/calm/Makefile" ;;
-    "src/websvn/templates/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/templates/Makefile" ;;
-    "src/websvn/Makefile") CONFIG_FILES="$CONFIG_FILES src/websvn/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
 
   *) as_fn_error "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
