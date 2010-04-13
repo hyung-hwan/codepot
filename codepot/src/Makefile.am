@@ -1,4 +1,4 @@
-SUBDIRS =  codepot css js system websvn
+SUBDIRS =  codepot css js system 
 
 wwwdir=$(WWWDIR)
 www_DATA =  \

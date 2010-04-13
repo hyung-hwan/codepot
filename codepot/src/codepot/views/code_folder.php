@@ -41,6 +41,26 @@ $this->load->view (
 	<div class="box" id="code_folder_sidebar_info">
 		<div class="boxtitle"><?=$this->lang->line('Revision')?>: <?=$file['created_rev']?></div>
 		<pre><?=$file['logmsg']?></pre>
+		<?php
+			if (array_key_exists('properties', $file) &&
+			    count($file['properties']))
+			{
+				print '<div class="boxtitle">';
+				print $this->lang->line('CODE_PROPERTIES');
+				print '</div>';
+
+				print '<ul>';
+				foreach ($file['properties'] as $pk => $pv)
+				{
+					print '<li>';
+					print htmlspecialchars ($pk);
+					print ' - ';
+					print htmlspecialchars ($pv);
+					print '</li>';
+				}	
+				print '</ul>';
+			}
+		?>
 	</div>
 </div> <!-- code_folder_sidebar -->
 

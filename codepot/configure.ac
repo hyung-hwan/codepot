@@ -131,20 +131,6 @@ AC_CONFIG_FILES([
 	src/system/scaffolding/views/Makefile
 	src/system/scaffolding/Makefile
 	src/system/Makefile
-	src/websvn/cache/Makefile
-	src/websvn/doc/Makefile
-	src/websvn/include/Makefile
-	src/websvn/languages/Makefile
-	src/websvn/lib/geshi/Makefile
-	src/websvn/lib/Makefile
-	src/websvn/temp/Makefile
-	src/websvn/templates/calm/images/Makefile
-	src/websvn/templates/calm/star-light/smilies/Makefile
-	src/websvn/templates/calm/star-light/src/Makefile
-	src/websvn/templates/calm/star-light/Makefile
-	src/websvn/templates/calm/Makefile
-	src/websvn/templates/Makefile
-	src/websvn/Makefile
 	src/Makefile
 ])
 AC_OUTPUT

@@ -206,7 +206,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 wwwdir = $(WWWDIR)
-SUBDIRS = codepot css js system websvn
+SUBDIRS = codepot css js system 
 www_DATA = \
 	index.php \
 	config.php

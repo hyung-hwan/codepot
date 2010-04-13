@@ -139,25 +139,66 @@ class ProjectModel extends Model
 			$cfgdir = CODEPOT_CFG_DIR;
 			$repodir = CODEPOT_SVNREPO_DIR;
 
+			// create repository
 			if (@svn_repos_create ("{$repodir}/{$project->id}") === FALSE)
 			{
 				$this->db->trans_rollback ();
 				return FALSE;
 			}
 
-			$cmd = "'{$cfgdir}/repo.sh' make '{$repodir}' '{$project->id}' '{$cfgdir}' '{$api}'";
-			exec (escapeshellcmd($cmd), $output = array(), $retval);
-			if ($retval != 0) 
+			// copy hook scripts to the top repository directory
+			// overwriting existing scripts are ok as they are 
+			// just updated to the latest scripts anyway.
+			$contents = @file_get_contents("{$cfgdir}/start-commit");
+			if ($contents === FALSE)
 			{
 				$this->deleteDirectory ("{$repodir}/{$project->id}");
 				$this->db->trans_rollback ();
 				return FALSE;
 			}
-			else
+
+			if (@file_put_contents (
+				"{$repodir}/start-commit",
+				str_replace('%API%', $api, $contents)) === FALSE)
 			{
-				$this->db->trans_commit ();
-				return TRUE;
+				$this->deleteDirectory ("{$repodir}/{$project->id}");
+				$this->db->trans_rollback ();
+				return FALSE;
 			}
+
+			$contents = @file_get_contents("{$cfgdir}/post-commit");
+			if ($contents === FALSE)
+			{
+				$this->deleteDirectory ("{$repodir}/{$project->id}");
+				$this->db->trans_rollback ();
+				return FALSE;
+			}
+
+			if (@file_put_contents(
+				"{$repodir}/post-commit",
+				str_replace('%API%', $api, $contents)) === FALSE)
+			{
+				$this->deleteDirectory ("{$repodir}/{$project->id}");
+				$this->db->trans_rollback ();
+				return FALSE;
+			}
+
+			// install hook scripts to the new project repository
+			if (@chmod ("{$repodir}/start-commit", 0755) === FALSE ||
+			    @chmod ("{$repodir}/post-commit", 0755) === FALSE ||
+			    @symlink ("../../start-commit", "{$repodir}/{$project->id}/hooks/start-commit") === FALSE ||
+			    @symlink ("../../post-commit", "{$repodir}/{$project->id}/hooks/post-commit") === FALSE)
+			{
+				// keep {$repodir}/start-commit, {$repodir}/post-commit 
+				// to minimize impact on other projects. just delete the attempted
+				// project repository directory.
+				$this->deleteDirectory ("{$repodir}/{$project->id}");
+				$this->db->trans_rollback ();
+				return FALSE;
+			}
+
+			$this->db->trans_commit ();
+			return TRUE;
 		}
 	}
 

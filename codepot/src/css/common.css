@@ -414,7 +414,7 @@ pre.prettyprint .nocode a:hover {
 }
 
 .content .sidebar ul {
-	margin: 0.2em 0 0.2em 0;
+	margin: 0.2em 0 0.2em 0.5em;
 	padding: 0.2em 0 0.2em 1em;
 }
 
