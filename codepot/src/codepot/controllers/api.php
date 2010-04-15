@@ -53,5 +53,16 @@ class API extends Controller
 		$this->email->send ();
 		*/
 	}
+
+	function logCodeRevpropChange ($type, $repo, $rev, $propname)
+	{
+		$this->check_access ();
+
+		if (!isset($repo) || !isset($rev) || !isset($propname)) return;
+
+		$this->load->model ('LogModel', 'logs');
+		// TODO:
+		//$this->logs->writeCodeRevpropChange ($type, $repo, $rev, '');
+	}
 }
 
