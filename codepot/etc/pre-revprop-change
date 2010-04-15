@@ -1,0 +1,24 @@
+#!/bin/sh
+
+REPOBASE="`basename "${1}"`"
+USER="${2}"
+USER="${3}"
+PROPNAME="${4}"
+ACTION="${5}"
+
+# [STDIN] PROPVAL  ** the new property value is passed via STDIN.
+
+ans="`wget -q -O- "%API%/projectHasMember/${REPOBASE}/${USER}" 2>/dev/null`"
+[ "${ans}" = "YES" ] && exit 0
+
+[ "${ans}" = "NO" ] && {
+	echo "-------------------------------------------------------------" >&2
+	echo " ${USER} is not a member of ${REPOBASE}" >&2
+	echo "-------------------------------------------------------------" >&2
+	exit 1
+}
+
+echo "---------------------------------------------------------------------" >&2
+echo " Failed to check membership of ${REPOBASE} for ${USER}" >&2
+echo "---------------------------------------------------------------------" >&2
+exit 1

@@ -54,8 +54,11 @@ $this->load->view (
 				{
 					print '<li>';
 					print htmlspecialchars ($pk);
-					print ' - ';
-					print htmlspecialchars ($pv);
+					if ($pv != '')
+					{
+						print ' - ';
+						print htmlspecialchars ($pv);
+					}
 					print '</li>';
 				}	
 				print '</ul>';
@@ -133,7 +136,7 @@ $this->load->view (
 		$xpar = $this->converter->AsciiTohex ($headpath);
 		if ($revision > 0 && $revision < $next_revision)
 		{
-			print anchor ("code/file/{$project->id}", $this->lang->line('Head revision'));
+			print anchor ("code/file/{$project->id}/{$xpar}", $this->lang->line('Head revision'));
 			print ' | ';
 		}
 		print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
