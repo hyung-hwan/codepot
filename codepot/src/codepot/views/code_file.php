@@ -202,8 +202,11 @@ if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 	{
 		print '<li>';
 		print htmlspecialchars($pn);
-		print ' - ';
-		print htmlspecialchars($pv);
+		if ($pv != '')
+		{
+			print ' - ';
+			print htmlspecialchars($pv);
+		}
 		print '</li>';
 	}
 	print '</ul>';
