@@ -48,6 +48,8 @@ rm -rf $RPM_BUILD_ROOT
 /etc/codepot/start-commit
 /etc/codepot/pre-commit
 /etc/codepot/post-commit
+/etc/codepot/pre-revprop-change
+/etc/codepot/post-revprop-change
 
 %attr(-,apache,apache) /var/lib/codepot/svnrepo
 %attr(-,apache,apache) /var/lib/codepot/files
