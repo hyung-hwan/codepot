@@ -78,11 +78,13 @@ $lang['Username'] = '사용자명';
 $lang['Wiki'] = '위키';
 $lang['Wikis'] = '위키';
 
-$lang['MSG_LOG_COMMIT_BY'] = '%s에 의해 커밋되었습니다';
-$lang['MSG_LOG_CHANGE_BY'] = '%s에 의해 변경되었습니다';
-$lang['MSG_LOG_CREATE_BY'] = '%s에 의해 생성되었습니다';
-$lang['MSG_LOG_DELETE_BY'] = '%s에 의해 삭제되었습니다';
-$lang['MSG_LOG_UPDATE_BY'] = '%s에 의해 갱신되었습니다';
+$lang['MSG_LOG_COMMIT_BY'] = '%s이(가) 커밋했습니다';
+$lang['MSG_LOG_CHANGE_BY'] = '%s이(가) 변경했습니다';
+$lang['MSG_LOG_CREATE_BY'] = '%s이(가) 생성했습니다';
+$lang['MSG_LOG_DELETE_BY'] = '%s이(가) 삭제했습니다';
+$lang['MSG_LOG_UPDATE_BY'] = '%s이(가) 갱신했습니다';
+$lang['MSG_LOG_REVPROP_CHANGE_BY'] = '리비전 속성 %s을(를) %s이(가) 변경했습니다';
+
 
 $lang['MSG_NO_DIFF'] = '차이점이 없습니다';
 $lang['MSG_NO_CODE_AVAIL'] = '소스코드가 없습니다';

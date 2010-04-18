@@ -57,7 +57,14 @@ class ProjectModel extends Model
 		if ($search->id != '') $this->db->like ('id', $search->id);
 		if ($search->name != '') $this->db->like ('name', $search->name);
 		if ($search->summary != '') $this->db->like ('summary', $search->summary);
+
 		$query = $this->db->get ('project');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+
 		$result = $query->result();
 		
 		$num = empty($result)? 0: $result[0]->count;
@@ -146,55 +153,43 @@ class ProjectModel extends Model
 				return FALSE;
 			}
 
-			// copy hook scripts to the top repository directory
-			// overwriting existing scripts are ok as they are 
-			// just updated to the latest scripts anyway.
-			$contents = @file_get_contents("{$cfgdir}/start-commit");
-			if ($contents === FALSE)
-			{
-				$this->deleteDirectory ("{$repodir}/{$project->id}");
-				$this->db->trans_rollback ();
-				return FALSE;
-			}
+			$hooks = array (
+				"start-commit",
+				"post-commit",
+				"pre-revprop-change",
+				"post-revprop-change"
+			);
 
-			if (@file_put_contents (
-				"{$repodir}/start-commit",
-				str_replace('%API%', $api, $contents)) === FALSE)
+			foreach ($hooks as $hook)
 			{
-				$this->deleteDirectory ("{$repodir}/{$project->id}");
-				$this->db->trans_rollback ();
-				return FALSE;
-			}
+				// copy hook scripts to the top repository directory
+				// overwriting existing scripts are ok as they are 
+				// just updated to the latest scripts anyway.
+				$contents = @file_get_contents("{$cfgdir}/${hook}");
+				if ($contents === FALSE)
+				{
+					$this->deleteDirectory ("{$repodir}/{$project->id}");
+					$this->db->trans_rollback ();
+					return FALSE;
+				}
 
-			$contents = @file_get_contents("{$cfgdir}/post-commit");
-			if ($contents === FALSE)
-			{
-				$this->deleteDirectory ("{$repodir}/{$project->id}");
-				$this->db->trans_rollback ();
-				return FALSE;
-			}
+				if (@file_put_contents (
+					"{$repodir}/${hook}",
+					str_replace('%API%', $api, $contents)) === FALSE)
+				{
+					$this->deleteDirectory ("{$repodir}/{$project->id}");
+					$this->db->trans_rollback ();
+					return FALSE;
+				}
 
-			if (@file_put_contents(
-				"{$repodir}/post-commit",
-				str_replace('%API%', $api, $contents)) === FALSE)
-			{
-				$this->deleteDirectory ("{$repodir}/{$project->id}");
-				$this->db->trans_rollback ();
-				return FALSE;
-			}
-
-			// install hook scripts to the new project repository
-			if (@chmod ("{$repodir}/start-commit", 0755) === FALSE ||
-			    @chmod ("{$repodir}/post-commit", 0755) === FALSE ||
-			    @symlink ("../../start-commit", "{$repodir}/{$project->id}/hooks/start-commit") === FALSE ||
-			    @symlink ("../../post-commit", "{$repodir}/{$project->id}/hooks/post-commit") === FALSE)
-			{
-				// keep {$repodir}/start-commit, {$repodir}/post-commit 
-				// to minimize impact on other projects. just delete the attempted
-				// project repository directory.
-				$this->deleteDirectory ("{$repodir}/{$project->id}");
-				$this->db->trans_rollback ();
-				return FALSE;
+				// install the hook script to the new project repository
+				if (@chmod ("{$repodir}/{$hook}", 0755) === FALSE ||
+				    @symlink ("../../{$hook}", "{$repodir}/{$project->id}/hooks/${hook}") === FALSE)
+				{
+					$this->deleteDirectory ("{$repodir}/{$project->id}");
+					$this->db->trans_rollback ();
+					return FALSE;
+				}
 			}
 
 			$this->db->trans_commit ();
@@ -257,10 +252,35 @@ class ProjectModel extends Model
 		}
 	}
 
-	function delete ($userid, $project)
+	function delete ($userid, $project, $force = FALSE)
 	{
 		// TODO: check if userid can do this..
 		$this->db->trans_begin ();
+
+		if ($force)
+		{
+			$this->db->where ('projectid', $project->id);
+			$this->db->delete ('wiki');
+
+			$this->db->where ('projectid', $project->id);
+			$this->db->delete ('issue_change');
+
+			$this->db->where ('projectid', $project->id);
+			$this->db->delete ('issue');
+
+			$this->db->where ('projectid', $project->id);
+			$query = $this->db->get ('file');
+			if ($this->db->trans_status() === FALSE)
+			{
+				$this->db->trans_rollback ();
+				return FALSE;
+			}
+
+			$result = $query->result ();
+
+			$this->db->where ('projectid', $project->id);
+			$this->db->delete ('file');
+		}
 
 		$this->db->where ('id', $project->id);
 		$this->db->delete ('project');
@@ -288,6 +308,13 @@ class ProjectModel extends Model
 			}
 			else
 			{
+				if ($force && count($result) > 0)
+				{
+					// no way to roll back file delete.
+					// so deletion is done here.
+					$this->_delete_files_uploaded ($result);
+				}
+
 				$this->db->trans_commit ();
 				return TRUE;
 			}
@@ -393,6 +420,13 @@ class ProjectModel extends Model
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() === FALSE) return FALSE;
 		return ($count == 1)? TRUE: FALSE;
+	}
+
+
+	function _delete_files_uploaded ($files)
+	{
+		foreach ($files as $file)
+			@unlink (CODEPOT_FILE_DIR . "/{$file->encname}");
 	}
 }
 
