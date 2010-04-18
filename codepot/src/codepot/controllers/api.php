@@ -54,15 +54,14 @@ class API extends Controller
 		*/
 	}
 
-	function logCodeRevpropChange ($type, $repo, $rev, $propname)
+	function logCodeRevpropChange ($type, $repo, $rev, $userid, $propname, $action)
 	{
 		$this->check_access ();
 
-		if (!isset($repo) || !isset($rev) || !isset($propname)) return;
+		if (!isset($repo) || !isset($rev) || !isset($propname) || !isset($action)) return;
 
 		$this->load->model ('LogModel', 'logs');
-		// TODO:
-		//$this->logs->writeCodeRevpropChange ($type, $repo, $rev, '');
+		$this->logs->writeCodeRevpropChange ($type, $repo, $rev, $userid, $propname, $action);
 	}
 }
 

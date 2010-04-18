@@ -137,6 +137,14 @@ file_dir = "@DEPOTDIR@/files"
 log_threshold = 0
 
 ;------------------------------------------------------------------------------
+; When yes, a project member can delete a non-empty project containing
+; wiki pages, file uploads, etc. An empty project can be deleted any time 
+; regardless of this option. A system administrator(sysadmin_userids) is 
+; allowed to delete a non-empty project also regardless of this option.
+;------------------------------------------------------------------------------
+force_project_delete = "no"
+
+;------------------------------------------------------------------------------
 ; customized footer
 ;------------------------------------------------------------------------------
 ; Leave this empty for the default footer message

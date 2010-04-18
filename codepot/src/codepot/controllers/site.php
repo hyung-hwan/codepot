@@ -429,7 +429,7 @@ class Site extends Controller
 		$this->load->view ($this->VIEW_LOG, $data);
 	}
 
-	function wiki ($xlink)
+	function wiki ($xlink = '')
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')

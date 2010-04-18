@@ -116,15 +116,27 @@ foreach ($latest_projects as $project)
 			print '<td></td>';
 			print '<td colspan=2 class="details">';
 			print '<span class="description">';
-			$fmt = $this->lang->line (
-				'MSG_LOG_'.strtoupper($log['action']).'_BY');
-			print htmlspecialchars (sprintf($fmt, $x['author']));
+
+			if ($log['action'] == 'revpropchange')
+			{
+				$fmt = $this->lang->line ('MSG_LOG_REVPROP_CHANGE_BY');
+				print htmlspecialchars (sprintf($fmt, $x['propname'], $x['author']));
+			}
+			else
+			{
+				$fmt = $this->lang->line (
+					'MSG_LOG_'.strtoupper($log['action']).'_BY');
+				print htmlspecialchars (sprintf($fmt, $x['author']));
+			}
 			print '</span>';
 
-			print '<pre class="message">';
-			$sm = strtok (trim ($x['message']), "\r\n");
-			print htmlspecialchars ($sm);
-			print '</pre>';
+			if ($log['action'] != 'revpropchange')
+			{
+				print '<pre class="message">';
+				$sm = strtok (trim ($x['message']), "\r\n");
+				print htmlspecialchars ($sm);
+				print '</pre>';
+			}
 			print '</td>';
 			print '</tr>';
 		}

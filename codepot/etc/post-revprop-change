@@ -1,7 +1,7 @@
 #!/bin/sh
 
 REPOBASE="`basename "${1}"`"
-REV="${2}"
+REVISION="${2}"
 USER="${3}"
 PROPNAME="${4}"
 ACTION="${5}"
@@ -9,5 +9,5 @@ ACTION="${5}"
 # [STDIN] PROPVAL  ** the old property value is passed via STDIN.
 
 # does not care if logging has failed.
-wget -q -O- "%API%/logRevpropChange/svn/${REPOBASE}/${REV}" 2>/dev/null
+wget -q -O- "%API%/logCodeRevpropChange/svn/${REPOBASE}/${REVISION}/${USER}/${PROPNAME}/${ACTION}" 2>/dev/null
 exit 0
