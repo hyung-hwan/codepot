@@ -304,10 +304,13 @@ class Project extends Controller
 			{
 				if ($data['project_confirm'] == 'yes')
 				{
-					$result = $this->projects->delete ($login['id'], $project);
+					$result = $this->projects->delete (
+						$login['id'], $project, 
+						($login['sysadmin?'] || CODEPOT_FORCE_PROJECT_DELETE));
 					if ($result === FALSE)
 					{
 						$data['message'] = 'DATABASE ERROR';
+						$data['project'] = $project;
 						$this->load->view ($this->VIEW_DELETE, $data);
 					}
 					else 

@@ -53,6 +53,12 @@ class IssueModel extends Model
 		if ($search->summary != '') $this->db->like ('summary', $search->summary);
 		$this->db->select ('count(id) as count');
 		$query = $this->db->get ('issue');
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+		
 		$result = $query->result();
 		
 		$num = empty($result)? 0: $result[0]->count;

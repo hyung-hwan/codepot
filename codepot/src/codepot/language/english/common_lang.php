@@ -84,6 +84,7 @@ $lang['MSG_LOG_CHANGE_BY'] = 'Changed by %s';
 $lang['MSG_LOG_CREATE_BY'] = 'Created by %s';
 $lang['MSG_LOG_DELETE_BY'] = 'Deleted by %s';
 $lang['MSG_LOG_UPDATE_BY'] = 'Updated by %s';
+$lang['MSG_LOG_REVPROP_CHANGE_BY'] = 'Revision property %s changed by %s';
 
 $lang['MSG_NO_DIFF'] = 'No difference found';
 $lang['MSG_NO_CODE_AVAIL'] = 'No source code available';

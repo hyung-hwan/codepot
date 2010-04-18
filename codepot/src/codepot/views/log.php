@@ -200,14 +200,26 @@ $this->load->view (
 
 			print '<td class="details">';
 			print '<span class="description">';
-			$fmt = $this->lang->line (
-				'MSG_LOG_'.strtoupper($log['action']).'_BY');
-			print htmlspecialchars (sprintf($fmt, $code['author']));
+			if ($log['action'] == 'revpropchange')
+			{
+				$fmt = $this->lang->line ('MSG_LOG_REVPROP_CHANGE_BY');
+				print htmlspecialchars (sprintf($fmt, $code['propname'], $code['author']));
+				//$code['action']
+			}
+			else
+			{
+				$fmt = $this->lang->line (
+					'MSG_LOG_'.strtoupper($log['action']).'_BY');
+				print htmlspecialchars (sprintf($fmt, $code['author']));
+			}
 			print '</span>';
 
-			print '<pre class="message">';
-			print htmlspecialchars ($code['message']);
-			print '</pre>';
+			if ($log['action'] != 'revpropchange')
+			{
+				print '<pre class="message">';
+				print htmlspecialchars ($code['message']);
+				print '</pre>';
+			}
 		}
 		else
 		{
