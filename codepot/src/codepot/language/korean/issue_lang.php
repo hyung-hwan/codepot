@@ -20,5 +20,6 @@ $lang['ISSUE_PRIORITY_OTHER'] = '기타';
 $lang['ISSUE_MSG_CHANGED_X_TO_Z'] = "<span class='quoted'>%s</span>을/를 <span class='quoted'>%s</span>(으)로 변경";
 $lang['ISSUE_MSG_CHANGED_X_FROM_Y_TO_Z'] = "<span class='quoted'>%s</span>을/를 <span class='quoted'>%s</span>에서  <span class='quoted'>%s</span>(으)로 변경";
 $lang['ISSUE_MSG_CONFIRM_UNDO'] = '마지막 변경내용을 취소할까요?';
+$lang['ISSUE_MSG_CREATED'] = '생성됨';
 $lang['ISSUE_MSG_TOTAL_NUM_ISSUES'] = '전체 이슈 %d개';
 ?>

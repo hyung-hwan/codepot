@@ -109,6 +109,7 @@ $(function () {
 	$("#issue_show_mainarea_change_form_open").button().click (
 		function () { 
 			$('#issue_show_mainarea_change_form').dialog('open'); 
+			return false;
 		}
 	);
 
@@ -135,6 +136,7 @@ $(function () {
 	$("#issue_show_mainarea_undo_change").button().click (
 		function () { 
 			$('#issue_show_mainarea_undo_change_confirm').dialog('open'); 
+			return false;
 		}
 	);
 
@@ -234,17 +236,15 @@ $this->load->view (
 	$msgfmt_changed_from_to = $this->lang->line ('ISSUE_MSG_CHANGED_X_FROM_Y_TO_Z');
 	$msgfmt_changed_to = $this->lang->line ('ISSUE_MSG_CHANGED_X_TO_Z');
 	$count = count($issue->changes);
-	if ($count > 1) 
-	{
-		print '<div class="infostrip">';
-		print '<span class="title">';
-		print $this->lang->line('Change log');
-		print '</span>';
-		print '<a id="issue_show_mainarea_undo_change" href="#">';
-		print $this->lang->line('Undo');
-		print '</a>';
-		print '</div>';
-	}
+
+	print '<div class="infostrip">';
+	print '<span class="title">';
+	print $this->lang->line('Change log');
+	print '</span>';
+	print '<a id="issue_show_mainarea_undo_change" href="#">';
+	print $this->lang->line('Undo');
+	print '</a>';
+	print '</div>';
 
 	print '<table id="issue_show_mainarea_changes_table">';
 	while ($count > 1)
@@ -252,7 +252,7 @@ $this->load->view (
 		$new = $issue->changes[--$count];
 		$old = $issue->changes[$count-1];
 
-		print "<tr>";
+		print '<tr>';
 		
 		print '<td class="date">'; 
 		print '<span title="';
@@ -336,6 +336,26 @@ $this->load->view (
 		print '</td>';
 		print '</tr>';
 	}
+
+	print '<tr>';
+	print '<td class="date">'; 
+	print '<span title="';
+	print date ('Y-m-d H:s:i', strtotime($issue->createdon));
+	print '">';
+	print date ('Y-m-d', strtotime($issue->updatedon));
+	print '</span>';
+	print '</td>';
+
+	print '<td class="updater">'; 
+	print htmlspecialchars($issue->createdby);
+	print '</td>';
+
+	print '<td class="details">';
+	print $this->lang->line('ISSUE_MSG_CREATED');
+	print '</td>';
+
+	print '</tr>';
+
 	print '</table>';
 ?>
 
@@ -437,12 +457,16 @@ $this->load->view (
 <script type="text/javascript">
 function render_wiki()
 {
-	<?php $creole_base = site_url() . "/wiki/show/{$project->id}/"; ?>
+	<?php 
+		$creole_base = site_url() . "/wiki/show/{$project->id}/"; 
+		$creole_attachment_base = site_url() . "/wiki/attachment0/{$project->id}/"; 
+	?>
 
 	creole_render_wiki (
 		"issue_show_mainarea_description_pre", 
 		"issue_show_mainarea_description", 
-		"<?=$creole_base?>"
+		"<?=$creole_base?>",
+		"<?=$creole_attachment_base?>"
 	);
 
 	<?php
@@ -453,7 +477,8 @@ function render_wiki()
 			print "creole_render_wiki (
 				'issue_show_mainarea_changes_comment_pre_{$xxx}', 
 				'issue_show_mainarea_changes_comment_{$xxx}', 
-				'{$creole_base}');";
+				'{$creole_base}',
+				'{$creole_attachment_base}');";
 		}
 	}
 	?>
