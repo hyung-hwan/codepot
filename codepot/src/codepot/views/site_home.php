@@ -9,9 +9,10 @@
 function render_wiki()
 {
 	creole_render_wiki (
-		"site_home_mainarea_textpre",
-		"site_home_mainarea_text",
-		"<?=site_url()?>/site/wiki/"
+		"site_home_mainarea_wiki_text",
+		"site_home_mainarea_wiki",
+		"<?=site_url()?>/site/wiki/",
+		"<?=site_url()?>/site/image/"
 	);
 }
 </script>
@@ -204,8 +205,8 @@ foreach ($latest_projects as $project)
 
 </div> <!-- site_home_mainarea_sidebar -->
 
-<div id="site_home_mainarea_text">
-<pre id="site_home_mainarea_textpre" style="visibility: hidden">
+<div id="site_home_mainarea_wiki">
+<pre id="site_home_mainarea_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($site->text); ?>
 </pre>
 </div> <!-- site_home_mainarea_text -->

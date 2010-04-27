@@ -47,8 +47,7 @@ function load_ini ($file)
 		array ('auth_mysql_name',              'string',     ''),
 		array ('auth_mysql_prefix',            'string',     ''),
 
-		array ('ldap_server_host',             'string',     '127.0.0.1'),
-		array ('ldap_server_port',             'integer',    389),
+		array ('ldap_server_uri',              'string',     'ldap://127.0.0.1:389'),
 		array ('ldap_server_protocol_version', 'integer',    3),
 		array ('ldap_userid_format',           'string',     '${userid}'),
 		array ('ldap_password_format',         'string',     '${password}'),
@@ -58,6 +57,7 @@ function load_ini ($file)
 
 		array ('svnrepo_dir',                  'string',      CODEPOT_DEPOT_DIR.'/svnrepo'),
 		array ('file_dir',                     'string',      CODEPOT_DEPOT_DIR.'/files'),
+		array ('attachment_dir',               'string',      CODEPOT_DEPOT_DIR.'/attachments'),
 
 		array ('log_threshold',                'integer',     0),
 

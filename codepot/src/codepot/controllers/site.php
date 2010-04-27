@@ -454,6 +454,25 @@ class Site extends Controller
 		}
 	}
 
+	function image ($xlink = '')
+	{
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ('main/signin');
+
+		$data['login'] = $login;
+
+		$linkname = $this->converter->HexToAscii ($xlink);
+
+		$part = explode (':', $linkname);
+		if (count($part) == 3)
+		{
+			$hexwikiname = $this->converter->AsciiTohex($part[1]);
+			$hexattname = $this->converter->AsciiTohex($part[2]);
+			redirect ("wiki/attachment/{$part[0]}/{$hexwikiname}/{$hexattname}");
+		}
+	}
+
 }
 
 ?>

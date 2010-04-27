@@ -10,9 +10,10 @@
 function render_wiki() 
 {
 	creole_render_wiki (
-		"project_home_textpre", 
-		"project_home_textarea", 
-		"<?=site_url()?>/wiki/show/<?=$project->id?>/"
+		"project_home_mainarea_wiki_text", 
+		"project_home_mainarea_wiki", 
+		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
+		"<?=site_url()?>/wiki/attachment0/<?=$project->id?>/"
 	);
 }
 </script>
@@ -209,11 +210,11 @@ $this->load->view (
 <?=htmlspecialchars($project->name)?>
 </div>
 
-<div id="project_home_textarea">
-<pre id="project_home_textpre" style="visibility: hidden">
+<div id="project_home_mainarea_wiki">
+<pre id="project_home_mainarea_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($project->description); ?>
 </pre>
-</div> <!-- project_home_textarea -->
+</div> <!-- project_home_mainarea_wiki -->
 
 </div> <!-- project_home_mainarea -->
 

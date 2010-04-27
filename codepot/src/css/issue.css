@@ -156,6 +156,7 @@
 	padding-top: 0.2em;
 	padding-bottom: 0.2em;
 	border-bottom: 1px solid lightgray;
+	overflow: auto;
 }
 
 #issue_show_mainarea_changes_table td.details .list {

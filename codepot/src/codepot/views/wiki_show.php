@@ -8,14 +8,19 @@
 <title><?=htmlspecialchars($wiki->name)?></title>
 </head>
 
+<?php
+$hexname = $this->converter->AsciiToHex ($wiki->name);
+?>
+
 <script type="text/javascript">
 function render_wiki()
 {
 
 	creole_render_wiki (
-		"wiki_show_textpre", 
-		"wiki_show_textarea", 
-		"<?=site_url()?>/wiki/show/<?=$project->id?>/"
+		"wiki_show_mainarea_wiki_text", 
+		"wiki_show_mainarea_wiki", 
+		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
+		"<?=site_url()?>/wiki/attachment/<?=$project->id?>/<?=$hexname?>/"
 	);
 }
 </script>
@@ -31,7 +36,6 @@ function render_wiki()
 <!---------------------------------------------------------------------------->
 
 <?php
-$hexname = $this->converter->AsciiToHex ($wiki->name);
 $this->load->view (
 	'projectbar',
 	array (
@@ -62,16 +66,37 @@ $this->load->view (
 <li><?=$this->lang->line('Last updated by')?> <?= $wiki->updatedby ?></li>
 </ul>
 </div>
+
+<?php if (!empty($wiki->attachments)): ?>
+	<div class="box">
+		<div class="boxtitle"><?= $this->lang->line('WIKI_ATTACHMENTS') ?></div>
+		<ul>
+		<?php
+			foreach ($wiki->attachments as $att)
+			{
+				$hexattname = $this->converter->AsciiToHex ($att->name);
+				print '<li>';
+				print anchor (
+					"wiki/attachment/{$project->id}/{$hexname}/{$hexattname}", 
+					htmlspecialchars($att->name)
+				);
+				print '</li>';
+			}
+		?>
+		</ul>
+	</div>
+<?php endif; ?>
+
 </div>
 
 <div class="mainarea" id="wiki_show_mainarea">
 <div class="title"><?=htmlspecialchars($wiki->name)?></div>
 
-<div id="wiki_show_textarea">
-<pre id="wiki_show_textpre" style="visibility: hidden">
+<div id="wiki_show_mainarea_wiki">
+<pre id="wiki_show_mainarea_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($wiki->text); ?>
 </pre>
-</div> <!-- wiki_show_textarea -->
+</div> <!-- wiki_show_mainarea_wiki -->
 
 </div> <!-- wiki_show_mainarea -->
 

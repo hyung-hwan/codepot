@@ -10,9 +10,10 @@
 function render_wiki()
 {
 	creole_render_wiki (
-		"file_show_textpre", 
-		"file_show_textarea", 
-		"<?=site_url()?>/wiki/show/<?=$project->id?>/"
+		"file_show_mainarea_wiki_text", 
+		"file_show_mainarea_wiki", 
+		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
+		"<?=site_url()?>/wiki/attachment0/<?=$project->id?>/"
 	);
 }
 </script>
@@ -76,11 +77,11 @@ $this->load->view (
 <div class="mainarea" id="file_show_mainarea">
 <div class="title"><?=htmlspecialchars($file->name)?></div>
 
-<div id="file_show_textarea">
-<pre id="file_show_textpre" style="visibility: hidden">
+<div id="file_show_mainarea_wiki">
+<pre id="file_show_mainarea_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($file->description); ?>
 </pre>
-</div> <!-- file_show_textarea -->
+</div> <!-- file_show_mainarea_wiki -->
 
 </div> <!-- file_show_mainarea -->
 

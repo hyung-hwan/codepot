@@ -91,7 +91,5 @@ $lang['MSG_NO_ISSUES_AVAIL'] = 'Tidak ada issue';
 $lang['MSG_NO_SUCH_FILE'] = 'No such file';
 $lang['MSG_NO_SUCH_ISSUE'] = 'No such issue';
 $lang['MSG_NO_SUCH_PROJECT'] = 'No such project';
-$lang['MSG_NO_SUCH_WIKI_PAGE'] = 'No such wiki page';
-$lang['MSG_NO_WIKIS_AVAIL'] = 'Tidak ada halaman wiki tersedia';
 $lang['MSG_SURE_TO_DELETE_THIS'] = "Saya yakin untuk menghapus";
 ?>

@@ -50,6 +50,24 @@ CREATE TABLE wiki (
 		ON DELETE RESTRICT ON UPDATE CASCADE
 ) charset=utf8 engine=InnoDB;	
 
+CREATE TABLE wiki_attachment (
+	projectid  VARCHAR(32)   NOT NULL,
+	wikiname   VARCHAR(255)  NOT NULL,
+	name       VARCHAR(255)  NOT NULL,
+	encname    VARCHAR(255)  NOT NULL,
+
+	createdon  DATETIME,
+	createdby  VARCHAR(32),
+
+	UNIQUE KEY wiki_attachment_id (projectid, wikiname, name),
+
+	CONSTRAINT wiki_attachment_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+
+	CONSTRAINT wiki_attachment_wikiid FOREIGN KEY (projectid,wikiname) REFERENCES wiki(projectid,name)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+) charset=utf8 engine=InnoDB;	
+
 CREATE TABLE issue (
 	projectid     VARCHAR(32)   NOT NULL,
 	id            BIGINT        NOT NULL,

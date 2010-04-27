@@ -1,6 +1,8 @@
 <?php
 $lang['Administration'] = 'Administration';
 $lang['All'] = 'All';
+$lang['Attachment'] = 'Attachment';
+$lang['Attachments'] = 'Attachments';
 $lang['Author'] = 'Author';
 $lang['Blame'] = 'Blame';
 $lang['Cancel'] = 'Cancel';
@@ -41,6 +43,7 @@ $lang['MD5'] = 'MD5';
 $lang['Member'] = 'Member';
 $lang['Members'] = 'Members';
 $lang['Message'] = 'Message';
+$lang['More'] = 'More';
 $lang['My issues'] = 'My issues';
 $lang['My projects'] = 'My projects';
 $lang['Name'] = 'Name';
@@ -93,7 +96,5 @@ $lang['MSG_NO_ISSUES_AVAIL'] = 'No outstanding issues';
 $lang['MSG_NO_SUCH_FILE'] = 'No such file';
 $lang['MSG_NO_SUCH_ISSUE'] = 'No such issue';
 $lang['MSG_NO_SUCH_PROJECT'] = 'No such project';
-$lang['MSG_NO_SUCH_WIKI_PAGE'] = 'No such wiki page';
-$lang['MSG_NO_WIKIS_AVAIL'] = 'No wiki pages available';
 $lang['MSG_SURE_TO_DELETE_THIS'] = "I'm sure to delete this";
 ?>

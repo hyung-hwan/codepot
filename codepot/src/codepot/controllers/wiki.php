@@ -20,7 +20,7 @@ class Wiki extends Controller
 
 		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG);
-
+		$this->lang->load ('wiki', CODEPOT_LANG);
 	}
 
 	function home ($projectid = '')
@@ -98,7 +98,8 @@ class Wiki extends Controller
 		}
 		else
 		{
-			$link = $this->wikihelper->parseLink ($name, $projectid, $this->converter);
+			$link = $this->wikihelper->parseLink (
+				$name, $projectid, $this->converter);
 			if ($link === FALSE)
 			{
 				$data['project'] = $project;
@@ -132,9 +133,8 @@ class Wiki extends Controller
 				else
 				{
 					$data['project'] = $project;
-					$data['message'] = 
-						$this->lang->line('MSG_NO_SUCH_WIKI_PAGE') . 
-						" - {$name}";
+					$data['message'] = sprintf (
+						$this->lang->line('WIKI_MSG_NO_SUCH_PAGE'), $name);
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 			}
@@ -157,10 +157,126 @@ class Wiki extends Controller
 		$this->_show_wiki ($projectid, $name, FALSE);
 	}
 
+	function attachment0 ($projectid = '', $target = '')
+	{
+		//$target => projectid:wikiname:attachment
+
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ('main/signin');
+
+		if ($target == '')
+		{
+			$data['login'] = $login;
+			$data['message'] = 'INVALID PARAMETERS';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$target = $this->converter->HexToAscii ($target);
+		$part = explode (':', $target);
+		if (count($part) == 3)
+		{
+			if ($part[0] == '') $part[0] = $projectid;	
+			$this->_handle_attachment ($login, $part[0], $part[1], $part[2]);
+		}
+	}
+
+	function attachment ($projectid = '', $wikiname = '', $name = '')
+	{
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ('main/signin');
+
+		if ($wikiname == '' || $name == '')
+		{
+			$data['login'] = $login;
+			$data['message'] = 'INVALID PARAMETERS';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$wikiname = $this->converter->HexToAscii ($wikiname);
+		$name = $this->converter->HexToAscii ($name);
+
+		$part = explode (':', $name);
+		if (count($part) == 3)
+		{
+			if ($part[0] != '') $projectid = $part[0];
+			if ($part[1] != '') $wikiname = $part[1];
+			if ($part[2] != '') $name = $part[2];
+		}
+
+		$this->_handle_attachment ($login, $projectid, $wikiname, $name);
+	}
+
+	function _handle_attachment ($login, $projectid, $wikiname, $name)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('WikiModel', 'wikis');
+
+		$data['login'] = $login;
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE)
+		{
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else if ($project === NULL)
+		{
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			$att = $this->wikis->getAttachment ($login['id'], $project, $wikiname, $name);
+			if ($att == FALSE)
+			{
+				$data['project'] = $project;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+				return;
+			}
+			else if ($att === NULL)
+			{
+				$data['project'] = $project;
+				$data['message'] = sprintf (
+					$this->lang->line('MSG_WIKI_NO_SUCH_ATTACHMENT'), $name);
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+
+			$path = CODEPOT_ATTACHMENT_DIR . "/{$att->encname}";
+				
+			$mtime = @filemtime ($path);
+			if ($mtime === FALSE) $mtime = time();
+			header('Last-Modified: ' . gmdate("D, d M Y H:i:s", $mtime) . ' GMT');
+			header ('Content-Type: ' . mime_content_type($path));
+			header("Content-Disposition: filename={$name}");
+			$len = @filesize($path);
+			if ($len !== FALSE) header("Content-Length: {$len}");
+			//header("Content-Transfer-Encoding: binary");
+			flush ();
+
+			$x = @readfile($path);
+			if ($x === FALSE)
+			{
+				$data['project'] = $project;
+				$data['message'] = sprintf (
+					$this->lang->line('MSG_WIKI_FAILED_TO_READ_ATTACHMENT'), $name);
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+		}
+	}
+
 	function _edit_wiki ($projectid, $name, $mode)
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
+		$this->load->library ('upload');
+
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('WikiModel', 'wikis');
 
@@ -208,8 +324,38 @@ class Wiki extends Controller
 			if ($this->input->post('wiki'))
 			{
 				$wiki->projectid = $this->input->post('wiki_projectid');
+
 				$wiki->name = $this->input->post('wiki_name');
 				$wiki->text = $this->input->post('wiki_text');
+
+				$wiki->delete_attachments = array();
+				$delatts = $this->input->post('wiki_delete_attachment');
+
+				if (!empty($delatts))
+				{
+					foreach ($delatts as $att)
+					{
+						$atpos = strpos ($att, '@');	
+						if ($atpos === FALSE) continue;
+
+						$attinfo['name'] = $this->converter->HexToAscii(substr ($att, 0, $atpos));
+						$attinfo['encname'] = $this->converter->HexToAscii(substr ($att, $atpos + 1));
+
+						array_push (
+							$wiki->delete_attachments, 
+							(object)$attinfo
+						);
+					}
+				}
+
+				$wiki->attachments = $this->wikis->getAttachments (
+					$login['id'], $project, $wiki->name);
+				if ($wiki->attachments === FALSE)
+				{
+					$data['message'] = 'DATABASE ERROR';
+					$this->load->view ($this->VIEW_ERROR, $data);	
+					return;
+				}
 
 				if ($this->form_validation->run())
 				{
@@ -221,17 +367,38 @@ class Wiki extends Controller
 					}
 					else
 					{
+						list($ret,$extra) = 
+							$this->_upload_attachments ('wiki_new_attachment');
+						if ($ret === FALSE)
+						{
+							$data['wiki'] = $wiki;
+							$data['message'] = $extra;
+							$this->load->view ($this->VIEW_EDIT, $data);
+							return;
+						}
+
+						$wiki->new_attachments = $extra;
+
 						$result = ($mode == 'update')?
 							$this->wikis->update ($login['id'], $wiki):
 							$this->wikis->create ($login['id'], $wiki);
+
 						if ($result === FALSE)
 						{
+							foreach ($extra as $att) 
+								@unlink ($att['fullencpath']);
+
 							$data['message'] = 'DATABASE ERROR';
 							$data['wiki'] = $wiki;
 							$this->load->view ($this->VIEW_EDIT, $data);	
 						}
 						else
 						{
+							// delete attachments after database operation
+							// as 'delete' is not easy to restore.
+							foreach ($wiki->delete_attachments as $att)
+								@unlink (CODEPOT_ATTACHMENT_DIR . "/{$att->encname}");
+
 							redirect ("wiki/show/{$project->id}/" . 
 								$this->converter->AsciiToHex($wiki->name));
 						}
@@ -257,7 +424,7 @@ class Wiki extends Controller
 					else if ($wiki == NULL)
 					{
 						$data['message'] = 
-							$this->lang->line('MSG_NO_SUCH_WIKI_PAGE') . 
+							$this->lang->line('WIKI_MSG_NO_SUCH_PAGE') . 
 							" - {$name}";
 						$this->load->view ($this->VIEW_ERROR, $data);
 					}
@@ -383,9 +550,8 @@ class Wiki extends Controller
 				}
 				else if ($wiki === NULL)
 				{
-					$data['message'] = 
-						$this->lang->line('MSG_NO_SUCH_WIKI_PAGE') . 
-						" - {$name}";
+					$data['message'] = sprintf (
+						$this->lang->line('WIKI_MSG_NO_SUCH_PAGE'), $name);
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 				else
@@ -397,5 +563,62 @@ class Wiki extends Controller
 			}
 
 		}
+	}
+
+	function _upload_attachments ($id)
+	{
+		$attno = 0;
+		$count = count($_FILES);
+
+		$attachments = array ();
+
+		for ($i = 0; $i < $count; $i++)
+		{	
+			$field_name = "{$id}_{$i}";
+
+			if (array_key_exists($field_name, $_FILES) &&
+			    $_FILES[$field_name]['name'] != '')
+			{
+				$fname = $_FILES[$field_name]['name'];
+				if (strpos ($fname, ':') !== FALSE)
+				{
+					while ($attno > 0)
+						@unlink ($attachments[$attno--]['fullencpath']);
+					return array(FALSE,$this->lang->line('WIKI_MSG_ATTACHMENT_NAME_NO_COLON'));
+				}
+
+				$ext = substr ($fname, strrpos ($fname, '.') + 1);
+
+				// delete all \" instances ...
+				$_FILES[$field_name]['type'] =
+					str_replace('\"', '', $_FILES[$field_name]['type']);
+				// delete all \\ instances ...
+				$_FILES[$field_name]['type'] =
+					str_replace('\\', '', $_FILES[$field_name]['type']);
+
+				$config['allowed_types'] = $ext;
+				$config['upload_path'] = CODEPOT_ATTACHMENT_DIR;
+				$config['max_size'] = CODEPOT_MAX_UPLOAD_SIZE;
+				$config['encrypt_name'] = TRUE;
+
+				$this->upload->initialize ($config);
+	
+				if (!$this->upload->do_upload ($field_name))
+				{
+					while ($attno > 0)
+						@unlink ($attachments[$attno--]['fullencpath']);
+					return array(FALSE,$this->upload->display_errors('',''));
+				}
+
+				$upload = $this->upload->data ();
+
+				$attachments[$attno++] = array (
+					'name' => $fname,
+					'encname' => $upload['file_name'], 
+					'fullencpath' => $upload['full_path']);
+			}
+		}
+
+		return array(TRUE,$attachments);
 	}
 }

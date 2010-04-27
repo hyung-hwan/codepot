@@ -45,7 +45,7 @@ $this->load->view (
 <?php
 if (empty($wikis))
 {
-	print $this->lang->line('MSG_NO_WIKIS_AVAIL');
+	print $this->lang->line('WIKI_MSG_NO_PAGES_AVAILABLE');
 }
 else
 {

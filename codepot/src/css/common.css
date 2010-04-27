@@ -284,6 +284,11 @@ body {
 
 .content .mainarea p.wiki {
 	/* use the default for normal cases */
+	overflow: auto;
+}
+
+.content .mainarea p.wiki img {
+	max-width: 100%;
 }
 
 .content .mainarea table p.wiki {
