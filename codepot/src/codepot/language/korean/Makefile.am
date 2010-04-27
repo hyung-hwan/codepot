@@ -5,7 +5,8 @@ www_DATA =  \
 	issue_lang.php \
 	index.html \
 	project_lang.php \
-	site_lang.php 
+	site_lang.php \
+	wiki_lang.php
 
 EXTRA_DIST = $(www_DATA)
 

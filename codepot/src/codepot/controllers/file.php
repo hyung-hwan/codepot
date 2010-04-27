@@ -302,9 +302,8 @@ class File extends Controller
 							$md5sum = md5_file ($upload['full_path']);
 							if ($md5sum === FALSE)
 							{
-								unlink (CODEPOT_FILE_DIR . "/{$file->encname}");
-
-								$data['message'] = "CANNOT GET MD5SUM OF FILE - {$file->name}";
+								@unlink ($upload['full_path']);
+								$data['message'] = "CANNOT GET MD5SUM - {$file->name}";
 								$data['file'] = $file;
 								$this->load->view ($this->VIEW_EDIT, $data);
 							}

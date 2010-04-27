@@ -1,6 +1,8 @@
 <?php
 $lang['Administration'] = '관리';
 $lang['All'] = '모두';
+$lang['Attachment'] = '첨부';
+$lang['Attachments'] = '첨부';
 $lang['Author'] = '저자';
 $lang['Blame'] = '책임전가';
 $lang['Cancel'] = '취소';
@@ -41,6 +43,7 @@ $lang['MD5'] = 'MD5';
 $lang['Member'] = '구성원';
 $lang['Members'] = '구성원';
 $lang['Message'] = '메시지';
+$lang['More'] = '더';
 $lang['My issues'] = '내 이슈';
 $lang['My projects'] = '내 프로젝트';
 $lang['Name'] = '이름';
@@ -93,7 +96,5 @@ $lang['MSG_NO_ISSUES_AVAIL'] = '이슈항목이 없습니다';
 $lang['MSG_NO_SUCH_FILE'] = '파일이 없습니다';
 $lang['MSG_NO_SUCH_ISSUE'] = '이슈항목이 없습니다';
 $lang['MSG_NO_SUCH_PROJECT'] = '프로젝트가 없습니다';
-$lang['MSG_NO_SUCH_WIKI_PAGE'] = '위키페이지가 없습니다';
-$lang['MSG_NO_WIKIS_AVAIL'] = '사용가능한 위키페이지가 없습니다';
 $lang['MSG_SURE_TO_DELETE_THIS'] = '반드시 이것을 삭제하고 싶어요';
 ?>

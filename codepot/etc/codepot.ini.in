@@ -25,8 +25,7 @@ database_prefix = ""
 ; ${userid} and ${password} to represent the actual user ID
 ; and the password respectively. 
 ;------------------------------------------------------------------------------
-ldap_server_host = "127.0.0.1"
-ldap_server_port = "389"
+ldap_server_uri = "ldap://127.0.0.1:389"
 ldap_server_protocol_version = "3"
 ldap_userid_format = "${userid}"
 ldap_password_format = "${password}"
@@ -124,6 +123,11 @@ svnrepo_dir = "@DEPOTDIR@/svnrepo"
 ; directory to store uploaded files
 ;------------------------------------------------------------------------------
 file_dir = "@DEPOTDIR@/files"
+
+;------------------------------------------------------------------------------
+; directory to store wiki attachments
+;------------------------------------------------------------------------------
+attachment_dir = "@DEPOTDIR@/attachments"
 
 ;------------------------------------------------------------------------------
 ; log threshold

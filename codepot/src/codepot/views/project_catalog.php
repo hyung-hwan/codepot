@@ -47,6 +47,7 @@ $(function () {
 	$("#project_catalog_mainarea_search_button").button().click (
 		function () { 
 			$('#project_catalog_mainarea_search_form').dialog('open'); 
+			return false;
 		}
 	);
 });

@@ -342,7 +342,19 @@ var Url = {
         img: { regex: rx.img,
             build: function(node, r, options) {
                 var img = document.createElement('img');
-                img.src = r[1];
+
+                if (r[1].match(rx.uriPrefix))
+		{
+                	img.src = r[1];
+		}
+		else
+		{
+			var tmp = r[1].replace(/~(.)/g, '$1');
+			tmp = Url.encode (tmp);
+			img.src = options && options.imgFormat? 
+				formatLink (tmp, options.imgFormat): tmp;
+		}
+
                 img.alt = r[2] === undefined
                     ? (options && options.defaultImageText ? options.defaultImageText : '')
                     : r[2].replace(/~(.)/g, '$1');
@@ -474,7 +486,7 @@ Parse.Simple.Creole.prototype = new Parse.Simple.Base();
 
 Parse.Simple.Creole.prototype.constructor = Parse.Simple.Creole;
 
-function creole_render_wiki (inputid, outputid, linkbase)
+function creole_render_wiki (inputid, outputid, linkbase, imgbase)
 {
         function $(id) { return document.getElementById(id); }
 
@@ -495,7 +507,8 @@ function creole_render_wiki (inputid, outputid, linkbase)
                         WikiCreole: 'http://www.wikicreole.org/wiki/',
                         Wikipedia: 'http://en.wikipedia.org/wiki/'
                 },*/
-                linkFormat: linkbase
+                linkFormat: linkbase,
+		imgFormat: imgbase
         } );
 
         var xinput = decodeEntities(input.innerHTML);

@@ -9,9 +9,10 @@
 function render_wiki()
 {
 	creole_render_wiki (
-		"site_show_mainarea_textpre",
-		"site_show_mainarea_text",
-		"<?=site_url()?>/site/wiki/"
+		"site_show_mainarea_wiki_text",
+		"site_show_mainarea_wiki",
+		"<?=site_url()?>/site/wiki/",
+		"<?=site_url()?>/site/image/"
 	);
 }
 </script>
@@ -67,8 +68,8 @@ $this->load->view (
 <?=htmlspecialchars($site->name)?> (<?=htmlspecialchars($site->id)?>)
 </div>
 
-<div id="site_show_mainarea_text">
-<pre id="site_show_mainarea_textpre" style="visibility: hidden">
+<div id="site_show_mainarea_wiki">
+<pre id="site_show_mainarea_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($site->text); ?>
 </pre>
 </div> <!-- site_show_mainarea_text -->

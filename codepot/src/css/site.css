@@ -45,8 +45,20 @@
 }
 
 /*----------------------------------------------- 
+ * site show view 
+ *-----------------------------------------------*/
+#site_show_mainarea_text p.wiki {
+	overflow: auto;
+}
+
+#site_show_mainarea_text img {
+	max-width: 100%;
+}
+
+/*----------------------------------------------- 
  * site edit view 
  *-----------------------------------------------*/
 #site_edit_form .text {
 	width: 100%;
 }
+
