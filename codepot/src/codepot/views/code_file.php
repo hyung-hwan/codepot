@@ -18,9 +18,9 @@
 <script type="text/javascript">
 $(function () {
 	if ($("#code_file_mainarea_result_info").is(":visible"))
-		btn_label = "<?=$this->lang->line('CODE_HIDE_DETAILS')?>";
+		btn_label = "<?=$this->lang->line('Hide details')?>";
 	else
-		btn_label = "<?=$this->lang->line('CODE_SHOW_DETAILS')?>";
+		btn_label = "<?=$this->lang->line('Show details')?>";
 	
 	btn = $("#code_file_mainarea_details_button").button({"label": btn_label}).click (function () {
 		
@@ -28,13 +28,13 @@ $(function () {
 		{
 			$("#code_file_mainarea_result_info").hide("blind",{},200);
 			$("#code_file_mainarea_details_button").button(
-				"option", "label", "<?=$this->lang->line('CODE_SHOW_DETAILS')?>");
+				"option", "label", "<?=$this->lang->line('Show details')?>");
 		}
 		else
 		{
 			$("#code_file_mainarea_result_info").show("blind",{},200);
 			$("#code_file_mainarea_details_button").button(
-				"option", "label", "<?=$this->lang->line('CODE_HIDE_DETAILS')?>");
+				"option", "label", "<?=$this->lang->line('Hide details')?>");
 		}
 	});
 });

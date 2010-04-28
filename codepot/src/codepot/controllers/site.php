@@ -34,7 +34,7 @@ class Site extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		$this->load->model ('SiteModel', 'sites');
 		$this->load->model ('ProjectModel', 'projects');
@@ -92,7 +92,7 @@ class Site extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		$this->load->model ('SiteModel', 'sites');
 
@@ -116,7 +116,7 @@ class Site extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		$this->load->model ('SiteModel', 'sites');
 
@@ -128,18 +128,17 @@ class Site extends Controller
 			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
-			return;
 		}
-
-		if ($site === NULL)
+		else if ($site === NULL)
 		{
-			$data['message'] = "NO SUCH SITE - {$siteid}";
+			$data['message'] = sprintf ($this->lang->line('SITE_MSG_NO_SUCH_SITE'), $siteid);
 			$this->load->view ($this->VIEW_ERROR, $data);
-			return;
 		}
-
-		$data['site'] = $site;
-		$this->load->view ($this->VIEW_SHOW, $data);
+		else
+		{
+			$data['site'] = $site;
+			$this->load->view ($this->VIEW_SHOW, $data);
+		}
 	}
 
 	function _edit_site ($site, $mode, $login)
@@ -219,12 +218,13 @@ class Site extends Controller
 		$this->load->model ('SiteModel', 'sites');
 
 		$login = $this->login->getUser ();
-		if ($login['id'] == '') redirect ('main/signin');
+		if ($login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		if (!$login['sysadmin?'])
 		{
 			$data['login'] = $login;
-			$data['message'] = "NO PERMISSION";
+			$data['message'] = $this->lang->line('SITE_MSG_ADMINISTRATORSHIP_REQUIRED');
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -242,7 +242,8 @@ class Site extends Controller
 		$this->load->model ('SiteModel', 'sites');
 
 		$login = $this->login->getUser ();
-		if ($login['id'] == '') redirect ('main/signin');
+		if ($login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		$site = $this->sites->get ($siteid);
 		if ($site === FALSE)
@@ -254,13 +255,13 @@ class Site extends Controller
 		else if ($site === NULL)
 		{
 			$data['login'] = $login;
-			$data['message'] = "NO SUCH SITE - $siteid";
+			$data['message'] = sprintf ($this->lang->line('SITE_MSG_NO_SUCH_SITE'), $siteid);
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if (!$login['sysadmin?'])
 		{
 			$data['login'] = $login;
-			$data['message'] = "NO PERMISSION - $siteid";
+			$data['message'] = $this->lang->line('SITE_MSG_ADMINISTRATORSHIP_REQUIRED');
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -333,7 +334,8 @@ class Site extends Controller
 		$this->load->model ('SiteModel', 'sites');
 
 		$login = $this->login->getUser ();
-		if ($login['id'] == '') redirect ('main/signin');
+		if ($login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		$site = $this->sites->get ($siteid);
 		if ($site === FALSE)
@@ -345,13 +347,13 @@ class Site extends Controller
 		else if ($site === NULL)
 		{
 			$data['login'] = $login;
-			$data['message'] = "NO SUCH SITE - $siteid";
+			$data['message'] = sprintf ($this->lang->line('SITE_MSG_NO_SUCH_SITE'), $siteid);
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if (!$login['sysadmin?'])
 		{
 			$data['login'] = $login;
-			$data['message'] = "NO PERMISSION - $siteid";
+			$data['message'] = $this->lang->line('SITE_MSG_ADMINISTRATORSHIP_REQUIRED');
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -433,7 +435,7 @@ class Site extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		$data['login'] = $login;
 
@@ -458,7 +460,7 @@ class Site extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		$data['login'] = $login;
 

@@ -35,7 +35,7 @@ class Code extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
@@ -112,7 +112,7 @@ class Code extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
@@ -176,7 +176,7 @@ class Code extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
@@ -229,7 +229,7 @@ class Code extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
@@ -282,7 +282,7 @@ class Code extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);

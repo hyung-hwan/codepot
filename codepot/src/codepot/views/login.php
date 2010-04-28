@@ -45,7 +45,7 @@ $this->load->view (
 
 <?php if ($message != "") print "<div id='project_create_message' class='form_message'>$message</div>"; ?>
 
-<?=form_open('main/index/')?>
+<?=form_open('main/signin/')?>
 	<?=form_fieldset('')?>
 
 		<?=form_hidden('user_url', set_value ('user_url', $user_url))?>

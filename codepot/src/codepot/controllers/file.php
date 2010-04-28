@@ -18,6 +18,7 @@ class File extends Controller
 
 		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG);
+		$this->lang->load ('file', CODEPOT_LANG);
 	}
 
 	function home ($projectid = "")
@@ -27,7 +28,7 @@ class File extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$project = $this->projects->get ($projectid);
@@ -68,7 +69,7 @@ class File extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
@@ -98,9 +99,8 @@ class File extends Controller
 			else if ($file === NULL)
 			{
 				$data['project'] = $project;
-				$data['message'] =
-					$this->lang->line('MSG_NO_SUCH_FILE').
-					" - {$name}";
+				$data['message'] = sprintf (
+					$this->lang->line('FILE_MSG_NO_SUCH_FILE'), $name);
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
 			else
@@ -119,7 +119,7 @@ class File extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
@@ -148,7 +148,7 @@ class File extends Controller
 			}
 			else if ($file === NULL)
 			{
-				redirect ('file/create/'. $projectid . '/' . 
+				redirect ("file/create/{$projectid}/" . 
 					$this->converter->AsciiToHex($name));
 			}
 			else
@@ -197,7 +197,8 @@ class File extends Controller
 		$this->load->model ('FileModel', 'files');
 
 		$login = $this->login->getUser ();
-		if ($login['id'] == '') redirect ('main');
+		if ($login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
@@ -219,7 +220,8 @@ class File extends Controller
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
 			$data['project'] = $project;
-			$data['message'] = "NO PERMISSION - $projectid";
+			$data['message'] = sprintf (
+				$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -262,13 +264,22 @@ class File extends Controller
 						}
 						else 
 						{
-							redirect ('file/show/' . $project->id . '/' .
+							redirect ("file/show/{$project->id}/" .
 								$this->converter->AsciiToHex($file->name));
 						}
 					}
 					else
 					{
 						$fname = $_FILES['file_name']['name'];
+
+						if (strpos ($fname, ':') !== FALSE)
+						{
+							$data['message'] = $this->lang->line ('FILE_MSG_NAME_NO_COLON');
+							$data['file'] = $file;
+							$this->load->view ($this->VIEW_EDIT, $data);
+							return;
+						}
+
 						$ext = substr ($fname, strrpos ($fname, '.') + 1);
 
 						// delete all \" instances ... 
@@ -320,7 +331,7 @@ class File extends Controller
 								}
 								else 
 								{
-									redirect ('file/show/' . $project->id . '/' .
+									redirect ("file/show/{$project->id}/" .
 										$this->converter->AsciiToHex($file->name));
 								}
 							}
@@ -346,7 +357,8 @@ class File extends Controller
 					}
 					else if ($file == NULL)
 					{
-						$data['message'] = "NO SUCH FILE - $name";
+						$data['message'] = sprintf 
+							($this->lang->line('FILE_MSG_NO_SUCH_FILE'), $name);
 						$this->load->view ($this->VIEW_ERROR, $data);
 					}
 					else
@@ -390,7 +402,8 @@ class File extends Controller
 		$this->load->model ('FileModel', 'files');
 
 		$login = $this->login->getUser ();
-		if ($login['id'] == '') redirect ('main');
+		if ($login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
@@ -412,7 +425,8 @@ class File extends Controller
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
 			$data['project'] = $project;
-			$data['message'] = "NO PERMISSION - $projectid";
+			$data['message'] = sprintf (
+				$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -468,7 +482,8 @@ class File extends Controller
 				}
 				else if ($file === NULL)
 				{
-					$data['message'] = "NO SUCH FILE - $name";
+					$data['message'] = sprintf 
+						($this->lang->line('FILE_MSG_NO_SUCH_FILE'), $name);
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 				else

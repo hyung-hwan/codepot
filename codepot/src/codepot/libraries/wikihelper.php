@@ -83,6 +83,17 @@ class WikiHelper
 
 					return FALSE;
 				}
+				else if ($ex[0] == '__WIKI__')
+				{
+					// __WIKI__:projectid:wikiname:attachment
+
+					$link->type = $this->_trans_reserved ($ex[0]);
+					$link->target = 'attachment0';
+					$link->projectid = ($ex[1] == '')? $projectid: $ex[1];
+					$link->extra = $converter->AsciiToHex ("{$link->projectid}:{$ex[2]}:{$ex[3]}");
+
+					return $link;
+				}
 			}
 		}
 
@@ -91,7 +102,10 @@ class WikiHelper
 
 	function _trans_reserved ($name)
 	{
-		return substr (strtolower ($name), 2, strlen($name) -  4);
+		// trim off leading and trailing double underscores blindly.
+		// actually it trims off the first and the last two characters
+		// each.
+		return substr (strtolower($name), 2, strlen($name) -  4);
 	}
 
 	function _is_reserved ($name, $exact)

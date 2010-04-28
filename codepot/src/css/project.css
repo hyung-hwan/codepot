@@ -5,32 +5,32 @@
 /*----------------------------------------------- 
  * project home view 
  *-----------------------------------------------*/
-#project_home_mainarea_sidebar_log_table {
+#project_home_sidebar_log_table {
 	border-collapse: collapse;
 }
 
-#project_home_mainarea_sidebar_log_table tr.odd {
+#project_home_sidebar_log_table tr.odd {
 	background-color: #bbccef;
 }
 
-#project_home_mainarea_sidebar_log_table tr.odd td.date {
+#project_home_sidebar_log_table tr.odd td.date {
 	width: 1%;
 	white-space: nowrap;
 }
 
-#project_home_mainarea_sidebar_log_table tr.odd td.object {
+#project_home_sidebar_log_table tr.odd td.object {
 	white-space: nowrap;
 }
 
-#project_home_mainarea_sidebar_log_table tr.even {
+#project_home_sidebar_log_table tr.even {
 	background-color: inherit;
 }
 
-#project_home_mainarea_sidebar_log_table tr.even td.details .description {
+#project_home_sidebar_log_table tr.even td.details .description {
 	font-style: italic;
 }
 
-#project_home_mainarea_sidebar_log_table tr.even td.details pre.message {
+#project_home_sidebar_log_table tr.even td.details pre.message {
 	border: 0;
 	margin: 1px;
 	background-color: inherit;
