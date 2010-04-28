@@ -30,7 +30,7 @@ class Wiki extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$project = $this->projects->get ($projectid);
@@ -71,7 +71,7 @@ class Wiki extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		if ($name == '')
@@ -105,44 +105,53 @@ class Wiki extends Controller
 				$data['project'] = $project;
 				$data['message'] = "INVALID LINK - {$name}";
 				$this->load->view ($this->VIEW_ERROR, $data);
-				return;
 			}
 			else if ($link !== NULL)
 			{
+				// redirect to  a special link like __WIKI__:projectid:wikiname
 				if ($link->extra === NULL)
 					redirect ("{$link->type}/{$link->target}/{$link->projectid}");
 				else
 					redirect ("{$link->type}/{$link->target}/{$link->projectid}/{$link->extra}");
-				return;
 			}
-
-			$wiki = $this->wikis->get ($login['id'], $project, $name);
-			if ($wiki === FALSE)
+			else
 			{
-				$data['project'] = $project;
-				$data['message'] = 'DATABASE ERROR';
-				$this->load->view ($this->VIEW_ERROR, $data);
-			}
-			else if ($wiki === NULL)
-			{
-				if ($create)
+				$wiki = $this->wikis->get ($login['id'], $project, $name);
+				if ($wiki === FALSE)
 				{
-					redirect ("wiki/create/{$projectid}/" . 
-						$this->converter->AsciiToHex($name));
+					$data['project'] = $project;
+					$data['message'] = 'DATABASE ERROR';
+					$this->load->view ($this->VIEW_ERROR, $data);
+				}
+				else if ($wiki === NULL)
+				{
+					if ($create)
+					{
+						// Redirecting to the 'new' page is determined by the project membership
+						// when the wiki page is not found.
+						$create = ($login['sysadmin?'] ||
+						           $this->projects->projectHasMember($project->id, $login['id']));
+					}
+
+					if ($create)
+					{
+						redirect ("wiki/create/{$projectid}/" . 
+							$this->converter->AsciiToHex($name));
+					}
+					else
+					{
+						$data['project'] = $project;
+						$data['message'] = sprintf (
+							$this->lang->line('WIKI_MSG_NO_SUCH_PAGE'), $name);
+						$this->load->view ($this->VIEW_ERROR, $data);
+					}
 				}
 				else
 				{
 					$data['project'] = $project;
-					$data['message'] = sprintf (
-						$this->lang->line('WIKI_MSG_NO_SUCH_PAGE'), $name);
-					$this->load->view ($this->VIEW_ERROR, $data);
+					$data['wiki'] = $wiki;
+					$this->load->view ($this->VIEW_SHOW, $data);
 				}
-			}
-			else
-			{
-				$data['project'] = $project;
-				$data['wiki'] = $wiki;
-				$this->load->view ($this->VIEW_SHOW, $data);
 			}
 		}
 	}
@@ -163,7 +172,7 @@ class Wiki extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		if ($target == '')
 		{
@@ -186,7 +195,7 @@ class Wiki extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		if ($wikiname == '' || $name == '')
 		{
@@ -233,40 +242,42 @@ class Wiki extends Controller
 		else
 		{
 			$att = $this->wikis->getAttachment ($login['id'], $project, $wikiname, $name);
-			if ($att == FALSE)
+			if ($att === FALSE)
 			{
 				$data['project'] = $project;
 				$data['message'] = 'DATABASE ERROR';
 				$this->load->view ($this->VIEW_ERROR, $data);
-				return;
 			}
 			else if ($att === NULL)
 			{
 				$data['project'] = $project;
 				$data['message'] = sprintf (
-					$this->lang->line('MSG_WIKI_NO_SUCH_ATTACHMENT'), $name);
+					$this->lang->line('WIKI_MSG_NO_SUCH_ATTACHMENT'), $name);
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
-
-			$path = CODEPOT_ATTACHMENT_DIR . "/{$att->encname}";
-				
-			$mtime = @filemtime ($path);
-			if ($mtime === FALSE) $mtime = time();
-			header('Last-Modified: ' . gmdate("D, d M Y H:i:s", $mtime) . ' GMT');
-			header ('Content-Type: ' . mime_content_type($path));
-			header("Content-Disposition: filename={$name}");
-			$len = @filesize($path);
-			if ($len !== FALSE) header("Content-Length: {$len}");
-			//header("Content-Transfer-Encoding: binary");
-			flush ();
-
-			$x = @readfile($path);
-			if ($x === FALSE)
+			else
 			{
-				$data['project'] = $project;
-				$data['message'] = sprintf (
-					$this->lang->line('MSG_WIKI_FAILED_TO_READ_ATTACHMENT'), $name);
-				$this->load->view ($this->VIEW_ERROR, $data);
+				$path = CODEPOT_ATTACHMENT_DIR . "/{$att->encname}";
+					
+				$mtime = @filemtime ($path);
+				if ($mtime === FALSE) $mtime = time();
+				header ('Content-Type: ' . mime_content_type($path));
+				header ('Expires: ' . gmdate("D, d M Y H:i:s", time() + 60*60*24*30) . ' GMT');  // 30days
+				header ('Last-Modified: ' . gmdate("D, d M Y H:i:s", $mtime) . ' GMT');
+				header ("Content-Disposition: filename={$name}");
+				$len = @filesize($path);
+				if ($len !== FALSE) header("Content-Length: {$len}");
+				//header("Content-Transfer-Encoding: binary");
+				flush ();
+
+				$x = @readfile($path);
+				if ($x === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = sprintf (
+						$this->lang->line('WIKI_MSG_FAILED_TO_READ_ATTACHMENT'), $name);
+					$this->load->view ($this->VIEW_ERROR, $data);
+				}
 			}
 		}
 	}
@@ -281,7 +292,8 @@ class Wiki extends Controller
 		$this->load->model ('WikiModel', 'wikis');
 
 		$login = $this->login->getUser ();
-		if ($login['id'] == '') redirect ('main');
+		if ($login['id'] == '') 
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
@@ -303,7 +315,8 @@ class Wiki extends Controller
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
 			$data['project'] = $project;
-			$data['message'] = "NO PERMISSION - $projectid";
+			$data['message'] = sprintf (
+				$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -324,44 +337,58 @@ class Wiki extends Controller
 			if ($this->input->post('wiki'))
 			{
 				$wiki->projectid = $this->input->post('wiki_projectid');
-
 				$wiki->name = $this->input->post('wiki_name');
 				$wiki->text = $this->input->post('wiki_text');
-
+				$wiki->attachments = array();
 				$wiki->delete_attachments = array();
-				$delatts = $this->input->post('wiki_delete_attachment');
-
-				if (!empty($delatts))
-				{
-					foreach ($delatts as $att)
-					{
-						$atpos = strpos ($att, '@');	
-						if ($atpos === FALSE) continue;
-
-						$attinfo['name'] = $this->converter->HexToAscii(substr ($att, 0, $atpos));
-						$attinfo['encname'] = $this->converter->HexToAscii(substr ($att, $atpos + 1));
-
-						array_push (
-							$wiki->delete_attachments, 
-							(object)$attinfo
-						);
-					}
-				}
-
-				$wiki->attachments = $this->wikis->getAttachments (
-					$login['id'], $project, $wiki->name);
-				if ($wiki->attachments === FALSE)
-				{
-					$data['message'] = 'DATABASE ERROR';
-					$this->load->view ($this->VIEW_ERROR, $data);	
-					return;
-				}
 
 				if ($this->form_validation->run())
 				{
+					$delatts = $this->input->post('wiki_delete_attachment');
+					if (!empty($delatts))
+					{
+						foreach ($delatts as $att)
+						{
+							$atpos = strpos ($att, '@');	
+							if ($atpos === FALSE) continue;
+	
+							$attinfo['name'] = $this->converter->HexToAscii(
+								substr ($att, 0, $atpos));
+							$attinfo['encname'] = $this->converter->HexToAscii(
+								substr ($att, $atpos + 1));
+
+							array_push (
+								$wiki->delete_attachments, 
+								(object)$attinfo
+							);
+						}
+					}
+	
+					$atts = $this->wikis->getAttachments (
+						$login['id'], $project, $wiki->name);
+					if ($atts === FALSE)
+					{
+						$data['wiki'] = $wiki;
+						$data['message'] = 'DATABASE ERROR';
+						$this->load->view ($this->VIEW_EDIT, $data);	
+						return;
+					}
+					$wiki->attachments = $atts;
+
+					if (strpos ($wiki->name, ':') !== FALSE)
+					{
+						$data['message'] = $this->lang->line('WIKI_MSG_NAME_NO_COLON');
+						$data['wiki'] = $wiki;
+						$this->load->view ($this->VIEW_EDIT, $data);	
+						return;
+					}
+
 					if ($this->wikihelper->_is_reserved ($wiki->name, FALSE))
 					{
-						$data['message'] = "RESERVED WIKI NAME - {$wiki->name}";
+						$data['message'] = sprintf (
+							$this->lang->line('WIKI_MSG_RESERVED_WIKI_NAME'), 
+							$wiki->name
+						);
 						$data['wiki'] = $wiki;
 						$this->load->view ($this->VIEW_EDIT, $data);
 					}
@@ -466,7 +493,8 @@ class Wiki extends Controller
 		$this->load->model ('WikiModel', 'wikis');
 
 		$login = $this->login->getUser ();
-		if ($login['id'] == '') redirect ('main');
+		if ($login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
@@ -488,13 +516,15 @@ class Wiki extends Controller
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
 			$data['project'] = $project;
-			$data['message'] = "NO PERMISSION - $projectid";
+			$data['message'] = sprintf (
+				$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if ($this->wikihelper->_is_reserved ($name, FALSE))
 		{
 			$data['project'] = $project;
-			$data['message'] = "RESERVED WIKI PAGE - $name ";
+			$data['message'] = sprintf (
+				$this->lang->line('WIKI_MSG_RESERVED_WIKI_NAME'), $name);
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else

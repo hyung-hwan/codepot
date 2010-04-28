@@ -28,6 +28,7 @@ $lang['Files'] = 'Files';
 $lang['First'] = 'First';
 $lang['Folder'] = 'Folder';
 $lang['Head revision'] = 'Head revision';
+$lang['Hide details'] = 'Hide details';
 $lang['History'] = 'History';
 $lang['Home'] = 'Home';
 $lang['ID'] = 'ID';
@@ -62,6 +63,7 @@ $lang['Purge'] = 'Purge';
 $lang['Repository'] = 'Repository';
 $lang['Revision'] = 'Revision';
 $lang['Search'] = 'Search';
+$lang['Show details'] = 'Show details';
 $lang['Sign in'] = 'Sign in';
 $lang['Sign out'] = 'Sign out';
 $lang['Site'] = 'Site';
@@ -91,10 +93,8 @@ $lang['MSG_LOG_REVPROP_CHANGE_BY'] = 'Revision property %s changed by %s';
 
 $lang['MSG_NO_DIFF'] = 'No difference found';
 $lang['MSG_NO_CODE_AVAIL'] = 'No source code available';
-$lang['MSG_NO_FILES_AVAIL'] = 'No files available';
-$lang['MSG_NO_ISSUES_AVAIL'] = 'No outstanding issues';
-$lang['MSG_NO_SUCH_FILE'] = 'No such file';
-$lang['MSG_NO_SUCH_ISSUE'] = 'No such issue';
 $lang['MSG_NO_SUCH_PROJECT'] = 'No such project';
 $lang['MSG_SURE_TO_DELETE_THIS'] = "I'm sure to delete this";
+
+$lang['MSG_PROJECT_MEMBERSHIP_REQUIRED'] = 'You have to be a member of the %s project to perform this task';
 ?>

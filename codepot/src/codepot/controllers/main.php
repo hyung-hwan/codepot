@@ -15,7 +15,12 @@ class Main extends Controller
 		$this->lang->load ('common', CODEPOT_LANG);
 	}
 
-	function index()
+	function index ($xurl = '')
+	{
+		redirect ("main/signin/$xurl");
+	}
+
+	function signin ($xurl = '')
 	{
 		$this->load->library(array('encrypt', 'form_validation', 'session'));
 
@@ -43,7 +48,7 @@ class Main extends Controller
 				}
 				else
 				{
-					if ($user_url != "") redirect ($user_url);
+					if ($user_url != '') redirect ($user_url);
 					else redirect ('site/home');
 				}
 			}
@@ -60,15 +65,11 @@ class Main extends Controller
 			$this->login->deauthenticate ();
 			$data['user_name'] = '';
 			$data['user_pass'] = '';
-			$data['user_url'] = '';
+			$data['user_url'] = $this->converter->HexToAscii($xurl);
 			$this->load->view ('login', $data);
 		}
 	}
 
-	function signin ()
-	{
-		redirect ('main/index');
-	}
 
 	function signout ($xurl = "")
 	{

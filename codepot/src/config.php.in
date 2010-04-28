@@ -9,8 +9,8 @@ define ('CODEPOT_CACHE_DIR', '@CACHEDIR@');
 
 function load_ini ($file)
 {
-	$cfg = parse_ini_file ($file, FALSE);
-	if (/*$cfg === FALSE*/ $cfg == FALSE) die ("ERROR: cannot parse $file");
+	$cfg = @parse_ini_file ($file, FALSE);
+	if (!is_array($cfg)) $cfg = array ();
 
 	$xcfgs = array (
 		array ('default_site_language',        'string',     'english'),

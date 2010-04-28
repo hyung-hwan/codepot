@@ -30,7 +30,7 @@ class Issue extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$project = $this->projects->get ($projectid);
@@ -145,7 +145,7 @@ class Issue extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		if ($hexid == '')
@@ -185,7 +185,8 @@ class Issue extends Controller
 				    $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 				{
 					$data['project'] = $project;
-					$data['message'] = "NO PERMISSION - $projectid";
+					$data['message'] = sprintf (
+						$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 				else if ($this->issues->change ($login['id'], $project, $id, $change) === FALSE)
@@ -206,7 +207,8 @@ class Issue extends Controller
 				    $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 				{
 					$data['project'] = $project;
-					$data['message'] = "NO PERMISSION - $projectid";
+					$data['message'] = sprintf (
+						$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 				else if ($this->issues->undo_last_change ($login['id'], $project, $id) === FALSE)
@@ -232,9 +234,8 @@ class Issue extends Controller
 			else if ($issue === NULL)
 			{
 				$data['project'] = $project;
-				$data['message'] = 
-					$this->lang->line('MSG_NO_SUCH_ISSUE').
-					" - {$id}";
+				$data['message'] = sprintf (
+					$this->lang->line('ISSUE_MSG_NO_SUCH_ISSUE'), $id);
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
 			else
@@ -257,7 +258,8 @@ class Issue extends Controller
 		$this->load->model ('IssueModel', 'issues');
 
 		$login = $this->login->getUser ();
-		if ($login['id'] == '') redirect ('main');
+		if ($login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$id = $this->converter->HexToAscii ($hexid);
@@ -279,7 +281,8 @@ class Issue extends Controller
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
 			$data['project'] = $project;
-			$data['message'] = "NO PERMISSION - $projectid";
+			$data['message'] = sprintf (
+				$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -353,9 +356,8 @@ class Issue extends Controller
 					}
 					else if ($issue == NULL)
 					{
-						$data['message'] = 
-							$this->lang->line('MSG_NO_SUCH_ISSUE') . 
-							" - {$id}";
+						$data['message'] = sprintf (
+							$this->lang->line('ISSUE_MSG_NO_SUCH_ISSUE'), $id);
 						$this->load->view ($this->VIEW_ERROR, $data);
 					}
 					else
@@ -402,7 +404,8 @@ class Issue extends Controller
 		$this->load->model ('IssueModel', 'issues');
 
 		$login = $this->login->getUser ();
-		if ($login['id'] == '') redirect ('main');
+		if ($login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$id = $this->converter->HexToAscii ($hexid);
@@ -424,7 +427,8 @@ class Issue extends Controller
 		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
 		{
 			$data['project'] = $project;
-			$data['message'] = "NO PERMISSION - $projectid";
+			$data['message'] = sprintf (
+				$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -479,9 +483,8 @@ class Issue extends Controller
 				}
 				else if ($issue === NULL)
 				{
-					$data['message'] = 
-						$this->lang->line('MSG_NO_SUCH_ISSUE') . 
-						" - {$id}";
+					$data['message'] = sprintf (
+						$this->lang->line('ISSUE_MSG_NO_SUCH_ISSUE'), $id);
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 				else

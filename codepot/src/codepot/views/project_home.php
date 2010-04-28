@@ -53,7 +53,6 @@ $this->load->view (
 ?>
 
 <!---------------------------------------------------------------------------->
-
 <div class="sidebar" id="project_home_sidebar">
 
 <div class="box">
@@ -93,7 +92,7 @@ $this->load->view (
 <div class="boxtitle">
 <?= anchor ("/project/log/{$project->id}", $this->lang->line('Change log')) ?>
 </div>
-<table id="project_home_mainarea_sidebar_log_table">
+<table id="project_home_sidebar_log_table">
 <?php 
 	$xdot = $this->converter->AsciiToHex ('.');
 	foreach ($log_entries as $log)

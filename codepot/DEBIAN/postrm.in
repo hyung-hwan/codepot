@@ -4,6 +4,7 @@
 [ -d "@LOGDIR@" ] && rmdir "@LOGDIR@" 2>/dev/null
 [ -d "@DEPOTDIR@/svnrepo" ] && rmdir "@DEPOTDIR@/svnrepo" 2>/dev/null
 [ -d "@DEPOTDIR@/files" ] && rmdir "@DEPOTDIR@/files" 2>/dev/null
+[ -d "@DEPOTDIR@/attachments" ] && rmdir "@DEPOTDIR@/attachments" 2>/dev/null
 [ -d "@DEPOTDIR@" ] && rmdir "@DEPOTDIR@" 2>/dev/null
 
 exit 0
