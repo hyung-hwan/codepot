@@ -29,7 +29,7 @@ class Project extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		if ($filter == '')
@@ -117,7 +117,7 @@ class Project extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '') 
-			redirect ('main/signin');
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		$data['login'] = $login;
 
@@ -206,7 +206,7 @@ class Project extends Controller
 				}
 				else
 				{
-					redirect ('project/home/' . $project->id);
+					redirect ("project/home/{$project->id}");
 				}
 			}
 			else
@@ -237,7 +237,8 @@ class Project extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 
 		$login = $this->login->getUser ();
-		if ($login['id'] == '') redirect ('main/signin');
+		if ($login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		$project->id = $projectid;
 		$project->name = '';
@@ -253,7 +254,8 @@ class Project extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 
 		$login = $this->login->getUser ();
-		if ($login['id'] == '') redirect ('main/signin');
+		if ($login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -275,7 +277,8 @@ class Project extends Controller
 		{
 			$data['project'] = $project;
 			$data['login'] = $login;
-			$data['message'] = "NO PERMISSION - $projectid";
+			$data['message'] = sprintf (
+				$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else
@@ -350,7 +353,8 @@ class Project extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 
 		$login = $this->login->getUser ();
-		if ($login['id'] == '') redirect ('main/signin');
+		if ($login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -372,7 +376,8 @@ class Project extends Controller
 		{
 			$data['login'] = $login;
 			$data['project'] = $project;
-			$data['message'] = "NO PERMISSION - $projectid";
+			$data['message'] = sprintf (
+				$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else

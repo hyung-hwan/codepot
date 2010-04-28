@@ -53,10 +53,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %attr(-,apache,apache) /var/lib/codepot/svnrepo
 %attr(-,apache,apache) /var/lib/codepot/files
+%attr(-,apache,apache) /var/lib/codepot/attachments
 %attr(-,apache,apache) /var/log/codepot
 %attr(-,apache,apache) /var/cache/codepot
 %dir /var/lib/codepot/svnrepo
 %dir /var/lib/codepot/files
+%dir /var/lib/codepot/attachments
 %dir /var/log/codepot
 %dir /var/cache/codepot
 

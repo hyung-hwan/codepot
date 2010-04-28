@@ -45,7 +45,7 @@ $this->load->view (
 <?php
 if (empty($files))
 {
-	print htmlspecialchars($this->lang->line('MSG_NO_FILES_AVAIL'));
+	print htmlspecialchars($this->lang->line('FILE_MSG_NO_FILES_AVAILABLE'));
 }
 else
 {

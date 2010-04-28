@@ -28,6 +28,7 @@ $lang['Files'] = '파일';
 $lang['First'] = '처음';
 $lang['Folder'] = '폴더';
 $lang['Head revision'] = '최신리비전';
+$lang['Hide details'] = '상세내역숨김';
 $lang['History'] = '변경기록';
 $lang['Home'] = '홈';
 $lang['ID'] = '아이디';
@@ -62,6 +63,7 @@ $lang['Purge'] = '정화하기';
 $lang['Repository'] = '저장소';
 $lang['Revision'] = '리비전';
 $lang['Search'] = '찾기';
+$lang['Show details'] = '상세내역보기';
 $lang['Sign in'] = '로그인';
 $lang['Sign out'] = '로그아웃';
 $lang['Site'] = '사이트';
@@ -91,10 +93,9 @@ $lang['MSG_LOG_REVPROP_CHANGE_BY'] = '리비전 속성 %s을(를) %s이(가) 변
 
 $lang['MSG_NO_DIFF'] = '차이점이 없습니다';
 $lang['MSG_NO_CODE_AVAIL'] = '소스코드가 없습니다';
-$lang['MSG_NO_FILES_AVAIL'] = '파일이 없습니다';
-$lang['MSG_NO_ISSUES_AVAIL'] = '이슈항목이 없습니다';
-$lang['MSG_NO_SUCH_FILE'] = '파일이 없습니다';
-$lang['MSG_NO_SUCH_ISSUE'] = '이슈항목이 없습니다';
 $lang['MSG_NO_SUCH_PROJECT'] = '프로젝트가 없습니다';
 $lang['MSG_SURE_TO_DELETE_THIS'] = '반드시 이것을 삭제하고 싶어요';
+
+$lang['MSG_PROJECT_MEMBERSHIP_REQUIRED'] = '이 작업을 수행하려면 %s 프로젝트의 멤버가 되어야 합니다';
+
 ?>

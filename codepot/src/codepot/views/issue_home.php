@@ -153,7 +153,7 @@ $this->load->view (
 <?php
 if (empty($issues))
 {
-	print $this->lang->line('MSG_NO_ISSUES_AVAIL');
+	print $this->lang->line('ISSUE_MSG_NO_ISSUES_AVAILABLE');
 }
 else
 {

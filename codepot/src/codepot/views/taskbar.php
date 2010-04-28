@@ -17,7 +17,7 @@ function show_taskbar ($con, $login)
 	}
 	else
 	{
-		print form_open('main/index');
+		print form_open('main/signin');
 
 		$user_name = "";
 		$user_pass = "";

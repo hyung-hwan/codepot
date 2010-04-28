@@ -699,9 +699,9 @@ install-data-hook:
 	$(INSTALL) -d "$(DESTDIR)@CACHEDIR@"
 
 uninstall-hook:
-	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/svnrepo"
-	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/files"
 	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/attachments"
+	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/files"
+	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/svnrepo"
 	$(RMDIR) "$(DESTDIR)@DEPOTDIR@"
 	$(RMDIR) "$(DESTDIR)@LOGDIR@"
 	$(RMDIR) "$(DESTDIR)@CACHEDIR@"
