@@ -187,7 +187,7 @@ if ($fileext == '') $fileext = "html"
 
 <div class="title"><?= $this->lang->line('Message') ?></div>
 <pre id="code_file_mainarea_result_info_logmsg">
-<?= $file['logmsg'] ?>
+<?= htmlspecialchars ($file['logmsg']) ?>
 </pre>
 
 <?php

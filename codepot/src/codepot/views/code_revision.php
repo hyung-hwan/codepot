@@ -132,13 +132,11 @@ $history = $file['history'];
 		print anchor ("code/file/{$project->id}/{$xpar}/{$history['rev']}", htmlspecialchars($p['path']));
 		print '</td>';
 
-		/*
 		print '<td>';
-		print anchor ("code/blame/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Blame'));
-		print ' ';
+		//print anchor ("code/blame/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Blame'));
+		//print ' ';
 		print anchor ("code/diff/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Difference'));
 		print '</td>';
-		*/
 
 		print '</tr>';
 	}
