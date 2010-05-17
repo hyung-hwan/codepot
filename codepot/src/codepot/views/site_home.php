@@ -1,9 +1,10 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/site.css" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css">
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/site.css">
 <script type="text/javascript" src="<?=base_url()?>/js/creole.js"></script>
 <script type="text/javascript">
 function render_wiki()
@@ -28,11 +29,11 @@ function render_wiki()
 
 <div class="content" id="site_home_content">
 
-<!---------------------------------------------------------------------------->
+<!-- ////////////////////////////////////////////////////////////////////// -->
 
 <?php $this->load->view ('taskbar'); ?>
 
-<!---------------------------------------------------------------------------->
+<!-- ////////////////////////////////////////////////////////////////////// -->
 
 <?php
 
@@ -52,7 +53,7 @@ $this->load->view (
 );
 ?>
 
-<!---------------------------------------------------------------------------->
+<!-- ////////////////////////////////////////////////////////////////////// -->
 
 <div class="mainarea" id="site_home_mainarea">
 
@@ -211,7 +212,7 @@ foreach ($latest_projects as $project)
 </pre>
 </div> <!-- site_home_mainarea_text -->
 
-<!----------------------------------------------------------->
+<!-- ////////////////////////////////////////////////////////////////////// -->
 
 </div> <!-- site_home_mainarea -->
 

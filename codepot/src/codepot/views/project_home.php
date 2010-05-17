@@ -1,9 +1,11 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
 <html>
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css">
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css">
 <script type="text/javascript" src="<?=base_url()?>/js/creole.js"></script>
 
 <script type="text/javascript">
@@ -26,11 +28,11 @@ function render_wiki()
 <div class="content" id="project_home_content">
 
 
-<!---------------------------------------------------------------------------->
+<!-- /////////////////////////////////////////////////////////////////////// -->
 
 <?php $this->load->view ('taskbar'); ?>
 
-<!---------------------------------------------------------------------------->
+<!-- /////////////////////////////////////////////////////////////////////// -->
 
 <?php 
 $this->load->view (
@@ -52,7 +54,7 @@ $this->load->view (
 ); 
 ?>
 
-<!---------------------------------------------------------------------------->
+<!-- /////////////////////////////////////////////////////////////////////// -->
 <div class="sidebar" id="project_home_sidebar">
 
 <div class="box">
@@ -201,7 +203,7 @@ $this->load->view (
 
 </div> <!-- project_home_sidebar -->
 
-<!---------------------------------------------------------------------------->
+<!-- /////////////////////////////////////////////////////////////////////// -->
 
 <div class="mainarea" id="project_home_mainarea">
 
@@ -218,11 +220,11 @@ $this->load->view (
 </div> <!-- project_home_mainarea -->
 
 
-<!---------------------------------------------------------------------------->
+<!-- /////////////////////////////////////////////////////////////////////// -->
 
 <?php $this->load->view ('footer'); ?>
 
-<!---------------------------------------------------------------------------->
+<!-- /////////////////////////////////////////////////////////////////////// -->
  
 </div> <!--  project_home_content -->
 

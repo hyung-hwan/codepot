@@ -23,16 +23,42 @@ function show_taskbar ($con, $login)
 		$user_pass = "";
 
 		//$hex = $con->converter->AsciiToHex (current_url());
-		print form_hidden ('user_url', set_value ('user_url', current_url()));
+		print form_hidden (
+			'user_url', 
+			set_value ('user_url', current_url())
+		);
 		//print anchor ("main/signin/{$hex}", $con->lang->line('Sign in'));
 
-		print form_label($con->lang->line('Username').' ', 'user_name');
-		print form_input ('user_name', set_value ('user_name', $user_name), 'size=12');
+		print form_label(
+			$con->lang->line('Username'), 
+			'taskbar_user_name'
+		);
 		print '&nbsp;';
-		print form_label($con->lang->line('Password').' ', 'user_pass');
-		print form_password ('user_pass', set_value ('user_pass', $user_pass), 'size=12');
+		print form_input (
+			'user_name', 
+			set_value ('user_name', $user_name), 
+			'size=12 id="taskbar_user_name"'
+		);
+
 		print '&nbsp;';
-		print form_submit ('login', $con->lang->line('Sign in'), 'class="button"');
+
+		print form_label (
+			$con->lang->line('Password'),
+			'taskbar_user_pass'
+		);
+		print '&nbsp;';
+		print form_password (
+			'user_pass',
+			set_value ('user_pass', $user_pass),
+			'size=12 id="taskbar_user_pass"'
+		);
+
+		print '&nbsp;';
+		print form_submit (
+			'login', 
+			$con->lang->line('Sign in'), 
+			'class="button"'
+		);
 
 		print form_close();
 	}
