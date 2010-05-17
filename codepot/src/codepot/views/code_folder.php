@@ -4,6 +4,42 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/code.css" />
+
+<script type="text/javascript" src="<?=base_url()?>/js/jquery.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>/js/jquery-ui.min.js"></script>
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/jquery-ui.css" />
+
+<?php
+	$file_count = count($file['content']);
+?>
+
+<script type="text/javascript">
+<?php if ($file_count > 0): ?>
+$(function () {
+	if ($("#code_folder_mainarea_result_info").is(":visible"))
+		btn_label = "<?=$this->lang->line('Hide details')?>";
+	else
+		btn_label = "<?=$this->lang->line('Show details')?>";
+	
+	btn = $("#code_folder_mainarea_details_button").button({"label": btn_label}).click (function () {
+		
+		if ($("#code_folder_mainarea_result_info").is(":visible"))
+		{
+			$("#code_folder_mainarea_result_info").hide("blind",{},200);
+			$("#code_folder_mainarea_details_button").button(
+				"option", "label", "<?=$this->lang->line('Show details')?>");
+		}
+		else
+		{
+			$("#code_folder_mainarea_result_info").show("blind",{},200);
+			$("#code_folder_mainarea_details_button").button(
+				"option", "label", "<?=$this->lang->line('Hide details')?>");
+		}
+	});
+});
+<?php endif; ?>
+</script>
+
 <title><?=htmlspecialchars($project->name)?></title>
 </head>
 
@@ -35,41 +71,6 @@ $this->load->view (
 ?>
 
 <!---------------------------------------------------------------------------->
-
-
-<div class="sidebar" id="code_folder_sidebar">
-	<div class="box" id="code_folder_sidebar_info">
-		<div class="boxtitle"><?=$this->lang->line('Revision')?>: <?=$file['created_rev']?></div>
-		<pre><?=$file['logmsg']?></pre>
-		<?php
-			if (array_key_exists('properties', $file) &&
-			    count($file['properties']))
-			{
-				print '<div class="boxtitle">';
-				print $this->lang->line('CODE_PROPERTIES');
-				print '</div>';
-
-				print '<ul>';
-				foreach ($file['properties'] as $pk => $pv)
-				{
-					print '<li>';
-					print htmlspecialchars ($pk);
-					if ($pv != '')
-					{
-						print ' - ';
-						print htmlspecialchars ($pv);
-					}
-					print '</li>';
-				}	
-				print '</ul>';
-			}
-		?>
-	</div>
-</div> <!-- code_folder_sidebar -->
-
-
-<!---------------------------------------------------------------------------->
-
 
 <div class="mainarea" id="code_folder_mainarea">
 
@@ -114,19 +115,29 @@ $this->load->view (
 ?>
 </div>
 
+
+<div class="infostrip" id="code_folder_mainarea_infostrip">
+	<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
+	<?php if ($file_count > 0): ?>
+	| 
+	<a id="code_folder_mainarea_details_button" href='#'><?=$this->lang->line('Details')?></a>
+	<?php endif; ?>
+</div>
+
+<div id="code_folder_mainarea_result">
+
 <?php
 	function comp_files ($a, $b)	
 	{
 		if ($a['type'] == $b['type'])
 		{
-			return ($a['name'] > $b['name'])? -1:
-			       ($a['name'] < $b['name'])? 1: 0;
+			return strcasecmp ($a['name'], $b['name']);
 		}	
 
 		return ($a['type'] == 'dir')? -1: 1;
 	}
 
-	if (count($file['content']) <= 0)
+	if ($file_count <= 0)
 	{
 		 print $this->lang->line('MSG_NO_CODE_AVAIL');
 	}
@@ -144,7 +155,6 @@ $this->load->view (
 
 		usort ($file['content'], 'comp_files');
 
-		print '<div id="code_folder_mainarea_result">';
 		print '<table id="code_folder_mainarea_result_table">';
 		print '<tr class="heading">';
 		print '<th>' . $this->lang->line('Name') . '</th>';
@@ -226,9 +236,48 @@ $this->load->view (
 			}
 		}
 		print '</table>';
+
+		print '<div id="code_folder_mainarea_result_info">';
+
+		print '<pre id="code_folder_mainarea_result_info_logmsg">';
+		print '<div class="title">';
+		print $this->lang->line('CODE_COMMIT');
+		print '</div>';
+		printf ($this->lang->line('CODE_MSG_COMMITTED_BY'), $file['last_author']);
+
+		print '<div class="title">';
+		print $this->lang->line('Message');
+		print '</div>';
+		print '<pre id="code_folder_mainarea_result_info_logmsg">';
+		print htmlspecialchars ($file['logmsg']);
+		print '</pre>';
+
+		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+		{
+			print '<div class="title">';
+			print $this->lang->line('CODE_PROPERTIES');
+			print '</div>';
+
+			print '<ul id="code_folder_mainarea_result_info_property_list">';
+			foreach ($file['properties'] as $pn => $pv)
+			{
+				print '<li>';
+				print htmlspecialchars($pn);
+				if ($pv != '')
+				{
+					print ' - ';
+					print htmlspecialchars($pv);
+				}
+				print '</li>';
+			}
+			print '</ul>';
+		}
+
 		print '</div>';
 	}
 ?>
+
+</div> <!-- code_folder_mainarea_result -->
 
 </div> <!-- code_folder_mainarea -->
 

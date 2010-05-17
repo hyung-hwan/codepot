@@ -7,11 +7,45 @@
 
 #code_folder_mainarea_result {
 	overflow: auto;
+	position: relative;
 }
 
 #code_folder_mainarea_result_table tr {
 	vertical-align: top;
 	white-space: nowrap;
+}
+
+#code_folder_mainarea_result_info {
+	position: absolute;
+	top: 5;
+	right: 5;
+	width: 22em;
+	background: #E5ECF9 none repeat scroll 0 0;
+	border: #D4DBE8 1px solid;
+	overflow: auto;
+	padding: 0.2em 0.4em 0.2em 0.4em;
+	font-size: 0.9em;
+}
+
+#code_folder_mainarea_result_info pre {
+	overflow: auto;
+	border: 0;
+	margin: 0;
+	padding: 0;
+	background-color: inherit;
+	white-space: -moz-pre-wrap;
+	white-space: -o-pre-wrap;
+	white-space: pre-wrap;
+}
+
+#code_folder_mainarea_result_info .title {
+	background-color: #8888FF;
+	color: #FFFFFF;
+	border: #D4DBE8 1px solid;
+	margin: 0.3em 0 0.3em 0;
+	padding: 0.1em 0.1em 0.1em 0.1em;
+	font-size: inherit;
+	text-transform: uppercase;
 }
 
 /*----------------------------------------------- 
