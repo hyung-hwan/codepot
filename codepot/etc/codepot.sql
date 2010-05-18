@@ -146,3 +146,9 @@ CREATE TABLE log  (
 	createdon  DATETIME     NOT NULL,
 	INDEX timed_project_type_action (createdon, projectid, type, action)
 ) charset=utf8 engine=InnoDB;	
+
+CREATE TABLE user_settings (
+	userid              VARCHAR(32) PRIMARY KEY,
+	code_hide_line_num CHAR(1) NOT NULL,
+	code_hide_details  CHAR(1) NOT NULL
+) charset=utf8 engine=InnoDB;

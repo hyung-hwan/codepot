@@ -17,17 +17,20 @@ function show_taskbar ($con, $login)
 	}
 	else
 	{
+
+//print '<div id="taskbar_signin_panel">';
+
 		print form_open('main/signin');
+
+//print '<div id="taskbar_signin_form_panel">';
 
 		$user_name = "";
 		$user_pass = "";
 
-		//$hex = $con->converter->AsciiToHex (current_url());
 		print form_hidden (
 			'user_url', 
 			set_value ('user_url', current_url())
 		);
-		//print anchor ("main/signin/{$hex}", $con->lang->line('Sign in'));
 
 		print form_label(
 			$con->lang->line('Username'), 
@@ -41,7 +44,6 @@ function show_taskbar ($con, $login)
 		);
 
 		print '&nbsp;';
-
 		print form_label (
 			$con->lang->line('Password'),
 			'taskbar_user_pass'
@@ -57,12 +59,22 @@ function show_taskbar ($con, $login)
 		print form_submit (
 			'login', 
 			$con->lang->line('Sign in'), 
-			'class="button"'
+			'class="button" id="taskbar_signin_ok_button"'
 		);
+//print '</div>';
+
+//print '<div id="taskbar_signin_button_panel">';
+//		print '<a href="#" id="taskbar_signin_button">';
+//		print $con->lang->line('Sign in');
+//		print '</a>';
+//print '</div>';
 
 		print form_close();
+
+//print '</div>';
+
 	}
-	print '</div>';
+	print '</div>'; // boxb
 
 	print '<div class="boxa">';
 	print anchor ('site/home', $con->lang->line('Home'));
@@ -73,7 +85,30 @@ function show_taskbar ($con, $login)
 
 	print '</div>';
 }
+?>
 
+<script type="text/javascript">
+/*
+$(function () {
+	$("#taskbar_signin_form_panel").hide();
+
+	btn_label = "<?=$this->lang->line('Sign in')?>";
+	btn = $("#taskbar_signin_button").button({"label": btn_label}).click (function () {
+		if ($("#taskbar_signin_form_panel").is(":visible"))
+		{
+			$("#taskbar_signin_form_panel").hide("slide",{direction: 'right'},200);
+		}
+		else
+		{
+			$("#taskbar_signin_form_panel").show("slide",{direction: 'right'},200);
+		}
+	});
+
+	$("#taskbar_signin_ok_button").button();
+}); */
+</script> 
+
+<?php
 show_taskbar ($this, $login);
 ?>
 

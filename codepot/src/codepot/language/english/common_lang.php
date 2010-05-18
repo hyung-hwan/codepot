@@ -63,6 +63,7 @@ $lang['Purge'] = 'Purge';
 $lang['Repository'] = 'Repository';
 $lang['Revision'] = 'Revision';
 $lang['Search'] = 'Search';
+$lang['Settings'] = 'Settings';
 $lang['Show details'] = 'Show details';
 $lang['Sign in'] = 'Sign in';
 $lang['Sign out'] = 'Sign out';
