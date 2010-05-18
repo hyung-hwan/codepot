@@ -5,7 +5,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css">
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/site.css">
+
+<script type="text/javascript" src="<?=base_url()?>/js/jquery.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>/js/jquery-ui.min.js"></script>
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/jquery-ui.css" />
+
 <script type="text/javascript" src="<?=base_url()?>/js/creole.js"></script>
+
 <script type="text/javascript">
 function render_wiki()
 {

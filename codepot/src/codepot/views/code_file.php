@@ -17,11 +17,17 @@
 
 <script type="text/javascript">
 $(function () {
+	<?php
+	if ($login['settings'] != NULL && $login['settings']->code_hide_details == 'Y')
+		print '$("#code_file_mainarea_result_info").hide();';
+	?>
+
 	if ($("#code_file_mainarea_result_info").is(":visible"))
 		btn_label = "<?=$this->lang->line('Hide details')?>";
 	else
 		btn_label = "<?=$this->lang->line('Show details')?>";
 	
+
 	btn = $("#code_file_mainarea_details_button").button({"label": btn_label}).click (function () {
 		
 		if ($("#code_file_mainarea_result_info").is(":visible"))
@@ -156,26 +162,31 @@ if ($fileext == '') $fileext = "html"
 
 <pre class="prettyprint lang-<?=$fileext?>" id="code_file_mainarea_result_pre">
 <?php
-	// print htmlspecialchars($file['content']);
-
-	$pos = 0; $lineno = 0; $len = strlen($file['content']);
-	while ($pos < $len)
+	if ($login['settings'] != NULL && $login['settings']->code_hide_line_num == 'Y')
 	{
-		$lineno_padded = str_pad (++$lineno, 6, ' ', STR_PAD_LEFT);
-		$npos = strpos ($file['content'], "\n", $pos);
-		if ($npos === FALSE)
+		print htmlspecialchars($file['content']);
+	}
+	else
+	{
+		$pos = 0; $lineno = 0; $len = strlen($file['content']);
+		while ($pos < $len)
 		{
+			$lineno_padded = str_pad (++$lineno, 6, ' ', STR_PAD_LEFT);
+			$npos = strpos ($file['content'], "\n", $pos);
+			if ($npos === FALSE)
+			{
+				print '<span class="nocode">' . $lineno_padded . ' </span> ';
+				print substr ($file['content'], $pos, $len - $pos);
+				print "\n";
+				break;
+			}
+
 			print '<span class="nocode">' . $lineno_padded . ' </span> ';
-			print substr ($file['content'], $pos, $len - $pos);
+			print htmlspecialchars (substr ($file['content'], $pos, $npos - $pos));
 			print "\n";
-			break;
+
+			$pos = $npos + 1;
 		}
-
-		print '<span class="nocode">' . $lineno_padded . ' </span> ';
-		print htmlspecialchars (substr ($file['content'], $pos, $npos - $pos));
-		print "\n";
-
-		$pos = $npos + 1;
 	}
 ?>
 </pre>

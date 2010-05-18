@@ -10,6 +10,7 @@ www_DATA =  \
 	projectmodel.php \
 	sitemodel.php \
 	subversionmodel.php \
+	usermodel.php \
 	wikimodel.php
 
 EXTRA_DIST = $(www_DATA)

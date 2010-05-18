@@ -24,6 +24,7 @@ class LoginModel extends Model
 			$userid = '';
 			$email = '';
 			$issysadmin = FALSE;
+			$settings = NULL;
 		}
 		else
 		{
@@ -35,12 +36,16 @@ class LoginModel extends Model
 
 			$issysadmin = $this->session->userdata('sysadmin?');
 			if ($issysadmin === NULL) $issysadmin = FALSE;
+
+			$settings = $this->session->userdata('user_settings');
+			if ($settings !== NULL) $settings = unserialize ($settings);
 		}
 
 		return array (
 			'id' => $userid, 
 			'email' => $email,
-			'sysadmin?' => $issysadmin
+			'sysadmin?' => $issysadmin,
+			'settings' => $settings
 		);
 	}
 
@@ -76,6 +81,11 @@ class LoginModel extends Model
 		//$this->session->unset_userdata ('userid');
 		//$this->session->unset_userdata ('server');
 		$this->session->sess_destroy ();
+	}
+
+	function setUserSettings ($settings)
+	{
+		$this->session->set_userdata ('user_settings', serialize($settings));
 	}
 
 	function getErrorMessage ()

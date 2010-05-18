@@ -9,7 +9,15 @@ define ('CODEPOT_CACHE_DIR', '@CACHEDIR@');
 
 function load_ini ($file)
 {
-	$cfg = @parse_ini_file ($file, FALSE);
+	if (defined('INI_SCANNER_RAW'))
+	{
+		$cfg = @parse_ini_file ($file, FALSE, INI_SCANNER_RAW);
+	}
+	else
+	{
+		$cfg = @parse_ini_file ($file, FALSE);
+	}
+
 	if (!is_array($cfg)) $cfg = array ();
 
 	$xcfgs = array (

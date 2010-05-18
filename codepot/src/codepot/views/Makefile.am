@@ -31,6 +31,7 @@ www_DATA =  \
 	site_show.php \
 	taskbar.php \
 	user_home.php \
+	user_settings.php \
 	wiki_delete.php \
 	wiki_edit.php \
 	wiki_home.php \

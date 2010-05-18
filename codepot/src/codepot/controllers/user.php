@@ -5,6 +5,7 @@ class User extends Controller
 	var $VIEW_ERROR = 'error';
 	var $VIEW_LOG = 'log';
         var $VIEW_HOME = 'user_home';
+        var $VIEW_SETTINGS = 'user_settings';
 
 	function User ()
 	{
@@ -17,6 +18,7 @@ class User extends Controller
 
 		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG);
+		$this->lang->load ('user', CODEPOT_LANG);
 	}
 
 	function index ()
@@ -134,6 +136,59 @@ class User extends Controller
 			$data['page_links'] = $this->pagination->create_links ();
 
 			$this->load->view ($this->VIEW_LOG, $data);
+		}
+	}
+
+	function settings ()
+	{
+		$this->load->model ('UserModel', 'users');
+		$this->load->library(array('encrypt', 'form_validation', 'session'));
+
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ('main/signin');
+
+		if ($login['id'] == '')
+		{
+			redirect ('site/home');
+			return;
+		}
+
+		$data['login'] = $login;
+		$data['message'] = '';
+
+		if($this->input->post('settings'))
+		{
+                        $settings->code_hide_line_num = $this->input->post('code_hide_line_num');
+                        $settings->code_hide_details = $this->input->post('code_hide_details');
+
+			if ($this->users->storeSettings ($login['id'], $settings) === FALSE)
+			{
+				$data['message'] = 'DATABASE ERROR';
+				$data['settings'] = $settings;
+				$this->load->view ($this->VIEW_SETTINGS, $data);
+			}
+			else
+			{
+				$this->login->setUserSettings ($settings);
+
+				$data['message'] = 'SETTINGS STORED SUCCESSFULLY';
+				$data['settings'] = $settings;
+				$this->load->view ($this->VIEW_SETTINGS, $data);
+			}
+		}
+		else
+		{
+			$settings = $this->users->fetchSettings ($login['id']);
+			if ($settings === FALSE || $settings === NULL)
+			{
+				if ($settings === FALSE) $data['message'] = 'DATABASE ERROR';
+				$settings->code_hide_line_num = ' ';
+				$settings->code_hide_details = ' ';
+			}
+
+			$data['settings'] = $settings;
+			$this->load->view ($this->VIEW_SETTINGS, $data);
 		}
 	}
 }

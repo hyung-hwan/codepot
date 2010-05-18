@@ -90,7 +90,8 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 	{
 		$menuitems = array (
 			array ("user/home", $con->lang->line('Overview')),
-			array ("user/log", $con->lang->line('Log'))
+			array ("user/log", $con->lang->line('Log')),
+			array ("user/settings", $con->lang->line('Settings'))
 		);
 
 		foreach ($menuitems as $item)

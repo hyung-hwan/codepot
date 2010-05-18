@@ -16,6 +16,11 @@
 <script type="text/javascript">
 <?php if ($file_count > 0): ?>
 $(function () {
+	<?php
+	if ($login['settings'] != NULL && $login['settings']->code_hide_details == 'Y')
+		print '$("#code_folder_mainarea_result_info").hide();';
+	?>
+
 	if ($("#code_folder_mainarea_result_info").is(":visible"))
 		btn_label = "<?=$this->lang->line('Hide details')?>";
 	else

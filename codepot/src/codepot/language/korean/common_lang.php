@@ -63,6 +63,7 @@ $lang['Purge'] = '정화하기';
 $lang['Repository'] = '저장소';
 $lang['Revision'] = '리비전';
 $lang['Search'] = '찾기';
+$lang['Settings'] = '설정';
 $lang['Show details'] = '상세내역보기';
 $lang['Sign in'] = '로그인';
 $lang['Sign out'] = '로그아웃';

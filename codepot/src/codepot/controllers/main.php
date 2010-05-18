@@ -22,6 +22,7 @@ class Main extends Controller
 
 	function signin ($xurl = '')
 	{
+		$this->load->model ('UserModel', 'users');
 		$this->load->library(array('encrypt', 'form_validation', 'session'));
 
 		$this->form_validation->set_rules('user_name', 'username', 'required|alpha_dash');
@@ -48,6 +49,10 @@ class Main extends Controller
 				}
 				else
 				{
+					$settings = $this->users->fetchSettings ($user_name);
+					if ($settings !== FALSE)
+						$this->login->setUserSettings ($settings);
+
 					if ($user_url != '') redirect ($user_url);
 					else redirect ('site/home');
 				}
