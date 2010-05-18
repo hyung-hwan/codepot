@@ -464,3 +464,27 @@ pre.prettyprint .nocode a:hover {
 	color: #bb2322;
 	font-style: italic;
 }
+
+/* === signin panel === */
+#taskbar_signin_panel {
+	position: absolute;
+	right: 0.8em;
+	top: 0.8em;
+}
+#taskbar_signin_form_panel {
+	background-color: black;
+	padding: 0.6em 0.6em 0.6em 0.6em;
+	float: right;
+	-moz-border-radius-bottomleft:2px;
+	-moz-border-radius-bottomright:2px;
+	-moz-border-radius-topleft:2px;
+	-moz-border-radius-topright:2px;
+	white-space: nowrap;
+}
+#taskbar_signin_button_panel {
+	float: right;
+	margin-left: 0.3em;
+}
+#taskbar_signin_button_panel a {
+	color: #0073EA;
+}

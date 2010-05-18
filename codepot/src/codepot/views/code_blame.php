@@ -17,6 +17,11 @@
 
 <script type="text/javascript">
 $(function () {
+	<?php
+	if ($login['settings'] != NULL && $login['settings']->code_hide_details == 'Y')
+		print '$("#code_blame_mainarea_result_info").hide();';
+	?>
+
 	if ($("#code_blame_mainarea_result_info").is(":visible"))
 		btn_label = "<?=$this->lang->line('Hide details')?>";
 	else
@@ -195,7 +200,16 @@ print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'
 	
 		print "<span class='nocode'>{$rev_padded}</span>";
 		print "<span class='nocode' title='{$author}'>{$author_padded}</span>";
-		print "<span class='nocode'>{$lineno_padded}</span>";
+
+		if ($login['settings'] != NULL && $login['settings']->code_hide_line_num == 'Y')
+		{
+			/* do nothing */
+		}
+		else
+		{
+			print "<span class='nocode'>{$lineno_padded}</span>";
+		}
+
 		print htmlspecialchars ($line['line']);
 		print "\n";
 	}
