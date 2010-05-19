@@ -21,7 +21,7 @@ class File extends Controller
 		$this->lang->load ('file', CODEPOT_LANG);
 	}
 
-	function home ($projectid = "")
+	function home ($projectid = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('FileModel', 'files');
@@ -62,7 +62,7 @@ class File extends Controller
 		}
 	}
 
-	function show ($projectid, $name)
+	function show ($projectid = '', $name = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('FileModel', 'files');
@@ -112,7 +112,7 @@ class File extends Controller
 		}
 	}
 
-	function get ($projectid, $name)
+	function get ($projectid = '', $name = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('FileModel', 'files');
@@ -384,17 +384,17 @@ class File extends Controller
 		}
 	}
 
-	function create ($projectid, $name = "")
+	function create ($projectid = '', $name = '')
 	{
 		return $this->_edit_file ($projectid, $name, "create");
 	}
 
-	function update ($projectid, $name)
+	function update ($projectid = '', $name = '')
 	{
 		return $this->_edit_file ($projectid, $name, "update");
 	}
 
-	function delete ($projectid, $name)
+	function delete ($projectid = '', $name = '')
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');

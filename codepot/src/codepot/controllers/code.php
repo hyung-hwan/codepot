@@ -28,7 +28,7 @@ class Code extends Controller
 		return $this->file ($projectid, $subdir, $rev);
 	}
 
-	function file ($projectid, $path = '', $rev = SVN_REVISION_HEAD)
+	function file ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
@@ -105,7 +105,7 @@ class Code extends Controller
 		}
 	}
 
-	function blame ($projectid, $path, $rev = SVN_REVISION_HEAD)
+	function blame ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
@@ -169,7 +169,7 @@ class Code extends Controller
 		}
 	}
 
-	function history ($projectid, $path = '', $rev = SVN_REVISION_HEAD)
+	function history ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
@@ -222,7 +222,7 @@ class Code extends Controller
 		}
 	}
 
-	function revision ($projectid, $path, $rev = SVN_REVISION_HEAD)
+	function revision ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
@@ -275,7 +275,7 @@ class Code extends Controller
 		}
 	}
 
-	function diff ($projectid, $path, $rev1 = SVN_REVISION_HEAD, $rev2 = SVN_REVISION_HEAD)
+	function diff ($projectid = '', $path = '', $rev1 = SVN_REVISION_HEAD, $rev2 = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
