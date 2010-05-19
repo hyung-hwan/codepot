@@ -38,7 +38,11 @@ class LoginModel extends Model
 			if ($issysadmin === NULL) $issysadmin = FALSE;
 
 			$settings = $this->session->userdata('user_settings');
-			if ($settings !== NULL) $settings = unserialize ($settings);
+			if ($settings !== NULL) 
+			{
+				$settings = @unserialize ($settings);
+				if ($settings === FALSE) $settings = NULL;
+			}
 		}
 
 		return array (

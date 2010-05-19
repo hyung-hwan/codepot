@@ -112,7 +112,7 @@ class Site extends Controller
 		}
 	}
 
-	function show ($siteid)
+	function show ($siteid = '')
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
@@ -213,7 +213,7 @@ class Site extends Controller
 		}
 	}
 
-	function create ($siteid = "")
+	function create ($siteid = '')
 	{
 		$this->load->model ('SiteModel', 'sites');
 
@@ -237,7 +237,7 @@ class Site extends Controller
 		}
 	}
 
-	function update ($siteid)
+	function update ($siteid = '')
 	{
 		$this->load->model ('SiteModel', 'sites');
 
@@ -329,7 +329,7 @@ class Site extends Controller
 		}
 	}
 
-	function delete ($siteid)
+	function delete ($siteid = '')
 	{
 		$this->load->model ('SiteModel', 'sites');
 
