@@ -51,13 +51,12 @@ else
 {
 	function comp_files ($a, $b)
 	{
-		if ($a->tag == $b->tag)
+		$cmp = strcmp ($b->tag, $a->tag);
+		if ($cmp == 0)
 		{
-			return ($a->name > $b->name)? -1:
-			       ($a->name < $b->name)? 1: 0;
+			return strcmp ($a->name, $b->name);
 		}
-
-		return ($a->tag < $b->tag)? 1: -1;
+		return $cmp;
 	}
 
         usort ($files, 'comp_files');
