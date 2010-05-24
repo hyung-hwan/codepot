@@ -162,8 +162,10 @@ $this->load->view (
 		{
 			$code = $log['message'];
 
-			$date = substr($code['time'], 0, 10);
-			$time = substr($code['time'], 11, 5);
+			//$date = substr($code['time'], 0, 10);
+			//$time = substr($code['time'], 11, 5);
+			$date = date ('Y-m-d', strtotime($log['createdon']));
+			$time = date ('h:i', strtotime($log['createdon']));
 		}
 		else
 		{

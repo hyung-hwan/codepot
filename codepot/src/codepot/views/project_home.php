@@ -105,7 +105,8 @@ $this->load->view (
 
 			print '<tr class="odd">';
 			print '<td class="date">';
-			print substr($x['time'], 5, 5);
+			//print substr($x['time'], 5, 5);
+			print date ('m-d', strtotime($log['createdon']));
 			print '</td>';
 			print '<td class="object">';
 			print anchor (	
