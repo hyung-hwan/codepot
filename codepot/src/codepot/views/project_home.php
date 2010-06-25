@@ -213,7 +213,7 @@ $this->load->view (
 </div>
 
 <div id="project_home_mainarea_wiki">
-<pre id="project_home_mainarea_wiki_text" style="visibility: hidden">
+<pre id="project_home_mainarea_wiki_text">
 <?php print htmlspecialchars($project->description); ?>
 </pre>
 </div> <!-- project_home_mainarea_wiki -->
