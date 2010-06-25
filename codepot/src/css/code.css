@@ -193,6 +193,10 @@
 	white-space: pre-wrap;
 }
 
+#code_revision_mainarea_result_table td {
+	white-space: nowrap;
+}
+
 #code_revision_mainarea_result_table td.M {
 	white-space: nowrap;
 	background-image:url(images/page_white_edit.png);
