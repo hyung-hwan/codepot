@@ -87,7 +87,10 @@ class SubversionModel extends Model
 			$fileinfo['type'] = 'dir';
 			$fileinfo['size'] = 0;
 			$fileinfo['created_rev'] = $info[0]['revision'];
-			$fileinfo['last_author'] = $info[0]['last_changed_author'];
+			if (array_key_exists ('last_changed_author', $info[0]) === FALSE)
+				$fileinfo['last_author'] = '';
+			else
+				$fileinfo['last_author'] = $info[0]['last_changed_author'];
 			$fileinfo['content'] = $list;
 			$fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
 			return $fileinfo;
