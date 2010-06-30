@@ -11,7 +11,7 @@
 
 <script type="text/javascript">
 function AsciiToHex (x) {
-        var r="";
+	var r="";
 	for(i=0; i<x.length; i++)
 	{
 		var tmp = x.charCodeAt(i).toString(16);
@@ -78,7 +78,9 @@ $this->load->view (
 		),
 
 		'ctxmenuitems' => array (
-			array ("project/create", $this->lang->line('New'), 'project_catalog_new')
+			array ("project/create", 
+			       $this->lang->line('New'),
+			       'project_catalog_new')
 		)
 	)
 ); 

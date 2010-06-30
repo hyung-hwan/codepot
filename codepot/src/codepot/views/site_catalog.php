@@ -24,20 +24,20 @@ $site->name = '';
 $site->text = '';
 
 $this->load->view (
-        'projectbar',
-        array (
+	'projectbar',
+	array (
 		'banner' => $this->lang->line('Administration'),
 
 		'page' => array (
 			'type' => 'site',
 			'id' => 'catalog',
 			'site' => $site,
-                ),
+		),
 
-                'ctxmenuitems' => array (
+		'ctxmenuitems' => array (
 			array ('site/create', $this->lang->line('New'))
 		)
-        )
+	)
 );
 ?>
 
@@ -66,7 +66,6 @@ foreach ($sites as $site)
 
 
 </div> <!-- site_catalog_content -->
-
 
 </body>
 </html>
