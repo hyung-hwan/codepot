@@ -216,6 +216,10 @@ body {
 	width: inherit;
 }
 
+.content .mainarea pre.wiki {
+	white-space: pre-wrap;
+}
+
 .content .mainarea tt {
 	/*
 	padding: .1em .1em .1em .1em;
