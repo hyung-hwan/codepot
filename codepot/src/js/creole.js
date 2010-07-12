@@ -300,6 +300,7 @@ var Url = {
         br: { tag: 'br', regex: /\\\\/ },
         
         preBlock: { tag: 'pre', capture: 2,
+            attrs: { 'class': 'wiki' },
             regex: /(^|\n)\{\{\{\n((.*\n)*?)\}\}\}(\n|$)/,
             replaceRegex: /^ ([ \t]*\}\}\})/gm,
             replaceString: '$1' },
