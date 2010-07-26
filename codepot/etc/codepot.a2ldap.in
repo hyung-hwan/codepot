@@ -5,15 +5,19 @@
 #
 
 <Location "/svn">
-        DAV svn
-        SVNParentPath "@DEPOTDIR@/svnrepo"
+	DAV svn
+	SVNParentPath "@DEPOTDIR@/svnrepo"
+
+	Order deny,allow
+	#Deny from all
+	#Satisfy any
 
 	# Uncomment SSLRequireSSL below to disallow non-SSL access.
 	# Note that SSL must be enabled site-wide to use it.
 	# SSLRequireSSL
 
-        AuthType Basic
-        AuthName "@PACKAGE@"
+	AuthType Basic
+	AuthName "@PACKAGE@"
 
 	#
 	# configure authentication below
@@ -23,23 +27,34 @@
 	# Apache version 2.1 or later
 	# mod_authnz_ldap 
 	#
-        AuthBasicProvider ldap
+	AuthBasicProvider ldap
 
 	# prevent other authenticatication moudles from authenticating users
 	# if this one fails. Set it to 'off' for 'require valid-user' as it
 	# is handled by mod_authz_user.
-        AuthzLDAPAuthoritative on
+	AuthzLDAPAuthoritative on
 
-        AuthLDAPGroupAttribute memberUid
-        AuthLDAPGroupAttributeIsDN off
-        AuthLDAPRemoteUserIsDN off
+	AuthLDAPGroupAttribute memberUid
+	AuthLDAPGroupAttributeIsDN off
+	AuthLDAPRemoteUserIsDN off
 
 	# ldap binding information
-        AuthLDAPURL ldap://127.0.0.1:389/ou=users,dc=sample,dc=net?uid
-        AuthLDAPBindDN cn=admin,dc=sample,dc=net
-        AuthLDAPBindPassword xxxxxxx
+	AuthLDAPURL ldap://127.0.0.1:389/ou=users,dc=sample,dc=net?uid
+	AuthLDAPBindDN cn=admin,dc=sample,dc=net
+	AuthLDAPBindPassword xxxxxxx
 
-        Require ldap-group cn=users,ou=groups,dc=sample,dc=net
+	#Require ldap-group cn=users,ou=groups,dc=sample,dc=net
+
+	# allow anynymous for viewing and checking out
+	<Limit GET HEAD OPTIONS REPORT PROPFIND>
+		Allow from all
+		#Satisfy any
+	</Limit>
+
+	# require authentication for other operations
+	<LimitExcept GET HEAD OPTIONS REPORT PROPFIND>
+		Require ldap-group cn=coders,ou=groups,dc=sample,dc=net
+	</LimitExcept>
 
 	# 
 	# Apache version 2.0.41
