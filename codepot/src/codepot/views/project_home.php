@@ -87,7 +87,19 @@ $this->load->view (
 
 <div class="box">
 <div class="boxtitle"><?=$this->lang->line('Repository')?></div>
-<?= anchor ($this->converter->expand(CODEPOT_SVN_BASE_URL, $_SERVER) . '/' . $project->id) ?>
+<ul>
+<?php
+$urls = explode (',', CODEPOT_SVN_BASE_URL);
+foreach ($urls as $url)
+{
+	$url = trim($url);
+	if ($url == '') continue;
+	print '<li>';
+	print anchor ($this->converter->expand($url,$_SERVER) . "/{$project->id}");
+	print '</li>';
+}
+?>
+</ul>
 </div>
 
 <div class="box">
