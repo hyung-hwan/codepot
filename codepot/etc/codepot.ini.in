@@ -59,11 +59,13 @@ https_url = "https://${SERVER_NAME}${REQUEST_URI}"
 api_base_url = "http://127.0.0.1"
 
 ;------------------------------------------------------------------------------
-; Subversion base URL
+; Command-separated list of subversion base URLs
 ;------------------------------------------------------------------------------
 ; This URL depends on the webdav configuration for subversion repository.
 ; If you have your repository enabled with SSL under /svn, you can set this to 
 ; https://${SERVER_NAME}/svn.
+; You may specify multiple URLs separated with a comma as shown below:
+;   "http://${SERVER_NAME}/svn, https://${SERVER_NAME}/svn"
 ;------------------------------------------------------------------------------
 svn_base_url = "http://${SERVER_NAME}:${SERVER_PORT}/svn"
 
@@ -75,12 +77,13 @@ login_model = "LdapLoginModel"
 ;------------------------------------------------------------------------------
 ; Comma separated list of system administrator IDs
 ;------------------------------------------------------------------------------
-; sysadmin_userids = tom, dick, jane
+; sysadmin_userids = "tom, dick, jane"
 ;------------------------------------------------------------------------------
-sysadmin_userids =
+sysadmin_userids = ""
 
 ;------------------------------------------------------------------------------
-; Maximum file upload size in Kbytes
+; Maximum file upload size in Kbytes. You may have to adjust PHP settings 
+; for a large value to work.
 ;------------------------------------------------------------------------------
 max_upload_size = "10000"
 
