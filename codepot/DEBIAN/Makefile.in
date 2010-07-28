@@ -173,7 +173,7 @@ EXTRA_DIST = conffiles copyright changelog
 doc_DATA = copyright changelog
 debdir = /DEBIAN
 deb_DATA = control conffiles
-deb_SCRIPTS = postinst postrm 
+deb_SCRIPTS = postinst postrm
 all: all-am
 
 .SUFFIXES:
