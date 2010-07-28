@@ -52,7 +52,7 @@ class LdapLoginModel extends LoginModel
 		}
 
 
-		@ldap_unbind ($bind);
+		//@ldap_unbind ($ldap);
 		@ldap_close ($ldap);
 
 		return parent::authenticate ($userid, $password, $email);
@@ -100,7 +100,7 @@ class LdapLoginModel extends LoginModel
 		}
 
 
-		@ldap_unbind ($bind);
+		//@ldap_unbind ($ldap);
 		@ldap_close ($ldap);
 
 		$user['id'] = $userid;
