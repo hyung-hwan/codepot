@@ -22,7 +22,7 @@ function render_wiki()
 <title><?=htmlspecialchars($site->name)?> (<?=$site->id?>)</title>
 </head>
 
-<body onLoad="render_wiki()">
+<body onload="render_wiki()">
 
 <div class="content" id="site_show_content">
 

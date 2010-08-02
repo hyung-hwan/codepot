@@ -1,11 +1,11 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css">
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/project.css" />
 <script type="text/javascript" src="<?=base_url()?>/js/creole.js"></script>
 
 <script type="text/javascript">
@@ -23,7 +23,7 @@ function render_wiki()
 <title><?=htmlspecialchars($project->name)?></title>
 </head>
 
-<body onLoad="render_wiki()">
+<body onload="render_wiki()">
 
 <div class="content" id="project_home_content">
 
@@ -106,112 +106,117 @@ foreach ($urls as $url)
 <div class="boxtitle">
 <?= anchor ("/project/log/{$project->id}", $this->lang->line('Change log')) ?>
 </div>
-<table id="project_home_sidebar_log_table">
 <?php 
-	$xdot = $this->converter->AsciiToHex ('.');
-	foreach ($log_entries as $log)
+	if (count($log_entries) > 0)
 	{
-		if ($log['type'] == 'code')
+		print '<table id="project_home_sidebar_log_table">';
+
+		$xdot = $this->converter->AsciiToHex ('.');
+		foreach ($log_entries as $log)
 		{
-			$x = $log['message'];
-
-			print '<tr class="odd">';
-			print '<td class="date">';
-			//print substr($x['time'], 5, 5);
-			print date ('m-d', strtotime($log['createdon']));
-			print '</td>';
-			print '<td class="object">';
-			print anchor (	
-				"code/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
-				"r{$x['rev']}");
-			print '</td>';
-
-			print '</tr>';
-
-			print '<tr class="even">';
-
-			print '<td></td>';
-			print '<td colspan=1 class="details">';
-			print '<span class="description">';
-			if ($log['action'] == 'revpropchange')
+			if ($log['type'] == 'code')
 			{
-				$fmt = $this->lang->line ('MSG_LOG_REVPROP_CHANGE_BY');
-				print htmlspecialchars (sprintf($fmt, $x['propname'], $x['author']));
+				$x = $log['message'];
+	
+				print '<tr class="odd">';
+				print '<td class="date">';
+				//print substr($x['time'], 5, 5);
+				print date ('m-d', strtotime($log['createdon']));
+				print '</td>';
+				print '<td class="object">';
+				print anchor (	
+					"code/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
+					"r{$x['rev']}");
+				print '</td>';
+	
+				print '</tr>';
+	
+				print '<tr class="even">';
+	
+				print '<td></td>';
+				print '<td colspan="1" class="details">';
+				print '<span class="description">';
+				if ($log['action'] == 'revpropchange')
+				{
+					$fmt = $this->lang->line ('MSG_LOG_REVPROP_CHANGE_BY');
+					print htmlspecialchars (sprintf($fmt, $x['propname'], $x['author']));
+				}
+				else
+				{
+					$fmt = $this->lang->line (
+						'MSG_LOG_'.strtoupper($log['action']).'_BY');
+					print htmlspecialchars (sprintf($fmt, $x['author']));
+				}
+				print '</span>';
+	
+				if ($log['action'] != 'revpropchange')
+				{
+					print '<pre class="message">';
+					$sm = strtok (trim ($x['message']), "\r\n");
+					print htmlspecialchars ($sm);
+					print '</pre>';
+				}
+				print '</td>';
+				print '</tr>';
 			}
 			else
 			{
+				print '<tr class="odd">';
+				print '<td class="date">';
+				print date ('m-d', strtotime($log['createdon']));
+				print '</td>';
+	
+				print '<td class="object">';
+				$uri = '';
+				if ($log['type'] == 'project')
+				{
+					$uri = "/project/home/{$log['projectid']}";
+					$trimmed = preg_replace("/(.{20}).+/u", "$1…", $log['message']);
+				}
+				else if ($log['type'] == 'wiki')
+				{
+					$hex = $this->converter->AsciiToHex ($log['message']);
+					$uri = "/wiki/show_r/{$log['projectid']}/{$hex}";
+					$trimmed = preg_replace("/(.{20}).+/u", "$1…", $log['message']);
+				}
+				else if ($log['type'] == 'file')
+				{
+					$hex = $this->converter->AsciiToHex ($log['message']);
+					$uri = "/file/show/{$log['projectid']}/{$hex}";
+					$trimmed = preg_replace("/(.{20}).+/u", "$1…", $log['message']);
+				}
+				else if ($log['type'] == 'issue')
+				{
+					$hex = $this->converter->AsciiToHex ($log['message']);
+					$uri = "/issue/show/{$log['projectid']}/{$hex}";
+					$trimmed =  $this->lang->line('Issue') . " {$log['message']}";
+				}
+	
+				if ($uri != '')
+					print anchor ($uri, htmlspecialchars($trimmed));
+				else
+					print htmlspecialchars($trimmed);
+				print '</td>';
+	
+				print '</tr>';
+	
+				print '<tr class="even">';
+				print '<td></td>';
+				print '<td colspan="1" class="details">';
+				print '<span class="description">';
 				$fmt = $this->lang->line (
 					'MSG_LOG_'.strtoupper($log['action']).'_BY');
-				print htmlspecialchars (sprintf($fmt, $x['author']));
+				print htmlspecialchars (sprintf($fmt, $log['userid']));
+				print '</span>';
+				print '</td>';
+	
+				print '</tr>';
 			}
-			print '</span>';
-
-			if ($log['action'] != 'revpropchange')
-			{
-				print '<pre class="message">';
-				$sm = strtok (trim ($x['message']), "\r\n");
-				print htmlspecialchars ($sm);
-				print '</pre>';
-			}
-			print '</td>';
-			print '</tr>';
 		}
-		else
-		{
-			print '<tr class="odd">';
-			print '<td class="date">';
-			print date ('m-d', strtotime($log['createdon']));
-			print '</td>';
 
-			print '<td class="object">';
-			$uri = '';
-			if ($log['type'] == 'project')
-			{
-				$uri = "/project/home/{$log['projectid']}";
-				$trimmed = preg_replace("/(.{20}).+/u", "$1…", $log['message']);
-			}
-			else if ($log['type'] == 'wiki')
-			{
-				$hex = $this->converter->AsciiToHex ($log['message']);
-				$uri = "/wiki/show_r/{$log['projectid']}/{$hex}";
-				$trimmed = preg_replace("/(.{20}).+/u", "$1…", $log['message']);
-			}
-			else if ($log['type'] == 'file')
-			{
-				$hex = $this->converter->AsciiToHex ($log['message']);
-				$uri = "/file/show/{$log['projectid']}/{$hex}";
-				$trimmed = preg_replace("/(.{20}).+/u", "$1…", $log['message']);
-			}
-			else if ($log['type'] == 'issue')
-			{
-				$hex = $this->converter->AsciiToHex ($log['message']);
-				$uri = "/issue/show/{$log['projectid']}/{$hex}";
-				$trimmed =  $this->lang->line('Issue') . " {$log['message']}";
-			}
-
-			if ($uri != '')
-				print anchor ($uri, htmlspecialchars($trimmed));
-			else
-				print htmlspecialchars($trimmed);
-			print '</td>';
-
-			print '</tr>';
-
-			print '<tr class="even">';
-			print '<td></td>';
-			print '<td colspan=1 class="details">';
-			print '<span class="description">';
-			$fmt = $this->lang->line (
-				'MSG_LOG_'.strtoupper($log['action']).'_BY');
-			print htmlspecialchars (sprintf($fmt, $log['userid']));
-			print '</span>';
-			print '</td>';
-
-			print '</tr>';
-		}
+		print "</table>";
 	}
 ?>
-</table>
 </div>
 
 </div> <!-- project_home_sidebar -->

@@ -1,10 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css">
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/site.css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/site.css" />
 
 <script type="text/javascript" src="<?=base_url()?>/js/jquery.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>/js/jquery-ui.min.js"></script>
@@ -31,7 +31,7 @@ function render_wiki()
 <title><?=htmlspecialchars($caption)?></title>
 </head>
 
-<body onLoad="render_wiki()">
+<body onload="render_wiki()">
 
 <div class="content" id="site_home_content">
 
@@ -75,11 +75,12 @@ foreach ($latest_projects as $project)
 		$cap = "{$project->name} ($project->id)";
 	else $cap = $project->name;
 
+	$sum = $project->summary;
 	//$sum = preg_replace("/(.{15}).+/u", "$1…", $project->summary);
-	//$sum = htmlspecialchars ($sum);
+	$sum = htmlspecialchars ($sum);
 
 	$anc = anchor ("project/home/{$project->id}", 
-		htmlspecialchars($cap), "title='{$project->summary}'");
+		htmlspecialchars($cap), "title='$sum'");
 	print "<li>{$anc}</li>";
 }
 ?>
@@ -123,7 +124,7 @@ foreach ($latest_projects as $project)
 			print '<tr class="even">';
 
 			print '<td></td>';
-			print '<td colspan=2 class="details">';
+			print '<td colspan="2" class="details">';
 			print '<span class="description">';
 
 			if ($log['action'] == 'revpropchange')
@@ -196,7 +197,7 @@ foreach ($latest_projects as $project)
 
 			print '<tr class="even">';
 			print '<td></td>';
-			print '<td colspan=2 class="details">';
+			print '<td colspan="2" class="details">';
 			print '<span class="description">';
 			$fmt = $this->lang->line (
 				'MSG_LOG_'.strtoupper($log['action']).'_BY');

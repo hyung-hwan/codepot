@@ -21,7 +21,7 @@ function render_wiki()
 <title><?=htmlspecialchars($file->name)?></title>
 </head>
 
-<body onLoad="render_wiki()">
+<body onload="render_wiki()">
 
 <div class="content" id="file_show_content">
 

@@ -1,4 +1,6 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -10,8 +12,9 @@
 <link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/jquery-ui.css" />
 
 <script type="text/javascript">
+/* <![CDATA[ */
 function AsciiToHex (x) {
-        var r="";
+	var r="";
 	for(i=0; i<x.length; i++)
 	{
 		var tmp = x.charCodeAt(i).toString(16);
@@ -50,6 +53,7 @@ $(function () {
 		}
 	);
 });
+/* ]]> */
 </script>
 
 <title><?=htmlspecialchars($project->name)?></title>
@@ -59,11 +63,11 @@ $(function () {
 
 <div class="content" id="issue_home_content">
 
-<!---------------------------------------------------------------------------->
+<!-- ============================================================ -->
 
 <?php $this->load->view ('taskbar'); ?>
 
-<!---------------------------------------------------------------------------->
+<!-- ============================================================ -->
 
 <?php
 $this->load->view (
@@ -84,7 +88,7 @@ $this->load->view (
 ); 
 ?>
 
-<!---------------------------------------------------------------------------->
+<!-- ============================================================ -->
 
 <div class="mainarea" id="issue_home_mainarea">
 <div class="title"><?=$this->lang->line('Issues')?></div>
@@ -100,9 +104,9 @@ $this->load->view (
 		$issue_status_array[''] = $this->lang->line('All');
 		$issue_priority_array[''] = $this->lang->line('All');
 	?>
-	<form id="issue_search_form">
+	<form id="issue_search_form" action="">
 		<div>
-			<?=form_label ($this->lang->line('Type'), 'type')
+			<?=form_label ($this->lang->line('Type'), 'issue_search_type')
 			?>
 			<?=form_dropdown('type',
 				$issue_type_array,
@@ -110,14 +114,14 @@ $this->load->view (
 				'id="issue_search_type"')
 			?>
 	
-			<?=form_label ($this->lang->line('Status'), 'status')
+			<?=form_label ($this->lang->line('Status'), 'issue_search_status')
 			?>
 			<?=form_dropdown('status',
 				$issue_status_array,
-				set_value('status', $search->status), 'id="status"')
+				set_value('status', $search->status), 'id="issue_search_status"')
 			?>
 
-			<?=form_label ($this->lang->line('Priority'), 'priority')
+			<?=form_label ($this->lang->line('Priority'), 'issue_search_priority')
 			?>
 			<?=form_dropdown('priority',
 				$issue_priority_array,
@@ -128,7 +132,7 @@ $this->load->view (
 
 
 		<div>
-			<?=form_label ($this->lang->line('Owner'), 'owner')
+			<?=form_label ($this->lang->line('Owner'), 'issue_search_owner')
 			?>
 			<?=form_input('owner',
 				set_value('owner', $search->owner),
@@ -137,7 +141,7 @@ $this->load->view (
 		</div>
 
 		<div>
-			<?=form_label ($this->lang->line('Summary'), 'summary')
+			<?=form_label ($this->lang->line('Summary'), 'issue_search_summary')
 			?>
 			<?=form_input('summary',
 				set_value('summary', $search->summary),
@@ -217,11 +221,11 @@ else
 
 </div> <!-- issue_home_mainarea -->
 
-<!---------------------------------------------------------------------------->
+<!-- ============================================================ -->
 
 <?php $this->load->view ('footer'); ?>
 
-<!---------------------------------------------------------------------------->
+<!-- ============================================================ -->
 
 
 </div> <!-- issue_home_content -->

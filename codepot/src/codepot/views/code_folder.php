@@ -1,4 +1,6 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -52,11 +54,11 @@ $(function () {
 
 <div class="content" id="code_folder_content">
 
-<!---------------------------------------------------------------------------->
+<!-- ================================================================== -->
 
 <?php $this->load->view ('taskbar'); ?>
 
-<!---------------------------------------------------------------------------->
+<!-- ================================================================== -->
 
 <?php
 $this->load->view (
@@ -75,7 +77,7 @@ $this->load->view (
 );
 ?>
 
-<!---------------------------------------------------------------------------->
+<!-- ================================================================== -->
 
 <div class="mainarea" id="code_folder_mainarea">
 
@@ -244,7 +246,6 @@ $this->load->view (
 
 		print '<div id="code_folder_mainarea_result_info">';
 
-		print '<pre id="code_folder_mainarea_result_info_logmsg">';
 		print '<div class="title">';
 		print $this->lang->line('CODE_COMMIT');
 		print '</div>';
@@ -287,11 +288,11 @@ $this->load->view (
 </div> <!-- code_folder_mainarea -->
 
 
-<!---------------------------------------------------------------------------->
+<!-- ================================================================== -->
 
 <?php $this->load->view ('footer'); ?>
 
-<!---------------------------------------------------------------------------->
+<!-- ================================================================== -->
 
 </div> <!--  code_folder_content -->
 
