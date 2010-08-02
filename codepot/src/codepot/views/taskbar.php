@@ -20,8 +20,9 @@ function show_taskbar ($con, $login)
 
 //print '<div id="taskbar_signin_panel">';
 
-		print form_open('main/signin');
+		print form_open('main/signin', array('id' => 'taskbar_signin_form'));
 
+		print form_fieldset();
 //print '<div id="taskbar_signin_form_panel">';
 
 		$user_name = "";
@@ -40,7 +41,7 @@ function show_taskbar ($con, $login)
 		print form_input (
 			'user_name', 
 			set_value ('user_name', $user_name), 
-			'size=12 id="taskbar_user_name"'
+			'size="12" id="taskbar_user_name"'
 		);
 
 		print '&nbsp;';
@@ -52,7 +53,7 @@ function show_taskbar ($con, $login)
 		print form_password (
 			'user_pass',
 			set_value ('user_pass', $user_pass),
-			'size=12 id="taskbar_user_pass"'
+			'size="12" id="taskbar_user_pass"'
 		);
 
 		print '&nbsp;';
@@ -69,6 +70,7 @@ function show_taskbar ($con, $login)
 //		print '</a>';
 //print '</div>';
 
+		print form_fieldset_close();
 		print form_close();
 
 //print '</div>';

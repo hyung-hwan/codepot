@@ -492,3 +492,10 @@ pre.prettyprint .nocode a:hover {
 #taskbar_signin_button_panel a {
 	color: #0073EA;
 }
+
+#taskbar_signin_form fieldset {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	white-space: nowrap;
+}
