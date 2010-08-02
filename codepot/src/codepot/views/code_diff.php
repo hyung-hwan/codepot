@@ -174,7 +174,7 @@ $this->load->view (
 	if (empty($file['content']))
 	{
 		print '<tr>';
-		print '<td colspan=2>';
+		print '<td colspan="2">';
 		print htmlspecialchars ($this->lang->line('MSG_NO_DIFF'));
 		print '</td>';
 		print '</tr>';

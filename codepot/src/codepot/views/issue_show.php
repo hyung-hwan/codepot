@@ -146,7 +146,7 @@ $(function () {
 <title><?=htmlspecialchars($issue->id)?></title>
 </head>
 
-<body onLoad="render_wiki()">
+<body onload="render_wiki()">
 
 <div class="content" id="issue_show_content">
 

@@ -25,7 +25,7 @@ function render_wiki()
 }
 </script>
 
-<body onLoad="render_wiki()">
+<body onload="render_wiki()">
 
 <div class="content" id="wiki_show_content">
 
