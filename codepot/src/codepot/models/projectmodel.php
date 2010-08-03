@@ -141,7 +141,7 @@ class ProjectModel extends Model
 		else
 		{
 			$url = parse_url(base_url());
-			$api = $api_base_url . $url['path'] . '/index.php/api';
+			$api = $api_base_url . $url['path'] . '/' . CODEPOT_INDEX_PAGE . '/api';
 
 			$cfgdir = CODEPOT_CFG_DIR;
 			$repodir = CODEPOT_SVNREPO_DIR;
