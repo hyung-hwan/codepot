@@ -2,8 +2,10 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/wiki.css" />
+
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/wiki.css')?>" />
+
 <title><title><?=htmlspecialchars($wiki->name)?></title></title>
 </head>
 

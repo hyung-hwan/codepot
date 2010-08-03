@@ -2,8 +2,10 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/code.css" />
+
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
+
 <title><?=htmlspecialchars($project->name)?></title>
 </head>
 
