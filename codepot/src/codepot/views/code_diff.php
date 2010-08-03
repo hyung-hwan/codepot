@@ -2,14 +2,16 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/code.css" />
-<script type="text/javascript" src="<?=base_url()?>/js/prettify/prettify.js"></script>
-<script type="text/javascript" src="<?=base_url()?>/js/prettify/lang-css.js"></script>
-<script type="text/javascript" src="<?=base_url()?>/js/prettify/lang-lisp.js"></script>
-<script type="text/javascript" src="<?=base_url()?>/js/prettify/lang-lua.js"></script>
-<script type="text/javascript" src="<?=base_url()?>/js/prettify/lang-sql.js"></script>
-<script type="text/javascript" src="<?=base_url()?>/js/prettify/lang-vb.js"></script>
+
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
+
 <title><?=htmlspecialchars($project->name)?></title>
 </head>
 

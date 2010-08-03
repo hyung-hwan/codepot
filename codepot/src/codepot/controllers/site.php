@@ -474,7 +474,6 @@ class Site extends Controller
 			redirect ("wiki/attachment/{$part[0]}/{$hexwikiname}/{$hexattname}");
 		}
 	}
-
 }
 
 ?>
