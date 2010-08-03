@@ -40,6 +40,14 @@ ldap_admin_password = ""
 ;------------------------------------------------------------------------------
 language = "auto"
 
+
+;------------------------------------------------------------------------------
+; Name of the index page. If you want to hide the index page name from
+; the URL by rewriting it (e.g. mod_rewrite), you have to change this
+; properly to match the rewriting rule 
+;------------------------------------------------------------------------------
+index_page = "index.php"
+
 ;------------------------------------------------------------------------------
 ; When set to yes, viewing pages require a user to sign in.
 ;------------------------------------------------------------------------------

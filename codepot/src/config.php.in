@@ -25,6 +25,7 @@ function load_ini ($file)
 		array ('default_site_name',            'string',     '@PACKAGE@'),
 
 		array ('language',                     'string',     'auto'),
+		array ('index_page',                   'string',     'index.php'),
 
 		array ('signin_compulsory',            'boolean',    FALSE),
 		array ('https_compulsory',             'boolean',    FALSE),

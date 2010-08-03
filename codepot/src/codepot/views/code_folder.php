@@ -4,12 +4,13 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/common.css" />
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/code.css" />
 
-<script type="text/javascript" src="<?=base_url()?>/js/jquery.min.js"></script>
-<script type="text/javascript" src="<?=base_url()?>/js/jquery-ui.min.js"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url()?>/css/jquery-ui.css" />
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
+
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
 
 <?php
 	$file_count = count($file['content']);
