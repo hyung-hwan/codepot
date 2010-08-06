@@ -4,6 +4,7 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="keywords" content="<?=$project->id?>" />
 
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/project.css')?>" />

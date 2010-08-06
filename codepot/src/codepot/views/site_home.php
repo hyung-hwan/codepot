@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="keywords" content="codepot" />
 
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/site.css')?>" />
