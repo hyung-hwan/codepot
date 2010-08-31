@@ -25,7 +25,8 @@ class Main extends Controller
 		$this->load->model ('UserModel', 'users');
 		$this->load->library(array('encrypt', 'form_validation', 'session'));
 
-		$this->form_validation->set_rules('user_name', 'username', 'required|alpha_dash');
+		//$this->form_validation->set_rules('user_name', 'username', 'required|alpha_dash');
+		$this->form_validation->set_rules('user_name', 'username', 'required');
 		$this->form_validation->set_rules('user_pass', 'password', 'required');
 		$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
 		
