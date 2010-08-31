@@ -1,6 +1,7 @@
 body {
 	padding: 0;
 	margin: 5px 5px 5px 5px;
+	min-width: 600px;
 }
 
 .content
