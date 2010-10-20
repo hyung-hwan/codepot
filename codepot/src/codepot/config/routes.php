@@ -43,6 +43,7 @@
 $route['default_controller'] = "site";
 $route['scaffolding_trigger'] = "";
 
+/* customized route to map @XXX to project/home/XXX */
 $route['@(.+)'] = "project/home/$1";
 
 /* End of file routes.php */
