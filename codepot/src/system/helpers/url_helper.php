@@ -6,7 +6,7 @@
  *
  * @package		CodeIgniter
  * @author		ExpressionEngine Dev Team
- * @copyright	Copyright (c) 2008 - 2009, EllisLab, Inc.
+ * @copyright	Copyright (c) 2008 - 2010, EllisLab, Inc.
  * @license		http://codeigniter.com/user_guide/license.html
  * @link		http://codeigniter.com
  * @since		Version 1.0
@@ -62,22 +62,6 @@ if ( ! function_exists('base_url'))
 	{
 		$CI =& get_instance();
 		return $CI->config->slash_item('base_url');
-	}
-
-}
-
-if ( ! function_exists('base_url_make'))
-{
-	function base_url_make($path)
-	{
-		$CI =& get_instance();
-		$url = $CI->config->slash_item('base_url');
-		if (substr($url, -1) == '/')
-		{
-			for ($i = 0; substr($path, $i, 1) == '/'; $i++);
-			return $url . substr($path, $i);
-		}
-		else return $url . $path;
 	}
 }
 

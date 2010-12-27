@@ -17,8 +17,8 @@
 
 #code_folder_mainarea_result_info {
 	position: absolute;
-	top: 5;
-	right: 5;
+	top: 5px;
+	right: 2px;
 	width: 22em;
 	background: #E5ECF9 none repeat scroll 0 0;
 	border: #D4DBE8 1px solid;
@@ -62,8 +62,8 @@
 
 #code_file_mainarea_result_info {
 	position: absolute;
-	top: 5;
-	right: 5;
+	top: 5px;
+	right: 2px;
 	width: 22em;
 	background: #E5ECF9 none repeat scroll 0 0;
 	border: #D4DBE8 1px solid;
@@ -107,8 +107,8 @@
 
 #code_blame_mainarea_result_info {
 	position: absolute;
-	top: 5;
-	right: 5;
+	top: 5px;
+	right: 2px;
 	width: 22em;
 	background: #E5ECF9 none repeat scroll 0 0;
 	border: #D4DBE8 1px solid;

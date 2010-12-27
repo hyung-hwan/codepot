@@ -51,7 +51,7 @@ $autoload['libraries'] = array('database', 'lang_detect');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array();
+$autoload['helper'] = array('codepot');
 
 
 /*
