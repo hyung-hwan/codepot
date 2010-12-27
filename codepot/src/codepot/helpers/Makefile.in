@@ -166,7 +166,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 wwwdir = $(WWWDIR)/codepot/helpers
 www_DATA = \
-	index.html
+	index.html \
+	codepot_helper.php
 
 EXTRA_DIST = $(www_DATA)
 all: all-am
