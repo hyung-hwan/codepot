@@ -75,7 +75,8 @@ class LogModel extends Model
 
 				if ($row->action == 'commit')
 				{
-					list($type,$repo,$rev) = split('[,]', $row->message);
+					//list($type,$repo,$rev) = split('[,]', $row->message);
+					list($type,$repo,$rev) = explode(',', $row->message);
 
 					$tmp['type'] = $type;
 					$tmp['repo'] = $repo;
@@ -83,7 +84,7 @@ class LogModel extends Model
 
 					$log = @svn_log (
 						'file:///'.CODEPOT_SVNREPO_DIR."/{$repo}",
-						$rev, $rev, 1,SVN_DISCOVER_CHANGED_PATHS);
+						$rev, $rev, 1, SVN_DISCOVER_CHANGED_PATHS);
 					if ($log === FALSE || count($log) < 1)
 					{
 						$tmp['time'] = '';
@@ -99,7 +100,8 @@ class LogModel extends Model
 				}
 				else
 				{
-					list($type,$repo,$rev,$propname,$action) = split('[,]', $row->message);
+					//list($type,$repo,$rev,$propname,$action) = split('[,]', $row->message);
+					list($type,$repo,$rev,$propname,$action) = explode(',', $row->message);
 
 					$tmp['type'] = $type;
 					$tmp['repo'] = $repo;

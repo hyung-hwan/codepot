@@ -7,7 +7,7 @@ class Site extends Controller
 	var $VIEW_HOME = 'site_home';
 	var $VIEW_EDIT = 'site_edit';
 	var $VIEW_DELETE = 'site_delete';
-        var $VIEW_CATALOG = 'site_catalog';
+	var $VIEW_CATALOG = 'site_catalog';
 	var $VIEW_LOG = 'log';
 
 	function Site ()

@@ -22,6 +22,10 @@
 			chgrp -R "${GROUP}" "@DEPOTDIR@/svnrepo"
 			chmod 0775 "@DEPOTDIR@/svnrepo"
 		}
+		[ "${filesdir}" = "1" ] && {
+			chgrp -R "${GROUP}" "@DEPOTDIR@/files"
+			chmod 0775 "@DEPOTDIR@/files"
+		}
 		[ "${attachmentsdir}" = "1" ] && {
 			chgrp -R "${GROUP}" "@DEPOTDIR@/attachments"
 			chmod 0775 "@DEPOTDIR@/attachments"
