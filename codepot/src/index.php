@@ -65,6 +65,16 @@ if (CODEPOT_HTTPS_COMPULSORY)
 
 /*
 |---------------------------------------------------------------
+| EXTRA INFORMATION
+|---------------------------------------------------------------
+*/
+if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')
+	$_SERVER['REQUEST_PROTOCOL'] = 'https';
+else
+	$_SERVER['REQUEST_PROTOCOL'] = 'http';
+
+/*
+|---------------------------------------------------------------
 | LOAD THE FRONT CONTROLLER
 |---------------------------------------------------------------
 */

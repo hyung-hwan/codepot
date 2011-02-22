@@ -74,8 +74,9 @@ api_base_url = "http://127.0.0.1"
 ; https://${SERVER_NAME}/svn.
 ; You may specify multiple URLs separated with a comma as shown below:
 ;   "http://${SERVER_NAME}/svn, https://${SERVER_NAME}/svn"
+; REQUEST_PROTOCOL is resolved to either http or https.
 ;------------------------------------------------------------------------------
-svn_base_url = "http://${SERVER_NAME}:${SERVER_PORT}/svn"
+svn_base_url = "${REQUEST_PROTOCOL}://${SERVER_NAME}:${SERVER_PORT}/svn"
 
 ;------------------------------------------------------------------------------
 ; Login model to use. 
