@@ -38,7 +38,7 @@ class Wiki extends Controller
 		{
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
-                }
+		}
 		else if ($project === NULL)
 		{
 			$data['message'] = 
@@ -261,22 +261,39 @@ class Wiki extends Controller
 					
 				$mtime = @filemtime ($path);
 				if ($mtime === FALSE) $mtime = time();
-				header ('Content-Type: ' . mime_content_type($path));
-				header ('Expires: ' . gmdate("D, d M Y H:i:s", time() + 60*60*24*30) . ' GMT');  // 30days
-				header ('Last-Modified: ' . gmdate("D, d M Y H:i:s", $mtime) . ' GMT');
-				header ("Content-Disposition: filename={$name}");
-				$len = @filesize($path);
-				if ($len !== FALSE) header("Content-Length: {$len}");
-				//header("Content-Transfer-Encoding: binary");
-				flush ();
 
-				$x = @readfile($path);
-				if ($x === FALSE)
+				header ('Content-Type: ' . mime_content_type($path));
+
+				//header ('Expires: ' . gmdate("D, d M Y H:i:s", time() + 60*60*24*30) . ' GMT');  // 30days
+				//header ('Expires: -1');
+				//header ('Cache-Control: must-revalidate, private');
+				header ('Cache-Control: max-age=0');
+				$reqheaders = function_exists('apache_request_headers')? apache_request_headers(): array();
+
+				if (isset($reqheaders['If-Modified-Since']) && 
+				    strtotime($reqheaders['If-Modified-Since']) >= $mtime) 
 				{
-					$data['project'] = $project;
-					$data['message'] = sprintf (
-						$this->lang->line('WIKI_MSG_FAILED_TO_READ_ATTACHMENT'), $name);
-					$this->load->view ($this->VIEW_ERROR, $data);
+					header('Last-Modified: '.gmdate('D, d M Y H:i:s', $mtime).' GMT', true, 304);
+					flush ();
+				}
+				else
+				{
+					header ('Last-Modified: ' . gmdate("D, d M Y H:i:s", $mtime) . ' GMT');
+					header ("Content-Disposition: filename={$name}");
+
+					$len = @filesize($path);
+					if ($len !== FALSE) header("Content-Length: {$len}");
+					//header("Content-Transfer-Encoding: binary");
+					flush ();
+
+					$x = @readfile($path);
+					if ($x === FALSE)
+					{
+						$data['project'] = $project;
+						$data['message'] = sprintf (
+							$this->lang->line('WIKI_MSG_FAILED_TO_READ_ATTACHMENT'), $name);
+						$this->load->view ($this->VIEW_ERROR, $data);
+					}
 				}
 			}
 		}
