@@ -7,7 +7,7 @@ body {
 .content
 {
 	font-size: 0.9em;
-	font-family: sans-serif;
+	font-family: Ubuntu, sans-serif;
 }
 
 .content h1 {
@@ -34,13 +34,24 @@ body {
 	list-style: square;
 }
 
+.content a
+{
+	text-decoration: none;
+	color: #4665A2;
+}
+
+.content a:visited
+{
+	color: #4665A2;
+}
+
 .content .taskbar {
 	font-size: 0.9em;
 	font-weight: bold;
 	text-transform: uppercase;
 	padding: 0.6em 0.2em 0.6em 0.2em;
 	color: #ffffff;
-	background-color: #203150
+	background-color: #203150;
 }
 
 .content .taskbar .boxa {
@@ -93,9 +104,10 @@ body {
 }
 
 .content .projectbar {
+	/*margin: 0.1em 0em 0em 0em;*/
 	padding: 0.2em 0.2em 0.2em 0.2em;
-	background-color: #2A5090;
 	color: #FFFFFF;
+	background-color: #4665A2;
 }
 
 .content .projectbar .title {
@@ -412,16 +424,19 @@ pre.prettyprint .nocode a:hover {
         vertical-align:baseline;
         border:0 none;
         color:#FFFFFF;
-        background-color: #7777FF;
+        /*background-color: #7777FF;*/
+	background-color: #4665A2;
 	text-transform: uppercase;
 }
 
 .content .sidebar .boxtitle a {
 	text-decoration: none;
+        color: #FFFFFF;
 }
 
 .content .sidebar .boxtitle a:hover {
-        background-color: #BBBBFF;
+        /*background-color: #BBBBFF;*/
+        color: #8899CC;
 }
 
 .content .sidebar ul {
@@ -450,7 +465,7 @@ pre.prettyprint .nocode a:hover {
 	font-style: italic;
 	text-align: right;
 	color: #FFFFFF;
-	background-color: #203150;
+	background-color: #4665A2;
 }
 
 .content .footer a {
