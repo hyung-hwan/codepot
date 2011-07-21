@@ -43,7 +43,7 @@ rm -rf $RPM_BUILD_ROOT
 /var/www/html/codepot
 
 %config(noreplace) /etc/codepot/codepot.ini
-/etc/codepot/codepot.sql 
+/etc/codepot/codepot.mysql 
 /etc/codepot/codepot.a2ldap
 /etc/codepot/start-commit
 /etc/codepot/pre-commit

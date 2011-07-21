@@ -6,10 +6,10 @@ CREATE TABLE site (
 	name        VARCHAR(128) NOT NULL,
 	text        TEXT         NOT NULL,
 
-	createdon   DATETIME,
-	updatedon   DATETIME,
-	createdby   VARCHAR(32),
-	updatedby   VARCHAR(32)
+	createdon   DATETIME     NOT NULL,
+	updatedon   DATETIME     NOT NULL,
+	createdby   VARCHAR(32)  NOT NULL,
+	updatedby   VARCHAR(32)  NOT NULL
 ) charset=utf8 engine=InnoDB;
 
 CREATE TABLE project (
@@ -18,10 +18,10 @@ CREATE TABLE project (
 	summary     VARCHAR(255) NOT NULL,
 	description TEXT NOT NULL,
 
-	createdon   DATETIME,
-	updatedon   DATETIME,
-	createdby   VARCHAR(32),
-	updatedby   VARCHAR(32)
+	createdon   DATETIME     NOT NULL,
+	updatedon   DATETIME     NOT NULL,
+	createdby   VARCHAR(32)  NOT NULL,
+	updatedby   VARCHAR(32)  NOT NULL
 
 ) charset=utf8 engine=InnoDB;
 
@@ -37,12 +37,12 @@ CREATE TABLE project_membership (
 CREATE TABLE wiki (
 	projectid  VARCHAR(32)   NOT NULL,
 	name       VARCHAR(255)  NOT NULL,
-	text	   TEXT          NOT NULL,
+	text	      TEXT          NOT NULL,
 
-	createdon  DATETIME,
-	updatedon  DATETIME,
-	createdby  VARCHAR(32),
-	updatedby  VARCHAR(32),
+	createdon  DATETIME      NOT NULL,
+	updatedon  DATETIME      NOT NULL,
+	createdby  VARCHAR(32)   NOT NULL,
+	updatedby  VARCHAR(32)   NOT NULL,
 
 	UNIQUE KEY wiki_id (projectid, name),
 
@@ -56,8 +56,8 @@ CREATE TABLE wiki_attachment (
 	name       VARCHAR(255)  NOT NULL,
 	encname    VARCHAR(255)  NOT NULL,
 
-	createdon  DATETIME,
-	createdby  VARCHAR(32),
+	createdon  DATETIME      NOT NULL,
+	createdby  VARCHAR(32)   NOT NULL,
 
 	UNIQUE KEY wiki_attachment_id (projectid, wikiname, name),
 
@@ -79,10 +79,10 @@ CREATE TABLE issue (
 	owner         VARCHAR(255)  NOT NULL,
 	priority      VARCHAR(32)   NOT NULL,
 
-	createdon  DATETIME,
-	updatedon  DATETIME,
-	createdby  VARCHAR(32),
-	updatedby  VARCHAR(32),
+	createdon     DATETIME      NOT NULL,
+	updatedon     DATETIME      NOT NULL,
+	createdby     VARCHAR(32)   NOT NULL,
+	updatedby     VARCHAR(32)   NOT NULL,
 
 	PRIMARY KEY (projectid, id),
 	KEY issue_status_type_summary (projectid, status, type, summary),
@@ -103,8 +103,8 @@ CREATE TABLE issue_change (
 	priority  VARCHAR(32)  NOT NULL,
 	comment   TEXT         NOT NULL,
 
-	updatedon DATETIME,
-	updatedby VARCHAR(32),
+	updatedon DATETIME     NOT NULL,
+	updatedby VARCHAR(32)  NOT NULL,
 
 	PRIMARY KEY (projectid, id, sno),
 	KEY issue_update_time (projectid, id, updatedon),
@@ -123,10 +123,10 @@ CREATE TABLE file (
 	md5sum      CHAR(32)      NOT NULL,
 	description TEXT          NOT NULL,
 
-	createdon  DATETIME,
-	updatedon  DATETIME, 
-	createdby  VARCHAR(32),
-	updatedby  VARCHAR(32),
+	createdon  DATETIME       NOT NULL,
+	updatedon  DATETIME       NOT NULL, 
+	createdby  VARCHAR(32)    NOT NULL,
+	updatedby  VARCHAR(32)    NOT NULL,
 
 	UNIQUE KEY file_id (projectid, name),
 	UNIQUE KEY (encname),

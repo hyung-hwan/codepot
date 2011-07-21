@@ -47,7 +47,7 @@ INSTALLATION
   
  * Customize CFGDIR/codepot.ini based on CFGDIR/codepot.ini-dist.
 
- * Initialize database using CFGDIR/codepot.sql
+ * Initialize database using CFGDIR/codepot.mysql
 
  * Configure apache web server ahthentication for subversion webdav access 
    using CFGDIR/codepot.a2ldap or CFGDIR/codepot.a2mysql
