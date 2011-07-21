@@ -514,8 +514,8 @@ class SubversionModel extends Model
 			## Sample svn_info() array ##
 			[0] => Array
 			(
-				[path] => codepot.sql
-				[url] => file:///svn/test/codepot.sql
+				[path] => codepot.mysql
+				[url] => file:///svn/test/codepot.mysql
 				[revision] => 27
 				[kind] => 1
 				[repos] => file:///svn/test
