@@ -168,7 +168,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 wwwdir = @wwwdir@
-cfg_DATA = codepot.ini codepot.sql codepot.a2ldap
+cfg_DATA = codepot.ini codepot.mysql codepot.a2ldap
 cfg_SCRIPTS = start-commit pre-commit post-commit pre-revprop-change post-revprop-change
 EXTRA_DIST = $(cfg_DATA)  $(cfg_SCRIPTS)
 all: all-am
