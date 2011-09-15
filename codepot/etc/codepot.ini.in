@@ -24,14 +24,27 @@ database_prefix = ""
 ; The userid format and the password format can contain 
 ; ${userid} and ${password} to represent the actual user ID
 ; and the password respectively. 
+;
+; If ldap_auth_mode is 1, authentication is performed by binding to 
+; a LDAP server specified using ldap_userid_format as a binddn and
+; ldap_password_format as a password.
+;
+; If ldap_auth_mode is 2, it finds a binddn by searching a subtree
+; under ldap_userid_search_base using ldap_userid_search_filter
+; after having bound with ldap_admin_binddn and ldap_admin_password.
+; The binddn found is used for subsequent binding for authentication.
+; ldap_userid_format is unused in this mode.
 ;------------------------------------------------------------------------------
 ldap_server_uri = "ldap://127.0.0.1:389"
 ldap_server_protocol_version = "3"
-ldap_userid_format = "${userid}"
+ldap_auth_mode 1
+ldap_userid_format = "cn=${userid},ou=users,dc=codepot,dc=org"
 ldap_password_format = "${password}"
+ldap_admin_binddn = "cn=admin,dc=codepot,dc=org"
+ldap_admin_password = "admin-password"
+ldap_userid_search_filter = "(uid=${userid})"
+ldap_userid_search_base = "ou=users,dc=codepot,dc=org"
 ldap_mail_attribute_name = ""
-ldap_admin_binddn = ""
-ldap_admin_password = ""
 
 ;------------------------------------------------------------------------------
 ; default langage to use. set it to 'auto' to detect it automatically.
@@ -39,7 +52,6 @@ ldap_admin_password = ""
 ;  english, korean, indonesian
 ;------------------------------------------------------------------------------
 language = "auto"
-
 
 ;------------------------------------------------------------------------------
 ; Name of the index page. If you want to hide the index page name from
