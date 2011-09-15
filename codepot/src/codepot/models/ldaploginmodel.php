@@ -24,7 +24,57 @@ class LdapLoginModel extends LoginModel
 			ldap_set_option ($ldap, LDAP_OPT_PROTOCOL_VERSION, CODEPOT_LDAP_SERVER_PROTOCOL_VERSION);
 		}
 
-		$f_userid = $this->formatString (CODEPOT_LDAP_USERID_FORMAT, $userid, $password); 
+		if (CODEPOT_LDAP_AUTH_MODE == 2)
+		{
+			$f_rootdn = $this->formatString (CODEPOT_LDAP_ADMIN_BINDDN, $userid, $password);
+			$f_rootpw = $this->formatString (CODEPOT_LDAP_ADMIN_PASSWORD, $userid, $password);
+			$f_basedn = $this->formatString (CODEPOT_LDAP_USERID_SEARCH_BASE, $userid, $password);
+			$f_filter = $this->formatString (CODEPOT_LDAP_USERID_SEARCH_FILTER, $userid, $password);
+			
+			$bind = @ldap_bind ($ldap, $f_userid, $f_password);
+			if ($bind === FALSE) 
+			{
+				$this->setErrorMessage (ldap_error ($ldap));
+				ldap_close ($ldap);
+				return FALSE;
+			}
+
+			$sr = @ldap_search ($ldap, $f_basedn, $f_filter, array("dn"));
+			if ($sr === FALSE)
+			{
+				$this->setErrorMessage (ldap_error ($ldap));
+				ldap_close ($ldap);
+				return FALSE;
+			}
+
+			$ec = @ldap_count_entries ($ldap, $sr);
+			if ($ec === FALSE)
+			{
+				$this->setErrorMessage (ldap_error ($ldap));
+				ldap_close ($ldap);
+				return FALSE;
+			}
+
+			if ($ec <= 0)
+			{
+				$this->setErrorMessage ('No such user');
+				ldap_close ($ldap);
+				return FALSE;
+			}
+
+			if (($fe = @ldap_first_entry ($ldap, $sr)) === FALSE ||
+			    ($f_userid = ldap_get_dn ($ldap, $fe)) === FALSE)
+			{
+				$this->setErrorMessage (ldap_error ($ldap));
+				ldap_close ($ldap);
+				return FALSE;
+			}
+		}
+		else
+		{
+			$f_userid = $this->formatString (CODEPOT_LDAP_USERID_FORMAT, $userid, $password); 
+		}
+
 		$f_password = $this->formatString (CODEPOT_LDAP_PASSWORD_FORMAT, $userid, $password);
 
 		$bind = @ldap_bind ($ldap, $f_userid, $f_password);
