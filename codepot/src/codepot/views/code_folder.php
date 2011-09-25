@@ -158,7 +158,16 @@ $this->load->view (
 			print anchor ("code/file/{$project->id}/{$xpar}", $this->lang->line('Head revision'));
 			print ' | ';
 		}
-		print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
+
+		if ($revision > 0)
+		{
+			if ($xpar == '') $revtrailer = $revreqroot;
+			else $revtrailer = "/{$xpar}{$revreq}";
+			print anchor ("code/history/{$project->id}{$revtrailer}", $this->lang->line('History'));
+		}
+		else
+			print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
+
 		print '</div>';
 
 		usort ($file['content'], 'comp_files');

@@ -91,7 +91,19 @@ $history = $file['history'];
 		print anchor ("code/revision/{$project->id}/{$xpar}", $this->lang->line('Head revision'));
 		print ' | ';
 	}
-	print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
+
+	if ($revision > 0)
+	{
+		if ($xpar == '') $revtrailer = $revreqroot;
+		else $revtrailer = "/{$xpar}{$revreq}";
+		print anchor (
+			"code/history/{$project->id}{$revtrailer}",
+			$this->lang->line('History'));
+	}
+	else
+	{
+		print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
+	}
 ?>
 </div> <!-- code_revision_mainarea_menu -->
 
