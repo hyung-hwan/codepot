@@ -90,9 +90,22 @@ $this->load->view (
 		"code/blame/{$project->id}/{$xpar}{$revreq}",
 		$this->lang->line('Blame'));
 	print ' | ';
-	print anchor (
-		"code/history/{$project->id}/{$xpar}",
-		$this->lang->line('History'));
+
+
+	if ($revision1 > 0)
+	{
+		if ($xpar == '') $revtrailer = $revreqroot;
+		else $revtrailer = "/{$xpar}{$revreq}";
+		print anchor (
+			"code/history/{$project->id}{$revtrailer}",
+			$this->lang->line('History'));
+        }
+        else
+	{
+		print anchor (
+			"code/history/{$project->id}/{$xpar}",
+			$this->lang->line('History'));
+	}
 ?>
 </div> <!-- code_diff_mainarea_menu -->
 

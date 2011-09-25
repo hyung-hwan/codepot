@@ -66,7 +66,7 @@ class Code extends Controller
 			}
 			else if ($file['type'] == 'file')
 			{
-				$head_rev = $this->subversion->getHeadRev ($projectid, $path);
+				$head_rev = $this->subversion->getHeadRev ($projectid, $path, $rev);
 				if ($head_rev === FALSE)
 				{
 					$data['project'] = $project;
@@ -143,7 +143,7 @@ class Code extends Controller
 			}
 			else
 			{
-				$head_rev = $this->subversion->getHeadRev ($projectid, $path);
+				$head_rev = $this->subversion->getHeadRev ($projectid, $path, $rev);
 				if ($head_rev === FALSE)
 				{
 					$data['project'] = $project;
@@ -188,7 +188,7 @@ class Code extends Controller
 		{
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
-                }
+		}
 		else if ($project === NULL)
 		{
 			$data['message'] = 

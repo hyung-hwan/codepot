@@ -143,7 +143,17 @@ print anchor ("code/file/{$project->id}/${xpar}{$revreq}", $this->lang->line('De
 print ' | ';
 print anchor ("code/diff/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Difference'));
 print ' | ';
-print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
+
+if ($revision > 0)
+{
+	if ($xpar == '') $revtrailer = $revreqroot;
+	else $revtrailer = "/{$xpar}{$revreq}";
+	print anchor ("code/history/{$project->id}{$revtrailer}", $this->lang->line('History'));
+}
+else
+{
+	print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
+}
 
 ?>
 </div> <!-- code_blame_mainarea_menu -->
