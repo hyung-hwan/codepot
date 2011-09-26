@@ -21,55 +21,54 @@ class SubversionModel extends Model
 	function getFile ($projectid, $path, $rev = SVN_REVISION_HEAD)
 	{
 		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
-		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
-		if ($path == '')
+		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
+		$info = @svn_info ($workurl, FALSE, $rev);
+		if ($info === FALSE || count($info) != 1) 
 		{
-			/* If a pegurl is at the root of repository and the url type is file://
-			 * (e.g. file:///svnrepo/codepot/ where /svnrepo/codepot is a project root),
-			 * some versions of libsvn end up with an assertion failure like
-			 *  ... libvvn_subr/path.c:114: svn_path_join: Assertion `svn_path_is_canonical(base, pool)' failed. 
-			 * 
-			 * Since the root directory is guaranteed to exist at the head revision,
-			 * the information can be acquired without using a peg revision.
-			 * In this case, a normal operational revision is used to work around
-			 * the assertion failure. Other functions that has to deal with 
-			 * the root directory should implement this check to work around it.
-			 */
-			$pegurl = $url;
-		}
-		else
-		{
-			if ($rev != SVN_REVISION_HEAD) $pegurl = $url . "@{$rev}";
-			else $pegurl = $url;
-		}
+			// If a URL is at the root of repository and the url type is file://
+			// (e.g. file:///svnrepo/codepot/ where /svnrepo/codepot is a project root),
+			// some versions of libsvn end up with an assertion failure like
+			//  ... libvvn_subr/path.c:114: svn_path_join: Assertion `svn_path_is_canonical(base, pool)' failed. 
+			// 
+			// Since the root directory is guaranteed to exist at the head revision,
+			// the information can be acquired without using a peg revision.
+			// In this case, a normal operational revision is used to work around
+			// the assertion failure. Other functions that has to deal with 
+			// the root directory should implement this check to work around it.
+			//
+			if ($rev == SVN_REVISION_HEAD || $path == '') return FALSE;
 
-		$info = @svn_info ($pegurl, FALSE, $rev);
-		if ($info === FALSE || count($info) != 1) return FALSE;
+			// rebuild the URL with a peg revision and retry it.
+			$workurl = "{$orgurl}@{$rev}";
+			$info = @svn_info ($workurl, FALSE, $rev);
+			if ($info === FALSE || count($info) != 1)  return FALSE;
+		}
 
 		if ($info[0]['kind'] == SVN_NODE_FILE) 
 		{
-			$lsinfo = @svn_ls ($pegurl, $rev, FALSE, TRUE);
+			$lsinfo = @svn_ls ($workurl, $rev, FALSE, TRUE);
 			if ($lsinfo === FALSE) return FALSE;
 
 			if (array_key_exists ($info[0]['path'], $lsinfo) === FALSE) return FALSE;
 			$fileinfo = $lsinfo[$info[0]['path']];
 
-			$str = @svn_cat ($pegurl, $rev);
+			$str = @svn_cat ($workurl, $rev);
 			if ($str === FALSE) return FALSE;
 
-			$log = @svn_log ($pegurl, 
+			$log = @svn_log ($workurl, 
 				$fileinfo['created_rev'], 
 				$fileinfo['created_rev'],
 				1, SVN_DISCOVER_CHANGED_PATHS);
 			if ($log === FALSE) return FALSE;
 
-			$prop = @svn_proplist ($pegurl, FALSE, $rev);
+			$prop = @svn_proplist ($workurl, FALSE, $rev);
 			if ($prop === FALSE) return FALSE;
 
-			if (array_key_exists ($url, $prop))
+			if (array_key_exists ($orgurl, $prop))
 			{
-				$fileinfo['properties'] = $prop[$url];
+				$fileinfo['properties'] = $prop[$orgurl];
 			}
 			else $fileinfo['properties'] = NULL;
 
@@ -82,24 +81,24 @@ class SubversionModel extends Model
 		}
 		else if ($info[0]['kind'] == SVN_NODE_DIR) 
 		{
-			$list = @svn_ls ($pegurl, $rev, FALSE, TRUE);
+			$list = @svn_ls ($workurl, $rev, FALSE, TRUE);
 			if ($list === FALSE) return FALSE;
 
 			if ($info[0]['revision'] <= 0) $log = array();
 			else
 			{
-				$log = @svn_log ($pegurl, 
+				$log = @svn_log ($workurl, 
 					$info[0]['revision'], 
 					$info[0]['revision'],
 					1, SVN_DISCOVER_CHANGED_PATHS);
 				if ($log === FALSE) return FALSE;
 			}
 
-			$prop = @svn_proplist ($pegurl, FALSE, $rev);
+			$prop = @svn_proplist ($workurl, FALSE, $rev);
 			if ($prop === FALSE) return FALSE;
 
-			if (array_key_exists ($url, $prop))
-				$fileinfo['properties'] = $prop[$url];
+			if (array_key_exists ($orgurl, $prop))
+				$fileinfo['properties'] = $prop[$orgurl];
 			else $fileinfo['properties'] = NULL;
 
 			$fileinfo['fullpath'] = substr (
@@ -123,29 +122,30 @@ class SubversionModel extends Model
 	function getBlame ($projectid, $path, $rev = SVN_REVISION_HEAD)
 	{
 		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
-		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
-		/* Compose a URL with a peg revision if a specific revision is given. However, 
-		 * It skipps composition if the path indicates the project root. Read the comment
-		 * in getFile() to know more about this skipping.
-		 */
-		if ($rev != SVN_REVISION_HEAD && $path != '') $url = $url . '@' . $rev;
-
-		$info = @svn_info ($url, FALSE, $rev);
-		if ($info === FALSE || count($info) != 1) return FALSE;
+		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
+		$info = @svn_info ($workurl, FALSE, $rev);
+		if ($info === FALSE || count($info) != 1) 
+		{
+			if ($rev == SVN_REVISION_HEAD || $path == '') return FALSE;
+			$workurl = "{$orgurl}@{$rev}";
+			$info = @svn_info ($workurl, FALSE, $rev);
+			if ($info === FALSE || count($info) != 1)  return FALSE;
+		}
 
 		if ($info[0]['kind'] != SVN_NODE_FILE) return FALSE;
 
-		$lsinfo = @svn_ls ($url, $rev, FALSE, TRUE);
+		$lsinfo = @svn_ls ($workurl, $rev, FALSE, TRUE);
 		if ($lsinfo === FALSE) return FALSE;
 
 		if (array_key_exists ($info[0]['path'], $lsinfo) === FALSE) return FALSE;
 		$fileinfo = $lsinfo[$info[0]['path']];
 
-		$str = @svn_blame ($url, $rev);
+		$str = @svn_blame ($workurl, $rev);
 		if ($str === FALSE) return FALSE;
 
-		$log = @svn_log ($url, 
+		$log = @svn_log ($workurl, 
 			$fileinfo['created_rev'], 
 			$fileinfo['created_rev'],
 			1, SVN_DISCOVER_CHANGED_PATHS);
@@ -531,13 +531,17 @@ class SubversionModel extends Model
 	function getDiff ($projectid, $path, $rev1, $rev2)
 	{
 		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
-		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
-		if ($rev1 != SVN_REVISION_HEAD && $path != '') $url1 = $url . '@' . $rev1;
-		else $url1 = $url;
-
-		$lsinfo1 = @svn_ls ($url1, $rev1, FALSE, TRUE);
-		if ($lsinfo1 === FALSE || count($lsinfo1) != 1) return FALSE;
+		$workurl1 = $orgurl;
+		$lsinfo1 = @svn_ls ($workurl1, $rev1, FALSE, TRUE);
+		if ($lsinfo1 === FALSE || count($lsinfo1) != 1) 
+		{
+			if ($rev1 == SVN_REVISION_HEAD || $path == '') return FALSE;
+			$workurl1 = "{$orgurl}@{$rev1}";
+			$lsinfo1 = @svn_ls ($workurl1, $rev1, FALSE, TRUE);
+			if ($lsinfo1 === FALSE || count($lsinfo1) != 1)  return FALSE;
+		}
 
 		// the check above guarantees that the foreach block below
 		// is executed only once.
@@ -554,17 +558,21 @@ class SubversionModel extends Model
 		{
 			// get two log entries including the new revision 
 			$log = @svn_log (
-				$url1, $rev1, SVN_REVISION_INITIAL, 2,
+				$workurl1, $rev1, SVN_REVISION_INITIAL, 2,
 				SVN_OMIT_MESSAGES | SVN_DISCOVER_CHANGED_PATHS);
 			if ($log === FALSE) return FALSE;
 			$rev2 = $log[(count($log) <= 1)? 0:1]['rev'];
 		}
 
-		if ($rev2 != SVN_REVISION_HEAD && $path != '') $url2 = $url . '@' . $rev2;
-		else $url2 = $url;
-
-		$lsinfo2 = @svn_ls ($url2, $rev2, FALSE, TRUE);
-		if ($lsinfo2 === FALSE || count($lsinfo2) != 1)  return FALSE;
+		$workurl2 = $orgurl;
+		$lsinfo2 = @svn_ls ($workurl2, $rev2, FALSE, TRUE);
+		if ($lsinfo2 === FALSE || count($lsinfo2) != 1) 
+		{
+			if ($rev2 == SVN_REVISION_HEAD || $path == '') return FALSE;
+			$workurl2 = "{$orgurl}@{$rev2}";
+			$lsinfo2 = @svn_ls ($workurl2, $rev2, FALSE, TRUE);
+			if ($lsinfo2 === FALSE || count($lsinfo2) != 1)  return FALSE;
+		}
 
 		// the check above guarantees the foreach block below
 		// is executed only once.
@@ -578,10 +586,10 @@ class SubversionModel extends Model
 		// let's get the actual URL for each revision.
 		// the actual URLs may be different from $url 
 		// if the file has been changed.
-		$info1 = @svn_info ($url1, FALSE, $rev1);
+		$info1 = @svn_info ($workurl1, FALSE, $rev1);
 		if ($info1 === FALSE || count($info1) != 1) return FALSE;
 		if ($info1[0]['kind'] != SVN_NODE_FILE) return FALSE;
-		$info2 = @svn_info ($url2, FALSE, $rev2);
+		$info2 = @svn_info ($workurl2, FALSE, $rev2);
 		if ($info2 === FALSE || count($info1) != 1) return FALSE;
 		if ($info2[0]['kind'] != SVN_NODE_FILE) return FALSE;
 
@@ -622,16 +630,20 @@ class SubversionModel extends Model
 	function getPrevRev ($projectid, $path, $rev)
 	{
 		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
-		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
-		/* Compose a URL with a peg revision if a specific revision is given. However, 
-		 * It skipps composition if the path indicates the project root. Read the comment
-		 * in getFile() to know more about this skipping.
-		 */
-		if ($rev != SVN_REVISION_HEAD & $path != '') $url = $url . '@' . $rev;
+		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
+		$info = @svn_info ($workurl, FALSE, $rev);
+		if ($info === FALSE || count($info) != 1) 
+		{
+			if ($rev == SVN_REVISION_HEAD || $path == '') return $rev;
+			$workurl = "{$orgurl}@{$rev}";
+			$info = @svn_info ($workurl, FALSE, $rev);
+			if ($info === FALSE || count($info) != 1)  return $rev;
+		}
 
 		$log = @svn_log (
-			$url, $rev, SVN_REVISION_INITIAL, 2,
+			$workurl, $rev, SVN_REVISION_INITIAL, 2,
 			SVN_OMIT_MESSAGES | SVN_DISCOVER_CHANGED_PATHS);
 		if ($log === FALSE) return $rev;
 
@@ -718,34 +730,38 @@ class SubversionModel extends Model
 	function getHeadRev ($projectid, $path, $rev)
 	{
 		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
-		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		if ($path == '')
 		{
-			$info = @svn_info ($url, FALSE, $rev);
+			$workurl = $orgurl;
+			$workrev = $rev;
+
+			$info = @svn_info ($workurl, FALSE, $workrev);
 			if ($info === FALSE || count($info) != 1)  return FALSE;
 		}
 		else
 		{
-			$orgrev = $rev;
-			$rev = SVN_REVISION_HEAD;
-
-			$info = @svn_info ($url, FALSE, $rev);
+			$workurl = "{$orgurl}@";
+			$workrev = SVN_REVISION_HEAD;
+			$info = @svn_info ($workurl, FALSE, $workrev);
 			if ($info === FALSE || count($info) != 1) 
 			{
-				$rev = $orgrev;
-				$info = @svn_info ($url, FALSE, $rev);
+				$workrev = $rev;
+				$info = @svn_info ($workurl, FALSE, $workrev);
 				if ($info === FALSE || count($info) != 1) 
 				{
-					if ($rev != SVN_REVISION_HEAD) $url = $url . '@' . $rev;
-					$info = @svn_info ($url, FALSE, $rev);
+					if ($rev == SVN_REVISION_HEAD) return FALSE;
+
+					$workurl = "{$orgurl}@{$rev}";
+					$info = @svn_info ($workurl, FALSE, $workrev);
 					if ($info === FALSE || count($info) != 1) return FALSE;
 				}
 			}
 		}
 
 		$log = @svn_log (
-			$url, $rev, SVN_REVISION_INITIAL, 1,
+			$workurl, $workrev, SVN_REVISION_INITIAL, 1,
 			SVN_OMIT_MESSAGES | SVN_DISCOVER_CHANGED_PATHS);
 		if ($log === FALSE) return FALSE;
 		if (count($log) != 1) return FALSE;
