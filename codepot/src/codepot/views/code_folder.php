@@ -187,7 +187,8 @@ $this->load->view (
 		$rownum = 0;
 		foreach ($file['content'] as $f)
 		{
-			$fullpath = $headpath . '/' . $f['name'];
+			//$fullpath = $headpath . '/' . $f['name'];
+			$fullpath = $file['fullpath'] . '/' . $f['name'];
 
 			$rowclass = $rowclasses[++$rownum % 2];
 			if ($f['type'] === 'dir')
