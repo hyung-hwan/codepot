@@ -4,8 +4,8 @@ class User extends Controller
 {
 	var $VIEW_ERROR = 'error';
 	var $VIEW_LOG = 'log';
-        var $VIEW_HOME = 'user_home';
-        var $VIEW_SETTINGS = 'user_settings';
+	var $VIEW_HOME = 'user_home';
+	var $VIEW_SETTINGS = 'user_settings';
 
 	function User ()
 	{
@@ -159,8 +159,8 @@ class User extends Controller
 
 		if($this->input->post('settings'))
 		{
-                        $settings->code_hide_line_num = $this->input->post('code_hide_line_num');
-                        $settings->code_hide_details = $this->input->post('code_hide_details');
+			$settings->code_hide_line_num = $this->input->post('code_hide_line_num');
+			$settings->code_hide_details = $this->input->post('code_hide_details');
 
 			if ($this->users->storeSettings ($login['id'], $settings) === FALSE)
 			{

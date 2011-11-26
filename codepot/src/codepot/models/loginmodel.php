@@ -87,6 +87,11 @@ class LoginModel extends Model
 		$this->session->sess_destroy ();
 	}
 
+	function changePassword ($userid, $passwd)
+	{
+		return FALSE;
+	}
+
 	function setUserSettings ($settings)
 	{
 		$this->session->set_userdata ('user_settings', serialize($settings));
