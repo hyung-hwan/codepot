@@ -28,11 +28,11 @@ class WikiModel extends Model
 			return NULL;
 		}
 
-                $this->db->select ('name,encname,createdon,createdby');
-                $this->db->where ('projectid', $project->id);
-                $this->db->where ('wikiname', $name);
-                $this->db->order_by ('name', 'ASC');
-                $query2 = $this->db->get ('wiki_attachment');
+		$this->db->select ('name,encname,createdon,createdby');
+		$this->db->where ('projectid', $project->id);
+		$this->db->where ('wikiname', $name);
+		$this->db->order_by ('name', 'ASC');
+		$query2 = $this->db->get ('wiki_attachment');
 
 		if ($this->db->trans_status() === FALSE) 
 		{
@@ -82,7 +82,7 @@ class WikiModel extends Model
 	{
 		$this->db->trans_start ();
 
-                $this->db->select ('name,encname,createdon,createdby');
+		$this->db->select ('name,encname,createdon,createdby');
 		$this->db->where ('projectid', $project->id);
 		$this->db->where ('wikiname', $wikiname);
 
@@ -143,13 +143,13 @@ class WikiModel extends Model
 			$this->db->insert ('wiki_attachment');
 		}	
 
-                $this->db->set ('createdon', $now);
+		$this->db->set ('createdon', $now);
 		$this->db->set ('type',      'wiki');
 		$this->db->set ('action',    'create');
 		$this->db->set ('projectid', $wiki->projectid);
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   $wiki->name);
-                $this->db->insert ('log');
+		$this->db->insert ('log');
 
 		if ($this->db->trans_status() === FALSE)
 		{
@@ -207,13 +207,13 @@ class WikiModel extends Model
 			$this->db->insert ('wiki_attachment');
 		}	
 		
-                $this->db->set ('createdon', $now);
+		$this->db->set ('createdon', $now);
 		$this->db->set ('type',      'wiki');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $wiki->projectid);
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   $wiki->name);
-                $this->db->insert ('log');
+		$this->db->insert ('log');
 
 		if ($this->db->trans_status() === FALSE)
 		{
@@ -238,16 +238,16 @@ class WikiModel extends Model
 		$this->db->where ('name', $wiki->name);
 		$this->db->delete ('wiki');
 
-                $this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('type',      'wiki');
 		$this->db->set ('action',    'delete');
 		$this->db->set ('projectid', $wiki->projectid);
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   $wiki->name);
 
-                $this->db->insert ('log');
+		$this->db->insert ('log');
 		$this->db->trans_complete ();
-                return $this->db->trans_status();
+		return $this->db->trans_status();
 	}
 
 }

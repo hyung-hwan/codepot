@@ -81,7 +81,7 @@ class LdapLoginModel extends LoginModel
 		if ($bind === FALSE) 
 		{
 			$this->setErrorMessage (ldap_error ($ldap));
-			ldap_close ($ldap);
+			@ldap_close ($ldap);
 			return FALSE;
 		}
 
@@ -127,7 +127,7 @@ class LdapLoginModel extends LoginModel
 		if ($bind === FALSE) 
 		{
 			$this->setErrorMessage (ldap_error ($ldap));
-			ldap_close ($ldap);
+			@ldap_close ($ldap);
 			return FALSE;
 		}
 

@@ -129,8 +129,8 @@ class ProjectModel extends Model
 		$this->db->set ('type',      'project');
 		$this->db->set ('action',    'create');
 		$this->db->set ('projectid', $project->id);
-                $this->db->set ('userid',    $userid);
-                $this->db->set ('message',   $project->name);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $project->name);
 		$this->db->insert ('log');
 
 		if ($priority <= 0 || $this->db->trans_status() === FALSE)
@@ -236,8 +236,8 @@ class ProjectModel extends Model
 		$this->db->set ('type',      'project');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $project->id);
-                $this->db->set ('userid',    $userid);
-                $this->db->set ('message',   $project->name);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $project->name);
 		$this->db->insert ('log');
 
 		if ($priority <= 0 || $this->db->trans_status() === FALSE)
