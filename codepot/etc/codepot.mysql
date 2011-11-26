@@ -152,3 +152,10 @@ CREATE TABLE user_settings (
 	code_hide_line_num CHAR(1) NOT NULL,
 	code_hide_details  CHAR(1) NOT NULL
 ) charset=utf8 engine=InnoDB;
+
+CREATE TABLE user (
+	userid     VARCHAR(32)  PRIMARY KEY,
+	passwd     VARCHAR(255) NOT NULL,
+	email      VARCHAR(255),
+	enabled    CHAR(1)      NOT NULL DEFAULT 'N' CHECK(enabled in ('Y', 'N'))
+) charset=utf8 engine=InnoDB;
