@@ -345,6 +345,16 @@ pre.prettyprint .nocode a:hover {
 	background-color: #BBCCDD;
 }
 
+/* Specify class=linenums on a pre to get line numbering */
+pre.prettyprint ol.linenums { 
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-left: 1em;
+	list-style-position: outside; 
+	color: #7E7EAE;
+} /* IE indents via margin-left */
+
+
 @media print {
 	pre.prettyprint .str { color: #060; }
 	pre.prettyprint .kwd { color: #006; font-weight: bold; }
