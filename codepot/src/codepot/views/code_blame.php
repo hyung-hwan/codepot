@@ -169,11 +169,15 @@ else
 <div id="code_blame_mainarea_result">
 
 <?php 
-	$fileext = substr(strrchr($file['name'], '.'), 1);
-	if ($fileext == "") $fileext = "html"
+$fileext = substr(strrchr($file['name'], '.'), 1);
+if ($fileext == "") $fileext = "html";
+
+$prettyprint_linenums = 'linenums';
+if ($login['settings'] != NULL &&
+    $login['settings']->code_hide_line_num == 'Y') $prettyprint_linenums = '';
 ?>
 
-<pre class="prettyprint lang-<?=$fileext?>" id="code_blame_mainarea_result_pre">
+<pre class="prettyprint <?=$prettyprint_linenums?> lang-<?=$fileext?>" id="code_blame_mainarea_result_pre">
 <?php
 
 	$content = $file['content'];
@@ -184,7 +188,6 @@ else
 	for ($i = 0; $i < $len; $i++)
 	{
 		$line = $content[$i];
-		$lineno_padded = str_pad ($line['line_no'], 6, ' ', STR_PAD_LEFT);
 	
 		if ($line['rev'] != $rev) 
 		{
@@ -212,15 +215,6 @@ else
 	
 		print "<span class='nocode'>{$rev_padded}</span>";
 		print "<span class='nocode' title='{$author}'>{$author_padded}</span>";
-
-		if ($login['settings'] != NULL && $login['settings']->code_hide_line_num == 'Y')
-		{
-			/* do nothing */
-		}
-		else
-		{
-			print "<span class='nocode'>{$lineno_padded}</span>";
-		}
 
 		print htmlspecialchars ($line['line']);
 		print "\n";

@@ -171,40 +171,16 @@ $this->load->view (
 
 <?php 
 $fileext = substr(strrchr($file['name'], '.'), 1);
-if ($fileext == '') $fileext = "html"
+if ($fileext == '') $fileext = "html";
+
+$prettyprint_linenums = 'linenums';
+if ($login['settings'] != NULL &&
+    $login['settings']->code_hide_line_num == 'Y') $prettyprint_linenums = '';
 ?>
 
-<pre class="prettyprint lang-<?=$fileext?>" id="code_file_mainarea_result_pre">
-<?php
-	if ($login['settings'] != NULL && $login['settings']->code_hide_line_num == 'Y')
-	{
-		print htmlspecialchars($file['content']);
-	}
-	else
-	{
-		$pos = 0; $lineno = 0; $len = strlen($file['content']);
-		while ($pos < $len)
-		{
-			$lineno_padded = str_pad (++$lineno, 6, ' ', STR_PAD_LEFT);
-			$npos = strpos ($file['content'], "\n", $pos);
-			if ($npos === FALSE)
-			{
-				print '<span class="nocode">' . $lineno_padded . ' </span> ';
-				print substr ($file['content'], $pos, $len - $pos);
-				print "\n";
-				break;
-			}
-
-			print '<span class="nocode">' . $lineno_padded . ' </span> ';
-			print htmlspecialchars (substr ($file['content'], $pos, $npos - $pos));
-			print "\n";
-
-			$pos = $npos + 1;
-		}
-	}
-?>
+<pre class="prettyprint <?=$prettyprint_linenums?> lang-<?=$fileext?>" id="code_file_mainarea_result_pre">
+<?php print htmlspecialchars($file['content']); ?>
 </pre>
-
 
 <div id="code_file_mainarea_result_info">
 <div class="title"><?= $this->lang->line('CODE_COMMIT') ?></div>
