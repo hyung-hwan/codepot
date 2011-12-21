@@ -643,7 +643,8 @@ class Wiki extends Controller
 				$_FILES[$field_name]['type'] =
 					str_replace('\\', '', $_FILES[$field_name]['type']);
 
-				$config['allowed_types'] = $ext;
+				//$config['allowed_types'] = $ext;
+				$config['allowed_types'] = '*';
 				$config['upload_path'] = CODEPOT_ATTACHMENT_DIR;
 				$config['max_size'] = CODEPOT_MAX_UPLOAD_SIZE;
 				$config['encrypt_name'] = TRUE;

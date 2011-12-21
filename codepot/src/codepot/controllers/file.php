@@ -289,7 +289,8 @@ class File extends Controller
 						$_FILES['file_name']['type'] = 
 							str_replace('\\', '', $_FILES['file_name']['type']);
 
-						$config['allowed_types'] = $ext;
+						//$config['allowed_types'] = $ext;
+						$config['allowed_types'] = '*';
 						$config['upload_path'] = CODEPOT_FILE_DIR;
 						$config['max_size'] = CODEPOT_MAX_UPLOAD_SIZE;
 						$config['encrypt_name'] = TRUE;

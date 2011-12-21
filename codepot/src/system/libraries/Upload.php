@@ -578,6 +578,11 @@ class CI_Upload {
 			$this->set_error('upload_no_file_types');
 			return FALSE;
 		}
+
+		if($this->allowed_types[0] == '*')
+		{
+			return true;
+		}
 		
 		$ext = strtolower(ltrim($this->file_ext, '.'));
 		
