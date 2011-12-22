@@ -36,7 +36,7 @@ class File extends Controller
 		{
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
-                }
+		}
 		else if ($project === NULL)
 		{
 			$data['message'] = 
@@ -161,6 +161,13 @@ class File extends Controller
 				header("Content-Type: application/octet-stream");
 				header("Content-Disposition: attachment; filename={$name}");
 				header("Content-Transfer-Encoding: binary");
+
+				header('Expires: 0');
+				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+				header('Pragma: public');
+				$fsize = @filesize($path);
+				if ($fsize !== FALSE) header("Content-Length: {$fsize}");
+
 				flush ();
 				$x = @readfile($path);
 				if ($x === FALSE)
