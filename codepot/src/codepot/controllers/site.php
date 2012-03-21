@@ -449,10 +449,7 @@ class Site extends Controller
 		}
 		else
 		{
-			if ($link->extra === NULL)
-				redirect ("{$link->type}/{$link->target}/{$link->projectid}");
-			else
-				redirect ("{$link->type}/{$link->target}/{$link->projectid}/{$link->extra}");
+			redirect ($link);
 		}
 	}
 

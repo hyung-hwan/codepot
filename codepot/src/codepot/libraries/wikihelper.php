@@ -11,13 +11,17 @@ class WikiHelper
 		if ($this->_is_reserved ($name, TRUE))
 		{
 			$ex0 = $this->_trans_reserved ($name);
-			//redirect ("{$ex0}/home/{$projectid}");
-			$link->type = $ex0;
-			$link->target = 'home';
-			$link->projectid = $projectid;
-			if ($link->projectid == NULL) return FALSE;
 
-			$link->extra = NULL;
+			//redirect ("{$ex0}/home/{$projectid}");
+
+			//$link->type = $ex0;
+			//$link->target = 'home';
+			//$link->projectid = $projectid;
+			//if ($link->projectid == NULL) return FALSE;
+			//$link->extra = NULL;
+
+			if ($projectid == NULL) return FALSE;
+			$link = "{$ex0}/home/{$projectid}";
 			return $link;
 		}
 		else
@@ -26,19 +30,25 @@ class WikiHelper
 			$cnt = count($ex);
 			if ($cnt == 2)
 			{
-				if ($this->_is_reserved ($ex[0], TRUE))
+				if ($ex[0] == '__LOCALURL__')
+				{
+					return ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https': 'http') . '://' . $_SERVER['HTTP_HOST'] . $ex[1];
+				}
+				else if ($this->_is_reserved ($ex[0], TRUE))
 				{
 					$ex0 = $this->_trans_reserved ($ex[0]);
 					$ex1 = ($ex[1] == '')? $projectid: $ex[1];
 
 					//redirect ("{$ex0}/home/{$ex1}");
 
-					$link->type = $ex0;
-					$link->target = 'home';
-					$link->projectid = $ex1;
-					if ($link->projectid == NULL) return FALSE;
+					//$link->type = $ex0;
+					//$link->target = 'home';
+					//$link->projectid = $ex1;
+					//if ($link->projectid == NULL) return FALSE;
+					//$link->extra = NULL;
 
-					$link->extra = NULL;
+					if ($ex1 == NULL) return FALSE;
+					$link = "{$ex0}/home/{$ex1}";
 					return $link;
 				}
 			}
@@ -52,12 +62,14 @@ class WikiHelper
 					$ex2 = $converter->AsciiToHex ($ex[2]);
 					//redirect ("{$ex0}/show/{$ex1}/{$ex2}");
 
-					$link->type = $ex0;
-					$link->target = 'show';
-					$link->projectid = $ex1;
-					if ($link->projectid == NULL) return FALSE;
+					//$link->type = $ex0;
+					//$link->target = 'show';
+					//$link->projectid = $ex1;
+					//if ($link->projectid == NULL) return FALSE;
+					//$link->extra = $ex2;
 
-					$link->extra = $ex2;
+					if ($ex1 == NULL) return FALSE;
+					$link = "{$ex0}/show/{$ex1}/{$ex2}";
 					return $link;
 				}
 			}
@@ -72,12 +84,14 @@ class WikiHelper
 					{
 						$ex3 = $converter->AsciiToHex ($ex[3]);
 						//redirect ("{$ex0}/{$ex[2]}/{$ex1}/{$ex3}");
-						$link->type = $ex0;
-						$link->target = $ex[2];
-						$link->projectid = $ex1;
-						if ($link->projectid == NULL) return FALSE;
+						//$link->type = $ex0;
+						//$link->target = $ex[2];
+						//$link->projectid = $ex1;
+						//if ($link->projectid == NULL) return FALSE;
+						//$link->extra = $ex3;
 
-						$link->extra = $ex3;
+						if ($ex1 == NULL) return FALSE;
+						$link = "{$ex0}/{$ex[2]}/{$ex1}/{$ex3}";
 						return $link;
 					}
 
@@ -87,11 +101,16 @@ class WikiHelper
 				{
 					// __WIKI__:projectid:wikiname:attachment
 
-					$link->type = $this->_trans_reserved ($ex[0]);
-					$link->target = 'attachment0';
-					$link->projectid = ($ex[1] == '')? $projectid: $ex[1];
-					$link->extra = $converter->AsciiToHex ("{$link->projectid}:{$ex[2]}:{$ex[3]}");
+					//$link->type = $this->_trans_reserved ($ex[0]);
+					//$link->target = 'attachment0';
+					//$link->projectid = ($ex[1] == '')? $projectid: $ex[1];
+					//$link->extra = $converter->AsciiToHex ("{$link->projectid}:{$ex[2]}:{$ex[3]}");
 
+					$ex0 = $this->_trans_reserved ($ex[0]);
+					$ex1 = ($ex[1] == '')? $projectid: $ex[1];
+					$extra = $converter->AsciiToHex ("{$link->projectid}:{$ex[2]}:{$ex[3]}");
+					$link = "{$ex0}/attachment0/{$ex1}/{$extra}";
+		
 					return $link;
 				}
 			}

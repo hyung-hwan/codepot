@@ -109,10 +109,7 @@ class Wiki extends Controller
 			else if ($link !== NULL)
 			{
 				// redirect to  a special link like __WIKI__:projectid:wikiname
-				if ($link->extra === NULL)
-					redirect ("{$link->type}/{$link->target}/{$link->projectid}");
-				else
-					redirect ("{$link->type}/{$link->target}/{$link->projectid}/{$link->extra}");
+				redirect ($link);
 			}
 			else
 			{
@@ -270,8 +267,8 @@ class Wiki extends Controller
 				header ('Cache-Control: max-age=0');
 				$reqheaders = function_exists('apache_request_headers')? apache_request_headers(): array();
 
-				if (isset($reqheaders['If-Modified-Since']) && 
-				    strtotime($reqheaders['If-Modified-Since']) >= $mtime) 
+				if (isset($reqheaders['If-Modified-Since']) &&
+				    strtotime($reqheaders['If-Modified-Since']) >= $mtime)
 				{
 					header('Last-Modified: '.gmdate('D, d M Y H:i:s', $mtime).' GMT', true, 304);
 					flush ();
