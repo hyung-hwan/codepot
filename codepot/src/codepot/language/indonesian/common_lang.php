@@ -9,6 +9,7 @@ $lang['Change log'] = 'Change log';
 $lang['Code'] = 'Kode';
 $lang['Code changes'] = 'Kode changes'
 $lang['Comment'] = 'Comment';
+$lang['Commitable'] = 'Commitable';
 $lang['Create'] = 'Dibuat';
 $lang['Created by'] = 'Dibuat oleh';
 $lang['Created on'] = 'Waktu dibuat';

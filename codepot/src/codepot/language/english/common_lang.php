@@ -11,6 +11,7 @@ $lang['Change log'] = 'Change log';
 $lang['Code'] = 'Code';
 $lang['Code changes'] = 'Code changes';
 $lang['Comment'] = 'Comment';
+$lang['Commitable'] = 'Commitable';
 $lang['Create'] = 'Create';
 $lang['Created by'] = 'Created by';
 $lang['Created on'] = 'Created on';
