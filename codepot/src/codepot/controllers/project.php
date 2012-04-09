@@ -169,6 +169,8 @@ class Project extends Controller
 		$this->form_validation->set_rules (
 			'project_description', 'description', 'required');
 		$this->form_validation->set_rules (
+			'project_commitable', 'commitable', 'alpha');
+		$this->form_validation->set_rules (
 			'project_members', 'members', 'required');
 		$this->form_validation->set_error_delimiters(
 			'<span class="form_field_error">','</span>');
@@ -187,6 +189,7 @@ class Project extends Controller
 			$project->name = $this->input->post('project_name');
 			$project->summary = $this->input->post('project_summary');
 			$project->description = $this->input->post('project_description');
+			$project->commitable = $this->input->post('project_commitable');
 			$project->members = $this->input->post('project_members');
 
 			// validate the form
@@ -244,6 +247,7 @@ class Project extends Controller
 		$project->name = '';
 		$project->summary = '';
 		$project->description = '';
+		$project->commitable = 'Y';
 		$project->members = $login['id'];
 
 		$this->_edit_project ($project, 'create', $login);

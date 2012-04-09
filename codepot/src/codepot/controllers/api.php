@@ -34,6 +34,18 @@ class API extends Controller
 		print ($this->projects->projectIsOwnedBy ($projectid, $userid) === FALSE)? 'NO': 'YES';
 	}
 
+	function projectIsCommitable ($projectid, $userid)
+	{
+		$this->check_access ();
+
+		if (!isset($projectid) || !isset($userid)) return 'NO';
+
+		$this->load->model ('ProjectModel', 'projects');
+		print ($this->projects->projectIsOwnedBy ($projectid, $userid) === FALSE ||
+		       $this->projects->projectIsCommitable ($projectid) === FALSE)? 'NO': 'YES';
+	}
+
+
 	function logCodeCommit ($type, $repo, $rev)
 	{
 		$this->check_access ();

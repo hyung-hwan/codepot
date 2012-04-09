@@ -11,6 +11,7 @@ $lang['Change log'] = '변경기록';
 $lang['Code'] = '코드';
 $lang['Code changes'] = '코드변경';
 $lang['Comment'] = '소견';
+$lang['Commitable'] = '커밋가능';
 $lang['Create'] = '생성';
 $lang['Created by'] = '최초생성인';
 $lang['Created on'] = '최초생성시간';
