@@ -41,7 +41,7 @@ class API extends Controller
 		if (!isset($projectid) || !isset($userid)) return 'NO';
 
 		$this->load->model ('ProjectModel', 'projects');
-		print ($this->projects->projectIsOwnedBy ($projectid, $userid) === FALSE ||
+		print ($this->projects->projectHasMember ($projectid, $userid) === FALSE ||
 		       $this->projects->projectIsCommitable ($projectid) === FALSE)? 'NO': 'YES';
 	}
 
