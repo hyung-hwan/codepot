@@ -46,14 +46,14 @@ class API extends Controller
 	}
 
 
-	function logCodeCommit ($type, $repo, $rev)
+	function logCodeCommit ($type, $repo, $rev, $userid)
 	{
 		$this->check_access ();
 
 		if (!isset($repo) || !isset($rev)) return;
 
 		$this->load->model ('LogModel', 'logs');
-		$this->logs->writeCodeCommit ($type, $repo, $rev, '');
+		$this->logs->writeCodeCommit ($type, $repo, $rev, $userid);
 
 
 		/*

@@ -132,13 +132,20 @@ foreach ($latest_projects as $project)
 			if ($log['action'] == 'revpropchange')
 			{
 				$fmt = $this->lang->line ('MSG_LOG_REVPROP_CHANGE_BY');
-				print htmlspecialchars (sprintf($fmt, $x['propname'], $x['author']));
+				//print htmlspecialchars (sprintf($fmt, $x['propname'], $x['author']));
+				printf (
+					htmlspecialchars ($fmt),
+					htmlspecialchars ($x['propname']),
+					anchor ("/site/userlog/{$code['author']}", htmlspecialchars ($x['author'])));
 			}
 			else
 			{
 				$fmt = $this->lang->line (
 					'MSG_LOG_'.strtoupper($log['action']).'_BY');
-				print htmlspecialchars (sprintf($fmt, $x['author']));
+				//print htmlspecialchars (sprintf($fmt, $x['author']));
+				printf (
+					htmlspecialchars ($fmt),
+					anchor ("/site/userlog/{$x['author']}", htmlspecialchars ($x['author'])));
 			}
 			print '</span>';
 
@@ -203,7 +210,10 @@ foreach ($latest_projects as $project)
 			print '<span class="description">';
 			$fmt = $this->lang->line (
 				'MSG_LOG_'.strtoupper($log['action']).'_BY');
-			print htmlspecialchars (sprintf($fmt, $log['userid']));
+			//print htmlspecialchars (sprintf($fmt, $log['userid']));
+			printf (
+				htmlspecialchars ($fmt),
+				anchor ("/site/userlog/{$log['userid']}", htmlspecialchars ($log['userid'])));
 			print '</span>';
 			print '</td>';
 

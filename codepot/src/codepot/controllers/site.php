@@ -431,6 +431,75 @@ class Site extends Controller
 		$this->load->view ($this->VIEW_LOG, $data);
 	}
 
+	function userlog ($userid = '', $offset = 0)
+	{
+		$login = $this->login->getUser ();
+
+		$this->load->library ('pagination');
+		$this->load->model ('LogModel', 'logs');
+		$this->load->model ('SiteModel', 'sites');
+
+                $site = $this->sites->get ($this->config->config['language']);
+		if ($site === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+		if ($site === NULL && CODEPOT_DEFAULT_SITE_LANGUAGE != '') 
+		{
+                	$site = $this->sites->get (CODEPOT_DEFAULT_SITE_LANGUAGE);
+			if ($site === FALSE)
+			{
+				$data['login'] = $login;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+				return;
+			}
+		}
+
+		if ($login['sysadmin?'] && 
+		    $this->input->post('purge_log') == 'yes')
+		{
+			$this->logs->purge ();
+		}
+
+		$num_log_entries = $this->logs->getNumEntries ('', $userid);
+		if ($num_log_entries === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$pagecfg['base_url'] = site_url() . "/site/userlog/$userid/";
+		$pagecfg['total_rows'] = $num_log_entries;
+		$pagecfg['per_page'] = CODEPOT_MAX_LOGS_PER_PAGE; 
+		$pagecfg['uri_segment'] = 3;
+		$pagecfg['first_link'] = $this->lang->line('First');
+		$pagecfg['last_link'] = $this->lang->line('Last');
+
+		$log_entries = $this->logs->getEntries ($offset, $pagecfg['per_page'], '', $userid);
+		if ($log_entries === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$this->pagination->initialize ($pagecfg);
+
+		$data['site'] = $site;
+		$data['login'] = $login;
+		$data['log_entries'] = $log_entries;
+		$data['page_links'] = $this->pagination->create_links ();
+
+		$this->load->view ($this->VIEW_LOG, $data);
+	}
+
 	function wiki ($xlink = '')
 	{
 		$login = $this->login->getUser ();
