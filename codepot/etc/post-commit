@@ -3,6 +3,8 @@
 REPOBASE="`basename "${1}"`"
 REV="${2}"
 
+AUTHOR="$(svnlook author -r ${REV} ${1})"
+
 # does not care if logging has failed.
-wget -q -O- "%API%/logCodeCommit/svn/${REPOBASE}/${REV}" 2>/dev/null
+wget -q -O- "%API%/logCodeCommit/svn/${REPOBASE}/${REV}/${AUTHOR}" 2>/dev/null
 exit 0
