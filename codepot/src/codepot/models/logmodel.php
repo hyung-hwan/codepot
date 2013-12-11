@@ -8,7 +8,7 @@ class LogModel extends Model
 		$this->load->database ();
 	}
 
-	function getNumEntries ($projectid = '')
+	function getNumEntries ($projectid = '', $userid = '')
 	{
 		$this->db->trans_start ();
 
@@ -20,6 +20,8 @@ class LogModel extends Model
 		else if ($projectid != '') 
 			$this->db->where ('projectid', $projectid);
 		//$num = $this->db->count_all ('log');
+
+		if ($userid != '') $this->db->where ('userid', $userid);
 
 		$this->db->select ('count(id) as count');
 		$query = $this->db->get ('log');
@@ -39,7 +41,7 @@ class LogModel extends Model
 		return $num;
 	}
 
-	function getEntries ($offset, $limit, $projectid = '')
+	function getEntries ($offset, $limit, $projectid = '', $userid = '')
 	{
 		$this->db->trans_start ();
 
@@ -50,6 +52,7 @@ class LogModel extends Model
 		else if ($projectid != '') 
 			$this->db->where ('projectid', $projectid);
 
+		if ($userid != '') $this->db->where ('userid', $userid);
 		$this->db->order_by ('createdon', 'desc');
 		$query = $this->db->get ('log', $limit, $offset);
 

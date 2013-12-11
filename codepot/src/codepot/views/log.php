@@ -123,7 +123,7 @@ $this->load->view (
 <div class="mainarea" id="log_mainarea">
 
 <div class="title" id="log_mainarea_title">
-<?= $this->lang->line ('Change log') ?>
+<?= anchor ("site/log", $this->lang->line ('Change log')) ?>
 </div>
 
 <?php if ($login['sysadmin?'] && isset($site)): ?>
@@ -206,14 +206,22 @@ $this->load->view (
 			if ($log['action'] == 'revpropchange')
 			{
 				$fmt = $this->lang->line ('MSG_LOG_REVPROP_CHANGE_BY');
-				print htmlspecialchars (sprintf($fmt, $code['propname'], $code['author']));
+				//print htmlspecialchars (sprintf($fmt, $code['propname'], $code['author']));
+				printf (
+					htmlspecialchars ($fmt),
+					htmlspecialchars ($code['propname']),
+					anchor ("/site/userlog/{$code['author']}", htmlspecialchars ($code['author'])));
 				//$code['action']
 			}
 			else
 			{
 				$fmt = $this->lang->line (
 					'MSG_LOG_'.strtoupper($log['action']).'_BY');
-				print htmlspecialchars (sprintf($fmt, $code['author']));
+
+				//print htmlspecialchars (sprintf($fmt, $code['author']));
+				printf (
+					htmlspecialchars ($fmt),
+					anchor ("/site/userlog/{$code['author']}", htmlspecialchars ($code['author'])));
 			}
 			print '</span>';
 
@@ -267,7 +275,11 @@ $this->load->view (
 			print '<span class="description">';
 			$fmt = $this->lang->line (
 				'MSG_LOG_'.strtoupper($log['action']).'_BY');
-			print htmlspecialchars (sprintf($fmt, $log['userid']));
+
+			//print htmlspecialchars (sprintf($fmt, $log['userid']));
+			printf (
+				htmlspecialchars ($fmt),
+				anchor ("/site/userlog/{$log['userid']}", htmlspecialchars ($log['userid'])));
 			print '</span>';
 		}
 
