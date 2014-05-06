@@ -237,6 +237,7 @@ foreach ($latest_projects as $project)
 			$xid = $this->converter->AsciiToHex ((string)$issue->id);
 			$owner = $issue->owner;
 		
+			$proissueanc = anchor ("issue/home/{$issue->projectid}", $pro);
 			$anc = anchor ("issue/show/{$issue->projectid}/{$xid}", '#' . htmlspecialchars($issue->id));
 		
 			$status = htmlspecialchars(
@@ -247,7 +248,7 @@ foreach ($latest_projects as $project)
 				$issue_type_array[$issue->type]: $issue->type);
 		
 			$sum = htmlspecialchars ($issue->summary);
-			print "<li><font color='blue'>{$owner}</font> {$pro} {$anc} {$type} {$status} - {$sum}</li>";
+			print "<li><font color='blue'>{$owner}</font> | {$proissueanc} | {$anc} | {$type} {$status} - {$sum}</li>";
 		}
 		?>
 	</ul>
