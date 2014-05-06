@@ -102,7 +102,7 @@ class IssueModel extends Model
 	function getMyIssues ($userid, $filter)
 	{
 		$this->db->trans_start ();
-		$this->db->where ('owner', $userid);
+		if (strlen($userid) > 0) $this->db->where ('owner', $userid);
 
 		//$this->db->order_by ('id', 'desc');
 		if (is_array($filter))

@@ -23,6 +23,10 @@ class Site extends Controller
 		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG);
 		$this->lang->load ('site', CODEPOT_LANG);
+
+
+		$this->load->library ('IssueHelper', 'issuehelper');
+		$this->lang->load ('issue', CODEPOT_LANG);
 	}
 
 	function index ()
@@ -39,6 +43,7 @@ class Site extends Controller
 		$this->load->model ('SiteModel', 'sites');
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('LogModel', 'logs');
+		$this->load->model ('IssueModel', 'issues');
 
                 $site = $this->sites->get ($this->config->config['language']);
 		if ($site === FALSE)
@@ -79,10 +84,26 @@ class Site extends Controller
 			return;
 		}
 
+		// get the issue for all users
+		$issues = $this->issues->getMyIssues (
+			/*$login['id']*/ "", $this->issuehelper->_get_open_status_array($this->lang));
+		if ($issues === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
 		$data['login'] = $login;
 		$data['latest_projects'] = $latest_projects;
 		$data['log_entries'] = $log_entries;
 		$data['site'] = $site;
+		$data['issues'] = $issues;
+		$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
+		$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
+		$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
+
 		//$data['user_name'] = '';
 		//$data['user_pass'] = '';
 		$this->load->view ($this->VIEW_HOME, $data);

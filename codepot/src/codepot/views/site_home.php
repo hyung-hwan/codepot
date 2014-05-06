@@ -226,6 +226,35 @@ foreach ($latest_projects as $project)
 
 </div> <!-- site_home_mainarea_sidebar -->
 
+<?php if ($issues && count($issues) > 0): ?>
+	<div id="site_home_mainarea_issues">
+	<div><?=$this->lang->line('Open issues')?></div>
+	<ul>
+		<?php 
+		foreach ($issues as $issue) 
+		{
+			$pro = $issue->projectid;
+			$xid = $this->converter->AsciiToHex ((string)$issue->id);
+			$owner = $issue->owner;
+		
+			$anc = anchor ("issue/show/{$issue->projectid}/{$xid}", '#' . htmlspecialchars($issue->id));
+		
+			$status = htmlspecialchars(
+				array_key_exists($issue->status, $issue_status_array)?
+				$issue_status_array[$issue->status]: $issue->status);
+			$type = htmlspecialchars(
+				array_key_exists($issue->type, $issue_type_array)?
+				$issue_type_array[$issue->type]: $issue->type);
+		
+			$sum = htmlspecialchars ($issue->summary);
+			print "<li><font color='blue'>{$owner}</font> {$pro} {$anc} {$type} {$status} - {$sum}</li>";
+		}
+		?>
+	</ul>
+	</div>
+<?php endif; ?>
+
+
 <div id="site_home_mainarea_wiki">
 <pre id="site_home_mainarea_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($site->text); ?>
