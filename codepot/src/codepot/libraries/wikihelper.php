@@ -8,6 +8,12 @@ class WikiHelper
 
 	function parseLink ($name, $projectid, $converter)
 	{
+		if (preg_match ('/^#R([[:digit:]]+)$/', $name, $matches) == 1)
+		{
+			// #R123 -> translate it to code reivision.
+			$link = "code/revision/{$projectid}/2e/{$matches[1]}";
+			return $link;
+		}
 		if ($this->_is_reserved ($name, TRUE))
 		{
 			$ex0 = $this->_trans_reserved ($name);
@@ -92,6 +98,14 @@ class WikiHelper
 
 						if ($ex1 == NULL) return FALSE;
 						$link = "{$ex0}/{$ex[2]}/{$ex1}/{$ex3}";
+						return $link;
+					}
+					else if ($ex[2] == 'revision')
+					{
+						// __CODE__::revision:178.
+						// 2e for the root directory.
+						if ($ex1 == NULL) return FALSE;
+						$link = "{$ex0}/{$ex[2]}/{$ex1}/2e/{$ex[3]}";
 						return $link;
 					}
 
