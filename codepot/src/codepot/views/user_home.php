@@ -14,7 +14,7 @@
 
 <script type="text/javascript">
 $(function () {
-	$('#user_home_mainarea_result').accordion();
+	$('#user_home_mainarea_result').tabs();
 });
 </script>
 
@@ -62,52 +62,51 @@ $num_activities = 0;
 
 <div id="user_home_mainarea_result">
 
-<h3>
-	<a href='#user_home_mainarea_result_projects'>
-		<?=$this->lang->line('Projects')?> (<?=$num_projects?>)
-	</a>
-</h3>
-<div id="user_home_mainarea_result_projects">
-<ul>
-<?php 
-foreach ($projects as $project) 
-{
-	$cap = "{$project->name} ({$project->id})";
-	$anc = anchor ("project/home/{$project->id}", htmlspecialchars($cap));
-	$sum = htmlspecialchars ($project->summary);
-	print "<li>{$anc} - {$sum}</li>";
-}
-?>
-</ul>
-</div>
 
-<h3>
-	<a href='#user_home_mainarea_result_issues'>
-		<?=$this->lang->line('Open issues')?> (<?=$num_issues?>)
-	</a>
-</h3>
-<div id="user_home_mainarea_result_issues">
-<ul>
-<?php 
-foreach ($issues as $issue) 
-{
-	$pro = $issue->projectid;
-	$xid = $this->converter->AsciiToHex ((string)$issue->id);
+<div id="tabs">
 
-	$anc = anchor ("issue/show/{$issue->projectid}/{$xid}", '#' . htmlspecialchars($issue->id));
+	<ul>
+	 	<li><a href="#user_home_mainarea_result_issues"> <?=$this->lang->line('Open issues')?> (<?=$num_issues?>) </a></li>
+		<li><a href="#user_home_mainarea_result_projects"> <?=$this->lang->line('Projects')?> (<?=$num_projects?>) </a></li>
+	</ul>
 
-	$status = htmlspecialchars(
-		array_key_exists($issue->status, $issue_status_array)?
-		$issue_status_array[$issue->status]: $issue->status);
-	$type = htmlspecialchars(
-		array_key_exists($issue->type, $issue_type_array)?
-		$issue_type_array[$issue->type]: $issue->type);
-
-	$sum = htmlspecialchars ($issue->summary);
-	print "<li>{$pro} {$anc} {$type} {$status} - {$sum}</li>";
-}
-?>
-</ul>
+	<div id="user_home_mainarea_result_issues">
+	<ul>
+	<?php 
+	foreach ($issues as $issue) 
+	{
+		$pro = $issue->projectid;
+		$xid = $this->converter->AsciiToHex ((string)$issue->id);
+	
+		$anc = anchor ("issue/show/{$issue->projectid}/{$xid}", '#' . htmlspecialchars($issue->id));
+	
+		$status = htmlspecialchars(
+			array_key_exists($issue->status, $issue_status_array)?
+			$issue_status_array[$issue->status]: $issue->status);
+		$type = htmlspecialchars(
+			array_key_exists($issue->type, $issue_type_array)?
+			$issue_type_array[$issue->type]: $issue->type);
+	
+		$sum = htmlspecialchars ($issue->summary);
+		print "<li>{$pro} {$anc} {$type} {$status} - {$sum}</li>";
+	}
+	?>
+	</ul>
+	</div>
+	
+	<div id="user_home_mainarea_result_projects">
+	<ul>
+	<?php 
+	foreach ($projects as $project) 
+	{
+		$cap = "{$project->name} ({$project->id})";
+		$anc = anchor ("project/home/{$project->id}", htmlspecialchars($cap));
+		$sum = htmlspecialchars ($project->summary);
+		print "<li>{$anc} - {$sum}</li>";
+	}
+	?>
+	</ul>
+	</div>
 </div>
 
 </div> <!-- user_home_mainarea_result -->
