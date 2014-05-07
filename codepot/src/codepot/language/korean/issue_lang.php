@@ -9,7 +9,7 @@ $lang['ISSUE_STATUS_ACCEPTED'] = '승인';
 $lang['ISSUE_STATUS_REJECTED'] = '거부';
 $lang['ISSUE_STATUS_STARTED'] = '시작';
 $lang['ISSUE_STATUS_STALLED'] = '지연';
-$lang['ISSUE_STATUS_RESOLVED'] = '완료';
+$lang['ISSUE_STATUS_RESOLVED'] = '해결';
 
 $lang['ISSUE_PRIORITY_CRITICAL'] = '긴급';
 $lang['ISSUE_PRIORITY_HIGH'] = '높음';

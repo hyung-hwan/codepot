@@ -61,6 +61,7 @@ $lang['Priority'] = '중요도';
 $lang['Project'] = '프로젝트';
 $lang['Projects'] = '프로젝트';
 $lang['Purge'] = '정화하기';
+$lang['Recently resolved issues'] = '최근해결이슈';
 $lang['Repository'] = '저장소';
 $lang['Revision'] = '리비전';
 $lang['Search'] = '찾기';

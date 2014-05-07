@@ -99,7 +99,7 @@ class IssueModel extends Model
 		return $query->result ();
 	}
 
-	function getMyIssues ($userid, $filter)
+	function getMyIssues ($userid, $filter, $hour_limit = 0)
 	{
 		$this->db->trans_start ();
 		if (strlen($userid) > 0) $this->db->where ('owner', $userid);
@@ -110,8 +110,14 @@ class IssueModel extends Model
 			$this->db->where_in ('status', array_keys($filter));
 		}
 
+		if ($hour_limit > 0)
+		{
+			$this->db->where ("updatedon >= SYSDATE() - INTERVAL {$hour_limit} HOUR");
+		}
+
 		$query = $this->db->get ('issue');
 		$this->db->trans_complete ();
+
 
 		if ($this->db->trans_status() === FALSE) return FALSE;
 		return $query->result ();
