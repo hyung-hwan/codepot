@@ -61,6 +61,7 @@ $lang['Priority'] = 'Priority';
 $lang['Project'] = 'Project';
 $lang['Projects'] = 'Projects';
 $lang['Purge'] = 'Purge';
+$lang['Recently resolved issues'] = 'Recently resolved issues';
 $lang['Repository'] = 'Repository';
 $lang['Revision'] = 'Revision';
 $lang['Search'] = 'Search';

@@ -255,6 +255,36 @@ foreach ($latest_projects as $project)
 	</div>
 <?php endif; ?>
 
+<?php if ($recently_resolved_issues && count($recently_resolved_issues) > 0): ?>
+	<div id="site_home_mainarea_issues">
+	<div><?=$this->lang->line('Recently resolved issues')?></div>
+	<ul>
+		<?php 
+		foreach ($recently_resolved_issues as $issue) 
+		{
+			$pro = $issue->projectid;
+			$xid = $this->converter->AsciiToHex ((string)$issue->id);
+			$owner = $issue->owner;
+		
+			$proissueanc = anchor ("issue/home/{$issue->projectid}", $pro);
+			$anc = anchor ("issue/show/{$issue->projectid}/{$xid}", '#' . htmlspecialchars($issue->id));
+		
+			$status = htmlspecialchars(
+				array_key_exists($issue->status, $issue_status_array)?
+				$issue_status_array[$issue->status]: $issue->status);
+			$type = htmlspecialchars(
+				array_key_exists($issue->type, $issue_type_array)?
+				$issue_type_array[$issue->type]: $issue->type);
+		
+			$sum = htmlspecialchars ($issue->summary);
+			print "<li><font color='blue'>{$owner}</font> | {$proissueanc} | {$anc} | {$type} {$status} - {$sum}</li>";
+		}
+		?>
+	</ul>
+	</div>
+<?php endif; ?>
+
+
 
 <div id="site_home_mainarea_wiki">
 <pre id="site_home_mainarea_wiki_text" style="visibility: hidden">

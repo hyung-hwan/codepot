@@ -57,6 +57,7 @@ $lang['Priority'] = 'Pirority';
 $lang['Project'] = 'Proyek';
 $lang['Projects'] = 'Proyek';
 $lang['Purge'] = 'Purge';
+$lang['Recently resolved issues'] = 'Recently resolved issues';
 $lang['Repository'] = 'Repository';
 $lang['Revision'] = 'Revisi';
 $lang['Search'] = 'Search';

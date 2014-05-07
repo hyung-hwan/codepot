@@ -75,6 +75,14 @@ class IssueHelper
 		);
 	}
 
+	function _get_resolved_status_array ($lang)
+	{
+		return array (
+			$this->STATUS_RESOLVED       => 
+				$lang->line('ISSUE_STATUS_RESOLVED')
+		);
+	}
+
 	function _get_priority_array ($lang)
 	{
 		return array (

@@ -87,7 +87,10 @@ class Site extends Controller
 		// get the issue for all users
 		$issues = $this->issues->getMyIssues (
 			/*$login['id']*/ "", $this->issuehelper->_get_open_status_array($this->lang));
-		if ($issues === FALSE)
+		$recently_resolved_issues = $this->issues->getMyIssues (
+			"", $this->issuehelper->_get_resolved_status_array($this->lang), 168);
+
+		if ($issues === FALSE || $recently_resolved_issues === FALSE)
 		{
 			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
@@ -95,11 +98,13 @@ class Site extends Controller
 			return;
 		}
 
+
 		$data['login'] = $login;
 		$data['latest_projects'] = $latest_projects;
 		$data['log_entries'] = $log_entries;
 		$data['site'] = $site;
 		$data['issues'] = $issues;
+		$data['recently_resolved_issues'] = $recently_resolved_issues;
 		$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
 		$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
 		$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
