@@ -134,7 +134,8 @@
 
 #issue_show_mainarea_changes_table td.date {
 	width: 1px;
-	white-space: nowrap;
+	/*white-space: nowrap;*/
+	text-align: right;
 	vertical-align: top;
 	padding-top: 0.2em;
 	padding-bottom: 0.2em;

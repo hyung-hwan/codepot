@@ -256,11 +256,7 @@ $this->load->view (
 		print '<tr>';
 		
 		print '<td class="date">'; 
-		print '<span title="';
 		print date ('Y-m-d H:s:i', strtotime($new->updatedon));
-		print '">';
-		print date ('Y-m-d', strtotime($new->updatedon));
-		print '</span>';
 		print '</td>';
 
 		print '<td class="updater">'; 
@@ -340,11 +336,7 @@ $this->load->view (
 
 	print '<tr>';
 	print '<td class="date">'; 
-	print '<span title="';
 	print date ('Y-m-d H:s:i', strtotime($issue->createdon));
-	print '">';
-	print date ('Y-m-d', strtotime($issue->updatedon));
-	print '</span>';
 	print '</td>';
 
 	print '<td class="updater">'; 
