@@ -151,7 +151,7 @@
 }
 
 #issue_show_mainarea_changes_table td.details {
-	white-space: nowrap;
+	/*white-space: nowrap;*/
 	vertical-align: top;
 	padding-top: 0.2em;
 	padding-bottom: 0.2em;
