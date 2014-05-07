@@ -144,7 +144,7 @@ $(function () {
 });
 </script>
 
-<title><?=htmlspecialchars($issue->id)?></title>
+<title><?=htmlspecialchars($project->id)?> <?=htmlspecialchars($issue->type)?> <?=htmlspecialchars($issue->id)?></title>
 </head>
 
 <body onload="render_wiki()">
