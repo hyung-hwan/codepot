@@ -10,6 +10,8 @@ $lang['ISSUE_STATUS_REJECTED'] = 'Rejected';
 $lang['ISSUE_STATUS_STARTED'] = 'Started';
 $lang['ISSUE_STATUS_STALLED'] = 'Stalled';
 $lang['ISSUE_STATUS_RESOLVED'] = 'Resolved';
+$lang['ISSUE_STATUS_WORKED_AROUND'] = 'Worked-around';
+
 
 $lang['ISSUE_PRIORITY_CRITICAL'] = 'Critical';
 $lang['ISSUE_PRIORITY_HIGH'] = 'High';
