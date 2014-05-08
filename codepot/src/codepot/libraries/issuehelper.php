@@ -18,6 +18,8 @@ class IssueHelper
 	// the work can be stalled for various reasons during progress
 	var $STATUS_STALLED    = 'stalled'; 
 	var $STATUS_RESOLVED   = 'resolved';
+        var $STATUS_WORKED_AROUND   = 'worked-around';
+
 
 	var $PRIORITY_CRITICAL = 'critical';
 	var $PRIORITY_HIGH     = 'high';
@@ -57,7 +59,9 @@ class IssueHelper
 			$this->STATUS_STALLED   => 
 				$lang->line('ISSUE_STATUS_STALLED'),
 			$this->STATUS_RESOLVED  => 
-				$lang->line('ISSUE_STATUS_RESOLVED')
+				$lang->line('ISSUE_STATUS_RESOLVED'),
+			$this->STATUS_WORKED_AROUND  => 
+				$lang->line('ISSUE_STATUS_WORKED_AROUND')
 		);
 	}
 
@@ -79,7 +83,9 @@ class IssueHelper
 	{
 		return array (
 			$this->STATUS_RESOLVED       => 
-				$lang->line('ISSUE_STATUS_RESOLVED')
+				$lang->line('ISSUE_STATUS_RESOLVED'),
+			$this->STATUS_WORKED_AROUND       => 
+				$lang->line('ISSUE_STATUS_WORKED_AROUND')
 		);
 	}
 
