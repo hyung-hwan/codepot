@@ -136,7 +136,7 @@ foreach ($latest_projects as $project)
 				printf (
 					htmlspecialchars ($fmt),
 					htmlspecialchars ($x['propname']),
-					anchor ("/site/userlog/{$code['author']}", htmlspecialchars ($x['author'])));
+					anchor ("/site/userlog/{$x['author']}", htmlspecialchars ($x['author'])));
 			}
 			else
 			{

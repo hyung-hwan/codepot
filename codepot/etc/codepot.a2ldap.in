@@ -46,10 +46,25 @@
 
 	#Require ldap-group cn=users,ou=groups,dc=sample,dc=net
 
-	# allow anynymous for viewing and checking out
+	# Enable find-grained access control using the access file.
+	# The specified file must be located under the repository/conf subdirectory.
+	# AuthzSVNRespsRelativeAccessFile requried subversion 1.7 or later.
+	# If you're using a older version, there are no automatic repostory 
+	# protection according to the project type (public/private)
+	# You may have to use AuthzSVNAccessFile for manual control globally
+	# in such a case.
+	# AuthzSVNReposRelativeAccessFile access.conf
+	# Satisfy All
+
+	# allow anynymous/guest for viewing and checking out
 	<Limit GET HEAD OPTIONS REPORT PROPFIND>
-		Allow from all
-		#Satisfy any
+		# Use 'Allow from all' to allow anonymous access.
+		#Allow from all
+
+		# 'Required valid-user' is more strict in that it requires a valid
+		# user name and password. You may create a guest account to supplement
+		# anonymous access.
+		Require valid-user
 	</Limit>
 
 	# require authentication for other operations

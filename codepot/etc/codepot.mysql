@@ -18,6 +18,7 @@ CREATE TABLE project (
 	summary     VARCHAR(255) NOT NULL,
 	description TEXT NOT NULL,
 	commitable  CHAR(1)      NOT NULL DEFAULT 'Y',
+	public      CHAR(1)      NOT NULL DEFAULT 'Y',
 
 	createdon   DATETIME     NOT NULL,
 	updatedon   DATETIME     NOT NULL,
@@ -38,7 +39,7 @@ CREATE TABLE project_membership (
 CREATE TABLE wiki (
 	projectid  VARCHAR(32)   NOT NULL,
 	name       VARCHAR(255)  NOT NULL,
-	text	      TEXT          NOT NULL,
+	text       TEXT          NOT NULL,
 
 	createdon  DATETIME      NOT NULL,
 	updatedon  DATETIME      NOT NULL,

@@ -57,6 +57,12 @@ class Code extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$file = $this->subversion->getFile ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
@@ -124,7 +130,7 @@ class Code extends Controller
 		{
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
-                }
+		}
 		else if ($project === NULL)
 		{
 			$data['message'] = 
@@ -134,6 +140,12 @@ class Code extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$file = $this->subversion->getBlame ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
@@ -198,6 +210,12 @@ class Code extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$file = $this->subversion->getHistory ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
@@ -251,6 +269,12 @@ class Code extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$file = $this->subversion->getRevHistory ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
@@ -304,6 +328,12 @@ class Code extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$file = $this->subversion->getDiff ($projectid, $path, $rev1, $rev2);
 			if ($file === FALSE)
 			{

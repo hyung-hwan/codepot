@@ -48,6 +48,12 @@ class Wiki extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$wikis = $this->wikis->getAll ($login['id'], $project);
 			if ($wikis === FALSE)
 			{
