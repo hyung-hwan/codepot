@@ -179,4 +179,3 @@ force_project_delete = "no"
 ; Leave this empty for the default footer message
 ;------------------------------------------------------------------------------
 footer = ""
-

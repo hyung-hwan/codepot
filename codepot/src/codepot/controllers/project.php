@@ -136,6 +136,12 @@ class Project extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$log_entries = $this->logs->getEntries (
 				0, CODEPOT_MAX_LOGS_IN_PROJECT_HOME, $projectid);
 			if ($log_entries === FALSE)
@@ -171,6 +177,8 @@ class Project extends Controller
 		$this->form_validation->set_rules (
 			'project_commitable', 'commitable', 'alpha');
 		$this->form_validation->set_rules (
+			'project_public', 'public', 'alpha');
+		$this->form_validation->set_rules (
 			'project_members', 'members', 'required');
 		$this->form_validation->set_error_delimiters(
 			'<span class="form_field_error">','</span>');
@@ -190,6 +198,7 @@ class Project extends Controller
 			$project->summary = $this->input->post('project_summary');
 			$project->description = $this->input->post('project_description');
 			$project->commitable = $this->input->post('project_commitable');
+			$project->public = $this->input->post('project_public');
 			$project->members = $this->input->post('project_members');
 
 			// validate the form
@@ -248,6 +257,7 @@ class Project extends Controller
 		$project->summary = '';
 		$project->description = '';
 		$project->commitable = 'Y';
+		$project->public = 'Y';
 		$project->members = $login['id'];
 
 		$this->_edit_project ($project, 'create', $login);

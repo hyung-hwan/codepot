@@ -46,6 +46,12 @@ class File extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$files = $this->files->getAll ($login['id'], $project);
 			if ($files === FALSE)
 			{
@@ -77,7 +83,7 @@ class File extends Controller
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
 		{
-			$data['message'] = 'DATABASE ERROR';
+			 $data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
 		else if ($project === NULL)
@@ -89,6 +95,12 @@ class File extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$file = $this->files->get ($login['id'], $project, $name);
 			if ($file === FALSE)
 			{
@@ -139,6 +151,12 @@ class File extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$file = $this->files->get ($login['id'], $project, $name);
 			if ($file === FALSE)
 			{

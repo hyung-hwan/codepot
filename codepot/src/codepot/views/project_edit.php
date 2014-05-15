@@ -107,8 +107,12 @@ $this->load->view (
 		<div>
 			<div>
 				<?=form_label($this->lang->line('Commitable').': ', 'project_commitable')?>
-				<?=form_checkbox('project_commitable', 'Y', set_checkbox('project_commitable', $project->commitable, $project->commitable == 'Y'))?>	
+				<?=form_checkbox('project_commitable', 'Y', set_checkbox('project_commitable', $project->commitable, $project->commitable == 'Y'))?>
 				<?=form_error('project_commitable')?>
+
+				<?=form_label($this->lang->line('Public').': ', 'project_public')?>
+				<?=form_checkbox('project_public', 'Y', set_checkbox('project_public', $project->public, $project->public == 'Y'))?>
+				<?=form_error('project_public')?>
 			</div>
 		</div>
 

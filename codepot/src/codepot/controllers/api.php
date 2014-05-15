@@ -45,7 +45,6 @@ class API extends Controller
 		       $this->projects->projectIsCommitable ($projectid) === FALSE)? 'NO': 'YES';
 	}
 
-
 	function logCodeCommit ($type, $repo, $rev, $userid)
 	{
 		$this->check_access ();
