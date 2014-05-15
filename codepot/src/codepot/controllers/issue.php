@@ -38,7 +38,7 @@ class Issue extends Controller
 		{
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
-                }
+		}
 		else if ($project === NULL)
 		{
 			$data['message'] = 
@@ -48,6 +48,12 @@ class Issue extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			if ($filter == '')
 			{
 				$search->type = '';

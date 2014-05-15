@@ -56,6 +56,7 @@ $lang['Path'] = 'Path';
 $lang['Priority'] = 'Pirority';
 $lang['Project'] = 'Proyek';
 $lang['Projects'] = 'Proyek';
+$lang['Public'] = 'Public';
 $lang['Purge'] = 'Purge';
 $lang['Recently resolved issues'] = 'Recently resolved issues';
 $lang['Repository'] = 'Repository';

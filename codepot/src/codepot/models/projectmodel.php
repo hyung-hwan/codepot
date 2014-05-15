@@ -100,6 +100,7 @@ class ProjectModel extends Model
 		$this->db->set ('summary', $project->summary);
 		$this->db->set ('description', $project->description);
 		$this->db->set ('commitable', $project->commitable);
+		$this->db->set ('public', $project->public);
 		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('createdby', $userid);
 		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
@@ -209,6 +210,7 @@ class ProjectModel extends Model
 		$this->db->set ('summary', $project->summary);
 		$this->db->set ('description', $project->description);
 		$this->db->set ('commitable', $project->commitable);
+		$this->db->set ('public', $project->public);
 		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('project');
@@ -429,6 +431,17 @@ class ProjectModel extends Model
 		$this->db->trans_start ();
 		$this->db->where ('id', $projectid);
 		$this->db->where ('commitable', 'Y');
+		$count = $this->db->count_all_results ('project');
+		$this->db->trans_complete ();
+		if ($this->db->trans_status() === FALSE) return FALSE;
+		return ($count == 1)? TRUE: FALSE;
+	}
+
+	function projectIsPublic ($projectid)
+	{
+		$this->db->trans_start ();
+		$this->db->where ('id', $projectid);
+		$this->db->where ('public', 'Y');
 		$count = $this->db->count_all_results ('project');
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() === FALSE) return FALSE;
