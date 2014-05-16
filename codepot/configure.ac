@@ -1,7 +1,7 @@
 
 dnl AC_PREREQ(2.59)
 
-AC_INIT([codepot],[0.1.1],[Hyung-Hwan Chung <hyunghwan.chung@gmail.com>],,[http://www.abiyo.net/codepot])
+AC_INIT([codepot],[0.1.2],[Hyung-Hwan Chung <hyunghwan.chung@gmail.com>],,[http://www.abiyo.net/codepot])
 AC_CONFIG_HEADER([./config.h])
 AC_CONFIG_AUX_DIR([ac/aux])
 AC_CONFIG_MACRO_DIR([ac/m4])
@@ -86,6 +86,7 @@ AC_CONFIG_FILES([
 	etc/Makefile
 	etc/codepot.ini
 	etc/codepot.a2ldap
+	etc/start-commit
 	DEBIAN/Makefile
 	DEBIAN/control
 	DEBIAN/postinst

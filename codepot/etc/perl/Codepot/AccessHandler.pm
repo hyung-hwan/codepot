@@ -8,10 +8,19 @@
 #        SVNParentPath "/var/lib/codepot/svnrepo"
 #        PerlAccessHandler Codepot::AccessHandler
 #        PerlAuthenHandler Codepot::AuthenHandler
+#        PerlSetEnv CODEPOT_CONFIG_FILE /etc/codepot/codepot.ini
 #        AuthType Basic
 #        AuthName "codepot"
 #        require valid-user
 # </Location>
+#
+# If you do not move the handler files to the default library directory,
+# a switch to indicate the location of the files are needed when loading
+# the mod_perl module. Somewhere in  your httpd configuration, specify
+# the -Mlib switch.
+#
+#   LoadModule perl_module modules/mod_perl.so
+#   PerlSwitches -Mlib=/etc/codepot/perl
 #
 
 package Codepot::AccessHandler;
@@ -37,7 +46,7 @@ sub get_config
 {
 	my $cfg = new Config::Simple();
 
-	if (!$cfg->read ('/etc/codepot/codepot.ini'))
+	if (!$cfg->read ($ENV{'CODEPOT_CONFIG_FILE'}))
 	{
 		return undef;
 	}
