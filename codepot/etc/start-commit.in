@@ -83,18 +83,21 @@ sub is_project_commitable
 	return (((scalar(@row) > 0 && $row[0] eq 'Y')? 1: 0), undef);
 }
 
-my $res;
+#------------------------------------------------------------
+# MAIN
+#------------------------------------------------------------
+
 my $cfg = get_config ();
 if (!defined($cfg))
 {
-	print "Cannot load codepot configuration file\n";
+	print (STDERR "Cannot load codepot configuration file\n");
 	exit (1);
 }
 
 my $dbh = open_database ($cfg);
 if (!defined($dbh))
 {
-	print ("Cannot open database\n");
+	print (STDERR "Cannot open database\n");
 	exit (1);
 }
 
@@ -106,7 +109,7 @@ my $errstr;
 	$dbh, $cfg->{database_prefix}, $REPOBASE, $USER);
 if ($member <= -1)
 {
-	print ("Cannot check membership - $errstr\n");
+	print (STDERR "Cannot check membership - $errstr\n");
 	close_database ($dbh);
 	exit (1);
 }
@@ -115,7 +118,7 @@ if ($member <= -1)
 	$dbh, $cfg->{database_prefix}, $REPOBASE);
 if ($commitable <= -1)
 {
-	print ("Cannot check commitability - $errstr\n");
+	print (STDERR "Cannot check commitability - $errstr\n");
 	close_database ($dbh);
 	exit (1);
 }
@@ -124,13 +127,13 @@ close_database ($dbh);
 
 if ($member == 0)
 {
-	print ("$USER doesn't belong to the $REPOBASE project\n");
+	print (STDERR "$USER doesn't belong to the $REPOBASE project\n");
 	exit (1);
 }
 
-if ($member == 0)
+if ($commitable == 0)
 {
-	print ("The $REPOBASE project is not commitable\n");
+	print (STDERR "The $REPOBASE project is not commitable\n");
 	exit (1);
 }
 
