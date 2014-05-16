@@ -87,6 +87,7 @@ AC_CONFIG_FILES([
 	etc/codepot.ini
 	etc/codepot.a2ldap
 	etc/start-commit
+	etc/pre-revprop-change
 	DEBIAN/Makefile
 	DEBIAN/control
 	DEBIAN/postinst
