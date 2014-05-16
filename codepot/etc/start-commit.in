@@ -66,6 +66,7 @@ sub is_project_member
 	}
 
 	my @row = $query->fetchrow_array;
+	$query->finish ();
 	return (((scalar(@row) > 0)? 1: 0), undef);
 }
 
@@ -80,6 +81,7 @@ sub is_project_commitable
 	}
 
 	my @row = $query->fetchrow_array;
+	$query->finish ();
 	return (((scalar(@row) > 0 && $row[0] eq 'Y')? 1: 0), undef);
 }
 

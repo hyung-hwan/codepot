@@ -83,15 +83,20 @@ sub write_revprop_change_log
 	my $message = "svn,$projectid,$revision,$propname,$action";
 	my $createdon = strftime ('%Y-%m-%d %H:%M:%S', localtime());
 
-	my $query = $dbh->prepare ("INSERT INTO ${prefix}log(type,projectid,message,createdon,action,userid) VALUES(?,?,?,?,?,?)");
+	$dbh->begin_word ();
+
+	my $query = $dbh->prepare ("INSERT INTO ${prefix}log (type,projectid,message,createdon,action,userid) VALUES (?,?,?,?,?,?)");
 	if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'revpropchange', $userid))
 	{
-		$dbh->rollback ();
-		return (-1, $dbh->errstr());
-	}
+                my $errstr = $dbh->errstr();
+                $query->finish ();
+                $dbh->rollback ();
+                return (-1, $errstr);
+        }
 
+	$query->finish ();
 	$dbh->commit ();
-	return 0;
+	return (0, undef);
 }
 
 #------------------------------------------------------------

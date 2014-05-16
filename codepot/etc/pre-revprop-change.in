@@ -69,6 +69,7 @@ sub is_project_member
 	}
 
 	my @row = $query->fetchrow_array;
+	$query->finish ();
 	return (((scalar(@row) > 0)? 1: 0), undef);
 }
 
