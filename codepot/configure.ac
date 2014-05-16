@@ -89,6 +89,7 @@ AC_CONFIG_FILES([
 	etc/start-commit
 	etc/post-commit
 	etc/pre-revprop-change
+	etc/post-revprop-change
 	DEBIAN/Makefile
 	DEBIAN/control
 	DEBIAN/postinst
