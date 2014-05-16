@@ -15,16 +15,7 @@ my $USER = $ARGV[2];
 my $PROPNAME = $ARGV[3];
 my $ACTION = $ARGV[4];
 
-REPOBASE="`basename "${1}"`"
-REVISION="${2}"
-USER="${3}"
-PROPNAME="${4}"
-ACTION="${5}"
-
 # [STDIN] PROPVAL  ** the old property value is passed via STDIN.
-
-#wget -q -O- "%API%/logCodeRevpropChange/svn/${REPOBASE}/${REVISION}/${USER}/${PROPNAME}/${ACTION}" 2>/dev/null
-#exit 0
 
 sub get_config
 {
@@ -83,7 +74,7 @@ sub write_revprop_change_log
 	my $message = "svn,$projectid,$revision,$propname,$action";
 	my $createdon = strftime ('%Y-%m-%d %H:%M:%S', localtime());
 
-	$dbh->begin_word ();
+	$dbh->begin_work ();
 
 	my $query = $dbh->prepare ("INSERT INTO ${prefix}log (type,projectid,message,createdon,action,userid) VALUES (?,?,?,?,?,?)");
 	if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'revpropchange', $userid))
