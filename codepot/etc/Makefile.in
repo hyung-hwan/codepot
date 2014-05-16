@@ -38,7 +38,7 @@ POST_UNINSTALL = :
 subdir = etc
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/codepot.a2ldap.in $(srcdir)/codepot.ini.in \
-	$(srcdir)/start-commit.in
+	$(srcdir)/pre-revprop-change.in $(srcdir)/start-commit.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/ac/m4/as-ac-expand.m4 \
 	$(top_srcdir)/configure.ac
@@ -46,10 +46,13 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/./config.h
-CONFIG_CLEAN_FILES = codepot.ini codepot.a2ldap start-commit
-am__installdirs = "$(DESTDIR)$(cfgdir)" "$(DESTDIR)$(cfgdir)"
+CONFIG_CLEAN_FILES = codepot.ini codepot.a2ldap start-commit \
+	pre-revprop-change
+am__installdirs = "$(DESTDIR)$(cfgdir)" "$(DESTDIR)$(perldir)" \
+	"$(DESTDIR)$(cfgdir)"
 cfgSCRIPT_INSTALL = $(INSTALL_SCRIPT)
-SCRIPTS = $(cfg_SCRIPTS)
+perlSCRIPT_INSTALL = $(INSTALL_SCRIPT)
+SCRIPTS = $(cfg_SCRIPTS) $(perl_SCRIPTS)
 SOURCES =
 DIST_SOURCES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -145,8 +148,10 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 wwwdir = @wwwdir@
 cfg_DATA = codepot.ini codepot.mysql codepot.a2ldap
-cfg_SCRIPTS = start-commit pre-commit post-commit pre-revprop-change post-revprop-change 
-EXTRA_DIST = $(cfg_DATA)  $(cfg_SCRIPTS)
+cfg_SCRIPTS = start-commit pre-commit post-commit pre-revprop-change post-revprop-change  
+perldir = $(CFGDIR)/perl/Codepot
+perl_SCRIPTS = perl/Codepot/AccessHandler.pm perl/Codepot/AuthenHandler.pm
+EXTRA_DIST = $(cfg_DATA)  $(cfg_SCRIPTS) $(perl_SCRIPTS)
 all: all-am
 
 .SUFFIXES:
@@ -185,6 +190,8 @@ codepot.a2ldap: $(top_builddir)/config.status $(srcdir)/codepot.a2ldap.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 start-commit: $(top_builddir)/config.status $(srcdir)/start-commit.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+pre-revprop-change: $(top_builddir)/config.status $(srcdir)/pre-revprop-change.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-cfgSCRIPTS: $(cfg_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(cfgdir)" || $(mkdir_p) "$(DESTDIR)$(cfgdir)"
@@ -203,6 +210,25 @@ uninstall-cfgSCRIPTS:
 	  f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
 	  echo " rm -f '$(DESTDIR)$(cfgdir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(cfgdir)/$$f"; \
+	done
+install-perlSCRIPTS: $(perl_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	test -z "$(perldir)" || $(mkdir_p) "$(DESTDIR)$(perldir)"
+	@list='$(perl_SCRIPTS)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f $$d$$p; then \
+	    f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
+	    echo " $(perlSCRIPT_INSTALL) '$$d$$p' '$(DESTDIR)$(perldir)/$$f'"; \
+	    $(perlSCRIPT_INSTALL) "$$d$$p" "$(DESTDIR)$(perldir)/$$f"; \
+	  else :; fi; \
+	done
+
+uninstall-perlSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(perl_SCRIPTS)'; for p in $$list; do \
+	  f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
+	  echo " rm -f '$(DESTDIR)$(perldir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(perldir)/$$f"; \
 	done
 uninstall-info-am:
 install-cfgDATA: $(cfg_DATA)
@@ -230,6 +256,7 @@ CTAGS:
 
 
 distdir: $(DISTFILES)
+	$(mkdir_p) $(distdir)/perl/Codepot
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
@@ -260,7 +287,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(SCRIPTS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(cfgdir)" "$(DESTDIR)$(cfgdir)"; do \
+	for dir in "$(DESTDIR)$(cfgdir)" "$(DESTDIR)$(perldir)" "$(DESTDIR)$(cfgdir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
 install: install-am
@@ -305,7 +332,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-cfgDATA install-cfgSCRIPTS
+install-data-am: install-cfgDATA install-cfgSCRIPTS \
+	install-perlSCRIPTS
 
 install-exec-am:
 
@@ -331,17 +359,19 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-cfgDATA uninstall-cfgSCRIPTS uninstall-info-am
+uninstall-am: uninstall-cfgDATA uninstall-cfgSCRIPTS uninstall-info-am \
+	uninstall-perlSCRIPTS
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
 	install install-am install-cfgDATA install-cfgSCRIPTS \
 	install-data install-data-am install-exec install-exec-am \
-	install-info install-info-am install-man install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am uninstall uninstall-am uninstall-cfgDATA \
-	uninstall-cfgSCRIPTS uninstall-info-am
+	install-info install-info-am install-man install-perlSCRIPTS \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
+	uninstall-cfgDATA uninstall-cfgSCRIPTS uninstall-info-am \
+	uninstall-perlSCRIPTS
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
