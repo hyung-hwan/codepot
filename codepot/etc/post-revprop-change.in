@@ -11,6 +11,20 @@ my $CFG_FILE = '@CFGDIR@/codepot.ini';
 my $REPO = $ARGV[0];
 my $REPOBASE = basename($REPO);
 my $REV = $ARGV[1];
+my $USER = $ARGV[2];
+my $PROPNAME = $ARGV[3];
+my $ACTION = $ARGV[4];
+
+REPOBASE="`basename "${1}"`"
+REVISION="${2}"
+USER="${3}"
+PROPNAME="${4}"
+ACTION="${5}"
+
+# [STDIN] PROPVAL  ** the old property value is passed via STDIN.
+
+#wget -q -O- "%API%/logCodeRevpropChange/svn/${REPOBASE}/${REVISION}/${USER}/${PROPNAME}/${ACTION}" 2>/dev/null
+#exit 0
 
 sub get_config
 {
@@ -57,20 +71,20 @@ sub close_database
 	$dbh->disconnect ();
 }
 
-sub write_commit_log
+sub write_revprop_change_log
 {
-	my ($dbh, $prefix, $projectid, $revision, $userid) = @_;
+	my ($dbh, $prefix, $projectid, $revision, $userid, $propname, $action) = @_;
 
 #+------+---------+-----------+---------------------------+---------------------+---------------+-----------------+
 #| id   | type    | projectid | message                   | createdon           | action        | userid          |
 #+------+---------+-----------+---------------------------+---------------------+---------------+-----------------+
-#|  895 | code    | codepot   | svn,codepot,72            | 2011-10-10 14:26:43 | commit        | hyunghwan.chung | 
+#| 1610 | code    | codepot   | svn,codepot,98,svn:log,M  | 2014-05-16 22:27:36 | revpropchange | hyunghwan.chung | 
 
-	my $message = "svn,$projectid,$revision";
+	my $message = "svn,$projectid,$revision,$propname,$action";
 	my $createdon = strftime ('%Y-%m-%d %H:%M:%S', localtime());
 
 	my $query = $dbh->prepare ("INSERT INTO ${prefix}log(type,projectid,message,createdon,action,userid) VALUES(?,?,?,?,?,?)");
-	if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'commit', $userid))
+	if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'revpropchange', $userid))
 	{
 		$dbh->rollback ();
 		return (-1, $dbh->errstr());
@@ -83,9 +97,6 @@ sub write_commit_log
 #------------------------------------------------------------
 # MAIN
 #------------------------------------------------------------
-
-my $AUTHOR = `svnlook author -r "${REV}" "${REPO}"`;
-chomp ($AUTHOR);
 
 my $cfg = get_config ();
 if (!defined($cfg))
@@ -101,7 +112,7 @@ if (!defined($dbh))
 	exit (1);
 }
 
-write_commit_log ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $AUTHOR);
+write_revprop_change_log ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $USER, $PROPNAME, $ACTION);
 close_database ($dbh);
 
 exit (0);
