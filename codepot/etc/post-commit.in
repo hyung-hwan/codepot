@@ -69,15 +69,20 @@ sub write_commit_log
 	my $message = "svn,$projectid,$revision";
 	my $createdon = strftime ('%Y-%m-%d %H:%M:%S', localtime());
 
-	my $query = $dbh->prepare ("INSERT INTO ${prefix}log(type,projectid,message,createdon,action,userid) VALUES(?,?,?,?,?,?)");
+	$dbh->begin_work ();
+
+	my $query = $dbh->prepare ("INSERT INTO ${prefix}log (type,projectid,message,createdon,action,userid) VALUES (?,?,?,?,?,?)");
 	if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'commit', $userid))
 	{
+		my $errstr = $dbh->errstr();
+		$query->finish ();
 		$dbh->rollback ();
-		return (-1, $dbh->errstr());
+		return (-1, $errstr);
 	}
 
+	$query->finish ();
 	$dbh->commit ();
-	return 0;
+	return (0, undef);
 }
 
 #------------------------------------------------------------
