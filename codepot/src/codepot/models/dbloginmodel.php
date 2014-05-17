@@ -40,6 +40,7 @@ class DbLoginModel extends LoginModel
 		
 		$this->db->select ('userid,passwd,email');
 		$this->db->where ('userid', $userid);
+		$this->db->where ('enabled', 'Y');
 		$query = $this->db->get ('user');
 
 		if ($this->db->trans_status() == FALSE)
@@ -53,15 +54,16 @@ class DbLoginModel extends LoginModel
 		{
 			$this->db->trans_complete ();
 			return FALSE;
-          }
+		}
 
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() == FALSE) return FALSE;
 
 		$user = $result[0];
 		if (strlen($user->passwd) < 10) return FALSE;
+		// the last 10 characters are the salt.
 		$hexsalt = substr ($user->passwd, -10);
-		$binsalt = pack("H*" , $hexsalt);
+		$binsalt = pack('H*' , $hexsalt);
 			
 		if (strcmp ($this->format_password_with_salt($passwd,$binsalt),$user->passwd) != 0) return FALSE;
 

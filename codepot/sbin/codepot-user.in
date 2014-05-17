@@ -1,0 +1,260 @@
+#!/usr/bin/perl
+
+# This script manipulate the user table in the codepot datbase.
+# It doesn't handle LDAP.
+
+use strict;
+
+use Switch;
+use Config::Simple;
+use DBI;
+use Digest::SHA1 qw (sha1_hex);
+
+
+my $CFG_FILE = '@CFGDIR@/codepot.ini';
+
+sub get_config
+{
+        my $cfg = new Config::Simple();
+
+        if (!$cfg->read ($CFG_FILE))
+        {
+                return undef;
+        }
+
+        my $config = {
+                database_hostname => $cfg->param ("database_hostname"),
+                database_username => $cfg->param ("database_username"),
+                database_password => $cfg->param ("database_password"),
+                database_name => $cfg->param ("database_name"),
+                database_driver => $cfg->param ("database_driver"),
+                database_prefix => $cfg->param ("database_prefix")
+        };
+
+        return $config;
+}
+
+sub open_database
+{
+	my ($cfg) = @_;
+
+	my $dbtype = $cfg->{database_driver};
+	my $dbname = $cfg->{database_name};
+	my $dbhost = $cfg->{database_hostname};
+
+	my $dbh = DBI->connect(
+		"DBI:$dbtype:$dbname:$dbhost",
+		$cfg->{database_username},
+		$cfg->{database_password},
+		{ RaiseError => 0, PrintError => 0, AutoCommit => 0 }
+	);
+
+	return $dbh;
+}
+
+sub close_database
+{
+	my ($dbh) = @_;
+	$dbh->disconnect ();
+}
+
+sub rand_string 
+{
+	my ($length) = @_;
+
+	my $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+	my $str = '';
+	my $size = length ($chars);
+	for( my $i = 0; $i < $length; $i++ )
+	{
+		$str = $str . substr ($chars, rand($size), 1) ;
+	}
+
+	return $str;
+}
+
+sub format_passwd 
+{
+	my ($password, $binsalt, $hexsalt) = @_;
+	my $fmt_pw = '{ssha1}' . sha1_hex ($password . $binsalt) . $hexsalt;
+	return $fmt_pw;
+}
+
+sub authenticate_database
+{
+	my ($dbh, $prefix, $userid, $password) = @_;
+	
+	my $query = $dbh->prepare ("SELECT userid,passwd FROM ${prefix}user WHERE userid=? and enabled='N'");
+	if (!$query || !$query->execute ($userid))
+	{
+		return (-1, $dbh->errstr());
+	}
+	
+	my @row = $query->fetchrow_array;
+	$query->finish ();
+
+	if (scalar(@row) <= 0) { return (0, undef); }
+
+	my $db_pw = $row[1];
+	if (length($db_pw) < 10) { return (0, undef); }
+
+	my $hexsalt = substr ($db_pw, -10);
+	my $binsalt = pack ('H*', $hexsalt);
+
+	#my $fmt_pw = '{ssha1}' . sha1_hex ($password . $binsalt) . $hexsalt;
+	my $fmt_pw = format_passwd ($password, $binsalt, $hexsalt);
+	return  (($fmt_pw eq $db_pw? 1: 0), undef);
+}
+
+sub add_user 
+{
+	my ($dbh, $prefix, $userid, $passwd, $email) = @_;
+
+	my $binsalt = rand_string (5);
+	my $hexsalt = unpack ("H*", $binsalt);
+	my $fmt_pw = format_passwd ($passwd, $binsalt, $hexsalt);
+	
+	$dbh->begin_work ();
+
+	my $query = $dbh->prepare ("INSERT INTO ${prefix}user (userid,passwd,email,enabled) VALUES (?, ?, ?, ?)");
+	if (!$query || !$query->execute ($userid, $fmt_pw, $email, 'N'))
+	{
+		my $errstr = $dbh->errstr();
+		$dbh->rollback ();
+		print (STDERR "Cannot add a user - $errstr\n");
+		return -1;
+	}
+
+	$query->finish ();
+	$dbh->commit ();
+	return 0;
+}
+
+sub delete_user 
+{
+	my ($dbh, $prefix, $userid) = @_;
+
+	$dbh->begin_work ();
+
+	my $query = $dbh->prepare ("DELETE FROM ${prefix}user WHERE userid=?");
+	if (!$query || !$query->execute ($userid) || $query->rows() <= 0)
+	{
+		my $errstr = $dbh->errstr();
+		$dbh->rollback ();
+		print (STDERR "Cannot delete a user - $errstr\n");
+		return -1;
+	}
+
+	$query->finish ();
+	$dbh->commit ();
+	return 0;
+}
+
+sub toggle_user 
+{
+	my ($dbh, $prefix, $userid, $enabled) = @_;
+
+	$dbh->begin_work ();
+
+	my $query = $dbh->prepare ("UPDATE ${prefix}user SET enabled=? WHERE userid=?");
+	if (!$query || !$query->execute ($enabled, $userid) || $query->rows() <= 0)
+	{
+		my $errstr = $dbh->errstr();
+		$dbh->rollback ();
+		print (STDERR "Cannot enable/disable a user - $errstr\n");
+		return -1;
+	}
+
+	$query->finish ();
+	$dbh->commit ();
+	return 0;
+}
+
+sub print_usage 
+{
+	print (STDERR "Usage: codepot-user add user-id password email\n");
+	print (STDERR "       codepot-user delete user-id\n");
+	print (STDERR "       codepot-user enable user-id\n");
+	print (STDERR "       codepot-user disable user-id\n");
+}
+
+#------------------------------------------------------------
+# MAIN
+#------------------------------------------------------------
+
+my $ARGC = scalar(@ARGV);
+my $USERID;
+my $PASSWD;
+my $EMAIL;
+my $op = 0;
+my $ret = 0;
+
+if ($ARGC >= 1) 
+{ 
+	if ($ARGV[0] eq 'add')
+	{
+		if ($ARGC == 4) 
+		{
+			$USERID = $ARGV[1];
+			$PASSWD = $ARGV[2];
+			$EMAIL = $ARGV[3];
+			$op = 1;
+		}
+	}
+	elsif ($ARGV[0] eq 'delete')
+	{
+		if ($ARGC == 2)
+		{
+			$USERID = $ARGV[1];
+			$op = 2;
+		}
+	}
+	elsif ($ARGV[0] eq 'enable')
+	{
+		if ($ARGC == 2)
+		{
+			$USERID = $ARGV[1];
+			$op = 3;
+		}
+	}
+	elsif ($ARGV[0] eq 'disable')
+	{
+		if ($ARGC == 2)
+		{
+			$USERID = $ARGV[1];
+			$op = 4;
+		}
+	}
+}
+
+if ($op <= 0)
+{
+	print_usage ();
+	exit (2);
+}
+
+my $cfg = get_config ();
+if (!defined($cfg))
+{
+	print (STDERR "Cannot load codepot configuration file\n");
+	exit (1);
+}
+
+my $dbh = open_database ($cfg);
+if (!defined($dbh))
+{
+	print (STDERR "Cannot open database\n");
+	exit (1);
+}
+
+switch ($op)
+{
+	case 1 { $ret = add_user ($dbh, $cfg->{database_prefix}, $USERID, $PASSWD, $EMAIL); }
+	case 2 { $ret = delete_user ($dbh, $cfg->{database_prefix}, $USERID); }
+	case 3 { $ret = toggle_user ($dbh, $cfg->{database_prefix}, $USERID, 'Y'); }
+	case 4 { $ret = toggle_user ($dbh, $cfg->{database_prefix}, $USERID, 'N'); }
+}
+
+close_database ($dbh);
+exit ($ret);

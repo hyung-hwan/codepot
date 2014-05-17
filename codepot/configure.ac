@@ -90,6 +90,8 @@ AC_CONFIG_FILES([
 	etc/post-commit
 	etc/pre-revprop-change
 	etc/post-revprop-change
+	sbin/Makefile
+	sbin/codepot-user
 	DEBIAN/Makefile
 	DEBIAN/control
 	DEBIAN/postinst

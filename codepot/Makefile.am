@@ -1,7 +1,7 @@
 ACLOCAL_AMFLAGS = -I ac/m4
 AUTOMAKE_OPTION = foreign
 
-SUBDIRS = etc src 
+SUBDIRS = etc src sbin
 
 EXTRA_DIST = README mkmf.sh DEBIAN
 

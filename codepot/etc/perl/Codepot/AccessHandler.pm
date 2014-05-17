@@ -132,15 +132,25 @@ sub authenticate_database
 {
 	my ($dbh, $prefix, $userid, $password) = @_;
 	
-	my $query = $dbh->prepare ("SELECT userid FROM ${prefix}account WHERE userid=? AND password=?");
-	if (!$query || !$query->execute ($userid, sha1_hex($password)))
+	my $query = $dbh->prepare ("SELECT userid,passwd FROM ${prefix}user WHERE userid=? and enabled='Y'");
+	if (!$query || !$query->execute ($userid))
 	{
 		return (-1, $dbh->errstr());
 	}
 	
 	my @row = $query->fetchrow_array;
 	$query->finish ();
-	return (((scalar(@row) > 0)? 1: 0), undef);
+
+	if (scalar(@row) <= 0) { return (0, undef); }
+
+	my $db_pw = $row[1];
+	if (length($db_pw) < 10) { return (0, undef); }
+
+	my $hexsalt = substr ($db_pw, -10);
+	my $binsalt = pack ('H*', $hexsalt);
+
+	my $fmt_pw = '{ssha1}' . sha1_hex ($password . $binsalt) . $hexsalt;
+	return  (($fmt_pw eq $db_pw? 1: 0), undef);
 }
 
 sub open_database
@@ -255,9 +265,11 @@ sub __handler
 	{
 		$auth = authenticate_ldap ($cfg, $userid, $password);
 	}
-	elsif ($cfg->{login_model} eq 'DatabaseLoginModel')
+	elsif ($cfg->{login_model} eq 'DbLoginModel')
 	{
-		$auth = authenticate_database ($dbh, $cfg->{database_prefix}, $userid, $password);
+		my $errmsg;
+		($auth,$errmsg) = authenticate_database (
+			$dbh, $cfg->{database_prefix}, $userid, $password);
 	}
 	if ($auth <= -1)
 	{
