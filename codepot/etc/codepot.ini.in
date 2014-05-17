@@ -94,7 +94,7 @@ svn_base_url = "${REQUEST_PROTOCOL}://${SERVER_NAME}:${SERVER_PORT}/svn"
 ; Login model to use. 
 ;------------------------------------------------------------------------------
 login_model = "LdapLoginModel"
-#login_model = "DatabaseLoginModel"
+#login_model = "DbLoginModel"
 
 ;------------------------------------------------------------------------------
 ; Comma separated list of system administrator IDs

@@ -41,6 +41,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 
 /var/www/html/codepot
+/usr/sbin/codepot-user
 
 %config(noreplace) /etc/codepot/codepot.ini
 /etc/codepot/codepot.mysql 
