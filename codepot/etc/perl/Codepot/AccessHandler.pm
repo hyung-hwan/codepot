@@ -39,6 +39,7 @@ use Config::Simple;
 use Net::LDAP;
 use URI;
 use DBI;
+use Digest::SHA1 qw (sha1_hex);
 
 use Apache2::Const -compile => qw(OK DECLINED FORBIDDEN HTTP_UNAUTHORIZED HTTP_INTERNAL_SERVER_ERROR PROXYREQ_PROXY);
 
@@ -52,22 +53,24 @@ sub get_config
 	}
 
 	my $config = {
-		ldap_server_uri => $cfg->param ("ldap_server_uri"),
-		ldap_server_protocol_version => $cfg->param ("ldap_server_protocol_version"),
-		ldap_auth_mode => $cfg->param ("ldap_auth_mode"),
-		ldap_userid_format => $cfg->param ("ldap_userid_format"),
-		ldap_password_format => $cfg->param ("ldap_password_format"),
-		ldap_userid_admin_binddn => $cfg->param ("ldap_admin_binddn"),
-		ldap_userid_admin_password => $cfg->param ("ldap_admin_password"),
-		ldap_userid_search_base => $cfg->param ("ldap_userid_search_base"),
-		ldap_userid_search_fitler => $cfg->param ("ldap_userid_search_filter"),
+		login_model => $cfg->param ('login_model'),
+		
+		ldap_server_uri => $cfg->param ('ldap_server_uri'),
+		ldap_server_protocol_version => $cfg->param ('ldap_server_protocol_version'),
+		ldap_auth_mode => $cfg->param ('ldap_auth_mode'),
+		ldap_userid_format => $cfg->param ('ldap_userid_format'),
+		ldap_password_format => $cfg->param ('ldap_password_format'),
+		ldap_userid_admin_binddn => $cfg->param ('ldap_admin_binddn'),
+		ldap_userid_admin_password => $cfg->param ('ldap_admin_password'),
+		ldap_userid_search_base => $cfg->param ('ldap_userid_search_base'),
+		ldap_userid_search_fitler => $cfg->param ('ldap_userid_search_filter'),
 
-		database_hostname => $cfg->param ("database_hostname"),
-		database_username => $cfg->param ("database_username"),
-		database_password => $cfg->param ("database_password"),
-		database_name => $cfg->param ("database_name"),
-		database_driver => $cfg->param ("database_driver"),
-		database_prefix => $cfg->param ("database_prefix")
+		database_hostname => $cfg->param ('database_hostname'),
+		database_username => $cfg->param ('database_username'),
+		database_password => $cfg->param ('database_password'),
+		database_name => $cfg->param ('database_name'),
+		database_driver => $cfg->param ('database_driver'),
+		database_prefix => $cfg->param ('database_prefix')
 	};
 
 	return $config;
@@ -85,7 +88,7 @@ sub format_string
 	return $out;
 }
 
-sub authenticate 
+sub authenticate_ldap
 {
 	my ($cfg, $userid, $password) = @_;
 	my $binddn;
@@ -125,6 +128,21 @@ sub authenticate
 	return ($res->code == 0)? 1: 0;
 }
 
+sub authenticate_database
+{
+	my ($dbh, $prefix, $userid, $password) = @_;
+	
+	my $query = $dbh->prepare ("SELECT userid FROM ${prefix}account WHERE userid=? AND password=?");
+	if (!$query || !$query->execute ($userid, sha1_hex($password)))
+	{
+		return (-1, $dbh->errstr());
+	}
+	
+	my @row = $query->fetchrow_array;
+	$query->finish ();
+	return (((scalar(@row) > 0)? 1: 0), undef);
+}
+
 sub open_database
 {
 	my ($cfg) = @_;
@@ -160,6 +178,7 @@ sub is_project_member
 	}
 
 	my @row = $query->fetchrow_array;
+	$query->finish ();
 	return (((scalar(@row) > 0)? 1: 0), undef);
 }
 
@@ -174,6 +193,7 @@ sub is_project_public
 	}
 
 	my @row = $query->fetchrow_array;
+	$query->finish ();
 	return (((scalar(@row) > 0 && $row[0] eq 'Y')? 1: 0), undef);
 }
 
@@ -230,7 +250,15 @@ sub __handler
 		}
 	}
 	
-	my $auth = authenticate ($cfg, $userid, $password);
+	my $auth = -3;
+	if ($cfg->{login_model} eq 'LdapLoginModel')
+	{
+		$auth = authenticate_ldap ($cfg, $userid, $password);
+	}
+	elsif ($cfg->{login_model} eq 'DatabaseLoginModel')
+	{
+		$auth = authenticate_database ($dbh, $cfg->{database_prefix}, $userid, $password);
+	}
 	if ($auth <= -1)
 	{
 		# failed to contact the authentication server
