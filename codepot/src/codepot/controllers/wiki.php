@@ -261,42 +261,43 @@ class Wiki extends Controller
 			else
 			{
 				$path = CODEPOT_ATTACHMENT_DIR . "/{$att->encname}";
-					
-				$mtime = @filemtime ($path);
-				if ($mtime === FALSE) $mtime = time();
+
+				$stat = @stat($path);
+				if ($stat === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = sprintf (
+						$this->lang->line('WIKI_MSG_FAILED_TO_READ_ATTACHMENT'), $name);
+					$this->load->view ($this->VIEW_ERROR, $data);
+					return;
+				}
+
+				$etag = sprintf ('%x-%x-%x-%x', $stat['dev'], $stat['ino'], $stat['size'], $stat['mtime']);
+				$lastmod = gmdate ('D, d M Y H:i:s', $stat['mtime']);
+
+				header ('Last-Modified: ' . $lastmod . ' GMT');
+				header ('Etag: ' . $etag);
+
+				if ((isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) ||
+				    (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $stat['mtime']))
+				{
+					header('Not Modified', true, 304);
+					flush ();
+					return;
+				}
 
 				header ('Content-Type: ' . mime_content_type($path));
+				header ('Content-Length: ' . $stat['size']);
+				header ('Content-Disposition: inline; filename=' . $name);
+				flush ();
 
-				//header ('Expires: ' . gmdate("D, d M Y H:i:s", time() + 60*60*24*30) . ' GMT');  // 30days
-				//header ('Expires: -1');
-				//header ('Cache-Control: must-revalidate, private');
-				header ('Cache-Control: max-age=0');
-				$reqheaders = function_exists('apache_request_headers')? apache_request_headers(): array();
-
-				if (isset($reqheaders['If-Modified-Since']) &&
-				    strtotime($reqheaders['If-Modified-Since']) >= $mtime)
+				$x = @readfile($path);
+				if ($x === FALSE)
 				{
-					header('Last-Modified: '.gmdate('D, d M Y H:i:s', $mtime).' GMT', true, 304);
-					flush ();
-				}
-				else
-				{
-					header ('Last-Modified: ' . gmdate("D, d M Y H:i:s", $mtime) . ' GMT');
-					header ("Content-Disposition: filename={$name}");
-
-					$len = @filesize($path);
-					if ($len !== FALSE) header("Content-Length: {$len}");
-					//header("Content-Transfer-Encoding: binary");
-					flush ();
-
-					$x = @readfile($path);
-					if ($x === FALSE)
-					{
-						$data['project'] = $project;
-						$data['message'] = sprintf (
-							$this->lang->line('WIKI_MSG_FAILED_TO_READ_ATTACHMENT'), $name);
-						$this->load->view ($this->VIEW_ERROR, $data);
-					}
+					$data['project'] = $project;
+					$data['message'] = sprintf (
+						$this->lang->line('WIKI_MSG_FAILED_TO_READ_ATTACHMENT'), $name);
+					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 			}
 		}
