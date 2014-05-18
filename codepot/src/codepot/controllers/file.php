@@ -172,21 +172,39 @@ class File extends Controller
 			else
 			{
 				$path = CODEPOT_FILE_DIR . '/' . $file->encname;
-				$mtime = @filemtime ($path);
-				if ($mtime === FALSE) $mtime = time();
-				header("Last-Modified: " . gmdate("D, d M Y H:i:s", $mtime) . " GMT");
-				//header("Expires: 0");
-				header("Content-Type: application/octet-stream");
-				header("Content-Disposition: attachment; filename={$name}");
-				header("Content-Transfer-Encoding: binary");
 
-				header('Expires: 0');
-				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-				header('Pragma: public');
-				$fsize = @filesize($path);
-				if ($fsize !== FALSE) header("Content-Length: {$fsize}");
+				$stat = @stat($path);
+				if ($stat === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = "CANNOT GET FILE - {$file->name}";
+					$this->load->view ($this->VIEW_ERROR, $data);
+					return;
+				}
 
+				$etag = sprintf ('%x-%x-%x-%x', $stat['dev'], $stat['ino'], $stat['size'], $stat['mtime']);
+				$lastmod = gmdate ('D, d M Y H:i:s', $stat['mtime']);
+
+				header ('Last-Modified: ' . $lastmod . ' GMT');
+				header ('Etag: ' . $etag);
+
+				if ((isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) ||
+				    (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $stat['mtime']))
+				{
+					header('Not Modified', true, 304);
+					flush ();
+					return;
+				}
+
+				header('Content-Type: application/octet-stream');
+				header('Content-Length: ' . $stat['size']);
+				header('Content-Disposition: attachment; filename=' . $name);
+				header('Content-Transfer-Encoding: binary');
+				//header('Expires: 0');
+				//header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+				//header('Pragma: public');
 				flush ();
+
 				$x = @readfile($path);
 				if ($x === FALSE)
 				{
