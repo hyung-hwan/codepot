@@ -37,6 +37,7 @@ use APR::Base64;
 
 use Config::Simple;
 use Net::LDAP;
+use Net::LDAP qw(LDAP_SUCCESS);
 use URI;
 use DBI;
 use Digest::SHA1 qw (sha1_hex);
@@ -60,10 +61,10 @@ sub get_config
 		ldap_auth_mode => $cfg->param ('ldap_auth_mode'),
 		ldap_userid_format => $cfg->param ('ldap_userid_format'),
 		ldap_password_format => $cfg->param ('ldap_password_format'),
-		ldap_userid_admin_binddn => $cfg->param ('ldap_admin_binddn'),
-		ldap_userid_admin_password => $cfg->param ('ldap_admin_password'),
+		ldap_admin_binddn => $cfg->param ('ldap_admin_binddn'),
+		ldap_admin_password => $cfg->param ('ldap_admin_password'),
 		ldap_userid_search_base => $cfg->param ('ldap_userid_search_base'),
-		ldap_userid_search_fitler => $cfg->param ('ldap_userid_search_filter'),
+		ldap_userid_search_filter => $cfg->param ('ldap_userid_search_filter'),
 
 		database_hostname => $cfg->param ('database_hostname'),
 		database_username => $cfg->param ('database_username'),
@@ -90,28 +91,53 @@ sub format_string
 
 sub authenticate_ldap
 {
-	my ($cfg, $userid, $password) = @_;
+	my ($r, $cfg, $userid, $password) = @_;
 	my $binddn;
 	my $passwd;
 
-	# get the next line removed once you implement the second mode
-	if ($cfg->{ldap_auth_mode} == 2) { return -2; }
-
 	my $uri = URI->new ($cfg->{ldap_server_uri});
-	my $ldap = Net::LDAP->new ($uri->host, 
-			scheme => $uri->scheme,
-			port => $uri->port,
-			version => $cfg->{ldap_server_protocol_version}
+	my $ldap = Net::LDAP->new (
+		$uri->host, 
+		scheme => $uri->scheme,
+		port => $uri->port,
+		version => $cfg->{ldap_server_protocol_version}
 	);
 	if (!defined($ldap))
 	{
-		# error
+		$r->log_error ('Cannot create LDAP');
 		return -1;
 	}
 
 	if ($cfg->{ldap_auth_mode} == 2)
 	{
-		# YET TO BE WRITTEN
+		my $f_rootdn = format_string ($cfg->{ldap_admin_binddn}, $userid, $password);
+		my $f_rootpw = format_string ($cfg->{ldap_admin_password}, $userid, $password);
+		my $f_basedn = format_string ($cfg->{ldap_userid_search_base}, $userid, $password);
+		my $f_filter = format_string ($cfg->{ldap_userid_search_filter}, $userid, $password);
+
+		my $res = $ldap->bind ($f_rootdn, password => $f_rootpw);
+		if ($res->code != LDAP_SUCCESS) 
+		{ 	
+			$r->log_error ("Cannot bind LDAP as $f_rootdn - " . $res->error());
+			$ldap->unbind();
+			return -1; 
+		}
+		
+		$res = $ldap->search (base => $f_basedn, scope => 'sub', filter => $f_filter);
+		if ($res->code != LDAP_SUCCESS) 
+		{ 	
+			$ldap->unbind();
+			return 0;
+		}
+
+		my $entry = $res->entry(0); # get the first entry only
+		if (!defined($entry))
+		{
+			$ldap->unbind();
+			return 0;
+		}
+
+		$binddn = $entry->dn ();
 	}
 	else
 	{
@@ -120,12 +146,15 @@ sub authenticate_ldap
 
 	$passwd = format_string ($cfg->{ldap_password_format}, $userid, $password);
 	my $res = $ldap->bind ($binddn, password => $passwd);
-
-	print $res->code;
-	print "\n";
+	if ($res->code != LDAP_SUCCESS)
+	{
+		#$r->log_error ("Cannot bind LDAP as $binddn - " . $res->error());
+		$ldap->unbind();
+		return 0;
+	}
 
 	$ldap->unbind();
-	return ($res->code == 0)? 1: 0;
+	return 1;
 }
 
 sub authenticate_database
@@ -263,7 +292,7 @@ sub __handler
 	my $auth = -3;
 	if ($cfg->{login_model} eq 'LdapLoginModel')
 	{
-		$auth = authenticate_ldap ($cfg, $userid, $password);
+		$auth = authenticate_ldap ($r, $cfg, $userid, $password);
 	}
 	elsif ($cfg->{login_model} eq 'DbLoginModel')
 	{
