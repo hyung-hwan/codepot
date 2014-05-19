@@ -155,6 +155,9 @@ else
 	print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
 }
 
+print ' | ';
+print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $this->lang->line('Download'));
+
 ?>
 </div> <!-- code_blame_mainarea_menu -->
 
