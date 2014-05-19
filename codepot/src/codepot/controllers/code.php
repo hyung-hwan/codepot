@@ -9,6 +9,7 @@ class Code extends Controller
 	var $VIEW_HISTORY = 'code_history';
 	var $VIEW_REVISION = 'code_revision';
 	var $VIEW_DIFF = 'code_diff';
+	var $VIEW_FETCH = 'code_fetch';
 
 	function Code ()
 	{
@@ -359,6 +360,75 @@ class Code extends Controller
 				$data['revision2'] = $rev2;
 				$data['file'] = $file;
 				$this->load->view ($this->VIEW_DIFF, $data);
+			}
+		}
+	}
+
+	function fetch ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+	
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		$data['login'] = $login;
+
+		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
+		$path = $this->_normalize_path ($path);
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE)
+		{
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else if ($project === NULL)
+		{
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
+			$file = $this->subversion->getFile ($projectid, $path, $rev);
+			if ($file === FALSE)
+			{
+				$data['project'] = $project;
+				$data['message'] = 'Failed to get file';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else if ($file['type'] == 'file')
+			{
+				header ('Content-Description: File Transfer');
+				header('Content-Type: application/octet-stream');
+				header ('Content-Disposition: attachment; filename='. basename($path));
+				header ('Content-Transfer-Encoding: binary');
+				header ('Content-Length: ' . strlen($file['content']));
+				flush ();
+				print $file['content'];
+			}
+			else
+			{
+				$data['project'] = $project;
+				$data['headpath'] = $path;
+				$data['file'] = $file;
+
+				$data['revision'] = $rev;
+				$data['prev_revision'] =
+					$this->subversion->getPrevRev ($projectid, $path, $rev);
+				$data['next_revision'] =
+					$this->subversion->getNextRev ($projectid, $path, $rev);
+
+				$this->load->view ($this->VIEW_FOLDER, $data);
 			}
 		}
 	}
