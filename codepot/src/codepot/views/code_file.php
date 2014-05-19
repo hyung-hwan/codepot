@@ -156,6 +156,11 @@ $this->load->view (
 			"code/history/{$project->id}/{$xpar}", 
 			$this->lang->line('History'));
 	}
+
+	print ' | ';
+	print anchor (
+		"code/fetch/{$project->id}/${xpar}{$revreq}",
+		$this->lang->line('Download'));
 ?>
 </div> <!-- code_file_mainarea_menu -->
 
