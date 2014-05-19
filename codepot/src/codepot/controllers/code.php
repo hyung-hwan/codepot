@@ -414,7 +414,9 @@ class Code extends Controller
 				header ('Content-Transfer-Encoding: binary');
 				header ('Content-Length: ' . strlen($file['content']));
 				flush ();
+
 				print $file['content'];
+				flush ();
 			}
 			else
 			{
