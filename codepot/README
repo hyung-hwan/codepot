@@ -22,6 +22,7 @@ INSTALLATION
    * Initialize the mysql database using /etc/codepot/codepot.mysql.
    * Configure /etc/httpd/conf.d/codepot.conf
    * Configure /etc/codepot/codepot.ini
+   * Restart httpd
    
  Here is how to install Codepot into the standard locations under Ubuntu Linux.
 
@@ -59,12 +60,12 @@ INSTALLATION
    $ mkdir -p /var/lib/codepot/svnrepo /var/lib/codepot/files
    $ mkdir -p /var/cache/codepot /var/log/codepot
   
- * Customize CFGDIR/codepot.ini based on CFGDIR/codepot.ini-dist.
+ * Customize CFGDIR/codepot.ini 
 
  * Initialize database using CFGDIR/codepot.mysql
 
- * Configure apache web server ahthentication for subversion webdav access 
-   using CFGDIR/codepot.a2ldap or CFGDIR/codepot.a2mysql
+ * Configure apache web server authentication for subversion webdav access 
+   based on CFGDIR/codepot.httpd 
 
  * To enable SSL 
    $ sudo a2enmod ssl 
