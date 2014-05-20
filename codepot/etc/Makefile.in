@@ -150,7 +150,7 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 wwwdir = @wwwdir@
-cfg_DATA = codepot.ini codepot.mysql codepot.a2ldap 
+cfg_DATA = codepot.ini codepot.mysql codepot.a2ldap codepot.httpd
 cfg_SCRIPTS = start-commit pre-commit post-commit pre-revprop-change post-revprop-change  
 perldir = $(CFGDIR)/perl/Codepot
 perl_SCRIPTS = perl/Codepot/AccessHandler.pm perl/Codepot/AuthenHandler.pm
@@ -343,8 +343,6 @@ info-am:
 
 install-data-am: install-cfgDATA install-cfgSCRIPTS \
 	install-perlSCRIPTS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 
 install-exec-am:
 
@@ -372,26 +370,18 @@ ps-am:
 
 uninstall-am: uninstall-cfgDATA uninstall-cfgSCRIPTS uninstall-info-am \
 	uninstall-perlSCRIPTS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
 	install install-am install-cfgDATA install-cfgSCRIPTS \
-	install-data install-data-am install-data-hook install-exec \
-	install-exec-am install-info install-info-am install-man \
-	install-perlSCRIPTS install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
-	uninstall-am uninstall-cfgDATA uninstall-cfgSCRIPTS \
-	uninstall-hook uninstall-info-am uninstall-perlSCRIPTS
+	install-data install-data-am install-exec install-exec-am \
+	install-info install-info-am install-man install-perlSCRIPTS \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
+	uninstall-cfgDATA uninstall-cfgSCRIPTS uninstall-info-am \
+	uninstall-perlSCRIPTS
 
-
-install-data-hook:
-	$(INSTALL) -D -m 0644 "@abs_top_builddir@/etc/codepot.httpd" "$(DESTDIR)@sysconfdir@/httpd/conf.d/codepot.conf"
-
-uninstall-hook:
-	$(RM) -f "$(DESTDIR)@sysconfdir@/httpd/conf.d/codepot.conf"
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

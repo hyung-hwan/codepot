@@ -44,9 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/codepot-user
 
 %config(noreplace) /etc/codepot/codepot.ini
-%config(noreplace) /etc/httpd/conf.d/codepot.conf
 /etc/codepot/codepot.mysql 
 /etc/codepot/codepot.a2ldap
+/etc/codepot/codepot.httpd
 /etc/codepot/start-commit
 /etc/codepot/pre-commit
 /etc/codepot/post-commit
@@ -70,10 +70,17 @@ rm -rf $RPM_BUILD_ROOT
 exit 0
 
 %post
+[ $1 -eq 0 ] && {
+	# install the httpd configuration file for the first installation
+	install -D -m 0644 %{_sysconfdir}/codepot/codepot.httpd %{_sysconfdir}/httpd/conf.d/codepot.conf
+}
 exit 0
 
 %preun
 exit 0
 
 %postun
+[ $1 -eq 0 ] && {
+	rm -f %{_sysconfdir}/httpd/conf.d/codepot.conf	
+}
 exit 0
