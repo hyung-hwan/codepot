@@ -5,9 +5,24 @@ CODEPOT
  subversion revision control system and wiki-based documentation, and supports
  authentication via LDAP.
 
-
 INSTALLATION
 
+ An RPM package is provided for RedHat/CentOS Linux. The RPM package specifies
+ dependency which must met prior to or at the same time as the installation of
+ the rpm package. 
+
+   rpm -ivh codepot-X.X.X-X.noarch.rpm
+
+ You can use the yum utility to be hassle-free instead.
+
+   yum localinstall --nogpgcheck codepot-X.X.X-X.noarch.rpm
+
+ You should perform the following tasks after the RPM installation.
+
+   * Initialize the mysql database using /etc/codepot/codepot.mysql.
+   * Configure /etc/httpd/conf.d/codepot.conf
+   * Configure /etc/codepot/codepot.ini
+   
  Here is how to install Codepot into the standard locations under Ubuntu Linux.
 
  * Install required packages.
@@ -29,7 +44,6 @@ INSTALLATION
  * Enable the apache server modules
    $ sudo a2enmod php5
    $ sudo a2enmod authnz_ldap # enable ldap-based authentication
-   $ sudo a2enmod auth_mysql  # enable mysql-based authentication
    $ sudo a2enmod dav_svn
    $ sudo a2enmod userdir # to enable $HOME/public_html
    $ sudo /etc/init.d/apache2 restart

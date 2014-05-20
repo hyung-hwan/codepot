@@ -1,0 +1,24 @@
+#
+# This file contains sample configuration to enable subversion
+# webdav access. The actual configuration can be more complex 
+# than this file depending on your requirement.
+#
+
+<Location "/svn">
+	DAV svn
+	SVNParentPath "@DEPOTDIR@/svnrepo"
+	#SVNListParentPath on
+
+	PerlAccessHandler Codepot::AccessHandler
+	PerlAuthenHandler Codepot::AuthenHandler
+	PerlSetEnv CODEPOT_CONFIG_FILE /etc/codepot/codepot.ini
+
+	# Uncomment SSLRequireSSL below to disallow non-SSL access.
+	# Note that SSL must be enabled site-wide to use it.
+	# SSLRequireSSL
+
+	AuthType Basic
+	AuthName "@PACKAGE@"
+	require valid-user
+</Location>
+
