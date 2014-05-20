@@ -37,7 +37,7 @@ database_prefix = ""
 ;------------------------------------------------------------------------------
 ldap_server_uri = "ldap://127.0.0.1:389"
 ldap_server_protocol_version = "3"
-ldap_auth_mode 1
+ldap_auth_mode = 2
 ldap_userid_format = "cn=${userid},ou=users,dc=codepot,dc=org"
 ldap_password_format = "${password}"
 ldap_admin_binddn = "cn=admin,dc=codepot,dc=org"
@@ -74,7 +74,7 @@ https_compulsory = "no"
 https_url = "https://${SERVER_NAME}${REQUEST_URI}"
 
 ;------------------------------------------------------------------------------
-; API base URL
+; API base URL (Deprecated as of v0.1.2. Not useful anymore)
 ;------------------------------------------------------------------------------
 api_base_url = "http://127.0.0.1"
 
@@ -93,8 +93,8 @@ svn_base_url = "${REQUEST_PROTOCOL}://${SERVER_NAME}:${SERVER_PORT}/svn"
 ;------------------------------------------------------------------------------
 ; Login model to use. 
 ;------------------------------------------------------------------------------
-login_model = "LdapLoginModel"
-#login_model = "DbLoginModel"
+#login_model = "LdapLoginModel"
+login_model = "DbLoginModel"
 
 ;------------------------------------------------------------------------------
 ; Comma separated list of system administrator IDs
