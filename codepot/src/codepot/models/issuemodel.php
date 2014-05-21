@@ -104,7 +104,6 @@ class IssueModel extends Model
 		$this->db->trans_start ();
 		if (strlen($userid) > 0) $this->db->where ('owner', $userid);
 
-		//$this->db->order_by ('id', 'desc');
 		if (is_array($filter))
 		{
 			$this->db->where_in ('status', array_keys($filter));
@@ -113,6 +112,15 @@ class IssueModel extends Model
 		if ($hour_limit > 0)
 		{
 			$this->db->where ("updatedon >= SYSDATE() - INTERVAL {$hour_limit} HOUR");
+		}
+
+		if (strlen($userid) > 0) 
+		{ 
+			$this->db->order_by ('id', 'desc');
+		}
+		else
+		{
+			$this->db->order_by ('updatedon', 'desc');
 		}
 
 		$query = $this->db->get ('issue');
