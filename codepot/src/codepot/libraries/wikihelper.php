@@ -14,6 +14,14 @@ class WikiHelper
 			$link = "code/revision/{$projectid}/2e/{$matches[1]}";
 			return $link;
 		}
+		else if (preg_match ('/^#I([[:digit:]]+)$/', $name, $matches) == 1)
+		{
+			// #I123 -> translate it to issue number.
+			$num_hex = $converter->AsciiToHex ($matches[1]);
+			$link = "issue/show/{$projectid}/{$num_hex}";
+			return $link;
+		}
+
 		if ($this->_is_reserved ($name, TRUE))
 		{
 			$ex0 = $this->_trans_reserved ($name);
