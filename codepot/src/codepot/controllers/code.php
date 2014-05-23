@@ -10,6 +10,7 @@ class Code extends Controller
 	var $VIEW_REVISION = 'code_revision';
 	var $VIEW_DIFF = 'code_diff';
 	var $VIEW_FETCH = 'code_fetch';
+	var $VIEW_SEARCH = 'code_search';
 
 	function Code ()
 	{
@@ -409,7 +410,7 @@ class Code extends Controller
 			else if ($file['type'] == 'file')
 			{
 				header ('Content-Description: File Transfer');
-				header('Content-Type: application/octet-stream');
+				header ('Content-Type: application/octet-stream');
 				header ('Content-Disposition: attachment; filename='. basename($path));
 				header ('Content-Transfer-Encoding: binary');
 				header ('Content-Length: ' . strlen($file['content']));
@@ -432,6 +433,108 @@ class Code extends Controller
 
 				$this->load->view ($this->VIEW_FOLDER, $data);
 			}
+		}
+	}
+
+	function _search_code ($project, $login)
+	{
+		$this->load->helper ('form');
+		$this->load->library ('form_validation');
+
+		$data['login'] = $login;
+		$data['message'] = '';
+
+		$this->form_validation->set_rules ('search_pattern', 'pattern', 'required');
+		$this->form_validation->set_rules ('search_folder', 'folder', '');
+		$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
+
+		if ($this->input->post('search_pattern'))
+		{
+			$pattern =  $this->input->post('search_pattern');
+			$path = $this->input->post('search_folder');
+			$path = $this->_normalize_path ($path);
+			$rev = SVN_REVISION_HEAD;
+
+			$file = $this->subversion->getFile ($project->id, $path, $rev);
+			if ($file === FALSE)
+			{
+				$data['project'] = $project;
+				$data['message'] = "Failed to get file - %path";
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+
+			if ($this->form_validation->run())
+			{
+				$data['project'] = $project;
+				$data['headpath'] = $path;
+				$data['pattern'] = $pattern;
+				$data['file'] = $file;
+
+				$data['revision'] = $rev;
+				$data['prev_revision'] =
+					$this->subversion->getPrevRev ($project->id, $path, $rev);
+				$data['next_revision'] =
+					$this->subversion->getNextRev ($project->id, $path, $rev);
+
+				$this->load->view ($this->VIEW_SEARCH, $data);
+			}
+			else
+			{
+				// TODO: arrange to display an error message...
+				$data['project'] = $project;
+				$data['headpath'] = $path;
+				$data['file'] = $file;
+
+				$data['revision'] = $rev;
+				$data['prev_revision'] =
+					$this->subversion->getPrevRev ($project->id, $path, $rev);
+				$data['next_revision'] =
+					$this->subversion->getNextRev ($project->id, $path, $rev);
+				$this->load->view ($this->VIEW_FOLDER, $data);
+			}
+		}
+		else
+		{
+			$data['project'] = $project;
+			$data['message'] = 'Failed to search';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+	}
+
+	function search ($projectid = '', $rev = SVN_REVISION_HEAD)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+	
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else if ($project === NULL)
+		{
+			$data['login'] = $login;
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
+
+			$this->_search_code ($project, $login);
 		}
 	}
 
