@@ -125,11 +125,18 @@ $this->load->view (
 
 
 <div class="infostrip" id="code_folder_mainarea_infostrip">
+        <?=form_open("code/search/{$project->id}/", 'id="code_folder_search_form"')?>
+	<?=form_hidden ('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_folder_search_folder"')?>
+	<?=form_input ('search_pattern', set_value('search_pattern', ''), 'id="code_folder_search_pattern"')?>
+	<?=form_submit ('search_submit', $this->lang->line('Search'), 'id="code_folder_search_submit"')?>
+	| 
 	<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
 	<?php if ($file_count > 0): ?>
 	| 
 	<a id="code_folder_mainarea_details_button" href='#'><?=$this->lang->line('Details')?></a>
 	<?php endif; ?>
+
+	<?=form_close()?>
 </div>
 
 <div id="code_folder_mainarea_result">
