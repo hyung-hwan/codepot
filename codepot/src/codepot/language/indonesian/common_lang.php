@@ -1,7 +1,6 @@
 <?php
 $lang['Administration'] = 'Administration';
 $lang['All'] = 'Semua';
-$lang['Author'] = 'Pengarang';
 $lang['Blame'] = 'Menyalahkan';
 $lang['Cancel'] = 'Cancel';
 $lang['Change'] = 'Change';
@@ -10,6 +9,7 @@ $lang['Code'] = 'Kode';
 $lang['Code changes'] = 'Kode changes'
 $lang['Comment'] = 'Comment';
 $lang['Commitable'] = 'Commitable';
+$lang['Commiter'] = 'Pengarang';
 $lang['Create'] = 'Dibuat';
 $lang['Created by'] = 'Dibuat oleh';
 $lang['Created on'] = 'Waktu dibuat';

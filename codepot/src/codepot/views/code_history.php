@@ -82,7 +82,7 @@ $this->load->view (
 <table id="code_history_mainarea_result_table">
 <tr class='heading'>
 	<th><?=$this->lang->line('Revision')?></th>
-	<th><?=$this->lang->line('Author')?></th>
+	<th><?=$this->lang->line('Commiter')?></th>
 	<th><?=$this->lang->line('Date')?></th>
 	<th><?=$this->lang->line('Message')?></th>
 	<?php if ($file['type'] == 'file' || $file['type'] == 'dir') print '<th></th>'; ?>

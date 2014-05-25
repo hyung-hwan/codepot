@@ -507,7 +507,7 @@ class Code extends Controller
 		$this->load->model ('SubversionModel', 'subversion');
 	
 		$login = $this->login->getUser ();
-		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+		if ((CODEPOT_SIGNIN_COMPULSORY || CODEPOT_SIGNIN_FOR_CODE_SEARCH) && $login['id'] == '')
 			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
 		$project = $this->projects->get ($projectid);
@@ -532,7 +532,6 @@ class Code extends Controller
 				// non-public projects require sign-in.
 				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 			}
-
 
 			$this->_search_code ($project, $login);
 		}

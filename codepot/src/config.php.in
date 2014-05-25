@@ -74,6 +74,9 @@ function load_ini ($file)
 		array ('log_threshold',                'integer',     0),
 
 		array ('force_project_delete',         'boolean',     FALSE),
+		array ('allow_set_time_limit',         'boolean',     FALSE),
+		array ('signin_for_code_search',       'boolean',     TRUE),
+
 		array ('footer',                       'string',      '')
 	);
 

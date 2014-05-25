@@ -184,7 +184,7 @@ $this->load->view (
 		print '<th>' . $this->lang->line('Name') . '</th>';
 		print '<th>' . $this->lang->line('Revision') . '</th>';
 		print '<th>' . $this->lang->line('Size') . '</th>';
-		print '<th>' . $this->lang->line('Author') . '</th>';
+		print '<th>' . $this->lang->line('Commiter') . '</th>';
 		print '<th>' . $this->lang->line('Date') . '</th>';
 		print '<th>' . $this->lang->line('Blame') . '</th>';
 		print '<th>' . $this->lang->line('Difference') . '</th>';
