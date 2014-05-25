@@ -183,7 +183,7 @@ if ($fileext == 'adb' || $fileext == 'ads') $fileext = 'ada';
 else if ($fileext == 'pas') $fileext = 'pascal';
 else if ($fileext == 'bas') $fileext = 'basic';
 
-if ($fileext != '') $prettyprint_lang = "lang-$fileext";
+$prettyprint_lang = ($fileext != '')?  "lang-$fileext": '';
 
 $prettyprint_linenums = 'linenums';
 if ($login['settings'] != NULL &&
