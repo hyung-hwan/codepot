@@ -6,9 +6,12 @@
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-ada.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-basic.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-css.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lisp.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-pascal.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
 
@@ -173,14 +176,18 @@ print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $this->lang->line('D
 
 <?php 
 $fileext = substr(strrchr($file['name'], '.'), 1);
-if ($fileext == "") $fileext = "html";
+if ($fileext == 'adb' || $fileext == 'ads') $fileext = 'ada';
+else if ($fileext == 'pas') $fileext = 'pascal';
+else if ($fileext == 'bas') $fileext = 'basic';
+
+if ($fileext != '') $prettyprint_lang = "lang-$fileext";
 
 $prettyprint_linenums = 'linenums';
 if ($login['settings'] != NULL &&
     $login['settings']->code_hide_line_num == 'Y') $prettyprint_linenums = '';
 ?>
 
-<pre class="prettyprint <?=$prettyprint_linenums?> lang-<?=$fileext?>" id="code_blame_mainarea_result_pre">
+<pre class="prettyprint <?=$prettyprint_linenums?> <?=$prettyprint_lang?>" id="code_blame_mainarea_result_pre">
 <?php
 
 	$content = $file['content'];
