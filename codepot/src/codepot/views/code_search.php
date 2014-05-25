@@ -106,15 +106,19 @@ $this->load->view (
 <div id="code_search_mainarea_result">
 
 <?php
-function search_and_show ($controller, $project, $file, $revision, $pattern)
+function search_and_show ($controller, $project, $path, $revision, $pattern, $recurse)
 {
-	if ($file['type'] == 'file')
+	//$file = $controller->subversion->getFile ($project->id, $path, $revision);
+	//if ($file['type'] == 'file') return;
+
+	$dirarray = array ($path);
+
+	while (count($dirarray) > 0)
 	{
-		// this function must be called with a directory
-		// do nothing here.
-	}
-	else
-	{
+		$path = array_shift ($dirarray);
+		$file = $controller->subversion->getFile ($project->id, $path, $revision);
+		if ($file === FALSE || $file['type'] == 'file') continue;;
+
 		// search in a directory.	
 		$file_list = $file['content'];
 		foreach ($file_list as $f)
@@ -127,8 +131,15 @@ function search_and_show ($controller, $project, $file, $revision, $pattern)
 				{
 					$lines = explode ("\n", $file2['content']);
 					//$matchkeys = preg_grep ("/{$pattern}/i", $lines, 0);
-					$matchlines = preg_grep ("/{$pattern}/", $lines, 0);
-					if (count($matchlines) > 0)
+					// TODO: allow regular expression
+					$escaped_pattern  = preg_quote ($pattern, '/');
+					$matchlines = @preg_grep ("/{$pattern}/", $lines, 0);
+					if ($matchlines === FALSE)
+					{
+						print $controller->lang->line('CODE_BAD_SEARCH_PATTERN'); 
+						return;
+					}
+					else if (count($matchlines) > 0)
 					{
 						$hexpath = $controller->converter->AsciiToHex($fullpath);
 						if ($revision <= 0)
@@ -141,12 +152,12 @@ function search_and_show ($controller, $project, $file, $revision, $pattern)
 							$revreq = "/{$file2['rev']}";
 							$revreqroot = '/' . $controller->converter->AsciiToHex ('.') . $revreq;
 						}
-
+	
 						print '<li>';
 						print anchor (
 							"code/file/{$project->id}/{$hexpath}{$revreq}",
 							htmlspecialchars($fullpath));
-
+	
 						print '<pre>';
 						foreach ($matchlines as $linenum => $line)
 						{
@@ -155,21 +166,29 @@ function search_and_show ($controller, $project, $file, $revision, $pattern)
 							print "\n";
 						}
 						print '</pre>';
-
+	
 						print '</li>';
 					}
 				}
 				else
 				{
-					search_and_show ($controller, $project, $file2, $revision, $pattern);
+
+					if ($recurse && count($file2['content']) > 0)
+					{
+						array_push ($dirarray, $fullpath);
+					}
 				}
 			}
 		}
 	}
 }
 
-$file = $this->subversion->getFile ($project->id, $file['fullpath'], $revision);
-search_and_show ($this, $project, $file, $revision, $pattern);
+// the repository search can take very long.
+// change the execution time limit to run this script forever if it's allowed.
+if (CODEPOT_ALLOW_SET_TIME_LIMIT) set_time_limit (0);
+
+// TODO: prevent recursion to subdirectories depending on input
+search_and_show ($this, $project, $file['fullpath'], $revision, $pattern, TRUE);
 ?>
 
 </div> <!-- code_search_mainarea_result -->
