@@ -93,13 +93,13 @@ $this->load->view (
 
 
 <div class="infostrip" id="code_search_mainarea_infostrip">
-        <?=form_open("code/search/{$project->id}/", 'id="code_search_search_form"')?>
+	<?=form_open("code/search/{$project->id}/", 'id="code_search_search_form"')?>
 	<?=form_hidden ('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_search_search_folder"')?>
+	<?=form_hidden ('search_revision', set_value('search_revision', $revision), 'id="code_search_search_revision"')?>
 	<?=form_input ('search_pattern', set_value('search_pattern', ''), 'id="code_search_search_pattern"')?>
 	<?=form_submit ('search_submit', $this->lang->line('Search'), 'id="code_search_search_submit"')?>
 	| 
 	<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
-
 	<?=form_close()?>
 </div>
 
@@ -149,7 +149,7 @@ function search_and_show ($controller, $project, $path, $revision, $pattern, $re
 						}
 						else
 						{
-							$revreq = "/{$file2['rev']}";
+							$revreq = "/{$file2['created_rev']}";
 							$revreqroot = '/' . $controller->converter->AsciiToHex ('.') . $revreq;
 						}
 	

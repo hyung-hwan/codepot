@@ -446,6 +446,7 @@ class Code extends Controller
 
 		$this->form_validation->set_rules ('search_pattern', 'pattern', 'required');
 		$this->form_validation->set_rules ('search_folder', 'folder', '');
+		$this->form_validation->set_rules ('search_revision', 'revision', 'numeric');
 		$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
 
 		if ($this->input->post('search_pattern'))
@@ -453,7 +454,7 @@ class Code extends Controller
 			$pattern =  $this->input->post('search_pattern');
 			$path = $this->input->post('search_folder');
 			$path = $this->_normalize_path ($path);
-			$rev = SVN_REVISION_HEAD;
+			$rev = $this->input->post('search_revision');
 
 			$file = $this->subversion->getFile ($project->id, $path, $rev);
 			if ($file === FALSE)
