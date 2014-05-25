@@ -20,6 +20,8 @@ INSTALLATION
  You should perform the following tasks after the RPM installation.
 
    * Initialize the mysql database using /etc/codepot/codepot.mysql.
+   * Add the following switch to /etc/httpd/conf.d/perl.conf
+      PerlSwitches -Mlib=/etc/codepot/perl
    * Configure /etc/httpd/conf.d/codepot.conf
    * Configure /etc/codepot/codepot.ini
    * Restart httpd

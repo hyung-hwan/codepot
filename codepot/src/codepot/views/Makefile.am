@@ -7,6 +7,7 @@ www_DATA =  \
 	code_folder.php \
 	code_history.php \
 	code_revision.php \
+	code_search.php \
 	file_delete.php \
 	file_edit.php \
 	file_home.php \

@@ -115,7 +115,7 @@ class IssueModel extends Model
 		}
 
 		if (strlen($userid) > 0) 
-		{ 
+		{
 			$this->db->order_by ('id', 'desc');
 		}
 		else

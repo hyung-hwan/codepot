@@ -31,7 +31,7 @@ class LdapLoginModel extends LoginModel
 			$f_basedn = $this->formatString (CODEPOT_LDAP_USERID_SEARCH_BASE, $userid, $password);
 			$f_filter = $this->formatString (CODEPOT_LDAP_USERID_SEARCH_FILTER, $userid, $password);
 			
-			$bind = @ldap_bind ($ldap, $f_userid, $f_password);
+			$bind = @ldap_bind ($ldap, $f_rootdn, $f_rootpw);
 			if ($bind === FALSE) 
 			{
 				$this->setErrorMessage (ldap_error ($ldap));

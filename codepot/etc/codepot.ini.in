@@ -188,6 +188,12 @@ allow_set_time_limit = "no"
 signin_for_code_search = "yes"
 
 ;------------------------------------------------------------------------------
+; For a public project, subversion access is limited to members only when
+; this item is set to yes. When no, this access is open to everyone.
+;------------------------------------------------------------------------------
+svn_for_members_only = "yes"
+
+;------------------------------------------------------------------------------
 ; customized footer
 ;------------------------------------------------------------------------------
 ; Leave this empty for the default footer message
