@@ -76,6 +76,7 @@ function load_ini ($file)
 		array ('force_project_delete',         'boolean',     FALSE),
 		array ('allow_set_time_limit',         'boolean',     FALSE),
 		array ('signin_for_code_search',       'boolean',     TRUE),
+		array ('svn_for_members_only',         'boolean',     FALSE),
 
 		array ('footer',                       'string',      '')
 	);
