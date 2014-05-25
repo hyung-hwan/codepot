@@ -71,7 +71,9 @@ sub get_config
 		database_password => $cfg->param ('database_password'),
 		database_name => $cfg->param ('database_name'),
 		database_driver => $cfg->param ('database_driver'),
-		database_prefix => $cfg->param ('database_prefix')
+		database_prefix => $cfg->param ('database_prefix'),
+
+		svn_for_members_only => $cfg->param ('svn_for_members_only')
 	};
 
 	return $config;
@@ -285,7 +287,10 @@ sub __handler
 		}
 		elsif ($public >= 1)
 		{
-			return Apache2::Const::OK;
+			if (lc($cfg->{svn_for_members_only}) eq 'no')
+			{
+				return Apache2::Const::OK;
+			}
 		}
 	}
 	
