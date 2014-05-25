@@ -3,7 +3,6 @@ $lang['Administration'] = '관리';
 $lang['All'] = '모두';
 $lang['Attachment'] = '첨부';
 $lang['Attachments'] = '첨부';
-$lang['Author'] = '저자';
 $lang['Blame'] = '책임전가';
 $lang['Cancel'] = '취소';
 $lang['Change'] = '변경';
@@ -12,6 +11,7 @@ $lang['Code'] = '코드';
 $lang['Code changes'] = '코드변경';
 $lang['Comment'] = '소견';
 $lang['Commitable'] = '커밋가능';
+$lang['Commiter'] = '커밋터';
 $lang['Create'] = '생성';
 $lang['Created by'] = '최초생성인';
 $lang['Created on'] = '최초생성시간';
@@ -87,12 +87,12 @@ $lang['Username'] = '사용자명';
 $lang['Wiki'] = '위키';
 $lang['Wikis'] = '위키';
 
-$lang['MSG_LOG_COMMIT_BY'] = '%s이(가) 커밋했습니다';
-$lang['MSG_LOG_CHANGE_BY'] = '%s이(가) 변경했습니다';
-$lang['MSG_LOG_CREATE_BY'] = '%s이(가) 생성했습니다';
-$lang['MSG_LOG_DELETE_BY'] = '%s이(가) 삭제했습니다';
-$lang['MSG_LOG_UPDATE_BY'] = '%s이(가) 갱신했습니다';
-$lang['MSG_LOG_REVPROP_CHANGE_BY'] = '리비전 속성 %s을(를) %s이(가) 변경했습니다';
+$lang['MSG_LOG_COMMIT_BY'] = '%s 커밋';
+$lang['MSG_LOG_CHANGE_BY'] = '%s 변경';
+$lang['MSG_LOG_CREATE_BY'] = '%s 생성';
+$lang['MSG_LOG_DELETE_BY'] = '%s 삭제';
+$lang['MSG_LOG_UPDATE_BY'] = '%s 갱신';
+$lang['MSG_LOG_REVPROP_CHANGE_BY'] = '리비전속성 %s 변경. 변경자 %s';
 
 
 $lang['MSG_NO_DIFF'] = '차이점이 없습니다';

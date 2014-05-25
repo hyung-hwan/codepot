@@ -111,7 +111,7 @@ $history = $file['history'];
 	<?=anchor ("code/revision/{$project->id}/${xpar}/{$prev_revision}", '<<')?> 
 	<?=$this->lang->line('Revision')?>: <?=$history['rev']?> 
 	<?=anchor ("code/revision/{$project->id}/${xpar}/{$next_revision}", '>>')?> | 
-	<?=$this->lang->line('Author')?>: <?=htmlspecialchars($history['author'])?> | 
+	<?=$this->lang->line('Committer')?>: <?=htmlspecialchars($history['author'])?> | 
 	<?=$this->lang->line('Last updated on')?>: <?=date('r', strtotime($history['date']))?>
 </div>
 

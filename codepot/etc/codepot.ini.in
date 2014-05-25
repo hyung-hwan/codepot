@@ -174,6 +174,20 @@ log_threshold = 0
 force_project_delete = "no"
 
 ;------------------------------------------------------------------------------
+; When yes, a codepot page can use set_time_limit() to adjust the maximum
+; execution time to override the global value. For example, the code search
+; page can take very long if the code repository is very large. You can
+; set this item to yes to allow such a page to complete its processing.
+;------------------------------------------------------------------------------
+allow_set_time_limit = "no"
+
+;------------------------------------------------------------------------------
+; When yes, a user must sign in to be able to search code.
+; When no, an anonymous user can search code.
+;------------------------------------------------------------------------------
+signin_for_code_search = "yes"
+
+;------------------------------------------------------------------------------
 ; customized footer
 ;------------------------------------------------------------------------------
 ; Leave this empty for the default footer message
