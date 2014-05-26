@@ -222,7 +222,7 @@ body {
 }
 
 .content .mainarea pre {
-        padding: .3em .3em .3em .3em;
+	padding: .3em .3em .3em .3em;
 	border: 1px dashed #BBCCDD;
 	background-color: #F1F1FF;
 	overflow: auto;
@@ -291,12 +291,12 @@ body {
 }
 
 .content .mainarea table.wiki th {
-        background-color: #bbccdd;
+	background-color: #bbccdd;
 }
 
 .content .mainarea table.wiki td {
-        vertical-align: top;
-        border-bottom: 1px dashed #bbccdd;
+	vertical-align: top;
+	border-bottom: 1px dashed #bbccdd;
 }
 
 .content .mainarea p.wiki {
@@ -315,35 +315,33 @@ body {
 
 .content .mainarea pre.prettyprint {
 	/* anything that make prettyprint area different from other pres? */
-	background-color: #FFFFFF;
+	/*background-color: #FFFFFF;*/
+	background: white;
+	font-size: 12px;
+	line-height: 1.5;
+	border: 1px solid #ccc;
+	padding: 10px;
+
+	tab-size: 5;
+	-moz-tab-size: 5;
+	-o-tab-size: 5;
 }
 
-pre.prettyprint .str { color: #080; }
-pre.prettyprint .kwd { color: #008; }
-pre.prettyprint .com { color: #800; }
-pre.prettyprint .typ { color: #606; }
-pre.prettyprint .lit { color: #066; }
-pre.prettyprint .pun { color: #660; }
-pre.prettyprint .pln { color: #000; }
-pre.prettyprint .tag { color: #008; }
-pre.prettyprint .atn { color: #606; }
-pre.prettyprint .atv { color: #080; }
-pre.prettyprint .dec { color: #606; }
-pre.prettyprint .nocode {
-        border-right: 1px solid #BBCCDD;
-        color: #8888FF;
-}
-
-pre.prettyprint .nocode a,
-pre.prettyprint .nocode a {
-	text-decoration: none;
-	color: #4444FF;
-}
-
-pre.prettyprint .nocode a:hover,
-pre.prettyprint .nocode a:hover {
-	background-color: #BBCCDD;
-}
+pre.prettyprint .pln { color: #222222; } 
+pre.prettyprint .str { color: #AA1111; }
+pre.prettyprint .kwd { color: #2222ff; }
+pre.prettyprint .com { color: #888a88; font-style: italic; }
+pre.prettyprint .typ { color: #4271ae; }
+pre.prettyprint .lit { color: #f5871f; }
+pre.prettyprint .pun { color: #4d4d4c; }
+pre.prettyprint .opn { color: #4d4d4c; }
+pre.prettyprint .clo { color: #4d4d4c; }
+pre.prettyprint .tag { color: #c82829; }
+pre.prettyprint .atn { color: #f5871f; }
+pre.prettyprint .atv { color: #3e999f; }
+pre.prettyprint .dec { color: #f5871f; }
+pre.prettyprint .var { color: #c82829; }
+pre.prettyprint .fun { color: #4271ae; }
 
 /* Specify class=linenums on a pre to get line numbering */
 pre.prettyprint ol.linenums { 
@@ -354,36 +352,49 @@ pre.prettyprint ol.linenums {
 	color: #7E7EAE;
 } /* IE indents via margin-left */
 
+/*
+pre.prettyprint li.L0,
+pre.prettyprint li.L1,
+pre.prettyprint li.L2,
+pre.prettyprint li.L3,
+pre.prettyprint li.L5,
+pre.prettyprint li.L6,
+pre.prettyprint li.L7,
+pre.prettyprint li.L8 { list-style-type: none }
+*/
+/* Alternate shading for lines */
+/*
+pre.prettyprint li.L1,
+pre.prettyprint li.L3,
+pre.prettyprint li.L5,
+pre.prettyprint li.L7,
+pre.prettyprint li.L9 { background: #eee }
+*/
 
 @media print {
-	pre.prettyprint .str { color: #060; }
-	pre.prettyprint .kwd { color: #006; font-weight: bold; }
-	pre.prettyprint .com { color: #600; font-style: italic; }
-	pre.prettyprint .typ { color: #404; font-weight: bold; }
-	pre.prettyprint .lit { color: #044; }
-	pre.prettyprint .pun { color: #440; }
-	pre.prettyprint .pln { color: #000; }
-	pre.prettyprint .tag { color: #006; font-weight: bold; }
-	pre.prettyprint .atn { color: #404; }
-	pre.prettyprint .atv { color: #060; }
-	pre.prettyprint .nocode a,
-	pre.prettyprint .nocode a {
-		text-decoration: none;
-		color: #4444FF;
-	}
-
-	pre.prettyprint .nocode a:hover,
-	pre.prettyprint .nocode a:hover {
-		background-color: #BBCCDD;
-	}
+	pre.prettyprint .pln { color: #222222; } 
+	pre.prettyprint .str { color: #AA1111; }
+	pre.prettyprint .kwd { color: #2222ff; font-weight: bold; }
+	pre.prettyprint .com { color: #888a88; font-style: italic; }
+	pre.prettyprint .typ { color: #4271ae; font-weight: bold; }
+	pre.prettyprint .lit { color: #f5871f; }
+	pre.prettyprint .pun { color: #4d4d4c; }
+	pre.prettyprint .opn { color: #4d4d4c; }
+	pre.prettyprint .clo { color: #4d4d4c; }
+	pre.prettyprint .tag { color: #c82829; font-weight: bold; }
+	pre.prettyprint .atn { color: #f5871f; }
+	pre.prettyprint .atv { color: #3e999f; }
+	pre.prettyprint .dec { color: #f5871f; }
+	pre.prettyprint .var { color: #c82829; }
+	pre.prettyprint .fun { color: #4271ae; }
 }
 
 .content .infostrip {
 	font-size: 0.9em;
 
-        background: #E5ECF9 none repeat scroll 0 0;
-        border: #D4DBE8 1px solid; 
-        /*background: #DDDDDD none repeat scroll 0 0;
+	background: #E5ECF9 none repeat scroll 0 0;
+	border: #D4DBE8 1px solid; 
+	/*background: #DDDDDD none repeat scroll 0 0;
 	border: 1px solid #CCCCCC;*/
 
 	margin: 0.3em 0em 0em 0em;
@@ -401,22 +412,23 @@ pre.prettyprint ol.linenums {
 
 .content .sidebar {
 	font-size: 0.9em;
-        float: right;
-        width: 22em;
+	float: right;
+	width: 22em;
 	margin-top: 0.3em;
 }
 
 .content .sidebar .box {
-        /* box in an sidebar to present actual information  */
-        padding:8px 8px 8px 8px;
-        margin: 1px 1px 2px 1px;
-        display:block;
+	/* box in an sidebar to present actual information  */
+	padding:8px 8px 8px 8px;
+	margin: 1px 1px 2px 1px;
+	display:block;
 	overflow: auto;
 
-        background: #E5ECF9 none repeat scroll 0 0;
-        border: #D4DBE8 1px solid; 
-        /* background: #DDDDDD none repeat scroll 0 0;
-        border: #CCCCCC 1px solid; */
+	/*background: #E5ECF9 none repeat scroll 0 0;*/
+	background: #EEEEEE none repeat scroll 0 0;
+	border: #D4DBE8 1px solid; 
+	/* background: #DDDDDD none repeat scroll 0 0;
+	border: #CCCCCC 1px solid; */
 
 	-moz-border-radius-bottomleft:2px;
 	-moz-border-radius-bottomright:2px;
@@ -425,28 +437,28 @@ pre.prettyprint ol.linenums {
 }
 
 .content .sidebar .boxtitle {
-        /* title of an infobox */
-        font-weight:bold;
-        outline-color:-moz-use-text-color;
-        outline-style:none;
-        outline-width:0;
-        padding: 2px;
-        vertical-align:baseline;
-        border:0 none;
-        color:#FFFFFF;
-        /*background-color: #7777FF;*/
+	/* title of an infobox */
+	font-weight:bold;
+	outline-color:-moz-use-text-color;
+	outline-style:none;
+	outline-width:0;
+	padding: 2px;
+	vertical-align:baseline;
+	border:0 none;
+	color:#FFFFFF;
+	/*background-color: #7777FF;*/
 	background-color: #4665A2;
 	text-transform: uppercase;
 }
 
 .content .sidebar .boxtitle a {
 	text-decoration: none;
-        color: #FFFFFF;
+	color: #FFFFFF;
 }
 
 .content .sidebar .boxtitle a:hover {
-        /*background-color: #BBBBFF;*/
-        color: #8899CC;
+	/*background-color: #BBBBFF;*/
+	color: #8899CC;
 }
 
 .content .sidebar ul {
