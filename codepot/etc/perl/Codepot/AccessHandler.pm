@@ -73,7 +73,7 @@ sub get_config
 		database_driver => $cfg->param ('database_driver'),
 		database_prefix => $cfg->param ('database_prefix'),
 
-		svn_for_members_only => $cfg->param ('svn_for_members_only')
+		svn_read_access => $cfg->param ('svn_read_access')
 	};
 
 	return $config;
@@ -238,15 +238,28 @@ sub is_project_public
 	return (((scalar(@row) > 0 && $row[0] eq 'Y')? 1: 0), undef);
 }
 
+sub is_read_method
+{
+	my ($method) = @_;
+
+	return $method eq "GET"     || $method eq "HEAD" ||
+	       $method eq "OPTIONS" || $method eq "REPORT" ||
+	       $method eq "PROPFIND";
+}
 sub __handler 
 {
 	my ($r, $cfg, $dbh) = @_;
 	my ($empty, $base, $repo, $dummy) = split ('/', $r->uri(), 4);
 	my $method = uc($r->method());
+	my $is_method_r = is_read_method ($method);
 
 	my $author;
 	my $userid = undef;
 	my $password = undef;
+
+	my $public = undef;
+	my $member = undef;
+	my $errmsg = undef;
 
 	if ($r->proxyreq() == Apache2::Const::PROXYREQ_PROXY)
 	{
@@ -272,13 +285,9 @@ sub __handler
 	if (!defined($userid)) { $userid = ""; }
 	if (!defined($password)) { $password = ""; }
 
-	if ($method eq "GET" ||
-	    $method eq "HEAD" ||
-	    $method eq "OPTIONS" ||
-	    $method eq "REPORT" ||
-	    $method eq "PROPFIND")
+	if ($is_method_r)
 	{
-		my ($public, $errmsg) = is_project_public ($dbh, $cfg->{database_prefix}, $repo);
+		($public, $errmsg) = is_project_public ($dbh, $cfg->{database_prefix}, $repo);
 		if ($public <= -1)
 		{
 			# failed to contact the authentication server
@@ -287,8 +296,9 @@ sub __handler
 		}
 		elsif ($public >= 1)
 		{
-			if (lc($cfg->{svn_for_members_only}) eq 'no')
+			if (lc($cfg->{svn_read_access}) eq 'anonymous')
 			{
+				# grant an anonymous user the read access.
 				return Apache2::Const::OK;
 			}
 		}
@@ -301,8 +311,7 @@ sub __handler
 	}
 	elsif ($cfg->{login_model} eq 'DbLoginModel')
 	{
-		my $errmsg;
-		($auth,$errmsg) = authenticate_database (
+		($auth, $errmsg) = authenticate_database (
 			$dbh, $cfg->{database_prefix}, $userid, $password);
 	}
 	if ($auth <= -1)
@@ -318,7 +327,14 @@ sub __handler
 	}
 
 	# authentication successful. 
-	my ($member, $errmsg) = is_project_member ($dbh, $cfg->{database_prefix}, $repo, $userid);
+	if ($is_method_r && $public >= 1 && lc($cfg->{svn_read_access}) eq 'authenticated')
+	{
+		# grant read access to an authenticated user regardless of membership 
+		# this applies to a public project only
+		return Apache2::Const::OK;
+	}
+
+	($member, $errmsg) = is_project_member ($dbh, $cfg->{database_prefix}, $repo, $userid);
 	if ($member <= -1)
 	{
 		$r->log_error ("Cannot check project membership - $errmsg");

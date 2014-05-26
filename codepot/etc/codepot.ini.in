@@ -188,10 +188,12 @@ allow_set_time_limit = "no"
 signin_for_code_search = "yes"
 
 ;------------------------------------------------------------------------------
-; For a public project, subversion access is limited to members only when
-; this item is set to yes. When no, this access is open to everyone.
+; Subversion read access is limited to the specified user type. The types 
+; include anonymous, authenticated, member. This applies to a public project 
+; only. Write access to any projects and read access to a non-public project
+; require membership regardless of this item.
 ;------------------------------------------------------------------------------
-svn_for_members_only = "yes"
+svn_read_access = "member"
 
 ;------------------------------------------------------------------------------
 ; customized footer
