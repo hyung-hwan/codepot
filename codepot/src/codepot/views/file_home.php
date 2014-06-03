@@ -55,7 +55,8 @@ else
 {
 	function comp_files ($a, $b)
 	{
-		$cmp = strcmp ($b->tag, $a->tag);
+		//$cmp = strcmp ($b->tag, $a->tag);
+		$cmp = version_compare ($b->tag, $a->tag);
 		if ($cmp == 0)
 		{
 			return strcmp ($a->name, $b->name);
