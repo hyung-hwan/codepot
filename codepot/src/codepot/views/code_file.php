@@ -48,12 +48,39 @@ $(function () {
 		}
 	});
 });
+
+function renderCode()
+{
+	$("#code_file_mainarea_result_raw").html ($("#code_file_mainarea_result_pre").html())
+	prettyPrint ();
+}
+
+var showing_raw_code = false;
+
+function showRawCode()
+{
+	if (showing_raw_code)
+	{
+		
+		$("#code_file_style_anchor").text("<?=$this->lang->line('Destyle')?>");
+		$("#code_file_mainarea_result_pre").removeClass("prettyprinted");
+		prettyPrint();
+	}
+	else
+	{
+		$("#code_file_style_anchor").text("<?=$this->lang->line('Enstyle')?>");
+		$("#code_file_mainarea_result_pre").html($("#code_file_mainarea_result_raw").html());
+	}
+
+	showing_raw_code = !showing_raw_code;
+}
+
 </script>
 
 <title><?=htmlspecialchars($project->name)?></title>
 </head>
 
-<body onload="prettyPrint()">
+<body onload="renderCode()">
 
 <div class="content" id="code_file_content">
 
@@ -164,6 +191,14 @@ $this->load->view (
 	print anchor (
 		"code/fetch/{$project->id}/${xpar}{$revreq}",
 		$this->lang->line('Download'));
+
+	print ' | ';
+	print anchor (
+		"code/file/{$project->id}/${xpar}{$revreq}",
+		$this->lang->line('Destyle'), 
+		array('id'      => 'code_file_style_anchor', 
+		      'onClick' => 'showRawCode(); return false;')
+	);
 ?>
 </div> <!-- code_file_mainarea_menu -->
 
@@ -227,6 +262,12 @@ if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 ?>
 </pre>
 </div> <!-- code_file_mainarea_result_info -->
+
+
+<div style="display:none">
+<pre id="code_file_mainarea_result_raw">
+</pre>
+</div>
 
 </div> <!-- code_file_mainarea_result -->
 
