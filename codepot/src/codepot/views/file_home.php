@@ -53,18 +53,43 @@ if (empty($files))
 }
 else
 {
+	function comp_tag ($a, $b)
+	{
+		$x = explode ('.', $a);
+		$y = explode ('.', $b);
+		$cx = count($x);
+		$cy = count($y);
+		$max = max($cx, $cy);
+
+		for ($i = 0; $i < $max; $i++)
+		{
+			if (is_numeric($x[$i]) && is_numeric($y[$i]))
+			{
+				$q = (int)$x[$i] - (int)$y[$i];
+			}
+			else
+			{
+				$q = strcmp($x[$i], $y[$i]);
+			}
+			if ($q != 0) return $q;
+		}
+
+		return ($cx > $cy)? 1:
+			   ($cx < $cy)? -1: 0;
+	}
+
 	function comp_files ($a, $b)
 	{
-		//$cmp = strcmp ($b->tag, $a->tag);
-		$cmp = version_compare ($b->tag, $a->tag);
+		//$cmp = version_compare ($b->tag, $a->tag);
+		$cmp = comp_tag ($b->tag, $a->tag);
 		if ($cmp == 0)
 		{
-			return strcmp ($a->name, $b->name);
+			$cmp = strcmp ($a->name, $b->name);
 		}
 		return $cmp;
 	}
 
-        usort ($files, 'comp_files');
+	usort ($files, 'comp_files');
 
 	print '<table id="file_home_mainarea_result_table">';
 	print '<tr class="heading">';
