@@ -199,6 +199,17 @@ if ($login['settings'] != NULL &&
 	{
 		$line = $content[$i];
 	
+		if ($line['author'] != $author || $line['rev'] != $rev) 
+		{
+			$author = $line['author'];
+			$author_padded = str_pad ($author, 9, ' ', STR_PAD_RIGHT);
+			$author_padded = substr($author_padded, 0, 9);
+		}
+		else
+		{
+			$author_padded = str_pad (' ', 9, ' ', STR_PAD_RIGHT);
+		}
+
 		if ($line['rev'] != $rev) 
 		{
 			$rev = $line['rev'];
@@ -212,19 +223,8 @@ if ($login['settings'] != NULL &&
 			$rev_padded = str_pad (' ', 6, ' ', STR_PAD_LEFT);
 		}
 	
-		if ($line['author'] != $author) 
-		{
-			$author = $line['author'];
-			$author_padded = str_pad ($author, 8, ' ', STR_PAD_RIGHT);
-			$author_padded = substr($author_padded, 0, 8);
-		}
-		else
-		{
-			$author_padded = str_pad (' ', 8, ' ', STR_PAD_RIGHT);
-		}
-	
-		print "<span class='nocode'>{$rev_padded}</span>";
-		print "<span class='nocode' title='{$author}'>{$author_padded}</span>";
+		print "<span class='nocode'>{$rev_padded}</span> ";
+		print "<span class='nocode' title='{$author}'>{$author_padded}</span> ";
 
 		print htmlspecialchars ($line['line']);
 		print "\n";
