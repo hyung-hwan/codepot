@@ -55,13 +55,15 @@ else
 {
 	function comp_tag ($a, $b)
 	{
-		$x = explode ('.', $a);
-		$y = explode ('.', $b);
+		//$x = explode ('.', $a);
+		//$y = explode ('.', $b);
+		$x = explode ('.', str_replace('-', '.', $a));
+		$y = explode ('.', str_replace('-', '.', $b));
 		$cx = count($x);
 		$cy = count($y);
-		$max = max($cx, $cy);
+		$min = min($cx, $cy);
 
-		for ($i = 0; $i < $max; $i++)
+		for ($i = 0; $i < $min; $i++)
 		{
 			if (is_numeric($x[$i]) && is_numeric($y[$i]))
 			{
