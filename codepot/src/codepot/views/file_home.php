@@ -76,8 +76,8 @@ else
 			if ($q != 0) return $q;
 		}
 
-		return ($cx > $cy)? 1:
-			   ($cx < $cy)? -1: 0;
+		return ($cx > $cy)? -1:
+		       ($cx < $cy)? 1: 0;
 	}
 
 	function comp_files ($a, $b)
