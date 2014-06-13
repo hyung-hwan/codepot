@@ -184,6 +184,10 @@
 	overflow: auto;
 }
 
+#code_revision_mainarea_result .title .anchor {
+	font-size: 9pt;
+}
+
 #code_revision_mainarea_result_msg {
 	border: 0;
 	padding: 0;	

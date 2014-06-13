@@ -6,6 +6,43 @@
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
 
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+
+<script type="text/javascript">
+
+$(function() {
+	$("#code_revision_edit_div").dialog (
+		{
+			title: '<?=$this->lang->line('Edit')?>',
+			width: 'auto',
+			height: 'auto',
+			resizable: false,
+			autoOpen: false,
+			modal: true,
+			buttons: {
+				'<?=$this->lang->line('OK')?>': function () {
+					$('#code_revision_edit_logmsg_form').submit ();
+					$(this).dialog('close');
+				},
+				'<?=$this->lang->line('Cancel')?>': function () {
+					$(this).dialog('close');
+				}
+			},
+			close: function() { }
+		}
+	);
+
+	$("#code_revision_edit_logmsg_button").button().click (
+		function () {
+			$("#code_revision_edit_div").dialog('open');
+			return false;
+		}
+	);
+});
+</script>
+
 <title><?=htmlspecialchars($project->name)?></title>
 </head>
 
@@ -118,7 +155,15 @@ $history = $file['history'];
 
 <div id="code_revision_mainarea_result">
 
-<div class="title">Message</div>
+<div class="title"><?=$this->lang->line('Message')?>
+	&nbsp;&nbsp;
+	<span class='anchor'>
+		<?=anchor ("#", $this->lang->line('Edit'),
+		           array ('id' => 'code_revision_edit_logmsg_button'));
+		?>
+	</span>
+</div>
+
 <pre id="code_revision_mainarea_result_msg">
 <?=htmlspecialchars($history['msg'])?>
 </pre>
@@ -169,6 +214,17 @@ $history = $file['history'];
 <!---------------------------------------------------------------------------->
 
 </div> <!-- code_revision_content -->
+
+<div id="code_revision_edit_div">
+	<?=form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_edit_logmsg_form"')?>
+		<?=
+			form_textarea (
+				array ('name' => 'code_revision_edit_logmsg', 
+				       'value' => $history['msg'], 'rows'=> 10, 'cols' => 70)
+			);
+		?>
+	<?=form_close()?>
+</div>
 
 </body>
 
