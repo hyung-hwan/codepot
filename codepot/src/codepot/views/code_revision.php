@@ -12,6 +12,9 @@
 
 <script type="text/javascript">
 
+<?php $can_edit = ($login['id'] == $file['history']['author']); ?>
+
+<?php if ($can_edit): ?>
 $(function() {
 	$("#code_revision_edit_div").dialog (
 		{
@@ -40,7 +43,25 @@ $(function() {
 			return false;
 		}
 	);
+
+	<?php if (strlen($edit_error_message) > 0): ?>
+	$("#code_revision_edit_error_div").dialog( { 
+		title: '<?=$this->lang->line('Error')?>',
+		width: 'auto',
+		height: 'auto',
+		modal: true,
+		autoOpen: true,
+		buttons: {
+			"<?=$this->lang->line('OK')?>": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+	<?php endif; ?>
+	
 });
+<?php endif; ?>
+
 </script>
 
 <title><?=htmlspecialchars($project->name)?></title>
@@ -155,13 +176,14 @@ $history = $file['history'];
 
 <div id="code_revision_mainarea_result">
 
-<div class="title"><?=$this->lang->line('Message')?>
-	&nbsp;&nbsp;
+<div class="title"><?=$this->lang->line('Message')?>&nbsp;
+<?php if ($can_edit): ?>
 	<span class='anchor'>
 		<?=anchor ("#", $this->lang->line('Edit'),
 		           array ('id' => 'code_revision_edit_logmsg_button'));
 		?>
 	</span>
+<?php endif; ?>
 </div>
 
 <pre id="code_revision_mainarea_result_msg">
@@ -215,16 +237,26 @@ $history = $file['history'];
 
 </div> <!-- code_revision_content -->
 
+<?php if ($can_edit): ?>
 <div id="code_revision_edit_div">
 	<?=form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_edit_logmsg_form"')?>
 		<?=
+
 			form_textarea (
-				array ('name' => 'code_revision_edit_logmsg', 
-				       'value' => $history['msg'], 'rows'=> 10, 'cols' => 70)
-			);
+				array ('name' => 'edit_log_message', 
+				       'value' => $history['msg'], 'rows'=> 10, 'cols' => 70,
+				       'id' => 'code_revision_edit_log_message')
+			)
 		?>
 	<?=form_close()?>
 </div>
+
+<?php if (strlen($edit_error_message) > 0): ?>
+<div id="code_revision_edit_error_div">
+<?=$edit_error_message?>
+</div>
+<?php endif; ?>
+<?php endif; ?> <!-- $can_edit -->
 
 </body>
 

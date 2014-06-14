@@ -246,6 +246,7 @@ class Code extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
+
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
@@ -275,6 +276,40 @@ class Code extends Controller
 			{
 				// non-public projects require sign-in.
 				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
+			$data['edit_error_message'] = '';
+			if ($login['id'] != '' && 
+			    $login['id'] == $this->subversion->getRevProp($projectid, $rev, 'svn:author'))
+			{
+				// the current user must be the author of the revision to be able to 
+				// change the log message.
+				$this->load->helper ('form');
+				$this->load->library ('form_validation');
+
+				$this->form_validation->set_rules ('edit_log_message', 'Message', 'required|min_length[2]');
+				$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
+
+				if ($this->input->post('edit_log_message'))
+				{
+					$logmsg =  $this->input->post('edit_log_message');
+					if ($this->form_validation->run())
+					{
+						if ($logmsg != $this->subversion->getRevProp ($projectid, $rev, 'svn:log'))
+						{
+							$actual_rev = $this->subversion->setRevProp (
+								$projectid, $rev, 'svn:log', $logmsg, $login['id']);
+							if ($actual_rev === FALSE)
+							{
+								$data['edit_error_message'] = 'Cannot change revision log message';
+							}
+						}
+					}
+					else
+					{
+						$data['edit_error_message'] = 'Invalid revision log message';
+					}
+				}
 			}
 
 			$file = $this->subversion->getRevHistory ($projectid, $path, $rev);
