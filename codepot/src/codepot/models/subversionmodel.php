@@ -768,6 +768,24 @@ class SubversionModel extends Model
 		return $log[0]['rev'];
 	}
 
+	function getRevProp ($projectid, $rev, $prop)
+	{
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
+		return @svn_revprop_get ($url, $rev, $prop);
+	}
+
+	function setRevProp ($projectid, $rev, $prop, $propval, $user)
+	{
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
+
+		$orguser = @svn_auth_get_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME);
+		@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $user);
+
+		$result = @svn_revprop_set ($url, $rev, $prop, $propval);
+
+		@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $orguser);
+		return $result;
+	}
 }
 
 ?>
