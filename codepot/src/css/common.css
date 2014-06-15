@@ -217,12 +217,39 @@ body {
 	font-size: inherit;
 }
 
+.content .mainarea .form_input_label {
+	margin-bottom: 0.2em;
+}
+
+.content .mainarea .form_input_label .ui-button {
+	font-size: 80%;
+	font-style: italic;
+}
+
+
+.content .mainarea .form_input_field {
+	margin-bottom: 0.5em;
+}
+
+.content .mainarea .form_input_preview {
+        width: 100%;
+        /*border: 1px solid #DDDDDD;*/
+        background-color: #FFFFF0;
+        font-size: 90%;
+}
+
+.content .mainarea .form_input_preview pre {
+        background-color: inherit;
+        /*background-color: #FDF5D6;*/
+        /*border: none;*/
+}
+
 .content .mainarea .icon {
 	border: 0;
 }
 
 .content .mainarea pre {
-	padding: .3em .3em .3em .3em;
+	/*padding: .3em .3em .3em .3em;*/
 	border: 1px dashed #BBCCDD;
 	background-color: #F1F1FF;
 	overflow: auto;

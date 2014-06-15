@@ -536,3 +536,33 @@ function creole_render_wiki (inputid, outputid, linkbase, imgbase)
         output.innerHTML = '';
         creole.parse (output, xinput);
 }
+
+function creole_render_wiki_with_input_text (input_text, outputid, linkbase, imgbase)
+{
+        function $(id) { return document.getElementById(id); }
+
+        function decodeEntities(str)
+        {
+                return str.replace(/&amp;/g, '&').
+                           replace(/&lt;/g, '<').
+                           replace(/&gt;/g, '>').
+                           replace(/&quot;/g, '"');
+        }
+
+        //var input = $(inputid);
+        var output = $(outputid);
+        var creole = new Parse.Simple.Creole(
+        {
+                forIE: document.all,
+                /*interwiki: {
+                        WikiCreole: 'http://www.wikicreole.org/wiki/',
+                        Wikipedia: 'http://en.wikipedia.org/wiki/'
+                },*/
+                linkFormat: linkbase,
+		imgFormat: imgbase
+        } );
+
+        var xinput = decodeEntities(input_text);
+        output.innerHTML = '';
+        creole.parse (output, xinput);
+}
