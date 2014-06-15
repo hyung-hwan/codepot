@@ -6,12 +6,28 @@
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/wiki.css')?>" />
 
+<script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
+
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
 
+
+
 <script type="text/javascript">
+
+function render_wiki(input_text)
+{
+        creole_render_wiki_with_input_text (
+		input_text,
+                "wiki_edit_mainarea_text_preview", 
+		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
+		"<?=site_url()?>/wiki/attachment0/<?=$project->id?>/"
+        );
+}
+
 var new_attachment_no = 0;
+
 $(function () {
 	$('#wiki_edit_more_new_attachment').button().click (
 		function () {
@@ -22,6 +38,12 @@ $(function () {
 			].join("");
 			$('#wiki_edit_new_attachment_list').append (html);
 			return false;
+		}
+	);
+
+	$("#wiki_edit_mainarea_text_preview_button").button().click(
+		function () {
+			render_wiki ($("#wiki_edit_mainarea_text").val());
 		}
 	);
 });
@@ -65,46 +87,44 @@ $this->load->view (
 
 <?=form_open_multipart("wiki/{$mode}/{$project->id}/".$this->converter->AsciiToHex($wiki->name))?>
 	<?=form_fieldset()?>
-		<div>
-			<div>
-				<?=form_label($this->lang->line('Name').': ', 'wiki_name')?>
-				<?=form_error('wiki_name');?>
-			</div>
-			<div>
-				<?php 
-					$extra = ($mode == 'update')? 'readonly="readonly"': ''; 
-					$extra .= 'maxlength="80" size="40" id="wiki_edit_mainarea_name"';
-				?>
-				<?=form_input('wiki_name', set_value('wiki_name', $wiki->name), $extra)?>
-			</div>
+		<div class='form_input_label'>
+			<?=form_label($this->lang->line('Name').': ', 'wiki_name')?>
+			<?=form_error('wiki_name');?>
+		</div>
+		<div class='form_input_field'>
+			<?php 
+				$extra = ($mode == 'update')? 'readonly="readonly"': ''; 
+				$extra .= 'maxlength="80" size="40" id="wiki_edit_mainarea_name"';
+			?>
+			<?=form_input('wiki_name', set_value('wiki_name', $wiki->name), $extra)?>
 		</div>
 
-		<div>
-			<div>
-				<?=form_label($this->lang->line('Text').': ', 'wiki_text')?>
-				<?=form_error('wiki_text');?>
-			</div>
-			<div>
-				<?php
-					$xdata = array (
-						'name' => 'wiki_text',
-						'value' => set_value ('wiki_text', $wiki->text),
-						'id' => 'wiki_edit_mainarea_text',
-						'rows' => 20,
-						'cols' => 80
-					);
-					print form_textarea ($xdata);
-				?>
-			</div>
+		<div class='form_input_label'>
+			<?=form_label($this->lang->line('Text').': ', 'wiki_text')?>
+			 <a href='#' id='wiki_edit_mainarea_text_preview_button'>Preview</a>
+			<?=form_error('wiki_text');?>
 		</div>
+		<div class='form_input_field'>
+			<?php
+				$xdata = array (
+					'name' => 'wiki_text',
+					'value' => set_value ('wiki_text', $wiki->text),
+					'id' => 'wiki_edit_mainarea_text',
+					'rows' => 20,
+					'cols' => 80
+				);
+				print form_textarea ($xdata);
+			?>
+		</div>
+		<div id='wiki_edit_mainarea_text_preview' class='form_input_preview'></div>
 
 		<?php if (!empty($wiki->attachments)): ?>
-		<div>
-			<div>
-				<?=form_label($this->lang->line('WIKI_ATTACHMENTS').': ', 'wiki_edit_attachment_list')?> 
-				<?=form_error('wiki_attachment_list');?>
-			</div>
+		<div class='form_input_label'>
+			<?=form_label($this->lang->line('WIKI_ATTACHMENTS').': ', 'wiki_edit_attachment_list')?> 
+			<?=form_error('wiki_attachment_list');?>
+		</div>
 
+		<div class='form_input_field'>
 			<ul id='wiki_edit_attachment_list'>
 			<?php
 				foreach ($wiki->attachments as $att)
@@ -122,25 +142,24 @@ $this->load->view (
 				}
 			?>
 			</ul>
-
 		</div>
 		<?php endif; ?>
 
-		<div>
-			<div>
-				<?=form_label($this->lang->line('WIKI_NEW_ATTACHMENTS').': ', 'wiki_edit_new_attachment_list')?> 
-				<a href='#' id='wiki_edit_more_new_attachment'>
-					<?=$this->lang->line('WIKI_MORE_NEW_ATTACHMENTS')?>
-				</a>
-				<?=form_error('wiki_edit_new_attachment_list');?>
-			</div>
+		<div class='form_input_label'>
+			<?=form_label($this->lang->line('WIKI_NEW_ATTACHMENTS').': ', 'wiki_edit_new_attachment_list')?> 
+			<a href='#' id='wiki_edit_more_new_attachment'>
+				<?=$this->lang->line('WIKI_MORE_NEW_ATTACHMENTS')?>
+			</a>
+			<?=form_error('wiki_edit_new_attachment_list');?>
+		</div>
 
-			<ul id='wiki_edit_new_attachment_list'>
-			<li>	
-				<input type='file' name='wiki_new_attachment_0' />
-				<!--<input type='checkbox' name='wiki_delete_attachment[]' value='delete'/>Delete-->
-			</li>
-			</ul>
+		<div class='form_input_field'>
+		<ul id='wiki_edit_new_attachment_list'>
+		<li>	
+			<input type='file' name='wiki_new_attachment_0' />
+			<!--<input type='checkbox' name='wiki_delete_attachment[]' value='delete'/>Delete-->
+		</li>
+		</ul>
 
 		</div>
 		
