@@ -18,12 +18,12 @@
 
 function render_wiki(input_text)
 {
-        creole_render_wiki_with_input_text (
+	creole_render_wiki_with_input_text (
 		input_text,
-                "wiki_edit_mainarea_text_preview", 
+		"wiki_edit_mainarea_text_preview", 
 		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
 		"<?=site_url()?>/wiki/attachment0/<?=$project->id?>/"
-        );
+	);
 }
 
 var new_attachment_no = 0;

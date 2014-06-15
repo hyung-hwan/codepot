@@ -19,12 +19,12 @@
 
 function render_wiki(input_text)
 {
-        creole_render_wiki_with_input_text (
+	creole_render_wiki_with_input_text (
 		input_text,
-                "site_edit_mainarea_text_preview", 
+		"site_edit_mainarea_text_preview", 
 		"<?=site_url()?>/site/wiki/",
 		"<?=site_url()?>/site/image/"
-        );
+	);
 }
 
 $(function () {
