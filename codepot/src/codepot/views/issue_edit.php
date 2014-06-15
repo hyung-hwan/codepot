@@ -6,6 +6,35 @@
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/issue.css')?>" />
 
+<script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
+
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+
+<script type="text/javascript">
+
+function render_wiki(input_text)
+{
+        creole_render_wiki_with_input_text (
+		input_text,
+                "issue_edit_mainarea_description_preview", 
+		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
+		"<?=site_url()?>/wiki/attachment0/<?=$project->id?>/"
+        );
+}
+
+$(function () {
+	$("#issue_edit_mainarea_description_preview_button").button().click(
+		function () {
+			render_wiki ($("#issue_edit_mainarea_description").val());
+		}
+	);
+});
+
+</script>
+
+
 <title><?=htmlspecialchars($issue->id)?></title>
 </head>
 
@@ -59,7 +88,7 @@ $this->load->view (
 			<?=form_hidden('issue_owner', set_value('issue_owner', $issue->owner))?>
 		</div>
 
-		<div id='issue_edit_mainarea_type'>
+		<div id='issue_edit_mainarea_type' class='form_input_field'>
 		<?php
 		if ($mode == 'update')
 		{
@@ -72,48 +101,45 @@ $this->load->view (
 				'issue_type', 
 				$issue_type_array,
 				set_value('issue_type', $issue->type),
-				'id="project_issue_type"');
+				'id="issue_edit_mainarea_type"');
 			print form_error('issue_type');
 		}
 		?>
 		</div>
 
-		<div id='issue_edit_mainarea_summary'>
-			<div>
-				<?=form_label($this->lang->line('Summary').': ', 'issue_summary')?>
-				<?=form_error('issue_summary');?>
-			</div>
-			<div>
-				<?=form_input('issue_summary', 
-					set_value('issue_summary', $issue->summary), 
-					'size="80" id="project_issue_summary"')
-				?>
-			</div>
+		<div class='form_input_label'>
+			<?=form_label($this->lang->line('Summary').': ', 'issue_summary')?>
+			<?=form_error('issue_summary');?>
+		</div>
+		<div class='form_input_field'>
+			<?=form_input('issue_summary', 
+				set_value('issue_summary', $issue->summary), 
+				'size="80" id="issue_edit_mainarea_summary"')
+			?>
 		</div>
 
-		<div id='issue_edit_mainarea_description'>
-			<div>
-				<?=form_label($this->lang->line('Description').': ', 'issue_description')?>
-				<?=form_error('issue_description');?>
-			</div>
-			<div>
-			<?php
-				$xdata = array (
-					'name' => 'issue_description',
-                                        'value' => set_value ('issue_description', $issue->description),
-                                        'id' => 'project_issue_description',
-                                        'rows' => 20,
-                                        'cols' => 80
-                                );
-                                print form_textarea ($xdata);
-                        ?>
-			</div>
+		<div class='form_input_label'>
+			<?=form_label($this->lang->line('Description').': ', 'issue_description')?>
+			<a href='#' id='issue_edit_mainarea_description_preview_button'>Preview</a>
+			<?=form_error('issue_description');?>
 		</div>
+		<div class='form_input_field'>
+		<?php
+			$xdata = array (
+				'name' => 'issue_description',
+				'value' => set_value ('issue_description', $issue->description),
+				'id' => 'issue_edit_mainarea_description',
+				'rows' => 20,
+				'cols' => 80
+			);
+			print form_textarea ($xdata);
+		?>
+		</div>
+		<div id='issue_edit_mainarea_description_preview' class='form_input_preview'></div>
 
-		<div id='issue_edit_mainarea_buttons'>
-			<?php $caption = ($mode == 'update')? $this->lang->line('Update'): $this->lang->line('Create'); ?>
-			<?=form_submit('issue', $caption)?>
-		</div>
+
+		<?php $caption = ($mode == 'update')? $this->lang->line('Update'): $this->lang->line('Create'); ?>
+		<?=form_submit('issue', $caption)?>
 
 	<?=form_fieldset_close()?>
 <?=form_close();?>
