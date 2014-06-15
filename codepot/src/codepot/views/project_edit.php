@@ -15,12 +15,12 @@
 <script type="text/javascript">
 function render_wiki(input_text)
 {
-        creole_render_wiki_with_input_text (
+	creole_render_wiki_with_input_text (
 		input_text,
-                "project_edit_mainarea_description_preview", 
+		"project_edit_mainarea_description_preview", 
 		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
 		"<?=site_url()?>/wiki/attachment0/<?=$project->id?>/"
-        );
+	);
 }
 
 $(function() {
