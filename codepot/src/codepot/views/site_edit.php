@@ -103,7 +103,7 @@ $this->load->view (
 
 		<div class='form_input_label'>
 			<?=form_label($this->lang->line('Text').': ', 'site_text')?>
-			<a href='#' id='site_edit_mainarea_text_preview_button'>Preview</a>
+			<a href='#' id='site_edit_mainarea_text_preview_button'><?=$this->lang->line('Preview')?></a>
 			<?=form_error('site_text')?>
 		</div>
 		<div class='form_input_field'>

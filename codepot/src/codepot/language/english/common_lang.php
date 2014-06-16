@@ -59,6 +59,7 @@ $lang['Overview'] = 'Overview';
 $lang['Owner'] = 'Owner';
 $lang['Password'] = 'Password';
 $lang['Path'] = 'Path';
+$lang['Preview'] = 'Preview';
 $lang['Priority'] = 'Priority';
 $lang['Project'] = 'Project';
 $lang['Projects'] = 'Projects';
