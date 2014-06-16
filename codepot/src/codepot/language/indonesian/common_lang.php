@@ -55,6 +55,7 @@ $lang['Overview'] = 'Ringkasan';
 $lang['Owner'] = 'Owner';
 $lang['Password'] = 'Kata sandi';
 $lang['Path'] = 'Path';
+$lang['Preview'] = 'Preview';
 $lang['Priority'] = 'Pirority';
 $lang['Project'] = 'Proyek';
 $lang['Projects'] = 'Proyek';

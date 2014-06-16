@@ -120,7 +120,7 @@ $this->load->view (
 
 		<div class='form_input_label'>
 			<?=form_label($this->lang->line('Description').': ', 'issue_description')?>
-			<a href='#' id='issue_edit_mainarea_description_preview_button'>Preview</a>
+			<a href='#' id='issue_edit_mainarea_description_preview_button'><?=$this->lang->line('Preview')?></a>
 			<?=form_error('issue_description');?>
 		</div>
 		<div class='form_input_field'>

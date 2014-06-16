@@ -101,7 +101,7 @@ $this->load->view (
 
 		<div class='form_input_label'>
 			<?=form_label($this->lang->line('Text').': ', 'wiki_text')?>
-			 <a href='#' id='wiki_edit_mainarea_text_preview_button'>Preview</a>
+			 <a href='#' id='wiki_edit_mainarea_text_preview_button'><?=$this->lang->line('Preview')?></a>
 			<?=form_error('wiki_text');?>
 		</div>
 		<div class='form_input_field'>

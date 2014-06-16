@@ -59,6 +59,7 @@ $lang['Overview'] = '개요';
 $lang['Owner'] = '담당자';
 $lang['Password'] = '패스워드';
 $lang['Path'] = '경로';
+$lang['Preview'] = '미리보기';
 $lang['Priority'] = '중요도';
 $lang['Project'] = '프로젝트';
 $lang['Projects'] = '프로젝트';
