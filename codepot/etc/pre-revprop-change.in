@@ -6,8 +6,13 @@ use Config::Simple;
 use DBI;
 use File::Basename;
 
+#use SVN::Core;
+#use SVN::Repos;
+#use SVN::Fs;
+
 my $CFG_FILE = '@CFGDIR@/codepot.ini';
-my $REPOBASE = basename($ARGV[0]);
+my $REPOFS = $ARGV[0];
+my $REPOBASE = basename($REPOFS);
 my $REVISION= $ARGV[1];
 my $USER = $ARGV[2];
 my $PROPNAME = $ARGV[3];
@@ -15,23 +20,25 @@ my $ACTION = $ARGV[4];
 
 sub get_config
 {
-        my $cfg = new Config::Simple();
+	my $cfg = new Config::Simple();
 
-        if (!$cfg->read ($CFG_FILE))
-        {
-                return undef;
-        }
+	if (!$cfg->read ($CFG_FILE))
+	{
+		return undef;
+	}
 
-        my $config = {
-                database_hostname => $cfg->param ("database_hostname"),
-                database_username => $cfg->param ("database_username"),
-                database_password => $cfg->param ("database_password"),
-                database_name => $cfg->param ("database_name"),
-                database_driver => $cfg->param ("database_driver"),
-                database_prefix => $cfg->param ("database_prefix")
-        };
+	my $config = {
+		database_hostname => $cfg->param ("database_hostname"),
+		database_username => $cfg->param ("database_username"),
+		database_password => $cfg->param ("database_password"),
+		database_name => $cfg->param ("database_name"),
+		database_driver => $cfg->param ("database_driver"),
+		database_prefix => $cfg->param ("database_prefix"),
 
-        return $config;
+		svn_min_commit_message_length => $cfg->param ('svn_min_commit_message_length')
+	};
+
+	return $config;
 }
 
 sub open_database
@@ -73,9 +80,41 @@ sub is_project_member
 	return (((scalar(@row) > 0)? 1: 0), undef);
 }
 
+#sub check_commit_message
+#{
+#	my ($minlen, $newmsg) = @_;
+#
+#	my $pool = SVN::Pool->new(undef); 
+#	my $svn = eval { SVN::Repos::open ($REPOFS, $pool) };
+#	if (!defined($svn))
+#	{
+#		print (STDERR "Cannot open svn - $REPOFS\n");
+#		return -1; # error
+#	}
+#	
+#	my $fs = $svn->fs ();
+#	if (!defined($fs))
+#	{
+#		print (STDERR "Cannot open fs - $REPOFS\n");
+#		return -1; # error
+#	}
+#	
+#	my $log = $fs->revision_prop ($REVISION, 'svn:log');
+#	$log =~ s/^\s+|\s+$//g; # trim leading spaces and  trailing spaces
+#	if (length($log) < $minlen) 
+#	{
+#		print (STDERR "[$log] Commit message too short. must be >= $minlen\n");
+#		return 0;
+#	}
+#
+#	return 1;
+#}
+
 #------------------------------------------------------------
 # MAIN
 #------------------------------------------------------------
+
+my $newauthor = undef;
 
 my $cfg = get_config ();
 if (!defined($cfg))
@@ -83,6 +122,41 @@ if (!defined($cfg))
 	print (STDERR "Cannot load codepot configuration file\n");
 	exit (1);
 }
+
+
+if ($ACTION eq 'D')
+{
+	if ($PROPNAME eq 'svn:log' || $PROPNAME eq 'svn:author' || $PROPNAME eq 'svn:date')
+	{
+		print (STDERR "Not allowed to delete $PROPNAME\n");
+		exit (1);
+	}
+}
+elsif ($ACTION eq 'M' || $ACTION eq 'A')
+{
+	if ($PROPNAME eq 'svn:author')
+	{
+		$newauthor = do { local $/; <STDIN> }; # read <STDIN> as a whole
+		$newauthor =~ s/^\s+|\s+$//g; # trim leading spaces and  trailing spaces
+		if ($newauthor eq '') 
+		{
+			print (STDERR "Not allowed to empty the author\n");
+			exit (1);
+		}
+	}
+	elsif ($PROPNAME eq 'svn:log')
+	{
+		my $minlen = $cfg->{svn_min_commit_message_length};
+		my $newmsg = do { local $/; <STDIN> }; # read <STDIN> as a whole
+		$newmsg =~ s/^\s+|\s+$//g; # trim leading spaces and  trailing spaces
+		if (length($newmsg) < $minlen) 
+		{
+			print (STDERR "Commit message too short. must be >= $minlen\n");
+			exit (1);
+		}
+	}
+}
+
 
 my $dbh = open_database ($cfg);
 if (!defined($dbh))
@@ -93,17 +167,38 @@ if (!defined($dbh))
 
 my ($member, $errstr) = is_project_member ($dbh, $cfg->{database_prefix}, $REPOBASE, $USER);
 
-close_database ($dbh);
 
 if ($member <= -1)
 {
-	print (STDERR "Cannot check membership - $errstr\n");
+	close_database ($dbh);
+	print (STDERR "Cannot check membership of [$USER] in the $REPOBASE project - $errstr\n");
 	exit (1);
 }
 elsif ($member == 0)
 {
-	print (STDERR "$USER doesn't belong to the $REPOBASE project\n");
+	close_database ($dbh);
+	print (STDERR "[$USER] doesn't belong to the $REPOBASE project\n");
 	exit (1);
 }
 
+if (defined($newauthor))
+{
+	# the new author to set must be a member of the project.
+
+	my ($member, $errstr) = is_project_member ($dbh, $cfg->{database_prefix}, $REPOBASE, $newauthor);
+	if ($member <= -1)
+	{
+		close_database ($dbh);
+		print (STDERR "Cannot check membership of [$newauthor] in the $REPOBASE project - $errstr\n");
+		exit (1);
+	}
+	elsif ($member == 0)
+	{
+		close_database ($dbh);
+		print (STDERR "[$newauthor] doesn't belong to the $REPOBASE project\n");
+		exit (1);
+	}
+}
+
+close_database ($dbh);
 exit (0);
