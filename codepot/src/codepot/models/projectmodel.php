@@ -156,6 +156,7 @@ class ProjectModel extends Model
 			}
 
 			$hooks = array (
+				"pre-commit",
 				"start-commit",
 				"post-commit",
 				"pre-revprop-change",
