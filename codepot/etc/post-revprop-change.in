@@ -19,23 +19,23 @@ my $ACTION = $ARGV[4];
 
 sub get_config
 {
-        my $cfg = new Config::Simple();
+	my $cfg = new Config::Simple();
+	
+	if (!$cfg->read ($CFG_FILE))
+	{
+		return undef;
+	}
+	
+	my $config = {
+		database_hostname => $cfg->param ("database_hostname"),
+		database_username => $cfg->param ("database_username"),
+		database_password => $cfg->param ("database_password"),
+		database_name => $cfg->param ("database_name"),
+		database_driver => $cfg->param ("database_driver"),
+		database_prefix => $cfg->param ("database_prefix")
+	};
 
-        if (!$cfg->read ($CFG_FILE))
-        {
-                return undef;
-        }
-
-        my $config = {
-                database_hostname => $cfg->param ("database_hostname"),
-                database_username => $cfg->param ("database_username"),
-                database_password => $cfg->param ("database_password"),
-                database_name => $cfg->param ("database_name"),
-                database_driver => $cfg->param ("database_driver"),
-                database_prefix => $cfg->param ("database_prefix")
-        };
-
-        return $config;
+	return $config;
 }
 
 sub open_database

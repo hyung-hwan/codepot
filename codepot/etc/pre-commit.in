@@ -92,6 +92,44 @@ sub is_project_commitable
 	return (((scalar(@row) > 0 && $row[0] eq 'Y')? 1: 0), undef);
 }
 
+sub check_commit_message
+{
+	my ($minlen) = @_;
+
+	my $pool = SVN::Pool->new(undef); 
+	#my $config = SVN::Core::config_get_config(undef);
+	#my $fs = eval { SVN::Fs::open ($REPOFS, $config, $pool) };
+	my $svn = eval { SVN::Repos::open ($REPOFS, $pool) };
+	if (!defined($svn))
+	{
+		print (STDERR "Cannot open svn - $REPOFS\n");
+		return -1; # error
+	}
+	
+	my $fs = $svn->fs ();
+	if (!defined($fs))
+	{
+		print (STDERR "Cannot open fs - $REPOFS\n");
+		return -1; # error
+	}
+	
+	my $txn = eval { $fs->open_txn ($TRANSACTION) };
+	if (!defined($txn))
+	{
+		print (STDERR "Cannot open transaction - $TRANSACTION\n");
+		return -1;
+	}
+	
+	my $log = $txn->prop ('svn:log');
+	$log =~ s/^\s+|\s+$//g; # trim leading spaces and  trailing spaces
+	if (length($log) < $minlen) {
+		print (STDERR "Commit message too short. must be >= $minlen\n");
+		return 0;
+	}
+
+	return 1;
+}
+
 #------------------------------------------------------------
 # MAIN
 #------------------------------------------------------------
@@ -103,37 +141,10 @@ if (!defined($cfg))
 	exit (1);
 }
 
-my $pool = SVN::Pool->new(undef); 
-#my $config = SVN::Core::config_get_config(undef);
-#my $fs = eval { SVN::Fs::open ($REPOFS, $config, $pool) };
-my $svn = eval { SVN::Repos::open ($REPOFS, $pool) };
-if (!defined($svn))
+if (check_commit_message ($cfg->{svn_min_commit_message_length}) <= 0)
 {
-	print (STDERR "Cannot open svn - $REPOFS\n");
-	exit (0); # just let go if the file system can't be opened
+	exit (1);
 }
-
-my $fs = $svn->fs ();
-if (!defined($fs))
-{
-	print (STDERR "Cannot open fs - $REPOFS\n");
-	exit (0); # just let go if the file system can't be opened
-}
-
-my $txn = eval { $fs->open_txn ($TRANSACTION) };
-if (!defined($txn))
-{
-	print (STDERR "Cannot open transaction - $TRANSACTION\n");
-	exit (0); # just let go if the transation can't be opened
-}
-
-my $log = $txn->prop ('svn:log');
-$log =~ s/^\s+|\s+$//g; # trim leading spaces and  trailing spaces
-if (length($log) < $cfg->{svn_min_commit_message_length}) {
-	print (STDERR "Commit message too short. must be >= $cfg->{svn_min_commit_message_length}\n");
-	exit (1); # block 
-}
-
 
 
 #my $dbh = open_database ($cfg);
