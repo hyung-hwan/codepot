@@ -39,7 +39,7 @@ subdir = etc
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/codepot.a2ldap.in $(srcdir)/codepot.httpd.in \
 	$(srcdir)/codepot.ini.in $(srcdir)/post-commit.in \
-	$(srcdir)/post-revprop-change.in \
+	$(srcdir)/post-revprop-change.in $(srcdir)/pre-commit.in \
 	$(srcdir)/pre-revprop-change.in $(srcdir)/start-commit.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/ac/m4/as-ac-expand.m4 \
@@ -49,7 +49,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/./config.h
 CONFIG_CLEAN_FILES = codepot.ini codepot.a2ldap codepot.httpd \
-	start-commit post-commit pre-revprop-change \
+	pre-commit start-commit post-commit pre-revprop-change \
 	post-revprop-change
 am__installdirs = "$(DESTDIR)$(cfgdir)" "$(DESTDIR)$(perldir)" \
 	"$(DESTDIR)$(cfgdir)"
@@ -192,6 +192,8 @@ codepot.ini: $(top_builddir)/config.status $(srcdir)/codepot.ini.in
 codepot.a2ldap: $(top_builddir)/config.status $(srcdir)/codepot.a2ldap.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 codepot.httpd: $(top_builddir)/config.status $(srcdir)/codepot.httpd.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+pre-commit: $(top_builddir)/config.status $(srcdir)/pre-commit.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 start-commit: $(top_builddir)/config.status $(srcdir)/start-commit.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
