@@ -87,6 +87,7 @@ AC_CONFIG_FILES([
 	etc/codepot.ini
 	etc/codepot.a2ldap
 	etc/codepot.httpd
+	etc/pre-commit
 	etc/start-commit
 	etc/post-commit
 	etc/pre-revprop-change

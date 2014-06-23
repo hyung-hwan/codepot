@@ -1,0 +1,182 @@
+#!/usr/bin/perl
+
+use strict;
+
+use Config::Simple;
+use DBI;
+use File::Basename;
+
+use SVN::Core;
+use SVN::Repos;
+use SVN::Fs;
+
+my $CFG_FILE = '@CFGDIR@/codepot.ini';
+my $REPOFS = $ARGV[0];
+my $REPOBASE = basename($REPOFS);
+my $TRANSACTION = $ARGV[1];
+
+sub get_config
+{
+        my $cfg = new Config::Simple();
+
+        if (!$cfg->read ($CFG_FILE))
+        {
+                return undef;
+        }
+
+        my $config = {
+                database_hostname => $cfg->param ('database_hostname'),
+                database_username => $cfg->param ('database_username'),
+                database_password => $cfg->param ('database_password'),
+                database_name => $cfg->param ('database_name'),
+                database_driver => $cfg->param ('database_driver'),
+                database_prefix => $cfg->param ('database_prefix'),
+
+		svn_min_commit_message_length => $cfg->param ('svn_min_commit_message_length')
+        };
+
+        return $config;
+}
+
+sub open_database
+{
+	my ($cfg) = @_;
+
+	my $dbtype = $cfg->{database_driver};
+	my $dbname = $cfg->{database_name};
+	my $dbhost = $cfg->{database_hostname};
+
+	my $dbh = DBI->connect(
+		"DBI:$dbtype:$dbname:$dbhost",
+		$cfg->{database_username},
+		$cfg->{database_password},
+		{ RaiseError => 0, PrintError => 0, AutoCommit => 0 }
+	);
+
+	return $dbh;
+}
+
+sub close_database
+{
+	my ($dbh) = @_;
+	$dbh->disconnect ();
+}
+
+sub is_project_member
+{
+	my ($dbh, $prefix, $projectid, $userid) = @_;
+
+	my $query = $dbh->prepare ("SELECT projectid FROM ${prefix}project_membership WHERE userid=? AND projectid=?");
+	if (!$query || !$query->execute ($userid, $projectid))
+	{
+		return (-1, $dbh->errstr());
+	}
+
+	my @row = $query->fetchrow_array;
+	$query->finish ();
+	return (((scalar(@row) > 0)? 1: 0), undef);
+}
+
+sub is_project_commitable
+{
+	my ($dbh, $prefix, $projectid) = @_;
+
+	my $query = $dbh->prepare ("SELECT commitable FROM ${prefix}project WHERE id=?");
+	if (!$query || !$query->execute ($projectid))
+	{
+		return (-1, $dbh->errstr());
+	}
+
+	my @row = $query->fetchrow_array;
+	$query->finish ();
+	return (((scalar(@row) > 0 && $row[0] eq 'Y')? 1: 0), undef);
+}
+
+#------------------------------------------------------------
+# MAIN
+#------------------------------------------------------------
+
+my $cfg = get_config ();
+if (!defined($cfg))
+{
+	print (STDERR "Cannot load codepot configuration file\n");
+	exit (1);
+}
+
+my $pool = SVN::Pool->new(undef); 
+#my $config = SVN::Core::config_get_config(undef);
+#my $fs = eval { SVN::Fs::open ($REPOFS, $config, $pool) };
+my $svn = eval { SVN::Repos::open ($REPOFS, $pool) };
+if (!defined($svn))
+{
+	print (STDERR "Cannot open svn - $REPOFS\n");
+	exit (0); # just let go if the file system can't be opened
+}
+
+my $fs = $svn->fs ();
+if (!defined($fs))
+{
+	print (STDERR "Cannot open fs - $REPOFS\n");
+	exit (0); # just let go if the file system can't be opened
+}
+
+my $txn = eval { $fs->open_txn ($TRANSACTION) };
+if (!defined($txn))
+{
+	print (STDERR "Cannot open transaction - $TRANSACTION\n");
+	exit (0); # just let go if the transation can't be opened
+}
+
+my $log = $txn->prop ('svn:log');
+$log =~ s/^\s+|\s+$//g; # trim leading spaces and  trailing spaces
+if (length($log) < $cfg->{svn_min_commit_message_length}) {
+	print (STDERR "Commit message too short. must be >= $cfg->{svn_min_commit_message_length}\n");
+	exit (1); # block 
+}
+
+
+
+#my $dbh = open_database ($cfg);
+#if (!defined($dbh))
+#{
+#	print (STDERR "Cannot open database\n");
+#	exit (1);
+#}
+#
+#my $member; 
+#my $commitable; 
+#my $errstr;
+#
+#($member, $errstr) = is_project_member (
+#	$dbh, $cfg->{database_prefix}, $REPOBASE, $USER);
+#if ($member <= -1)
+#{
+#	print (STDERR "Cannot check membership - $errstr\n");
+#	close_database ($dbh);
+#	exit (1);
+#}
+#
+#($commitable, $errstr) = is_project_commitable (
+#	$dbh, $cfg->{database_prefix}, $REPOBASE);
+#if ($commitable <= -1)
+#{
+#	print (STDERR "Cannot check commitability - $errstr\n");
+#	close_database ($dbh);
+#	exit (1);
+#}
+#
+#close_database ($dbh);
+#
+#if ($member == 0)
+#{
+#	print (STDERR "$USER doesn't belong to the $REPOBASE project\n");
+#	exit (1);
+#}
+#
+#if ($commitable == 0)
+#{
+#	print (STDERR "The $REPOBASE project is not commitable\n");
+#	exit (1);
+#}
+#
+exit (0);
