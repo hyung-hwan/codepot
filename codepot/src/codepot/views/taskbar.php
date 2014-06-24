@@ -10,6 +10,23 @@ function show_taskbar ($con, $login)
 	{
 		$title = (isset($login['email']) && $login['email'] != '')?
 			('title=' . htmlspecialchars($login['email'])): '';
+
+		// attempt to load the user icon regardless of its upload state.
+		// if it has not been uploaded, it won't be found. 
+		// check a file system may be faster than checking the database.
+		$icon_src = '';
+		$icon_path = CODEPOT_USERICON_DIR . '/' . $login['id'] . '.png';
+		$icon_image = file_get_contents($icon_path);
+		if ($icon_image)
+		{
+			$icon_src = sprintf (
+			'<img style="vertical-align:middle;" src="data:%s;base64,%s" alt="" />',
+				mime_content_type($icon_path),
+				base64_encode($icon_image)
+			);
+		}
+		print $icon_src;
+
 		print anchor ('user/home', htmlspecialchars($login['id']), $title);
 
 		$hex = $con->converter->AsciiToHex (current_url());
