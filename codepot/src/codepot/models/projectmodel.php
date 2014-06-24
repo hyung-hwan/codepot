@@ -34,12 +34,16 @@ class ProjectModel extends Model
 		$this->db->order_by ('priority', 'asc');
 		$query2 = $this->db->get ('project_membership');
 
+		/*
 		$members = '';
 		foreach ($query2->result() as $a)
 		{
 			if ($members !== '') $members .= ',';
 			$members .= $a->userid;
 		}
+		*/
+		$members = array ();
+		foreach ($query2->result() as $a) array_push ($members, $a->userid);
 		$result[0]->members = $members;
 
 		$this->db->trans_complete ();
@@ -110,7 +114,8 @@ class ProjectModel extends Model
 		$this->db->where ('projectid', $project->id);
 		$this->db->delete ('project_membership');
 
-		$members = preg_split ('/[[:space:],]+/', $project->members);
+		//$members = preg_split ('/[[:space:],]+/', $project->members);
+		$members = $project->members;
 		$member_count = count ($members);
 		$members = array_unique ($members);
 		$priority = 0;
@@ -219,7 +224,8 @@ class ProjectModel extends Model
 		$this->db->where ('projectid', $project->id);
 		$this->db->delete ('project_membership');
 
-		$members = preg_split ('/[[:space:],]+/', $project->members);
+		//$members = preg_split ('/[[:space:],]+/', $project->members);
+		$members = $project->members;
 		$member_count = count ($members);
 		$members = array_unique ($members);
 		$priority = 0;

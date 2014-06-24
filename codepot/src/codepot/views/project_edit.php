@@ -137,9 +137,18 @@ $this->load->view (
 		</div>
 		<div class='form_input_field'>
 			<?php
+				$members = $project->members;
+				$member_count = count($members);
+				$member_string = '';
+				for ($i = 0; $i < $member_count; $i++)
+				{
+					if ($i >= 1) $member_string .= ',';
+					$member_string .= $members[$i];
+				}
+
 				$xdata = array (
 					'name' => 'project_members',
-					'value' => set_value ('project_members', $project->members),
+					'value' => set_value ('project_members', $member_string),
 					'id' => 'project_edit_mainarea_members',
 					'rows' => 2,
 					'cols' => 80

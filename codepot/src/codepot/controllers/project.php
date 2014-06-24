@@ -199,7 +199,7 @@ class Project extends Controller
 			$project->description = $this->input->post('project_description');
 			$project->commitable = $this->input->post('project_commitable');
 			$project->public = $this->input->post('project_public');
-			$project->members = $this->input->post('project_members');
+			$project->members = explode (',', $this->input->post('project_members'));
 
 			// validate the form
 			if ($this->form_validation->run())
@@ -224,7 +224,7 @@ class Project extends Controller
 			else
 			{
 				// if not, reload the edit view with an error message
-				$data['message'] = 'Your input is not complete, Bro.';
+				$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 				$data['project'] = $project;
 				$this->load->view ($this->VIEW_EDIT, $data);
 			}
@@ -258,7 +258,7 @@ class Project extends Controller
 		$project->description = '';
 		$project->commitable = 'Y';
 		$project->public = 'Y';
-		$project->members = $login['id'];
+		$project->members = array ($login['id']);
 
 		$this->_edit_project ($project, 'create', $login);
 	}
@@ -348,7 +348,7 @@ class Project extends Controller
 			{
 				// the form validation failed.
 				// reload the form with an error message.
-				$data['message'] = "Your input is not complete, Bro.";
+				$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 				$data['project'] = $project;
 				$this->load->view ($this->VIEW_DELETE, $data);
 			}
