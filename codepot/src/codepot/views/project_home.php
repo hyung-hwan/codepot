@@ -77,13 +77,34 @@ $this->load->view (
 	$member_count = count($members);
 	$members = array_unique ($members);
 	$priority = 0;
+
+	$icons = $this->projects->getUserIcons($members);
+	if ($icons === FALSE) $icons = array(); // can't get the icon array for members.
+
 	for ($i = 0; $i < $member_count; $i++)
 	{
 		if (!array_key_exists($i, $members)) continue;
 
 		$m = $members[$i];
 		if ($m == '') continue;
-		print "<li>{$m}</li>";
+
+		$icon = '';
+		if (array_key_exists($m, $icons))
+		{
+			// old browsers don't support image data URI.
+			$icon_path = CODEPOT_USERICON_DIR . '/' . $icons[$m];
+			$icon_image = file_get_contents($icon_path);
+			if ($icon_image)
+			{
+				$icon = sprintf (
+					'<img style="vertical-align:middle;" src="data:%s;base64,%s" alt="" /> ',
+					mime_content_type($icon_path),
+					base64_encode($icon_image)
+				);
+			}
+		}
+
+		print "<li>{$icon}{$m}</li>";
 	}
 ?>
 </ul>

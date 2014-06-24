@@ -199,7 +199,7 @@ class Project extends Controller
 			$project->description = $this->input->post('project_description');
 			$project->commitable = $this->input->post('project_commitable');
 			$project->public = $this->input->post('project_public');
-			$project->members = explode (',', $this->input->post('project_members'));
+			$project->members = array_unique (preg_split ('/[[:space:],]+/', $this->input->post('project_members')));
 
 			// validate the form
 			if ($this->form_validation->run())

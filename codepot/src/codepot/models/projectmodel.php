@@ -460,6 +460,35 @@ class ProjectModel extends Model
 		foreach ($files as $file)
 			@unlink (CODEPOT_FILE_DIR . "/{$file->encname}");
 	}
+
+	function getUserIcons ($users)
+	{
+		$this->db->trans_start ();
+
+		$this->db->select ('userid,icon_name');
+		$this->db->where_in ('userid', $users);
+		$this->db->where ('icon_name IS NOT NULL', null);
+
+		$query = $this->db->get ('user_settings');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+
+		$out = array();
+		$result = $query->result();
+		
+		if (!empty($result))
+		{
+			foreach ($result as $t) $out[$t->userid] = $t->icon_name;
+		}
+
+		$this->db->trans_complete ();
+		if ($this->db->trans_status() === FALSE) return FALSE;
+
+		return $out;
+	}
 }
 
 ?>
