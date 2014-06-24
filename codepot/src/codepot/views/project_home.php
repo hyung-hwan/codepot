@@ -88,7 +88,7 @@ $this->load->view (
 		$m = $members[$i];
 		if ($m == '') continue;
 
-		$icon = '';
+		$icon_src = '';
 		if (array_key_exists($m, $icons))
 		{
 			// old browsers don't support image data URI.
@@ -96,7 +96,7 @@ $this->load->view (
 			$icon_image = file_get_contents($icon_path);
 			if ($icon_image)
 			{
-				$icon = sprintf (
+				$icon_src = sprintf (
 					'<img style="vertical-align:middle;" src="data:%s;base64,%s" alt="" /> ',
 					mime_content_type($icon_path),
 					base64_encode($icon_image)
@@ -104,7 +104,7 @@ $this->load->view (
 			}
 		}
 
-		print "<li>{$icon}{$m}</li>";
+		print "<li>{$icon_src}{$m}</li>";
 	}
 ?>
 </ul>
