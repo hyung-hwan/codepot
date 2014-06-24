@@ -219,7 +219,7 @@ class Site extends Controller
 			else
 			{
 				// if not, reload the edit view with an error message
-				$data['message'] = 'Your input is not complete, Bro.';
+				$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 				$data['site'] = $site;
 				$this->load->view ($this->VIEW_EDIT, $data);
 			}
@@ -341,7 +341,7 @@ class Site extends Controller
 			{
 				// the form validation failed.
 				// reload the form with an error message.
-				$data['message'] = "Your input is not complete, Bro.";
+				$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 				$data['site'] = $site;
 				$this->load->view ($this->VIEW_DELETE, $data);
 			}

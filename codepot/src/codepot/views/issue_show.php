@@ -397,10 +397,9 @@ $this->load->view (
 			?>
 
 			<?php
-			$tmp = explode (',', $project->members);
 			$owner_array = array ();
 			$found = FALSE;
-			foreach ($tmp as $t) 
+			foreach ($project->members as $t) 
 			{
 				if ($issue->owner == $t) $found = TRUE;
 				$owner_array[$t] = $t;

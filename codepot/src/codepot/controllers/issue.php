@@ -345,7 +345,7 @@ class Issue extends Controller
 				}
 				else
 				{
-					$data['message'] = "Your input is not complete, Bro";
+					$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 					$data['issue'] = $issue;
 					$this->load->view ($this->VIEW_EDIT, $data);	
 				}
@@ -381,8 +381,7 @@ class Issue extends Controller
 					$issue->type = $this->issuehelper->TYPE_DEFECT;
 					$issue->status = $this->issuehelper->STATUS_NEW;
 					$issue->priority = $this->issuehelper->PRIORITY_OTHER;
-					$members = explode (',', $project->members);
-					$issue->owner = (count($members) > 0)? $members[0]: '';
+					$issue->owner = (count($project->members) > 0)? $project->members[0]: '';
 
 					$data['issue'] = $issue;
 					$this->load->view ($this->VIEW_EDIT, $data);	
@@ -474,7 +473,7 @@ class Issue extends Controller
 				}
 				else
 				{
-					$data['message'] = "Your input is not complete, Bro.";
+					$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 					$data['issue'] = $issue;
 					$this->load->view ($this->VIEW_DELETE, $data);
 				}

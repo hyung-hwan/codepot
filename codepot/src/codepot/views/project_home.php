@@ -73,8 +73,8 @@ $this->load->view (
 <div class="boxtitle"><?=$this->lang->line('Members')?></div>
 <ul>
 <?php
-	$members = preg_split ('/[[:space:],]+/', $project->members);
-	$member_count = count ($members);
+	$members = $project->members;
+	$member_count = count($members);
 	$members = array_unique ($members);
 	$priority = 0;
 	for ($i = 0; $i < $member_count; $i++)

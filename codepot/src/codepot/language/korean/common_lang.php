@@ -104,5 +104,6 @@ $lang['MSG_NO_SUCH_PROJECT'] = '프로젝트가 없습니다';
 $lang['MSG_SURE_TO_DELETE_THIS'] = '반드시 이것을 삭제하고 싶어요';
 
 $lang['MSG_PROJECT_MEMBERSHIP_REQUIRED'] = '이 작업을 수행하려면 %s 프로젝트의 멤버가 되어야 합니다';
+$lang['MSG_FORM_INPUT_INCOMPLETE'] = '입력이 완전하지 않습니다';
 
 ?>
