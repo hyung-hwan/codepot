@@ -454,7 +454,7 @@ class Wiki extends Controller
 				}
 				else
 				{
-					$data['message'] = "Your input is not complete, Bro";
+					$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 					$data['wiki'] = $wiki;
 					$this->load->view ($this->VIEW_EDIT, $data);	
 				}
@@ -586,7 +586,7 @@ class Wiki extends Controller
 				}
 				else
 				{
-					$data['message'] = "Your input is not complete, Bro.";
+					$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 					$data['wiki'] = $wiki;
 					$this->load->view ($this->VIEW_DELETE, $data);
 				}
