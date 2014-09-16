@@ -335,7 +335,7 @@ class Issue extends Controller
 					{
 						$data['message'] = 'DATABASE ERROR';
 						$data['issue'] = $issue;
-						$this->load->view ($this->VIEW_EDIT, $data);	
+						$this->load->view ($this->VIEW_EDIT, $data);
 					}
 					else
 					{
@@ -347,7 +347,7 @@ class Issue extends Controller
 				{
 					$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 					$data['issue'] = $issue;
-					$this->load->view ($this->VIEW_EDIT, $data);	
+					$this->load->view ($this->VIEW_EDIT, $data);
 				}
 			}
 			else
@@ -369,7 +369,7 @@ class Issue extends Controller
 					else
 					{
 						$data['issue'] = $issue;
-						$this->load->view ($this->VIEW_EDIT, $data);	
+						$this->load->view ($this->VIEW_EDIT, $data);
 					}
 				}
 				else
@@ -381,10 +381,20 @@ class Issue extends Controller
 					$issue->type = $this->issuehelper->TYPE_DEFECT;
 					$issue->status = $this->issuehelper->STATUS_NEW;
 					$issue->priority = $this->issuehelper->PRIORITY_OTHER;
-					$issue->owner = (count($project->members) > 0)? $project->members[0]: '';
+					if ($this->projects->projectHasMember($project->id, $login['id']))
+					{
+						// let the current user be the issue owner if he/she is a
+						// project memeber.
+						$issue->owner = $login['id'];
+					}
+					else
+					{
+						// if not, assign the issue to the first member.
+						$issue->owner = (count($project->members) > 0)? $project->members[0]: '';
+					}
 
 					$data['issue'] = $issue;
-					$this->load->view ($this->VIEW_EDIT, $data);	
+					$this->load->view ($this->VIEW_EDIT, $data);
 				}
 			}
 
