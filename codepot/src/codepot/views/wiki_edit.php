@@ -12,7 +12,9 @@
 <script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
 
-
+<?php
+$hexname = $this->converter->AsciiToHex ($wiki->name);
+?>
 
 <script type="text/javascript">
 
@@ -22,7 +24,7 @@ function render_wiki(input_text)
 		input_text,
 		"wiki_edit_mainarea_text_preview", 
 		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
-		"<?=site_url()?>/wiki/attachment0/<?=$project->id?>/"
+		"<?=site_url()?>/wiki/attachment/<?=$project->id?>/<?=$hexname?>/"
 	);
 }
 
