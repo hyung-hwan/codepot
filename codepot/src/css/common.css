@@ -335,6 +335,11 @@ body {
 	max-width: 100%;
 }
 
+.content .mainarea li img  {
+	vertical-align: middle;
+	padding: 2px;
+}
+
 .content .mainarea table p.wiki {
 	/* no margin-top within tables */
 	margin-top: 0;
