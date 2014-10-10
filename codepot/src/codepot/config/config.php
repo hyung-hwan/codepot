@@ -12,7 +12,24 @@
 |
 */
 /*$config['base_url']	= "http://example.com"*/
-$config['base_url'] = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https': 'http';
+//$config['base_url'] = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')? 'https': 'http';
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']))
+{
+	/* set to https if the first X-Forwarded-Proto is https */
+	if (array_search ("https", array_map ('strtolower', preg_split("/[\s,]+/", $_SERVER['HTTP_X_FORWARDED_PROTO']))) === 0)
+		$config['base_url'] = 'https';
+	else
+		$config['base_url'] = 'http';
+}
+else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')
+{
+	$config['base_url'] = 'https';
+}
+else
+{
+	$config['base_url'] = 'http';
+}
+
 $config['base_url'] .= "://{$_SERVER['HTTP_HOST']}";
 $config['base_url'] .= preg_replace('@/+$@','',dirname($_SERVER['SCRIPT_NAME'])).'/';
 
