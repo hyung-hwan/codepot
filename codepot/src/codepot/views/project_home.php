@@ -120,7 +120,7 @@ foreach ($urls as $url)
 	$url = trim($url);
 	if ($url == '') continue;
 	print '<li>';
-	print anchor ($this->converter->expand($url,$_SERVER) . "/{$project->id}");
+	print anchor ($this->converter->expand($url,$_SERVER) . "/{$project->id}/");
 	print '</li>';
 }
 ?>
