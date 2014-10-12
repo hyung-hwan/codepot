@@ -303,20 +303,20 @@ var Url = {
 	// it uses the image pattern with special prefix
 	// {{__ohloh__!width|height|style|widget-url}}
 	// {{__ohloh__!300px!100px!border: none!http://www.ohloh.net/p/140949/widgets/project_partner_badge.js}}
-        ohlohWidget: { regex: '\\{\\{__ohloh__!(.+)!(.+)!(.+)!(.+)\\}\\}',
+        ohlohWidget: { regex: '\\{\\{(__ohloh__|__openhub__)!(.+)!(.+)!(.+)!(.+)\\}\\}',
             build: function(node, r, options) {
-		var d = document.createElement('iframe');
-		d.setAttribute ("width", r[1]);
-		d.setAttribute ("height", r[2]);
-		d.setAttribute ("style", r[3]);
+                var d = document.createElement('iframe');
+                d.setAttribute ("width", r[2]);
+                d.setAttribute ("height", r[3]);
+                d.setAttribute ("style", r[4]);
                 node.appendChild (d);
 
-		var doc = d.contentWindow || d.contentDocument;
-		if (doc.document) { doc = doc.document;}
+                var doc = d.contentWindow || d.contentDocument;
+                if (doc.document) { doc = doc.document;}
 
-		doc.open ();
-		doc.write ('<script type="text/javascript" src="' + r[4] + '"></script>');
-		doc.close ();
+                doc.open ();
+                doc.write ('<script type="text/javascript" src="' + r[5] + '"></script>');
+                doc.close ();
             } },
         
         preBlock: { tag: 'pre', capture: 2,
