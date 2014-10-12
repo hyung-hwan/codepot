@@ -17,17 +17,25 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']))
 {
 	/* set to https if the first X-Forwarded-Proto is https */
 	if (array_search ("https", array_map ('strtolower', preg_split("/[\s,]+/", $_SERVER['HTTP_X_FORWARDED_PROTO']))) === 0)
+	{
 		$config['base_url'] = 'https';
+		$_SERVER['REQUEST_PROTOCOL'] = 'https';
+	}
 	else
+	{
 		$config['base_url'] = 'http';
+		$_SERVER['REQUEST_PROTOCOL'] = 'http';
+	}
 }
 else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')
 {
 	$config['base_url'] = 'https';
+	$_SERVER['REQUEST_PROTOCOL'] = 'https';
 }
 else
 {
 	$config['base_url'] = 'http';
+	$_SERVER['REQUEST_PROTOCOL'] = 'http';
 }
 
 $config['base_url'] .= "://{$_SERVER['HTTP_HOST']}";

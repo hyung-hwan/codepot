@@ -46,6 +46,10 @@ define('APPPATH', $application_folder.'/');
 */
 if (CODEPOT_HTTPS_COMPULSORY)
 {
+	// this option is not affected by X-Forwared-Proto or other similar headers.
+	// this option mandates SSL over the direct connection to the origin server.
+	// it doesn't care if the client is using SSL when the connection is relayed
+	// by intermediate proxy servers.
 	if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on') 
 	{
 		/* force https except api calls */
@@ -62,16 +66,6 @@ if (CODEPOT_HTTPS_COMPULSORY)
 		}
 	}
 }
-
-/*
-|---------------------------------------------------------------
-| EXTRA INFORMATION
-|---------------------------------------------------------------
-*/
-if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')
-	$_SERVER['REQUEST_PROTOCOL'] = 'https';
-else
-	$_SERVER['REQUEST_PROTOCOL'] = 'http';
 
 /*
 |---------------------------------------------------------------
