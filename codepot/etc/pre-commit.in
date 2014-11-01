@@ -122,8 +122,15 @@ sub check_commit_message
 	
 	my $log = $txn->prop ('svn:log');
 	$log =~ s/^\s+|\s+$//g; # trim leading spaces and  trailing spaces
-	if (length($log) < $minlen) {
+	if (length($log) < $minlen) 
+	{
 		print (STDERR "Commit message too short. must be >= $minlen\n");
+		return 0;
+	}
+
+	if ($log =~ /^[[:punct:][:space:]]+$/)
+	{
+		print (STDERR "Commit message meaningless\n");
 		return 0;
 	}
 
