@@ -17,7 +17,8 @@ class LoginModel extends Model
 
 	function getUser ()
 	{
-		$server1 = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'];
+		//$server1 = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'];
+		$server1 = $_SERVER['HTTP_HOST'];
 		$server2 = $this->session->userdata('server');
 		if ($server1 != $server2) 
 		{
@@ -55,7 +56,8 @@ class LoginModel extends Model
 
 	function authenticate ($userid, $password, $email = '')
 	{
-		$server = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'];
+		//$server = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'];
+		$server = $_SERVER['HTTP_HOST'];
 
 		$sysadmin = FALSE;
 		$ids = explode (',', CODEPOT_SYSADMIN_USERIDS);

@@ -31,7 +31,8 @@ function load_ini ($file)
 		array ('https_compulsory',             'boolean',    FALSE),
 		array ('https_url',                    'string',     'https://${SERVER_NAME}${REQUEST_URI}'),
 		array ('api_base_url',                 'string',     'http://127.0.0.1'),
-		array ('svn_base_url',                 'string',     'http://${SERVER_NAME}:${SERVER_PORT}/svn'),
+		//array ('svn_base_url',                 'string',     '${REQUEST_PROTOCOL}://${SERVER_NAME}:${SERVER_PORT}/svn'),
+		array ('svn_base_url',                 'string',     '${REQUEST_PROTOCOL}://${HTTP_POST}/svn'),
 
 		array ('login_model',                  'string',     'LdapLoginModel'),
 		array ('sysadmin_userids',             'string',     ''),
