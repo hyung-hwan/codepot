@@ -336,7 +336,7 @@ class Code extends Controller
 		}
 	}
 
-	function diff ($projectid = '', $path = '', $rev1 = SVN_REVISION_HEAD, $rev2 = SVN_REVISION_HEAD)
+	function _do_diff ($projectid = '', $path = '', $rev1 = SVN_REVISION_HEAD, $rev2 = SVN_REVISION_HEAD, $full = FALSE)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
@@ -371,7 +371,7 @@ class Code extends Controller
 				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 			}
 
-			$file = $this->subversion->getDiff ($projectid, $path, $rev1, $rev2);
+			$file = $this->subversion->getDiff ($projectid, $path, $rev1, $rev2, $full);
 			if ($file === FALSE)
 			{
 				$data['project'] = $project;
@@ -398,6 +398,16 @@ class Code extends Controller
 				$this->load->view ($this->VIEW_DIFF, $data);
 			}
 		}
+	}
+
+	function diff ($projectid = '', $path = '', $rev1 = SVN_REVISION_HEAD, $rev2 = SVN_REVISION_HEAD)
+	{
+		return $this->_do_diff ($projectid, $path, $rev1, $rev2, FALSE);
+	}
+
+	function fulldiff ($projectid = '', $path = '', $rev1 = SVN_REVISION_HEAD, $rev2 = SVN_REVISION_HEAD)
+	{
+		return $this->_do_diff ($projectid, $path, $rev1, $rev2, TRUE);
 	}
 
 	function fetch ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)

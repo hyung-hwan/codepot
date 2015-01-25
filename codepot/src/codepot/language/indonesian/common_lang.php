@@ -28,6 +28,7 @@ $lang['File'] = 'File';
 $lang['Files'] = 'File';
 $lang['First'] = 'Pertama';
 $lang['Folder'] = 'Folder';
+$lang['Full Difference'] = 'FullDiff';
 $lang['Head revision'] = 'Kepala revisi';
 $lang['History'] = 'Sejarah';
 $lang['Home'] = 'Beranda';

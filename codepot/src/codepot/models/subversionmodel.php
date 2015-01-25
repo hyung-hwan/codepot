@@ -278,14 +278,20 @@ class SubversionModel extends Model
 		return $fileinfo;
 	}
 
-	function _get_diff ($diff, $all, $ent)
+	function _get_diff ($diff, $src1, $src2, $all, $ent)
 	{
 		/* copied from websvn */
 
 		if ($all) 
 		{
-			$ofile = fopen ($oldtname, "r");
-			$nfile = fopen ($newtname, "r");
+			//$ofile = fopen ($oldtname, "r");
+			//$nfile = fopen ($newtname, "r");
+			$ofile = fopen("php://memory", 'r+');
+			$nfile = fopen("php://memory", 'r+');
+			fputs($ofile, $src1);
+			fputs($nfile, $src2);
+			rewind($ofile);
+			rewind($nfile);
 		}
 
 		// Ignore the 4 header lines
@@ -398,14 +404,14 @@ class SubversionModel extends Model
 							$listing[$index]["rev1diffclass"] = "diffdeleted";
 							$listing[$index]["rev2diffclass"] = "diff";
 
-							$listing[$index]["rev1line"] = $text;
-							//$listing[$index]["rev2line"] = "&nbsp;";
-							$listing[$index]["rev2line"] = '';
-
 							if ($all) {
 								fgets($ofile);
 								$curoline++;
 							}
+
+							$listing[$index]["rev1line"] = $text;
+							//$listing[$index]["rev2line"] = "&nbsp;";
+							$listing[$index]["rev2line"] = '';
 
 							break;
 
@@ -429,23 +435,29 @@ class SubversionModel extends Model
 								$listing[$i]["rev2diffclass"] = "diffchanged";
 								$listing[$i]["rev2line"] = $text;
 
-								if ($all) {
+								if ($all) 
+								{
 									fgets($nfile);
 									$curnline++;
 								}
 
+
 								// Don't increment the current index count
 								$index--;
 
-							} else {
+							} 
+							else 
+							{
 								$listing[$index]["rev1diffclass"] = "diff";
 								$listing[$index]["rev2diffclass"] = "diffadded";
+
 
 								//$listing[$index]["rev1line"] = "&nbsp;";
 								$listing[$index]["rev1line"] = '';
 								$listing[$index]["rev2line"] = $text;
 
-								if ($all) {
+								if ($all) 
+								{
 									fgets($nfile);
 									$curnline++;
 								}
@@ -459,7 +471,8 @@ class SubversionModel extends Model
 							$listing[$index]["rev1line"] = $text;
 							$listing[$index]["rev2line"] = $text;
 
-							if ($all) {
+							if ($all) 
+							{
 								fgets($ofile);
 								fgets($nfile);
 								$curoline++;
@@ -479,13 +492,18 @@ class SubversionModel extends Model
 		// Output the rest of the files
 		if ($all) 
 		{
-			while (!feof($ofile) || !feof($nfile)) 
+			while (1)
 			{
+				if (feof($ofile) && feof($nfile)) break;
+
 				$listing[$index]["rev1diffclass"] = "diff";
 				$listing[$index]["rev2diffclass"] = "diff";
 
-				$line = rtrim(fgets($ofile));
-				if ($ent) $line = replaceEntities($line, $rep);
+				if (!feof($ofile))
+				{
+					$line = rtrim(fgets($ofile));
+					if ($ent) $line = replaceEntities($line, $rep);
+				}
 
 				if (!feof($ofile)) {
 					//$listing[$index]["rev1line"] = hardspace($line);
@@ -495,9 +513,13 @@ class SubversionModel extends Model
 					//$listing[$index]["rev1line"] = "&nbsp;";
 					$listing[$index]["rev1line"] = ''; 
 				}
+			
 
-				$line = rtrim(fgets($nfile));
-				if ($ent) $line = replaceEntities(rtrim(fgets($nfile)), $rep);
+				if (!feof($nfile))
+				{
+					$line = rtrim(fgets($nfile));
+					if ($ent) $line = replaceEntities(rtrim(fgets($nfile)), $rep);
+				}
 
 				if (!feof($nfile)) {
 					//$listing[$index]["rev2line"] = hardspace($line);
@@ -528,7 +550,7 @@ class SubversionModel extends Model
 	// $rev1 - new revision number
 	// $rev2 - old revision number
 	//
-	function getDiff ($projectid, $path, $rev1, $rev2)
+	function getDiff ($projectid, $path, $rev1, $rev2, $full = FALSE)
 	{
 		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
@@ -621,7 +643,16 @@ class SubversionModel extends Model
 
 		fclose($errors);
 
-		$fileinfo['content'] = $this->_get_diff ($diff, FALSE, FALSE);
+		if ($full)
+		{
+			$src1 = @svn_cat ($info2[0]['url'], $info2[0]['revision']);
+			$src2 = @svn_cat ($info1[0]['url'], $info1[0]['revision']);
+			$fileinfo['content'] = $this->_get_diff ($diff, $src1, $src2, TRUE, FALSE);
+		}
+		else
+		{
+			$fileinfo['content'] = $this->_get_diff ($diff, '', '', FALSE, FALSE);
+		}
 		fclose ($diff);
 
 		return $fileinfo;
