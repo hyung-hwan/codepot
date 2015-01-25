@@ -30,6 +30,7 @@ $lang['File'] = 'File';
 $lang['Files'] = 'Files';
 $lang['First'] = 'First';
 $lang['Folder'] = 'Folder';
+$lang['Full Difference'] = 'FullDiff';
 $lang['Head revision'] = 'Head revision';
 $lang['Hide details'] = 'Hide details';
 $lang['History'] = 'History';

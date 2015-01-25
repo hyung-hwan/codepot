@@ -219,6 +219,10 @@ $history = $file['history'];
 		print anchor ("code/diff/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Difference'));
 		print '</td>';
 
+		print '<td>';
+		print anchor ("code/fulldiff/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Full Difference'));
+		print '</td>';
+
 		print '</tr>';
 	}
 ?>
