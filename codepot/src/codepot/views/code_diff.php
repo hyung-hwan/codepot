@@ -91,6 +91,21 @@ $this->load->view (
 		$this->lang->line('Blame'));
 	print ' | ';
 
+	if (!$fullview)
+	{
+		print anchor (
+			"code/fulldiff/{$project->id}/{$xpar}{$revreq}",
+			$this->lang->line('Full Difference'));
+	}
+	else
+	{
+		print anchor (
+			"code/diff/{$project->id}/{$xpar}{$revreq}",
+			$this->lang->line('Difference'));
+	}
+
+	print ' | ';
+
 
 	if ($revision1 > 0)
 	{
@@ -115,9 +130,10 @@ $this->load->view (
 ?>
 
 <div id="code_diff_mainarea_result">
-<table id="code_diff_mainarea_result_table">
 <?php
-
+if (!$fullview)
+{
+	print '<table id="code_diff_mainarea_result_table">';
 	/*
 	print '<pre>';	
 	print_r ($file['content']);
@@ -237,8 +253,109 @@ $this->load->view (
 			print '</tr>';
 		}
 	}
+
+	print '</table>';
+}
+else
+{
+	print '<div style="width: 100%; overflow: hidden;" id="code_diff_mainarea_result_fullview">';
+
+	if (empty($file['content']))
+	{
+		print htmlspecialchars ($this->lang->line('MSG_NO_DIFF'));
+	}
+	else
+	{
+		print ("<div style='float:left; width: 49%;'>");
+
+		print "<div class='navigator'>";
+		$currev = $file['created_rev'];
+		$prevrev = $file['against']['prev_rev'];
+		$prevanc = "code/fulldiff/{$project->id}/{$xpar}/{$currev}/{$prevrev}";
+		print anchor ($prevanc, '<<');
+		print '&nbsp;&nbsp;&nbsp;';
+	
+		print $this->lang->line('Revision');
+		print ' ';
+		print $file['against']['created_rev'];
+	
+		$currev = $file['created_rev'];
+		$nextrev = $file['against']['next_rev'];
+		$nextanc = "code/fulldiff/{$project->id}/{$xpar}/{$currev}/{$nextrev}";
+		print '&nbsp;&nbsp;&nbsp;';
+		print anchor ($nextanc, '>>');
+		print "</div>";
+
+		print "<pre class='prettyprint lang-{$fileext}' style='width: 100%' id='code_diff_mainarea_result_fulldiffold'>";
+
+		foreach ($file['content'] as $x)
+		{
+			if (array_key_exists('rev1line', $x)) 
+			{
+				$diffclass = array_key_exists('rev1diffclass', $x)? $x['rev1diffclass']: 'diff';
+				print "<span class='{$diffclass}'>";
+				if ($x['rev1line'] == '') print '&nbsp;';
+				else print htmlspecialchars($x['rev1line']);
+				print "</span>";
+			}
+			else
+			{
+				print $x['rev1lineno'];
+			}
+			print "\n";
+		}
+		printf ("</div>");
+		print '</pre>';
+
+
+		print ("<div style='float:left; width: 49%;'>");
+
+		print "<div class='navigator'>";
+		$currev = $file['against']['created_rev'];
+		$prevrev = $file['prev_rev'];
+		$prevanc = "code/fulldiff/{$project->id}/{$xpar}/{$prevrev}/{$currev}";
+		print anchor ($prevanc, '<<');
+		print '&nbsp;&nbsp;&nbsp;';
+
+		print $this->lang->line('Revision');
+		print ' ';
+		print $file['created_rev'];
+
+		$currev = $file['against']['created_rev'];
+		$nextrev = $file['next_rev'];
+		$nextanc = "code/fulldiff/{$project->id}/{$xpar}/{$nextrev}/{$currev}";
+		print '&nbsp;&nbsp;&nbsp;';
+		print anchor ($nextanc, '>>');
+		print "</div>";
+
+		print "<pre class='prettyprint lang-{$fileext}' style='width: 100%' id='code_diff_mainarea_result_fulldiffnew'>";
+		foreach ($file['content'] as $x)
+		{
+			if (array_key_exists('rev2line', $x)) 
+			{
+				$diffclass = array_key_exists('rev2diffclass', $x)? $x['rev2diffclass']: 'diff';
+
+				print "<span class='{$diffclass}'>";
+
+				if ($x['rev2line'] == '') print '&nbsp;';
+				else print htmlspecialchars($x['rev2line']);
+				
+				print "</span>";
+			}
+			else
+			{
+				print $x['rev2lineno'];
+			}
+			print "\n";
+		}
+
+		print '</pre>';
+		printf ("</div>");
+	}
+	print '</div>';
+}
 ?>
-</table>
+
 </div>
 
 </div> <!-- code_diff_mainarea -->
