@@ -262,7 +262,7 @@ class Code extends Controller
 		{
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
-                }
+		}
 		else if ($project === NULL)
 		{
 			$data['message'] = 
@@ -395,6 +395,7 @@ class Code extends Controller
 				$data['revision1'] = $rev1;
 				$data['revision2'] = $rev2;
 				$data['file'] = $file;
+				$data['fullview'] = $full;
 				$this->load->view ($this->VIEW_DIFF, $data);
 			}
 		}
