@@ -6,6 +6,8 @@
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
 
+<script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
+
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
@@ -64,10 +66,23 @@ $(function() {
 
 </script>
 
+
+<script type="text/javascript">
+function render_wiki()
+{
+	creole_render_wiki (
+		"code_revision_mainarea_result_msg_text", 
+		"code_revision_mainarea_result_msg", 
+		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
+		""
+	);
+}
+</script>
+
 <title><?=htmlspecialchars($project->name)?></title>
 </head>
 
-<body>
+<body onload="render_wiki()">
 
 <div class="content" id="code_revision_content">
 
@@ -186,11 +201,13 @@ $history = $file['history'];
 <?php endif; ?>
 </div>
 
-<pre id="code_revision_mainarea_result_msg">
-<?=htmlspecialchars($history['msg'])?>
+<div id="code_revision_mainarea_result_msg">
+<pre id="code_revision_mainarea_result_msg_text" style="visibility: hidden;">
+<?php print htmlspecialchars($history['msg']); ?>
 </pre>
+</div>
 
-<div class="title">Files updated</div>
+<div class="title"><?=$this->lang->line('Files')?></div>
 <table id="code_revision_mainarea_result_table">
 <?php 
 	/*
@@ -227,7 +244,37 @@ $history = $file['history'];
 	}
 ?>
 </table>
-</div> <!-- code_revision_mainarea_body -->
+
+
+
+<div class="title"><?=$this->lang->line('Comment')?></div>
+<div id="code_revision_mainarea_review_comment">
+<?php
+	//foreach ($review_comments as $rc)
+	//{
+	// 
+	// delete box, edit box???
+	//}
+	print form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_review_comment_form"');
+
+	print form_textarea (
+		array ('name' => 'edit_review_comment', 
+		       'value' => '', 'rows'=> 20, 'cols' => 120,
+		       'id' => 'code_revision_edit_review_comment')
+	);
+
+	print "<br/>";
+
+	//print form_submit ('submit_review_comment', $this->lang->line('Submit'));
+	print form_submit ('submit_review_comment', 'Submit');
+
+	print form_close();
+?>
+</div> <!-- code_revision_mainarea_review_comment -->
+
+
+
+</div> <!-- code_revision_mainarea_result -->
 
 </div> <!-- code_revision_mainarea -->
 
@@ -251,6 +298,7 @@ $history = $file['history'];
 				       'value' => $history['msg'], 'rows'=> 10, 'cols' => 70,
 				       'id' => 'code_revision_edit_log_message')
 			)
+
 		?>
 	<?=form_close()?>
 </div>
