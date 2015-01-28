@@ -131,6 +131,51 @@ $this->load->view (
 
 <div id="code_diff_mainarea_result">
 <?php
+function format_diff ($a, $b, $css_class)
+{
+	if ($b == '') return htmlspecialchars($a);
+
+	$cc = '';
+	$diffstart = -1;
+	$aalen = strlen($a);
+	$bblen = strlen($b);
+
+	for ($i = 0; $i < $aalen && $i < $bblen; $i++)
+	{
+		if ($a[$i] == $b[$i])
+		{
+			if ($diffstart >= 0)
+			{
+				$cc .= sprintf ('<span class="%s">', $css_class);
+				$cc .= htmlspecialchars(substr($a, $diffstart, $i - $diffstart));
+				$cc .= '</span>';
+				$diffstart = -1;
+			}
+			$cc .= htmlspecialchars($a[$i]);
+		}
+		else
+		{
+			if ($diffstart < 0) $diffstart = $i;	
+		}
+	}
+
+	if ($diffstart >= 0)
+	{
+		$cc .= sprintf ('<span class="%s">', $css_class);
+		$cc .= htmlspecialchars(substr($a, $diffstart, $aalen - $diffstart));
+		$cc .= '</span>';
+	}	
+	else
+	{
+		if ($aalen > $bblen)
+		{
+			$cc .= htmlspecialchars(substr ($a, $aalen, $aalen - $bblen));
+		}
+	}
+
+	return $cc;
+}
+
 if (!$fullview)
 {
 	print '<table id="code_diff_mainarea_result_table">';
@@ -290,19 +335,15 @@ else
 
 		foreach ($file['content'] as $x)
 		{
-			if (array_key_exists('rev1line', $x)) 
-			{
-				$diffclass = array_key_exists('rev1diffclass', $x)? $x['rev1diffclass']: 'diff';
-				print "<span class='{$diffclass}'>";
-				if ($x['rev1line'] == '') print '&nbsp;';
-				else print htmlspecialchars($x['rev1line']);
-				print "</span>";
-			}
-			else
-			{
-				print $x['rev1lineno'];
-			}
-			print "\n";
+			$diffclass = array_key_exists('rev1diffclass', $x)? $x['rev1diffclass']: 'diff';
+			print "<span class='{$diffclass}'>";
+
+			if ($diffclass == 'diffchanged')
+				print format_diff ($x['rev1line'], $x['rev2line'], 'diffchangedold');
+			else 
+				print htmlspecialchars($x['rev1line']);
+
+			print "</span>\n";
 		}
 		printf ("</div>");
 		print '</pre>';
@@ -331,22 +372,16 @@ else
 		print "<pre class='prettyprint lang-{$fileext}' style='width: 100%' id='code_diff_mainarea_result_fulldiffnew'>";
 		foreach ($file['content'] as $x)
 		{
-			if (array_key_exists('rev2line', $x)) 
-			{
-				$diffclass = array_key_exists('rev2diffclass', $x)? $x['rev2diffclass']: 'diff';
+			$diffclass = array_key_exists('rev2diffclass', $x)? $x['rev2diffclass']: 'diff';
 
-				print "<span class='{$diffclass}'>";
+			print "<span class='{$diffclass}'>";
 
-				if ($x['rev2line'] == '') print '&nbsp;';
-				else print htmlspecialchars($x['rev2line']);
-				
-				print "</span>";
-			}
-			else
-			{
-				print $x['rev2lineno'];
-			}
-			print "\n";
+			if ($diffclass == 'diffchanged')
+				print format_diff ($x['rev2line'], $x['rev1line'], 'diffchangednew');
+			else 
+				print htmlspecialchars($x['rev2line']);
+
+			print "</span>\n";
 		}
 
 		print '</pre>';
