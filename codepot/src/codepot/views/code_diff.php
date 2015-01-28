@@ -135,12 +135,14 @@ function format_diff ($a, $b, $css_class)
 {
 	if ($b == '') return htmlspecialchars($a);
 
+	// TODO: word by word comparison to be less position dependent 
+
 	$cc = '';
 	$diffstart = -1;
-	$aalen = strlen($a);
-	$bblen = strlen($b);
+	$alen = strlen($a);
+	$blen = strlen($b);
 
-	for ($i = 0; $i < $aalen && $i < $bblen; $i++)
+	for ($i = 0; $i < $alen && $i < $blen; $i++)
 	{
 		if ($a[$i] == $b[$i])
 		{
@@ -162,14 +164,14 @@ function format_diff ($a, $b, $css_class)
 	if ($diffstart >= 0)
 	{
 		$cc .= sprintf ('<span class="%s">', $css_class);
-		$cc .= htmlspecialchars(substr($a, $diffstart, $aalen - $diffstart));
+		$cc .= htmlspecialchars(substr($a, $diffstart, $alen - $diffstart));
 		$cc .= '</span>';
 	}	
 	else
 	{
-		if ($aalen > $bblen)
+		if ($alen > $blen)
 		{
-			$cc .= htmlspecialchars(substr ($a, $aalen, $aalen - $bblen));
+			$cc .= htmlspecialchars(substr ($a, $alen, $alen - $blen));
 		}
 	}
 
