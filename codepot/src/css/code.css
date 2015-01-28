@@ -374,3 +374,12 @@
 	padding-left:15px;
 	margin: 0;
 }
+
+#code_diff_mainarea_result_fullview .diffchangedold {
+	text-decoration: line-through;
+}
+
+#code_diff_mainarea_result_fullview .diffchangednew {
+	//background-color:#ffff00;
+	text-decoration: underline;
+}
