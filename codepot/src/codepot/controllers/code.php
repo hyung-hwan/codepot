@@ -246,7 +246,7 @@ class Code extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
-
+		$this->load->model ('CodeReviewModel', 'code_review');
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
@@ -278,9 +278,10 @@ class Code extends Controller
 				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 			}
 
-			$data['edit_error_message'] = '';
+			$data['popup_error_message'] = '';
 			if ($login['id'] != '' && 
-			    $login['id'] == $this->subversion->getRevProp($projectid, $rev, 'svn:author'))
+			    $login['id'] == $this->subversion->getRevProp($projectid, $rev, 'svn:author') &&
+			    $this->input->post('edit_log_message'))
 			{
 				// the current user must be the author of the revision to be able to 
 				// change the log message.
@@ -290,25 +291,57 @@ class Code extends Controller
 				$this->form_validation->set_rules ('edit_log_message', 'Message', 'required|min_length[2]');
 				$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
 
-				if ($this->input->post('edit_log_message'))
+				if ($this->form_validation->run())
 				{
-					$logmsg =  $this->input->post('edit_log_message');
-					if ($this->form_validation->run())
+					$logmsg = $this->input->post('edit_log_message');
+					if ($logmsg != $this->subversion->getRevProp ($projectid, $rev, 'svn:log'))
 					{
-						if ($logmsg != $this->subversion->getRevProp ($projectid, $rev, 'svn:log'))
+						$actual_rev = $this->subversion->setRevProp (
+							$projectid, $rev, 'svn:log', $logmsg, $login['id']);
+						if ($actual_rev === FALSE)
 						{
-							$actual_rev = $this->subversion->setRevProp (
-								$projectid, $rev, 'svn:log', $logmsg, $login['id']);
-							if ($actual_rev === FALSE)
-							{
-								$data['edit_error_message'] = 'Cannot change revision log message';
-							}
+							$data['popup_error_message'] = 'Cannot change revision log message';
 						}
+						else 
+						{
+							$this->form_validation->_field_data = array();
+						}
+					}
+				}
+				else
+				{
+					$data['popup_error_message'] = 'Invalid revision log message';
+				}
+			}
+
+			if ($login['id'] != '' && $this->input->post('edit_review_comment'))
+			{
+				// Note that edit_log_message and edit_review_comment are not 
+				// supposed to be/ POSTed at the same time. 
+				// this program may break if that happens.
+
+				$this->load->helper ('form');
+				$this->load->library ('form_validation');
+
+				$this->form_validation->set_rules ('edit_review_comment', $this->lang->line('Comment'), 'required|min_length[10]');
+				$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
+
+				if ($this->form_validation->run())
+				{
+					$review_comment = $this->input->post('edit_review_comment');
+					if ($this->code_review->insertReview ($projectid, $rev, $login['id'], $review_comment) === FALSE)
+					{
+						$data['popup_error_message'] = 'Cannot add code review';
 					}
 					else
 					{
-						$data['edit_error_message'] = 'Invalid revision log message';
+						// this is a hack to clear form data upon success
+						$this->form_validation->_field_data = array();
 					}
+				}
+				else
+				{
+					$data['popup_error_message'] = 'Invalid review comment';
 				}
 			}
 
@@ -321,17 +354,28 @@ class Code extends Controller
 			}
 			else
 			{
-				$data['project'] = $project;
-				$data['headpath'] = $path;
-				$data['file'] = $file;
-
-				$data['revision'] = $rev;
-				$data['prev_revision'] =
-					$this->subversion->getPrevRev ($projectid, $path, $rev);
-				$data['next_revision'] =
-					$this->subversion->getNextRev ($projectid, $path, $rev);
-
-				$this->load->view ($this->VIEW_REVISION, $data);
+				$reviews = $this->code_review->getReviews ($projectid, $rev);
+				if ($reviews === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = 'Failed to get code reviews';
+					$this->load->view ($this->VIEW_ERROR, $data);
+				}
+				else
+				{
+					$data['project'] = $project;
+					$data['headpath'] = $path;
+					$data['file'] = $file;
+					$data['reviews'] = $reviews;
+	
+					$data['revision'] = $rev;
+					$data['prev_revision'] =
+						$this->subversion->getPrevRev ($projectid, $path, $rev);
+					$data['next_revision'] =
+						$this->subversion->getNextRev ($projectid, $path, $rev);
+	
+					$this->load->view ($this->VIEW_REVISION, $data);
+				}
 			}
 		}
 	}
