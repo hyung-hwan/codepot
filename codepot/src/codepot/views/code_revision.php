@@ -14,6 +14,8 @@
 
 <script type="text/javascript">
 
+<?php $review_count = count($reviews); ?>
+<?php $is_loggedin = ($login['id'] != ''); ?>
 <?php $can_edit = ($login['id'] == $file['history']['author']); ?>
 
 <?php if ($can_edit): ?>
@@ -45,9 +47,44 @@ $(function() {
 			return false;
 		}
 	);
+});
+<?php endif; ?>
 
-	<?php if (strlen($edit_error_message) > 0): ?>
-	$("#code_revision_edit_error_div").dialog( { 
+<?php if ($is_loggedin): ?>
+$(function() {
+	$("#code_revision_new_comment_div").dialog (
+		{
+			title: '<?=$this->lang->line('Comment')?>',
+			width: 'auto',
+			height: 'auto',
+			resizable: false,
+			autoOpen: false,
+			modal: true,
+			buttons: {
+				'<?=$this->lang->line('OK')?>': function () {
+					$('#code_revision_new_review_comment_form').submit ();
+					$(this).dialog('close');
+				},
+				'<?=$this->lang->line('Cancel')?>': function () {
+					$(this).dialog('close');
+				}
+			},
+			close: function() { }
+		}
+	);
+
+	$("#code_revision_new_review_comment_button").button().click (
+		function () {
+			$("#code_revision_new_comment_div").dialog('open');
+			return false;
+		}
+	);
+});
+<?php endif; ?>
+
+<?php if (strlen($popup_error_message) > 0): ?>
+$(function() {
+	$("#code_revision_popup_error_div").dialog( { 
 		title: '<?=$this->lang->line('Error')?>',
 		width: 'auto',
 		height: 'auto',
@@ -59,8 +96,6 @@ $(function() {
 			}
 		}
 	});
-	<?php endif; ?>
-	
 });
 <?php endif; ?>
 
@@ -76,6 +111,21 @@ function render_wiki()
 		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
 		""
 	);
+
+	<?php 
+	print "for (i = 0; i < $review_count; i++) {\n";
+	?>
+
+	creole_render_wiki (
+		"code_revision_mainarea_review_comment_text_" + i , 
+		"code_revision_mainarea_review_comment_" + i, 
+		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
+		""
+	);
+
+	<?php
+	print "}\n";
+	?>
 }
 </script>
 
@@ -247,28 +297,39 @@ $history = $file['history'];
 
 
 
-<div class="title"><?=$this->lang->line('Comment')?></div>
+<div class="title"><?=$this->lang->line('Comment')?>&nbsp;
+<?php if ($is_loggedin): ?>
+<span class='anchor'>
+	<?=anchor ("#", $this->lang->line('New'),
+	           array ('id' => 'code_revision_new_review_comment_button'));
+	?>
+</span>
+<?php endif; ?>
+</div>
+
 <div id="code_revision_mainarea_review_comment">
 <?php
-	//foreach ($review_comments as $rc)
-	//{
-	// 
-	// delete box, edit box???
-	//}
-	print form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_review_comment_form"');
+	for ($i = $review_count; $i > 0; )
+	{
+		$i--;
 
-	print form_textarea (
-		array ('name' => 'edit_review_comment', 
-		       'value' => '', 'rows'=> 20, 'cols' => 120,
-		       'id' => 'code_revision_edit_review_comment')
-	);
+		$rc = $reviews[$i];
+		print "<div id='code_revision_mainarea_review_comment_title_$i' class='review_comment_title'>\n";
+		printf (" <span class='review_comment_title_no'>%d</span>", $rc->sno);
+		printf (" <span class='review_comment_title_updatedby'>%s</span>", $rc->updatedby);
+		printf (" <span class='review_comment_title_updatedon'>%s</span>", $rc->updatedon);
+		print ("</div>\n");
 
-	print "<br/>";
+		print "<div id='code_revision_mainarea_review_comment_$i' class='review_comment_text'>\n";
+		print "<pre id='code_revision_mainarea_review_comment_text_$i' style='visibility: hidden'>\n";
 
-	//print form_submit ('submit_review_comment', $this->lang->line('Submit'));
-	print form_submit ('submit_review_comment', 'Submit');
+		// TODO: delete box, edit box???
+		print $rc->comment;
 
-	print form_close();
+		print "</pre>\n";
+		print "</div>\n";
+	}
+
 ?>
 </div> <!-- code_revision_mainarea_review_comment -->
 
@@ -302,13 +363,30 @@ $history = $file['history'];
 		?>
 	<?=form_close()?>
 </div>
+<?php endif; ?> <!-- $can_edit -->
 
-<?php if (strlen($edit_error_message) > 0): ?>
-<div id="code_revision_edit_error_div">
-<?=$edit_error_message?>
+<div id="code_revision_new_comment_div">
+<?php
+	print form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_new_review_comment_form"');
+
+	print form_error('edit_review_comment');
+
+	print form_textarea (
+		array ('name' => 'edit_review_comment', 
+		       'value' => set_value('edit_review_comment', ''), 
+		       'rows'=> 25, 'cols' => 100,
+		       'id' => 'code_revision_edit_review_comment')
+	);
+	print form_close();
+?>
+</div>
+
+<?php if (strlen($popup_error_message) > 0): ?>
+<div id="code_revision_popup_error_div">
+<?=$popup_error_message?>
 </div>
 <?php endif; ?>
-<?php endif; ?> <!-- $can_edit -->
+
 
 </body>
 
