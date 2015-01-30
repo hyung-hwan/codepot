@@ -484,6 +484,11 @@ pre.prettyprint li.L9 { background: #eee }
 	-moz-border-radius-topright:2px;
 }
 
+.content .sidebar .box .user_icon_img {
+	height: 2em;
+	vertical-align: middle;
+}
+
 .content .sidebar .boxtitle {
 	/* title of an infobox */
 	font-weight:bold;

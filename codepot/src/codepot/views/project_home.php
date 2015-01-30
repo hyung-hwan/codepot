@@ -97,7 +97,7 @@ $this->load->view (
 			if ($icon_image)
 			{
 				$icon_src = sprintf (
-					'<img style="vertical-align:middle;" src="data:%s;base64,%s" alt="" /> ',
+					'<img class="user_icon_img" src="data:%s;base64,%s" alt="" /> ',
 					mime_content_type($icon_path),
 					base64_encode($icon_image)
 				);
