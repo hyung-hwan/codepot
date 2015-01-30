@@ -530,12 +530,13 @@ pre.prettyprint li.L9 { background: #eee }
 .content .footer {
 	clear: both;
 	padding: 0.3em 0.5em 0.3em 0.5em;
-	font-size: .8em;
-	font-weight: bold;
+	font-size: 1em;
+	/*font-weight: bold;*/
 	font-style: italic;
 	text-align: right;
 	color: #FFFFFF;
 	background-color: #4665A2;
+	line-height: 1.5em;
 }
 
 .content .footer a {
