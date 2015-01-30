@@ -110,6 +110,13 @@ body {
 
 .content .taskbar form input[type="submit"] {
 	cursor: pointer;
+	height: 1.6em; /* lower than line-height of taskbar */
+	vertical-align: middle;
+	padding-left: 5px;
+	padding-right: 5px;
+	text-transform: uppercase;
+}
+
 }
 
 .content .projectbar {
