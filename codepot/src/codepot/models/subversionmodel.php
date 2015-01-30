@@ -327,8 +327,7 @@ class SubversionModel extends Model
 					if ($curoline < $oline) 
 					{
 						$nl = fgets($ofile);
-
-						$line = rtrim($nl);
+						$line = rtrim($nl, "\r\n");
 						if ($ent) $line = replaceEntities($line, $rep);
 
 						//$listing[$index]["rev1line"] = hardspace($line);
@@ -346,7 +345,7 @@ class SubversionModel extends Model
 					{
 						$nl = fgets($nfile);
 
-						$line = rtrim($nl);
+						$line = rtrim($nl, "\r\n");
 						if ($ent) $line = replaceEntities($line, $rep);
 
 						//$listing[$index]["rev2line"] = hardspace($line);
@@ -388,7 +387,7 @@ class SubversionModel extends Model
 
 					$mod = $line{0};
 
-					$line = rtrim(substr($line, 1));
+					$line = rtrim(substr($line, 1), "\r\n");
 					if ($ent) $line = replaceEntities($line, $rep);
 
 					//if (strip_tags($line) == '') $line = '&nbsp;';
@@ -501,7 +500,7 @@ class SubversionModel extends Model
 
 				if (!feof($ofile))
 				{
-					$line = rtrim(fgets($ofile));
+					$line = rtrim(fgets($ofile), "\r\n");
 					if ($ent) $line = replaceEntities($line, $rep);
 				}
 
@@ -517,8 +516,8 @@ class SubversionModel extends Model
 
 				if (!feof($nfile))
 				{
-					$line = rtrim(fgets($nfile));
-					if ($ent) $line = replaceEntities(rtrim(fgets($nfile)), $rep);
+					$line = rtrim(fgets($nfile), "\r\n");
+					if ($ent) $line = replaceEntities(rtrim(fgets($nfile), "\r\n"), $rep);
 				}
 
 				if (!feof($nfile)) {
