@@ -365,6 +365,7 @@ $history = $file['history'];
 </div>
 <?php endif; ?> <!-- $can_edit -->
 
+<?php if ($is_loggedin): ?>
 <div id="code_revision_new_comment_div">
 <?php
 	print form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_new_review_comment_form"');
@@ -380,6 +381,7 @@ $history = $file['history'];
 	print form_close();
 ?>
 </div>
+<?php endif; ?> <!-- $is_loggedin -->
 
 <?php if (strlen($popup_error_message) > 0): ?>
 <div id="code_revision_popup_error_div">
