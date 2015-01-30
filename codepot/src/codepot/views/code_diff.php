@@ -136,7 +136,6 @@ function format_diff ($a, $b, $css_class)
 	if ($b == '') return htmlspecialchars($a);
 
 	// TODO: word by word comparison to be less position dependent 
-
 	$cc = '';
 	$diffstart = -1;
 	$alen = strlen($a);
@@ -171,7 +170,9 @@ function format_diff ($a, $b, $css_class)
 	{
 		if ($alen > $blen)
 		{
+			$cc .= sprintf ('<span class="%s">', $css_class);
 			$cc .= htmlspecialchars(substr ($a, $blen, $alen - $blen));
+			$cc .= '</span>';
 		}
 	}
 
