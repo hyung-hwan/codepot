@@ -114,8 +114,8 @@ $this->load->view (
 		print anchor (
 			"code/history/{$project->id}{$revtrailer}",
 			$this->lang->line('History'));
-        }
-        else
+	}
+	else
 	{
 		print anchor (
 			"code/history/{$project->id}/{$xpar}",
@@ -157,7 +157,7 @@ function format_diff ($a, $b, $css_class)
 		}
 		else
 		{
-			if ($diffstart < 0) $diffstart = $i;	
+			if ($diffstart < 0) $diffstart = $i;
 		}
 	}
 
@@ -171,7 +171,7 @@ function format_diff ($a, $b, $css_class)
 	{
 		if ($alen > $blen)
 		{
-			$cc .= htmlspecialchars(substr ($a, $alen, $alen - $blen));
+			$cc .= htmlspecialchars(substr ($a, $blen, $alen - $blen));
 		}
 	}
 

@@ -540,7 +540,6 @@ class SubversionModel extends Model
 		return $listing;
 	}
 
-	
 	//  
 	// Given a path name at the HEAD revision, it compares the file
 	// between two revisions given. The actual path name at a given
@@ -645,9 +644,15 @@ class SubversionModel extends Model
 
 		if ($full)
 		{
-			$src1 = @svn_cat ($info2[0]['url'], $info2[0]['revision']);
-			$src2 = @svn_cat ($info1[0]['url'], $info1[0]['revision']);
-			$fileinfo['content'] = $this->_get_diff ($diff, $src1, $src2, TRUE, FALSE);
+			$old_text = @svn_cat ($info2[0]['url'], $info2[0]['revision']);
+			if ($old_text === FALSE)
+			{
+				// if the old URL can't give the contents,
+				// try it with the latest url and the old revision number
+				$old_text = @svn_cat ($info1[0]['url'], $info2[0]['revision']);
+			}
+			$new_text = @svn_cat ($info1[0]['url'], $info1[0]['revision']);
+			$fileinfo['content'] = $this->_get_diff ($diff, $old_text, $new_text, TRUE, FALSE);
 		}
 		else
 		{

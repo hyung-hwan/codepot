@@ -46,20 +46,29 @@ body {
 }
 
 .content .taskbar {
-	font-size: 0.9em;
-	font-weight: bold;
+	font-size: 1em;
+	/*font-weight: bold;*/
 	text-transform: uppercase;
-	padding: 0.6em 0.2em 0.6em 0.2em;
+	padding: 0.5em 0.2em 0.5em 0.2em;
 	color: #ffffff;
 	background-color: #203150;
+
+	line-height: 2em;
+	vertical-align: middle;
 }
 
 .content .taskbar .boxa {
 	/*vertical-align: bottom;*/
+	float: none;
 }
 
 .content .taskbar .boxb {
 	float: right;
+}
+
+.content .taskbar .boxb .user_icon_img {
+	height: 2em; /* as large as line-height of taskbar */
+	vertical-align: middle;
 }
 
 .content .taskbar a {
@@ -105,7 +114,7 @@ body {
 
 .content .projectbar {
 	/*margin: 0.1em 0em 0em 0em;*/
-	padding: 0.2em 0.2em 0.2em 0.2em;
+	padding: 0.5em 0.5em 0.5em 0.5em;
 	color: #FFFFFF;
 	background-color: #4665A2;
 }

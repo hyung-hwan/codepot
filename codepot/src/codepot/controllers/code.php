@@ -399,7 +399,7 @@ class Code extends Controller
 		{
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
-                }
+		}
 		else if ($project === NULL)
 		{
 			$data['message'] = 
@@ -425,9 +425,9 @@ class Code extends Controller
 			else
 			{
 				$file['prev_rev'] =
-					$this->subversion->getPrevRev ($projectid, $path, $file['created_rev']);	
+					$this->subversion->getPrevRev ($projectid, $path, $file['created_rev']);
 				$file['next_rev'] =
-					$this->subversion->getNextRev ($projectid, $path, $file['created_rev']);	
+					$this->subversion->getNextRev ($projectid, $path, $file['created_rev']);
 				$file['against']['prev_rev'] = 
 					$this->subversion->getPrevRev ($projectid, $path, $file['against']['created_rev']);
 				$file['against']['next_rev'] = 
