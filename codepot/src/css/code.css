@@ -410,4 +410,9 @@
 	text-decoration: underline;
 }
 
-
+#code_diff_mainarea_result_fullview .diffrow {
+	font-size: 1.2em;
+	padding: 0.2em 0.2em 0.2em 0.2em;
+	font-weight: bold;
+	background-color: black;
+}

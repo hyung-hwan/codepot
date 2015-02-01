@@ -179,7 +179,8 @@ function format_diff ($a, $b, $css_class)
 	return $cc;
 }
 
-if (!$fullview)
+//if (!$fullview)
+if (FALSE) // don't want to delete code for the original diff view. 
 {
 	print '<table id="code_diff_mainarea_result_table">';
 	/*
@@ -338,15 +339,24 @@ else
 
 		foreach ($file['content'] as $x)
 		{
-			$diffclass = array_key_exists('rev1diffclass', $x)? $x['rev1diffclass']: 'diff';
-			print "<span class='{$diffclass}'>";
+			if (array_key_exists('rev2line', $x)) 
+			{
+				$diffclass = array_key_exists('rev1diffclass', $x)? $x['rev1diffclass']: 'diff';
+				print "<span class='{$diffclass}'>";
 
-			if ($diffclass == 'diffchanged')
-				print format_diff ($x['rev1line'], $x['rev2line'], 'diffchangedold');
-			else 
-				print htmlspecialchars($x['rev1line']);
+				if ($diffclass == 'diffchanged')
+					print format_diff ($x['rev1line'], $x['rev2line'], 'diffchangedold');
+				else 
+					print htmlspecialchars($x['rev1line']);
 
-			print "</span>\n";
+				print "</span>\n";
+			}
+			else
+			{
+				print "<span class='diffrow'> ";
+				print $x['rev1lineno'];
+				print " </span>\n";
+			}
 		}
 		printf ("</div>");
 		print '</pre>';
@@ -375,16 +385,25 @@ else
 		print "<pre class='prettyprint lang-{$fileext}' style='width: 100%' id='code_diff_mainarea_result_fulldiffnew'>";
 		foreach ($file['content'] as $x)
 		{
-			$diffclass = array_key_exists('rev2diffclass', $x)? $x['rev2diffclass']: 'diff';
+			if (array_key_exists('rev2line', $x)) 
+			{
+				$diffclass = array_key_exists('rev2diffclass', $x)? $x['rev2diffclass']: 'diff';
 
-			print "<span class='{$diffclass}'>";
+				print "<span class='{$diffclass}'>";
 
-			if ($diffclass == 'diffchanged')
-				print format_diff ($x['rev2line'], $x['rev1line'], 'diffchangednew');
-			else 
-				print htmlspecialchars($x['rev2line']);
+				if ($diffclass == 'diffchanged')
+					print format_diff ($x['rev2line'], $x['rev1line'], 'diffchangednew');
+				else 
+					print htmlspecialchars($x['rev2line']);
 
-			print "</span>\n";
+				print "</span>\n";
+			}
+			else
+			{
+				print "<span class='diffrow'> ";
+				print $x['rev2lineno'];
+				print " </span>\n";
+			}
 		}
 
 		print '</pre>';
