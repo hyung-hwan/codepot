@@ -102,7 +102,7 @@ $this->load->view (
 		{
 			// old browsers don't support image data URI.
 			$icon_path = CODEPOT_USERICON_DIR . '/' . $icons[$m];
-			$icon_image = file_get_contents($icon_path);
+			$icon_image = @file_get_contents($icon_path);
 			if ($icon_image)
 			{
 				$icon_src = sprintf (
