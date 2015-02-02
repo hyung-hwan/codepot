@@ -7,6 +7,13 @@
 
 <script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
 
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
+
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
@@ -474,6 +481,8 @@ function render_wiki()
 		}
 	}
 	?>
+
+	prettyPrint ();
 }
 </script>
 
