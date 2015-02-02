@@ -324,6 +324,14 @@ var Url = {
             regex: /(^|\n)\{\{\{\n((.*\n)*?)\}\}\}(\n|$)/,
             replaceRegex: /^ ([ \t]*\}\}\})/gm,
             replaceString: '$1' },
+
+	/* codeBlock is to be used together with prettify  */
+        codeBlock: { tag: 'pre', capture: 2,
+            attrs: { 'class': 'prettyprint' },
+            regex: /(^|\n)\[\[\[\n((.*\n)*?)\]\]\](\n|$)/,
+            replaceRegex: /^ ([ \t]*\]\]\])/gm,
+            replaceString: '$1' },
+
         tt: { tag: 'tt',
             regex: /\{\{\{(.*?\}\}\}+)/, capture: 1,
             replaceRegex: /\}\}\}$/, replaceString: '' },
@@ -496,7 +504,7 @@ var Url = {
 
     g.root = {
         children: [ g.h1, g.h2, g.h3, g.h4, g.h5, g.h6,
-            g.hr, g.ulist, g.olist, g.preBlock, g.table, g.ohlohWidget ],
+            g.hr, g.ulist, g.olist, g.preBlock, g.codeBlock, g.table, g.ohlohWidget ],
         fallback: { children: [ g.paragraph ] }
     };
 
