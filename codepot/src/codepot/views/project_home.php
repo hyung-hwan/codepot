@@ -12,6 +12,13 @@
 
 <script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
 
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
+
 <script type="text/javascript">
 function render_wiki() 
 {
@@ -21,6 +28,8 @@ function render_wiki()
 		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
 		"<?=site_url()?>/wiki/attachment0/<?=$project->id?>/"
 	);
+
+	prettyPrint ();
 }
 </script>
 
@@ -125,6 +134,10 @@ foreach ($urls as $url)
 }
 ?>
 </ul>
+<pre>
+<?php //print_r ($urls); ?>
+<?php //print_r ($_SERVER); ?>
+</pre>
 </div>
 
 <div class="box">
