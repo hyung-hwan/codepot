@@ -8,6 +8,13 @@
 
 <script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
 
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
+
 <title><?=htmlspecialchars($wiki->name)?></title>
 </head>
 
@@ -18,13 +25,14 @@ $hexname = $this->converter->AsciiToHex ($wiki->name);
 <script type="text/javascript">
 function render_wiki()
 {
-
 	creole_render_wiki (
 		"wiki_show_mainarea_wiki_text", 
 		"wiki_show_mainarea_wiki", 
 		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
 		"<?=site_url()?>/wiki/attachment/<?=$project->id?>/<?=$hexname?>/"
 	);
+
+	prettyPrint ();
 }
 </script>
 
