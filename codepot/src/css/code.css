@@ -334,14 +334,14 @@
 #code_diff_mainarea_result_fulldiffold {
 	border: none;
 	//padding-left: 10px;
-	//background: #F8FAF8;
+	//background: #F8F8FA;
 	padding-left: 1px;
 }
 
 #code_diff_mainarea_result_fulldiffnew {
 	border: none;
 	//padding-left: 10px;
-	background: #F8F8FA;
+	background: #FEF8F8;
 	padding-left: 1px;
 }
 

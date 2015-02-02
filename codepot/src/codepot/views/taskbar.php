@@ -16,7 +16,7 @@ function show_taskbar ($con, $login)
 		// check a file system may be faster than checking the database.
 		$icon_src = '';
 		$icon_path = CODEPOT_USERICON_DIR . '/' . $login['id'] . '.png';
-		$icon_image = file_get_contents($icon_path);
+		$icon_image = @file_get_contents($icon_path);
 		if ($icon_image)
 		{
 			$icon_src = sprintf (
