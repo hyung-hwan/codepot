@@ -32,6 +32,7 @@ $lang['Full Difference'] = 'FullDiff';
 $lang['Head revision'] = 'Kepala revisi';
 $lang['History'] = 'Sejarah';
 $lang['Home'] = 'Beranda';
+$lang['Icon'] = 'Icon';
 $lang['ID'] = 'ID';
 $lang['Issue'] = 'Issue';
 $lang['Issues'] = 'Issue';

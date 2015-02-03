@@ -35,6 +35,7 @@ $lang['Head revision'] = 'Head revision';
 $lang['Hide details'] = 'Hide details';
 $lang['History'] = 'History';
 $lang['Home'] = 'Home';
+$lang['Icon'] = 'Icon';
 $lang['ID'] = 'ID';
 $lang['Issue'] = 'Issue';
 $lang['Issues'] = 'Issues';

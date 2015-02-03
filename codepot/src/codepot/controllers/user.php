@@ -157,13 +157,56 @@ class User extends Controller
 		$data['login'] = $login;
 		$data['message'] = '';
 
+		$icon_fname = FALSE;
+		$uploaded_fname = FALSE;
+
 		if($this->input->post('settings'))
 		{
+			if (array_key_exists ('icon_img_file_name', $_FILES))
+			{
+				$fname = $_FILES['icon_img_file_name']['name'];
+
+				if (strpos ($fname, ':') !== FALSE)
+				{
+					$data['message'] = $this->lang->line ('FILE_MSG_NAME_NO_COLON');
+					$data['file'] = $file;
+					$this->load->view ($this->VIEW_EDIT, $data);
+					return;
+				}
+
+				// delete all \" instances ... 
+				$_FILES['icon_img_file_name']['type'] = 
+					str_replace('\"', '', $_FILES['icon_img_file_name']['type']);
+				// delete all \\ instances ...  
+				$_FILES['icon_img_file_name']['type'] = 
+					str_replace('\\', '', $_FILES['icon_img_file_name']['type']);
+
+				$config['allowed_types'] = 'png';
+				$config['upload_path'] = CODEPOT_USERICON_DIR;
+				$config['max_size'] = CODEPOT_MAX_UPLOAD_SIZE;
+				$config['max_width'] = 100; // TODO: make it configurable.
+				$config['max_height'] = 100;
+				$config['encrypt_name'] = TRUE;
+
+				$this->load->library ('upload');
+				$this->upload->initialize ($config);
+		
+				if ($this->upload->do_upload ('icon_img_file_name'))
+				{
+					$upload = $this->upload->data ();
+					$uploaded_fname = $upload['file_name'];
+					$icon_fname = $login['id'] . '.png';
+				}
+			}
+
 			$settings->code_hide_line_num = $this->input->post('code_hide_line_num');
 			$settings->code_hide_details = $this->input->post('code_hide_details');
+			$settings->icon_name = $icon_fname;
+			$settings->uploaded_icon_name = $uploaded_fname;
 
 			if ($this->users->storeSettings ($login['id'], $settings) === FALSE)
 			{
+				@unlink (CODEPOT_USERICON_DIR . '/' . $uploaded_fname);
 				$data['message'] = 'DATABASE ERROR';
 				$data['settings'] = $settings;
 				$this->load->view ($this->VIEW_SETTINGS, $data);
@@ -185,6 +228,7 @@ class User extends Controller
 				if ($settings === FALSE) $data['message'] = 'DATABASE ERROR';
 				$settings->code_hide_line_num = ' ';
 				$settings->code_hide_details = ' ';
+				$settings->icon_name = '';
 			}
 
 			$data['settings'] = $settings;

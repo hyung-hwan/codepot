@@ -61,7 +61,7 @@ $this->load->view (
 
 <div id="user_settings_mainarea_result">
 
-<?=form_open('user/settings/')?>
+<?=form_open_multipart('user/settings/')?>
 
 	<?=form_fieldset($this->lang->line('Code'))?>
 
@@ -74,6 +74,15 @@ $this->load->view (
 			'Y', $settings->code_hide_details == 'Y')
 		?>
 		<?= $this->lang->line('USER_MSG_HIDE_DETAILS')?>
+
+		<div class='form_input_field'>
+			<?=form_label($this->lang->line('Icon').': ', 'icon_img_file_name')?>
+			<?php
+				$extra = 'maxlength="255" size="40"';
+				print form_upload('icon_img_file_name', set_value('icon_img_file_name', ''), $extra);
+			?>
+			<?=form_error('icon_img_file_name');?>
+		</div>
 	
 	<?=form_fieldset_close()?>
 
