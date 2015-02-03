@@ -368,7 +368,7 @@ class File extends Controller
 
 								if ($this->files->create ($login['id'], $file) === FALSE)
 								{
-									unlink (CODEPOT_FILE_DIR . "/{$file->encname}");
+									@unlink (CODEPOT_FILE_DIR . "/{$file->encname}");
 									$data['message'] = 'DATABASE ERROR';
 									$data['file'] = $file;
 									$this->load->view ($this->VIEW_EDIT, $data);
