@@ -82,6 +82,7 @@ $this->load->view (
 				print form_upload('icon_img_file_name', set_value('icon_img_file_name', ''), $extra);
 			?>
 			<?=form_error('icon_img_file_name');?>
+			(.png, max. 100x100)
 		</div>
 	
 	<?=form_fieldset_close()?>
