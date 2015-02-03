@@ -35,6 +35,7 @@ $lang['Head revision'] = '최신리비전';
 $lang['Hide details'] = '상세내역숨김';
 $lang['History'] = '변경기록';
 $lang['Home'] = '홈';
+$lang['Icon'] = '아이콘';
 $lang['ID'] = '아이디';
 $lang['Issue'] = '이슈';
 $lang['Issues'] = '이슈';
