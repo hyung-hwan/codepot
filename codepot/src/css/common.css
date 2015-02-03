@@ -226,7 +226,7 @@ body {
 
 .content .mainarea form textarea {
 	border: 1px solid #BBCCDD;
-	font-family: monospace;
+	font-family: monospace, consolas;
 	font-size: inherit;
 }
 

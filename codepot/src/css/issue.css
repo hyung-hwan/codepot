@@ -107,7 +107,7 @@
 	display: block;
 	padding: 1px;
 	font-size: inherit;
-	font-family: monospace;
+	font-family: monospace, consolas;
 	width: 100%;
 }
 
@@ -179,7 +179,7 @@
 	display: block;
 	padding: 1px;
 	font-size: inherit;
-	font-family: monospace;
+	font-family: monospace, consolas;
 	width: 100%;
 }
 
