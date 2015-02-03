@@ -4,7 +4,9 @@ www_DATA =  \
 	index.html \
 	Lang_detect.php \
 	issuehelper.php \
-	wikihelper.php 
+	wikihelper.php \
+	phpgraphlib.php \
+	phpgraphlibpie.php
 
 EXTRA_DIST = $(www_DATA)
 
