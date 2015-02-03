@@ -91,7 +91,7 @@ class UserModel extends Model
 		$this->db->where ('userid', $userid);
 		$this->db->set ('code_hide_line_num', (string)$settings->code_hide_line_num);
 		$this->db->set ('code_hide_details', (string)$settings->code_hide_details);
-		if (strlen($settings->icon_name) > 0) $this->db->set ('icon_name', (string)$settings->icon_name);
+		if (strlen($icon_name_set) $this->db->set ('icon_name', (string)$settings->icon_name);
 		$this->db->update ('user_settings');
 
 		if ($this->db->trans_status() === FALSE)
