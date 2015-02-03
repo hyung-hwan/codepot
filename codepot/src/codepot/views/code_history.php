@@ -79,6 +79,17 @@ $this->load->view (
 </div> <!-- code_history_mainarea_menu -->
 
 <div id="code_history_mainarea_result">
+
+<?php
+	$xfullpath = $this->converter->AsciiToHex (($fullpath == '')? '.': $fullpath);
+
+	$graph_url = site_url() . "/code/graph/commits-by-users/{$project->id}/{$xfullpath}";
+	print "<img src='{$graph_url}' />";
+
+	$graph_url = site_url() . "/code/graph/commit-share-by-users/{$project->id}/{$xfullpath}";
+	print "<img src='{$graph_url}' />";
+?>
+
 <table id="code_history_mainarea_result_table">
 <tr class='heading'>
 	<th><?=$this->lang->line('Revision')?></th>

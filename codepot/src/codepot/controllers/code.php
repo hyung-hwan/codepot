@@ -635,4 +635,61 @@ class Code extends Controller
 		return $path;
 	}
 
+	function graph ($type = '', $projectid = '', $path = '')
+	{
+		$this->load->model ('SubversionModel', 'subversion');
+
+		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
+		$path = $this->_normalize_path ($path);
+
+		$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
+		$history = $file['history'];
+		$history_count = count($history);
+
+			
+		if ($type == 'commit-share-by-users')
+		{
+			$stats = array();
+			for ($i = 0; $i < $history_count; $i++)
+			{
+				$h = $history[$i];
+				if (array_key_exists ($h['author'], $stats))
+					$stats[$h['author']]++;
+				else 
+					$stats[$h['author']] = 1;
+			}
+
+			$this->load->library ('PHPGraphLibPie', array ('width' => 400, 'height' => 300), 'graph');
+			$this->graph->addData($stats);
+			$this->graph->setTitle("Commit share by users");
+			$this->graph->setLabelTextColor('50,50,50');
+			$this->graph->setLegendTextColor('50,50,50');
+			$this->graph->createGraph();
+		}
+		else
+		{
+			$stats = array();
+			for ($i = 0; $i < $history_count; $i++)
+			{
+				$h = $history[$i];
+				if (array_key_exists ($h['author'], $stats))
+					$stats[$h['author']]++;
+				else 
+					$stats[$h['author']] = 1;
+			}
+
+			$this->load->library ('PHPGraphLib', array ('width' => 400, 'height' => 300), 'graph');
+			$this->graph->addData($stats);
+			$this->graph->setTitle("Commits by users");
+			$this->graph->setDataPoints(TRUE);
+			$this->graph->setDataValues(TRUE);
+			//$this->graph->setLine(TRUE);
+			$this->graph->setBars(TRUE);
+			//$this->graph->setXValuesHorizontal(TRUE);
+			$this->graph->createGraph();
+
+		}
+	}
+
 }
