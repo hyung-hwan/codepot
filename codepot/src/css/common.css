@@ -274,9 +274,12 @@ body {
 .content .mainarea pre.wiki {
 	white-space: pre-wrap;
 	padding: 1em;
-	line-height: 1.4em;
-	//font-size: 1.1em;
+	line-height: 1.2em;
 	font-family: consolas, "Andale Mono", monospace;
+
+	tab-size: 5;
+	-moz-tab-size: 5;
+	-o-tab-size: 5;
 }
 
 .content .mainarea tt {
@@ -370,9 +373,8 @@ body {
 	/*border: 1px solid #ccc;*/
 	background-color: #F8F8FA;
 	border: none;
-	//font-size: 1.1em;
 	font-family: consolas, "Andale Mono", monospace;
-	line-height: 1.4em;
+	line-height: 1.2em;
 	padding: 1em;
 
 	tab-size: 5;

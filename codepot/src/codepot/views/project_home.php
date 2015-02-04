@@ -73,6 +73,7 @@ $this->load->view (
 <div class="box">
 <ul>
 <li><?=$this->lang->line('Created on')?> <?=$project->createdon?></li>
+<li><?=$this->lang->line('Created by')?> <?=$project->createdby?></li>
 <li><?=$this->lang->line('Last updated on')?> <?=$project->updatedon?></li>
 <li><?=$this->lang->line('Last updated by')?> <?=$project->updatedby?></li>
 </ul>

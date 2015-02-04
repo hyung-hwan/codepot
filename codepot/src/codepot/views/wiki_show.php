@@ -73,6 +73,7 @@ $this->load->view (
 <div class="box">
 <ul>
 <li><?=$this->lang->line('Created on')?> <?= $wiki->createdon ?></li>
+<li><?=$this->lang->line('Created by')?> <?= $wiki->createdby ?></li>
 <li><?=$this->lang->line('Last updated on')?> <?= $wiki->updatedon ?></li>
 <li><?=$this->lang->line('Last updated by')?> <?= $wiki->updatedby ?></li>
 </ul>
