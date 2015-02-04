@@ -307,6 +307,9 @@ if (FALSE) // don't want to delete code for the original diff view.
 }
 else
 {
+	$http_user_agent = $_SERVER['HTTP_USER_AGENT']; 
+	$is_msie = (preg_match('/MSIE/i',$http_user_agent) && !preg_match('/Opera/i',$http_user_agent));
+
 	print '<div style="width: 100%; overflow: hidden;" id="code_diff_mainarea_result_fullview">';
 
 	if (empty($file['content']))
@@ -345,10 +348,12 @@ else
 				print "<span class='{$diffclass}'>";
 
 				if ($diffclass == 'diffchanged')
-					print format_diff ($x['rev1line'], $x['rev2line'], 'diffchangedold');
+					$xline = format_diff ($x['rev1line'], $x['rev2line'], 'diffchangedold');
 				else 
-					print htmlspecialchars($x['rev1line']);
+					$xline = htmlspecialchars($x['rev1line']);
 
+				if ($is_msie && $xline == '') $xline = '&nbsp;'
+				print $xline;
 				print "</span>\n";
 			}
 			else
@@ -392,10 +397,12 @@ else
 				print "<span class='{$diffclass}'>";
 
 				if ($diffclass == 'diffchanged')
-					print format_diff ($x['rev2line'], $x['rev1line'], 'diffchangednew');
+					$xline = format_diff ($x['rev2line'], $x['rev1line'], 'diffchangednew');
 				else 
-					print htmlspecialchars($x['rev2line']);
+					$xline = htmlspecialchars($x['rev2line']);
 
+				if ($is_msie && $xline == '') $xline = '&nbsp;'
+				print $xline;
 				print "</span>\n";
 			}
 			else
