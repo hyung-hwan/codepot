@@ -135,7 +135,7 @@ $this->load->view (
 		print '</td>';
 
 
-		if ($file['type'] == 'file')	
+		if ($file['type'] == 'file')
 		{
 			print '<td>';
 			print anchor ("code/blame/{$project->id}/{$xfullpath}/{$h['rev']}", 
