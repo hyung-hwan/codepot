@@ -257,9 +257,9 @@ class User extends Controller
 				header ("Content-Type: image/png");
 				header ("Content-Length: $icon_size");
 				@readfile ($icon_path);
-				return $icon_size;
+				return;
 			}
-                }
+		}
 
 		$img = imagecreate (50, 50);
 
