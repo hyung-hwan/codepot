@@ -647,21 +647,18 @@ class Code extends Controller
 		$history = $file['history'];
 		$history_count = count($history);
 
-			
 		if ($type == 'commit-share-by-users')
 		{
 			$stats = array();
 			for ($i = 0; $i < $history_count; $i++)
 			{
 				$h = $history[$i];
-				if (array_key_exists ('author', $h))
-				{
-					$author = $h['author'];
-					if (array_key_exists ($author, $stats))
-						$stats[$author]++;
-					else 
-						$stats[$author] = 1;
-				}
+				$author = (array_key_exists ('author', $h))? $h['author']: '?';
+
+				if (array_key_exists ($author, $stats))
+					$stats[$author]++;
+				else 
+					$stats[$author] = 1;
 			}
 
 			$this->load->library ('PHPGraphLibPie', array ('width' => 400, 'height' => 300), 'graph');
@@ -677,14 +674,12 @@ class Code extends Controller
 			for ($i = 0; $i < $history_count; $i++)
 			{
 				$h = $history[$i];
-				if (array_key_exists ('author', $h))
-				{
-					$author = $h['author'];
-					if (array_key_exists ($author, $stats))
-						$stats[$author]++;
-					else 
-						$stats[$author] = 1;
-				}
+				$author = (array_key_exists ('author', $h))? $h['author']: '?';
+
+				if (array_key_exists ($author, $stats))
+					$stats[$author]++;
+				else 
+					$stats[$author] = 1;
 			}
 
 			$this->load->library ('PHPGraphLib', array ('width' => 400, 'height' => 300), 'graph');
@@ -696,7 +691,6 @@ class Code extends Controller
 			$this->graph->setBars(TRUE);
 			//$this->graph->setXValuesHorizontal(TRUE);
 			$this->graph->createGraph();
-
 		}
 	}
 
