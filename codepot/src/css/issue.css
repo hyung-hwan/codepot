@@ -107,7 +107,7 @@
 	display: block;
 	padding: 1px;
 	font-size: inherit;
-	font-family: monospace, consolas;
+	font-family: consolas, "Andale Mono", monospace;
 	width: 100%;
 }
 
@@ -179,7 +179,7 @@
 	display: block;
 	padding: 1px;
 	font-size: inherit;
-	font-family: monospace, consolas;
+	font-family: consolas, "Andale Mono", monospace;
 	width: 100%;
 }
 
