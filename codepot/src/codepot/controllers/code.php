@@ -637,6 +637,22 @@ class Code extends Controller
 
 	function graph ($type = '', $projectid = '', $path = '')
 	{
+		$this->load->model ('ProjectModel', 'projects');
+
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+		{
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
+			return;
+		}
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE || ($project->public !== 'Y' && $login['id'] == ''))
+		{
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
+			return;
+		}
+
 		$this->load->model ('SubversionModel', 'subversion');
 
 		$path = $this->converter->HexToAscii ($path);
