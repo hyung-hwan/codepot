@@ -98,6 +98,7 @@ $this->load->view (
 		$m = $members[$i];
 		if ($m == '') continue;
 
+		/*
 		$icon_src = '';
 		if (array_key_exists($m, $icons))
 		{
@@ -115,6 +116,9 @@ $this->load->view (
 		}
 
 		print "<li>{$icon_src}{$m}</li>";
+		*/
+		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($m));
+		print "<li><img src='{$user_icon_url}' class='user_icon_img' />{$m}</li>";
 	}
 ?>
 </ul>
