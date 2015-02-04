@@ -494,7 +494,7 @@ pre.prettyprint li.L9 { background: #eee }
 
 .content .sidebar .box .user_icon_img {
 	height: 2em;
-	width: auto;
+	width: 2em;
 	vertical-align: middle;
 	padding-top: 1px;
 	padding-bottom: 1px;
