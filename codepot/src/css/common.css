@@ -226,7 +226,7 @@ body {
 
 .content .mainarea form textarea {
 	border: 1px solid #BBCCDD;
-	font-family: monospace, consolas;
+	font-family: consolas, "Andale Mono", monospace;
 	font-size: inherit;
 }
 
@@ -274,8 +274,9 @@ body {
 .content .mainarea pre.wiki {
 	white-space: pre-wrap;
 	padding: 1em;
-	line-height: 1.5em;
-	font-size: 1.1em;
+	line-height: 1.4em;
+	//font-size: 1.1em;
+	font-family: consolas, "Andale Mono", monospace;
 }
 
 .content .mainarea tt {
@@ -369,8 +370,9 @@ body {
 	/*border: 1px solid #ccc;*/
 	background-color: #F8F8FA;
 	border: none;
-	font-size: 1.1em;
-	line-height: 1.5em;
+	//font-size: 1.1em;
+	font-family: consolas, "Andale Mono", monospace;
+	line-height: 1.4em;
 	padding: 1em;
 
 	tab-size: 5;
