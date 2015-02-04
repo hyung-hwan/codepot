@@ -308,7 +308,12 @@ if (FALSE) // don't want to delete code for the original diff view.
 else
 {
 	$http_user_agent = $_SERVER['HTTP_USER_AGENT']; 
-	$is_msie = (preg_match('/MSIE/i',$http_user_agent) && !preg_match('/Opera/i',$http_user_agent));
+	$is_msie = (stristr($http_user_agent, 'MSIE') != FALSE && 
+	            stristr($http_user_agent, 'Opera') == FALSE);
+	if (!$is_msie)
+	{
+		$is_msie = (preg_match ("/^Mozilla.+\(Windows.+\) like Gecko$/", $http_user_agent) != FALSE);
+	}
 
 	print '<div style="width: 100%; overflow: hidden;" id="code_diff_mainarea_result_fullview">';
 
