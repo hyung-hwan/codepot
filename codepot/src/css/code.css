@@ -56,8 +56,7 @@
 }
 
 #code_file_mainarea_result_pre {
-	/* make it the same as font-size of info .title below */
-	padding-top: 0.8em;
+	line-height: 1.4em;
 }
 
 #code_file_mainarea_result_info {
@@ -101,8 +100,7 @@
 }
 
 #code_blame_mainarea_result_pre {
-	/* make it the same as font-size of info .title below */
-	padding-top: 0.8em;
+	line-height: 1.4em;
 }
 
 #code_blame_mainarea_result_info {
@@ -336,6 +334,7 @@
 	//padding-left: 10px;
 	//background: #F8F8FA;
 	padding-left: 1px;
+	line-height: 1.4em;
 }
 
 #code_diff_mainarea_result_fulldiffnew {
@@ -343,6 +342,7 @@
 	//padding-left: 10px;
 	background: #FEF8F8;
 	padding-left: 1px;
+	line-height: 1.4em;
 }
 
 #code_diff_mainarea_result_fullview .navigator {
