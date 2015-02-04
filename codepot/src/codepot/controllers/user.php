@@ -235,6 +235,65 @@ class User extends Controller
 			$this->load->view ($this->VIEW_SETTINGS, $data);
 		}
 	}
+
+	function icon ($userid = '')
+	{
+	// TODO: ETag, If-None-Match???
+		$userid_len = strlen($userid);
+		if ($userid_len > 0)
+		{
+			$userid = $this->converter->HexToAscii ($userid);
+			$userid_len = strlen($userid);
+		}
+
+		if ($userid_len > 0)
+		{
+			$icon_path = CODEPOT_USERICON_DIR . '/' . $userid . '.png';
+			$icon_size = @filesize ($icon_path);
+			if (@file_exists($icon_path) === TRUE && 
+			    ($icon_size = @filesize($icon_path)) !== FALSE &&
+			    @getimagesize($icon_path) !== FALSE)
+			{
+				header ("Content-Type: image/png");
+				header ("Content-Length: $icon_size");
+				@readfile ($icon_path);
+				return $icon_size;
+			}
+                }
+
+		$img = imagecreate (50, 50);
+
+		$bgcolor = imagecolorallocate($img, 250, 255, 250);
+		imagefill ($img, 0, 0, $bgcolor);
+
+		if ($userid_len > 0) 
+		{
+			$fgcolor = imagecolorallocate($img, 0, 0, 0);
+			$font_size = 4;
+			$font_width = imagefontwidth(5);
+			$font_height = imagefontheight(5);
+			$img_width = imagesx($img);
+			$y = 2;
+			$k = 1;
+			for ($i = 0; $i < $userid_len; $i++) 
+			{
+				$x = $k * $font_width;
+				if ($x > $img_width - $font_width) 
+				{
+					$k = 1;
+					$y += $font_height + 2;
+					$x = $k * $font_width;
+				}
+
+				$k++;
+				imagechar ($img, $font_size, $x, $y, $userid[$i], $fgcolor);
+			}
+		}
+
+		header ("Content-Type: image/png");
+		imagepng ($img);
+		imagedestroy ($img);
+	}
 }
 
 ?>

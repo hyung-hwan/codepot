@@ -15,3 +15,15 @@ if ( ! function_exists('base_url_make'))
 	}
 }
 
+if ( ! function_exists('codepot_merge_path'))
+{
+	function codepot_merge_path($base, $path)
+	{
+		if (substr($base, -1) == '/')
+		{
+			for ($i = 0; substr($path, $i, 1) == '/'; $i++);
+			return $base . substr($path, $i);
+		}
+		else return $base . $path;
+	}
+}

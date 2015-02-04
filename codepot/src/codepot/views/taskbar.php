@@ -11,6 +11,7 @@ function show_taskbar ($con, $login)
 		$title = (isset($login['email']) && $login['email'] != '')?
 			('title=' . htmlspecialchars($login['email'])): '';
 
+		/*
 		// attempt to load the user icon regardless of its upload state.
 		// if it has not been uploaded, it won't be found. 
 		// check a file system may be faster than checking the database.
@@ -26,6 +27,9 @@ function show_taskbar ($con, $login)
 			);
 		}
 		print $icon_src;
+		*/
+		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $con->converter->AsciiToHex($login['id']));
+		print "<img src='{$user_icon_url}' class='user_icon_img' />";
 
 		print anchor ('user/home', htmlspecialchars($login['id']), $title);
 
