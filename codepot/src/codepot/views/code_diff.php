@@ -184,7 +184,7 @@ if (FALSE) // don't want to delete code for the original diff view.
 {
 	print '<table id="code_diff_mainarea_result_table">';
 	/*
-	print '<pre>';	
+	print '<pre>';
 	print_r ($file['content']);
 	print '</pre>';
 	*/
