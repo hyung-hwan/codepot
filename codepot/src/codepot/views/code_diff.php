@@ -352,7 +352,7 @@ else
 				else 
 					$xline = htmlspecialchars($x['rev1line']);
 
-				if ($is_msie && $xline == '') $xline = '&nbsp;'
+				if ($is_msie && $xline == '') $xline = '&nbsp;';
 				print $xline;
 				print "</span>\n";
 			}
@@ -401,7 +401,7 @@ else
 				else 
 					$xline = htmlspecialchars($x['rev2line']);
 
-				if ($is_msie && $xline == '') $xline = '&nbsp;'
+				if ($is_msie && $xline == '') $xline = '&nbsp;';
 				print $xline;
 				print "</span>\n";
 			}
