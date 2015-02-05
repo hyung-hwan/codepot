@@ -124,7 +124,9 @@ $this->load->view (
 	</ul>
 
 	<div class="title"><?=$this->lang->line('MD5')?></div>
-	<?= $file->md5sum ?>
+	<ul>
+	<li><?= $file->md5sum ?></li>
+	</ul>
 
 </div> <!-- file_show_mainarea_result_info -->
 
