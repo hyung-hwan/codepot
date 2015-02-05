@@ -261,6 +261,14 @@ if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 }
 ?>
 </pre>
+
+<div class="title">CLOC</div>
+<?php
+	/* TODO: show this if it's enabled in the user settings  */
+        $graph_url = codepot_merge_path (site_url(), "/code/graph/cloc-file/{$project->id}/{$xpar}{$revreq}");
+        print "<img src='{$graph_url}' />";
+?>
+
 </div> <!-- code_file_mainarea_result_info -->
 
 

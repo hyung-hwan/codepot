@@ -635,7 +635,7 @@ class Code extends Controller
 		return $path;
 	}
 
-	function graph ($type = '', $projectid = '', $path = '')
+	function graph ($type = '', $projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
@@ -659,12 +659,100 @@ class Code extends Controller
 		if ($path == '.') $path = ''; /* treat a period specially */
 		$path = $this->_normalize_path ($path);
 
-		$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
-		$history = $file['history'];
-		$history_count = count($history);
 
-		if ($type == 'commit-share-by-users')
+		if ($type == 'cloc-file')
 		{
+			// number of lines in a single file
+
+			$file = $this->subversion->getFile ($projectid, $path, $rev);
+			if ($file === FALSE)
+			{
+				header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
+				return;
+			}
+
+			if ($file['type'] != 'file')
+			{
+				header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
+				return;
+			}
+
+			$tfname = @tempnam(__FILE__, 'xxx'); 
+			if ($tfname === FALSE)
+			{
+				header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
+				return;
+			}
+
+			$tfname = $tfname . '.' . pathinfo ($file['name'], PATHINFO_EXTENSION);
+			@file_put_contents ($tfname, $file['content']);
+
+			$cloc_cmd = sprintf ('%s --quiet --csv --csv-delimiter=":" %s', CODEPOT_CLOC_COMMAND_PATH, $tfname);
+			$cloc = @popen ($cloc_cmd, 'r');
+			if ($cloc === FALSE)
+			{
+				@unlink ($tfname);
+				header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
+				return;
+			}
+
+			$line_count = 0;
+			$counter = FALSE;
+			while (!feof($cloc))
+			{
+				$line = @fgets ($cloc);
+				if ($line_count == 2)
+				{
+					$counter = explode (':', $line);
+				}
+				$line_count++;
+			} 
+
+			@pclose ($cloc);
+			@unlink ($tfname);
+
+			if ($counter === FALSE)
+			{
+				$stats = array (
+					'no-data' => 0
+				);
+				$title = $file['name'];
+			}
+			else
+			{
+				$stats = array (
+					'blank' => (integer)$counter[2],
+					'comment' => (integer)$counter[3],
+					'code' => (integer)$counter[4],
+					'total' => (integer)$counter[2] + (integer)$counter[3] + (integer)$counter[4]
+				);
+
+				$title = $file['name'] . ' (' . $counter[1] . ')';
+			}
+
+			$this->load->library ('PHPGraphLib', array ('width' => 280, 'height' => 200), 'graph');
+			$this->graph->addData($stats);
+			$this->graph->setTitle($title);
+			$this->graph->setDataPoints(TRUE);
+			$this->graph->setDataValues(TRUE);
+			$this->graph->setBars(TRUE);
+			$this->graph->setXValuesHorizontal(TRUE);
+			$this->graph->setYValues (FALSE);
+			$this->graph->createGraph();
+		}
+		else if ($type == 'commit-share-by-users')
+		{
+			// revision is ignored
+			$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
+			if ($file === FALSE)
+			{
+				header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
+				return;
+			}
+
+			$history = $file['history'];
+			$history_count = count($history);
+
 			$stats = array();
 			for ($i = 0; $i < $history_count; $i++)
 			{
@@ -679,13 +767,24 @@ class Code extends Controller
 
 			$this->load->library ('PHPGraphLibPie', array ('width' => 400, 'height' => 300), 'graph');
 			$this->graph->addData($stats);
-			$this->graph->setTitle("Commit share by users");
+			$this->graph->setTitle('Commit share by users');
 			$this->graph->setLabelTextColor('50,50,50');
 			$this->graph->setLegendTextColor('50,50,50');
 			$this->graph->createGraph();
 		}
 		else
 		{
+			// revision is ignored
+			$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
+			if ($file === FALSE)
+			{
+				header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
+				return;
+			}
+
+			$history = $file['history'];
+			$history_count = count($history);
+
 			$stats = array();
 			for ($i = 0; $i < $history_count; $i++)
 			{
@@ -700,7 +799,7 @@ class Code extends Controller
 
 			$this->load->library ('PHPGraphLib', array ('width' => 400, 'height' => 300), 'graph');
 			$this->graph->addData($stats);
-			$this->graph->setTitle("Commits by users");
+			$this->graph->setTitle('Commits by users');
 			$this->graph->setDataPoints(TRUE);
 			$this->graph->setDataValues(TRUE);
 			//$this->graph->setLine(TRUE);
