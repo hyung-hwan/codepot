@@ -646,11 +646,21 @@ class SubversionModel extends Model
 			$old_text = @svn_cat ($info2[0]['url'], $info2[0]['revision']);
 			if ($old_text === FALSE)
 			{
-				// if the old URL can't give the contents,
-				// try it with the latest url and the old revision number
-				$old_text = @svn_cat ($info1[0]['url'], $info2[0]['revision']);
+				$pegged_url = $info2[0]['url'] . '@' . $info2[0]['revision'];
+				$old_text = @svn_cat ($pegged_url, $info2[0]['revision']);
+				if ($old_text === FALSE)
+				{
+					// if the old URL can't give the contents,
+					// try it with the latest url and the old revision number
+					$old_text = @svn_cat ($info1[0]['url'], $info2[0]['revision']);
+				}
 			}
 			$new_text = @svn_cat ($info1[0]['url'], $info1[0]['revision']);
+			if ($new_text == FALSE)
+			{
+				$pegged_url = $info1[0]['url'] . '@' . $info1[0]['revision'];
+				$new_text = @svn_cat ($pegged_url, $info1[0]['revision']);
+			}
 			$fileinfo['content'] = $this->_get_diff ($diff, $old_text, $new_text, TRUE, FALSE);
 		}
 		else
