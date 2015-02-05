@@ -677,21 +677,24 @@ class Code extends Controller
 				return;
 			}
 
-			$tfname = @tempnam(__FILE__, 'xxx'); 
+			// pass __FILE__ as the first argument so that tempnam creates a name
+			// in the system directory. __FILE__ can never be a valid directory.
+			$tfname = @tempnam(__FILE__, 'codepot-cloc-'); 
 			if ($tfname === FALSE)
 			{
 				header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
 				return;
 			}
 
-			$tfname = $tfname . '.' . pathinfo ($file['name'], PATHINFO_EXTENSION);
-			@file_put_contents ($tfname, $file['content']);
+			$actual_tfname = $tfname . '.' . pathinfo ($file['name'], PATHINFO_EXTENSION);
+			@file_put_contents ($actual_tfname, $file['content']);
 
-			$cloc_cmd = sprintf ('%s --quiet --csv --csv-delimiter=":" %s', CODEPOT_CLOC_COMMAND_PATH, $tfname);
+			$cloc_cmd = sprintf ('%s --quiet --csv --csv-delimiter=":" %s', CODEPOT_CLOC_COMMAND_PATH, $actual_tfname);
 			$cloc = @popen ($cloc_cmd, 'r');
 			if ($cloc === FALSE)
 			{
 				@unlink ($tfname);
+				@unlink ($actual_tfname);
 				header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
 				return;
 			}
@@ -710,6 +713,7 @@ class Code extends Controller
 
 			@pclose ($cloc);
 			@unlink ($tfname);
+			@unlink ($actual_tfname);
 
 			if ($counter === FALSE)
 			{
