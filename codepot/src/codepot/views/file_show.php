@@ -15,7 +15,35 @@
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
 
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+
 <script type="text/javascript">
+$(function () {
+	if ($("#file_show_mainarea_result_info").is(":visible"))
+		btn_label = "<?=$this->lang->line('Hide details')?>";
+	else
+		btn_label = "<?=$this->lang->line('Show details')?>";
+	
+
+	btn = $("#file_show_mainarea_details_button").button({"label": btn_label}).click (function () {
+		
+		if ($("#file_show_mainarea_result_info").is(":visible"))
+		{
+			$("#file_show_mainarea_result_info").hide("blind",{},200);
+			$("#file_show_mainarea_details_button").button(
+				"option", "label", "<?=$this->lang->line('Show details')?>");
+		}
+		else
+		{
+			$("#file_show_mainarea_result_info").show("blind",{},200);
+			$("#file_show_mainarea_details_button").button(
+				"option", "label", "<?=$this->lang->line('Hide details')?>");
+		}
+	});
+});
+
 function render_wiki()
 {
 	creole_render_wiki (
@@ -66,33 +94,43 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="sidebar" id="file_show_sidebar">
-
-<div class="box">
-<ul>
-<li><?=$this->lang->line('Created on')?> <?= $file->updatedon ?></li>
-<li><?=$this->lang->line('Last updated on')?> <?= $file->updatedon ?></li>
-<li><?=$this->lang->line('Last updated by')?> <?= $file->updatedby ?></li>
-</ul>
-</div>
-
-<div class="box">
-<div class="boxtitle"><?=$this->lang->line('MD5')?></div>
-<?= $file->md5sum ?>
-</div>
-
-<?= anchor ("file/get/{$project->id}/". $this->converter->AsciiToHex($file->name), '['.$this->lang->line('Download').']') ?>
-
-</div>
 
 <div class="mainarea" id="file_show_mainarea">
 <div class="title"><?=htmlspecialchars($file->name)?></div>
+
+<div class="infostrip" id="wiki_show_mainarea_infostrip">
+	<?= anchor ("file/get/{$project->id}/". $this->converter->AsciiToHex($file->name), $this->lang->line('Download')) ?>
+	| <a id="file_show_mainarea_details_button" href='#'><?=$this->lang->line('Details')?></a>
+</div>
+
+<div id="file_show_mainarea_result">
+
 
 <div id="file_show_mainarea_wiki">
 <pre id="file_show_mainarea_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($file->description); ?>
 </pre>
 </div> <!-- file_show_mainarea_wiki -->
+
+
+
+<div id="file_show_mainarea_result_info">
+
+	<ul>
+	<li><?=$this->lang->line('Created on')?> <?= $file->updatedon ?></li>
+	<li><?=$this->lang->line('Created by')?> <?= $file->createdby ?></li>
+	<li><?=$this->lang->line('Last updated on')?> <?= $file->updatedon ?></li>
+	<li><?=$this->lang->line('Last updated by')?> <?= $file->updatedby ?></li>
+	</ul>
+
+	<div class="title"><?=$this->lang->line('MD5')?></div>
+	<?= $file->md5sum ?>
+
+</div> <!-- file_show_mainarea_result_info -->
+
+
+
+</div> <!-- file_show_mainarea_result -->
 
 </div> <!-- file_show_mainarea -->
 
