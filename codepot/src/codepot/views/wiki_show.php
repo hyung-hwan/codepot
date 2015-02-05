@@ -15,6 +15,10 @@
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
 
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+
 <title><?=htmlspecialchars($wiki->name)?></title>
 </head>
 
@@ -23,6 +27,30 @@ $hexname = $this->converter->AsciiToHex ($wiki->name);
 ?>
 
 <script type="text/javascript">
+$(function () {
+	if ($("#wiki_show_mainarea_result_info").is(":visible"))
+		btn_label = "<?=$this->lang->line('Hide details')?>";
+	else
+		btn_label = "<?=$this->lang->line('Show details')?>";
+	
+
+	btn = $("#wiki_show_mainarea_details_button").button({"label": btn_label}).click (function () {
+		
+		if ($("#wiki_show_mainarea_result_info").is(":visible"))
+		{
+			$("#wiki_show_mainarea_result_info").hide("blind",{},200);
+			$("#wiki_show_mainarea_details_button").button(
+				"option", "label", "<?=$this->lang->line('Show details')?>");
+		}
+		else
+		{
+			$("#wiki_show_mainarea_result_info").show("blind",{},200);
+			$("#wiki_show_mainarea_details_button").button(
+				"option", "label", "<?=$this->lang->line('Hide details')?>");
+		}
+	});
+});
+
 function render_wiki()
 {
 	creole_render_wiki (
@@ -69,46 +97,58 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-<div class="sidebar" id="wiki_show_sidebar">
-<div class="box">
-<ul>
-<li><?=$this->lang->line('Created on')?> <?= $wiki->createdon ?></li>
-<li><?=$this->lang->line('Created by')?> <?= $wiki->createdby ?></li>
-<li><?=$this->lang->line('Last updated on')?> <?= $wiki->updatedon ?></li>
-<li><?=$this->lang->line('Last updated by')?> <?= $wiki->updatedby ?></li>
-</ul>
-</div>
-
-<?php if (!empty($wiki->attachments)): ?>
-	<div class="box">
-		<div class="boxtitle"><?= $this->lang->line('WIKI_ATTACHMENTS') ?></div>
-		<ul>
-		<?php
-			foreach ($wiki->attachments as $att)
-			{
-				$hexattname = $this->converter->AsciiToHex ($att->name);
-				print '<li>';
-				print anchor (
-					"wiki/attachment/{$project->id}/{$hexname}/{$hexattname}", 
-					htmlspecialchars($att->name)
-				);
-				print '</li>';
-			}
-		?>
-		</ul>
-	</div>
-<?php endif; ?>
-
-</div>
 
 <div class="mainarea" id="wiki_show_mainarea">
+
 <div class="title"><?=htmlspecialchars($wiki->name)?></div>
+
+<div class="infostrip" id="wiki_show_mainarea_infostrip">
+	<a id="wiki_show_mainarea_details_button" href='#'><?=$this->lang->line('Details')?></a>
+</div>
+
+
+
+
+<div id="wiki_show_mainarea_result">
+
 
 <div id="wiki_show_mainarea_wiki">
 <pre id="wiki_show_mainarea_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($wiki->text); ?>
 </pre>
 </div> <!-- wiki_show_mainarea_wiki -->
+
+
+<div id="wiki_show_mainarea_result_info"> 
+
+<ul>
+<li><?=$this->lang->line('Created on')?> <?= $wiki->createdon ?></li>
+<li><?=$this->lang->line('Created by')?> <?= $wiki->createdby ?></li>
+<li><?=$this->lang->line('Last updated on')?> <?= $wiki->updatedon ?></li>
+<li><?=$this->lang->line('Last updated by')?> <?= $wiki->updatedby ?></li>
+</ul>
+
+<?php if (!empty($wiki->attachments)): ?>
+	<div class="title"><?= $this->lang->line('WIKI_ATTACHMENTS') ?></div>
+	<ul>
+	<?php
+		foreach ($wiki->attachments as $att)
+		{
+			$hexattname = $this->converter->AsciiToHex ($att->name);
+			print '<li>';
+			print anchor (
+				"wiki/attachment/{$project->id}/{$hexname}/{$hexattname}", 
+				htmlspecialchars($att->name)
+			);
+			print '</li>';
+		}
+	?>
+	</ul>
+<?php endif; ?>
+
+</div> <!-- wiki_show_mainarea_result_info -->
+
+</div> <!-- wiki_show_mainarea_result -->
 
 </div> <!-- wiki_show_mainarea -->
 
