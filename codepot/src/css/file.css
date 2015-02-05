@@ -10,8 +10,13 @@
 	white-space: nowrap;
 }
 
+/*-----------------------------------------------
+ * file show view
+ *-----------------------------------------------*/
+
 #file_show_mainarea_result {
 	position: relative;
+	min-height: 13em;
 }
 
 #file_show_mainarea_result_info {

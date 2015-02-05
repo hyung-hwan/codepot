@@ -80,7 +80,8 @@ function load_ini ($file)
 		array ('signin_for_code_search',       'boolean',     TRUE),
 		array ('svn_for_members_only',         'boolean',     FALSE),
 
-		array ('footer',                       'string',      '')
+		array ('footer',                       'string',      ''),
+		array ('cloc_command_path',            'string',      CODEPOT_CFG_DIR.'/cloc.pl')
 	);
 
 	foreach ($xcfgs as $x)
