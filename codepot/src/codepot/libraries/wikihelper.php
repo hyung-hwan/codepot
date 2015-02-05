@@ -21,6 +21,20 @@ class WikiHelper
 			$link = "issue/show/{$projectid}/{$num_hex}";
 			return $link;
 		}
+		else if (preg_match ('/^#C(\/.*)$/', $name, $matches) == 1)
+		{
+			// #C/XXX... -> translate it to a code file
+			$file_name = $converter->AsciiToHex ($matches[1]);
+			$link = "code/file/{$projectid}/{$file_name}";
+			return $link;
+		}
+		else if (preg_match ('/^#F(.+)$/', $name, $matches) == 1)
+		{
+			// #Ffilename.tgz -> translate it to a file download
+			$file_name = $converter->AsciiToHex ($matches[1]);
+			$link = "file/show/{$projectid}/{$file_name}";
+			return $link;
+		}
 
 		if ($this->_is_reserved ($name, TRUE))
 		{
