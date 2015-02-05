@@ -9,7 +9,7 @@ License: GPL
 Group: Applications/Utilities
 Source0: %{name}-%{version}.tar.gz
 
-Requires: httpd php php-ldap php-mysql php-gd subversion subversion-perl mod_dav_svn mod_perl perl-LDAP perl-Config-Simple perl-URI perl-DBI perl-Digest-SHA1
+Requires: httpd php php-ldap php-mysql php-gd subversion subversion-perl mod_dav_svn mod_perl perl perl-LDAP perl-Config-Simple perl-URI perl-DBI perl-Digest-SHA1
 
 #BuildRequires:
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
@@ -52,6 +52,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/codepot/post-commit
 /etc/codepot/pre-revprop-change
 /etc/codepot/post-revprop-change
+/etc/codepot/cloc.pl
 /etc/codepot/perl/Codepot/AccessHandler.pm
 /etc/codepot/perl/Codepot/AuthenHandler.pm
 
