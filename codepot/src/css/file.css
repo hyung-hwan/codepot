@@ -10,6 +10,35 @@
 	white-space: nowrap;
 }
 
+#file_show_mainarea_result {
+	position: relative;
+}
+
+#file_show_mainarea_result_info {
+	position: absolute;
+	top: 5px;
+	right: 2px;
+	width: 22em;
+	background: #E5ECF9 none repeat scroll 0 0;
+	border: #D4DBE8 1px solid;
+	overflow: auto;
+	padding: 0.2em 0.4em 0.2em 0.4em;
+	font-size: 0.9em;
+}
+
+#file_show_mainarea_result_info ul {
+	padding-left: 2em;
+}
+
+#file_show_mainarea_result_info .title {
+	background-color: #8888FF;
+	color: #FFFFFF;
+	border: #D4DBE8 1px solid;
+	margin: 0.3em 0 0.3em 0;
+	padding: 0.1em 0.1em 0.1em 0.1em;
+	font-size: inherit;
+	text-transform: uppercase;
+}
 
 #file_edit_mainarea_description {
 	width: 100%;
