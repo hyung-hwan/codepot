@@ -193,6 +193,7 @@ $this->load->view (
 		print '<th>' . $this->lang->line('Date') . '</th>';
 		print '<th>' . $this->lang->line('Blame') . '</th>';
 		print '<th>' . $this->lang->line('Difference') . '</th>';
+		print '<th>' . $this->lang->line('Full Difference') . '</th>';
 		print '</tr>';
 
 		$rowclasses = array ('even', 'odd');
@@ -261,6 +262,11 @@ $this->load->view (
 				print anchor (
 					"code/diff/{$project->id}/{$hexpath}{$revreq}",
 					$this->lang->line('Difference'));
+				print '</td>';
+				print '<td>';
+				print anchor (
+					"code/fulldiff/{$project->id}/{$hexpath}{$revreq}",
+					$this->lang->line('Full Difference'));
 				print '</td>';
 				print '</tr>';
 			}
