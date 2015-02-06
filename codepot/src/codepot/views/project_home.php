@@ -272,6 +272,13 @@ foreach ($urls as $url)
 <?=htmlspecialchars($project->name)?>
 </div>
 
+<div id="project_home_mainarea_stat">
+<?php
+$graph_url = codepot_merge_path (site_url(), "/code/graph/commits-per-month/{$project->id}");
+print "<img src='{$graph_url}' />";
+?>
+</div> <!-- project_home_mainarea_stat -->
+
 <div id="project_home_mainarea_wiki">
 <pre id="project_home_mainarea_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($project->description); ?>
