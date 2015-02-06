@@ -79,6 +79,26 @@ $(function() {
 			return false;
 		}
 	);
+
+	<?php
+	for ($i = $review_count; $i > 0; )
+	{
+		$i--;
+
+		$rc = $reviews[$i];
+		if ($login['id'] == $rc->updatedby)
+		{
+			print ("
+				$('#code_revision_edit_review_comment_button_{$i}').button().click (
+					function () {
+						alert ('not implemented {$i}');
+						return false;
+					}
+				)
+			");
+		}
+	}
+	?>
 });
 <?php endif; ?>
 
@@ -318,6 +338,16 @@ $history = $file['history'];
 		printf (" <span class='review_comment_title_no'>%d</span>", $rc->sno);
 		printf (" <span class='review_comment_title_updatedby'>%s</span>", $rc->updatedby);
 		printf (" <span class='review_comment_title_updatedon'>%s</span>", $rc->updatedon);
+		
+		if ($login['id'] == $rc->updatedby)
+		{
+			print '&nbsp;';
+			print anchor (
+				"#", $this->lang->line('Edit'), 
+				array ('id' => 'code_revision_edit_review_comment_button_' . $i)
+			);
+		}
+
 		print ("</div>\n");
 
 		print "<div id='code_revision_mainarea_review_comment_$i' class='review_comment_text'>\n";
@@ -353,7 +383,6 @@ $history = $file['history'];
 <div id="code_revision_edit_div">
 	<?=form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_edit_logmsg_form"')?>
 		<?=
-
 			form_textarea (
 				array ('name' => 'edit_log_message', 
 				       'value' => $history['msg'], 'rows'=> 10, 'cols' => 70,
