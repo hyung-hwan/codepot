@@ -52,7 +52,7 @@ $(function() {
 
 <?php if ($is_loggedin): ?>
 $(function() {
-	$("#code_revision_new_comment_div").dialog (
+	$("#code_revision_new_review_comment_div").dialog (
 		{
 			title: '<?=$this->lang->line('Comment')?>',
 			width: 'auto',
@@ -75,7 +75,7 @@ $(function() {
 
 	$("#code_revision_new_review_comment_button").button().click (
 		function () {
-			$("#code_revision_new_comment_div").dialog('open');
+			$("#code_revision_new_review_comment_div").dialog('open');
 			return false;
 		}
 	);
@@ -88,10 +88,37 @@ $(function() {
 		$rc = $reviews[$i];
 		if ($login['id'] == $rc->updatedby)
 		{
+			$edit_title = $this->lang->line('Comment') . ' ' . ($i + 1);
+			$label_ok = $this->lang->line('OK');
+			$label_cancel = $this->lang->line('Cancel');
 			print ("
+
+				$('#code_revision_edit_review_comment_div_{$i}').dialog (
+					{
+						title: '{$edit_title}',
+						width: 'auto',
+						height: 'auto',
+						resizable: false,
+						autoOpen: false,
+						modal: true,
+						buttons: {
+							'{$label_ok}': function () {
+								// dynamically add a comment number to edit
+								var hidden_comment_no = $('<input>').attr('type', 'hidden').attr('name', 'edit_review_comment_no').val('{$i}');
+								$('#code_revision_edit_review_comment_form_{$i}').append(hidden_comment_no).submit ();
+								$(this).dialog('close');
+							},
+							'{$label_cancel}': function () {
+								$(this).dialog('close');
+							}
+						},
+						close: function() { }
+					}
+				);
+			
 				$('#code_revision_edit_review_comment_button_{$i}').button().click (
 					function () {
-						alert ('not implemented {$i}');
+						$('#code_revision_edit_review_comment_div_{$i}').dialog('open');
 						return false;
 					}
 				)
@@ -353,7 +380,6 @@ $history = $file['history'];
 		print "<div id='code_revision_mainarea_review_comment_$i' class='review_comment_text'>\n";
 		print "<pre id='code_revision_mainarea_review_comment_text_$i' style='visibility: hidden'>\n";
 
-		// TODO: delete box, edit box???
 		print $rc->comment;
 
 		print "</pre>\n";
@@ -395,7 +421,7 @@ $history = $file['history'];
 <?php endif; ?> <!-- $can_edit -->
 
 <?php if ($is_loggedin): ?>
-<div id="code_revision_new_comment_div">
+<div id="code_revision_new_review_comment_div">
 <?php
 	print form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_new_review_comment_form"');
 
@@ -408,6 +434,26 @@ $history = $file['history'];
 		       'id' => 'code_revision_edit_review_comment')
 	);
 	print form_close();
+
+	for ($i = $review_count; $i > 0; )
+	{
+		$i--;
+
+		$rc = $reviews[$i];
+
+		if ($login['id'] == $rc->updatedby)
+		{
+			print "<div id='code_revision_edit_review_comment_div_{$i}'>\n";
+			print form_open("code/revision/{$project->id}${revreqroot}", "id='code_revision_edit_review_comment_form_{$i}'");
+			print form_textarea (
+				array ('name' => "edit_review_comment_{$i}",
+				       'value' => $rc->comment, 'rows'=> 10, 'cols' => 70,
+				       'id' => "code_revision_edit_review_comment_{$i}")
+			);
+			print form_close();
+			print "</div>\n";
+		}
+	}
 ?>
 </div>
 <?php endif; ?> <!-- $is_loggedin -->
