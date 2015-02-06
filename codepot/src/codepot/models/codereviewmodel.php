@@ -15,7 +15,6 @@ class CodeReviewModel extends Model
 		$this->db->where ('projectid', (string)$projectid);
 		$this->db->where ('rev', $revision);
 		$query = $this->db->get ('code_review');
-		//if ($query === FALSE) 
 		if ($this->db->trans_status() === FALSE)
 		{
 			$this->db->trans_complete ();
@@ -65,12 +64,38 @@ class CodeReviewModel extends Model
 		$this->db->set ('projectid', $projectid);
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   "$rev,$sno");
-                $this->db->insert ('log');*/
+		$this->db->insert ('log');*/
 
 		$this->db->trans_complete ();
-                if ($this->db->trans_status() === FALSE) return FALSE;
+		if ($this->db->trans_status() === FALSE) return FALSE;
 
 		return $newsno;
+	}
+
+	function updateReview ($projectid, $revision, $sno, $userid, $comment, $strict = FALSE)
+	{
+		// TODO: check if userid can do this..
+		$this->db->trans_start ();
+
+		$this->db->where ('projectid', $projectid);
+		$this->db->where ('rev', $revision);
+		$this->db->where ('sno', $sno);
+		if ($strict) $this->db->where ('updatedby', $userid);
+		$this->db->set ('comment', $comment);
+		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedby', $userid);
+		$this->db->update ('code_review');
+
+                /*$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'code_review');
+		$this->db->set ('action',    'insert');
+		$this->db->set ('projectid', $projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   "$rev,$sno");
+		$this->db->insert ('log');*/
+
+		$this->db->trans_complete ();
+ 		return $this->db->trans_status();
 	}
 
 	function deleteReview ($projectid, $revision, $sno, $userid)
@@ -89,10 +114,10 @@ class CodeReviewModel extends Model
 		$this->db->set ('projectid', $projectid);
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   "$rev,$sno");
-                $this->db->insert ('log');*/
+		$this->db->insert ('log');*/
 
 		$this->db->trans_complete ();
-                return $this->db->trans_status();
+		return $this->db->trans_status();
 	}
 }
 

@@ -314,34 +314,76 @@ class Code extends Controller
 				}
 			}
 
-			if ($login['id'] != '' && $this->input->post('edit_review_comment'))
+			if ($login['id'] != '')
 			{
-				// Note that edit_log_message and edit_review_comment are not 
-				// supposed to be/ POSTed at the same time. 
-				// this program may break if that happens.
-
-				$this->load->helper ('form');
-				$this->load->library ('form_validation');
-
-				$this->form_validation->set_rules ('edit_review_comment', $this->lang->line('Comment'), 'required|min_length[10]');
-				$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
-
-				if ($this->form_validation->run())
+				if ($this->input->post('new_review_comment'))
 				{
-					$review_comment = $this->input->post('edit_review_comment');
-					if ($this->code_review->insertReview ($projectid, $rev, $login['id'], $review_comment) === FALSE)
+					// Note that edit_log_message and new_review_comment are not 
+					// supposed to be/ POSTed at the same time. 
+					// this program may break if that happens.
+	
+					$this->load->helper ('form');
+					$this->load->library ('form_validation');
+	
+					$this->form_validation->set_rules ('new_review_comment', $this->lang->line('Comment'), 'required|min_length[10]');
+					$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
+	
+					if ($this->form_validation->run())
 					{
-						$data['popup_error_message'] = 'Cannot add code review';
+						$review_comment = $this->input->post('new_review_comment');
+						if ($this->code_review->insertReview ($projectid, $rev, $login['id'], $review_comment) === FALSE)
+						{
+							$data['popup_error_message'] = 'Cannot add code review comment';
+						}
+						else
+						{
+							// this is a hack to clear form data upon success
+							$this->form_validation->_field_data = array();
+						}
 					}
 					else
 					{
-						// this is a hack to clear form data upon success
-						$this->form_validation->_field_data = array();
+						$data['popup_error_message'] = 'Invalid review comment';
 					}
 				}
-				else
+				else if ($this->input->post('edit_review_comment_no'))
 				{
-					$data['popup_error_message'] = 'Invalid review comment';
+					$this->load->helper ('form');
+					$this->load->library ('form_validation');
+
+					// get the comment number without validation.
+					$comment_no = $this->input->post('edit_review_comment_no');
+					if (is_numeric($comment_no))
+					{
+						$comment_field_name = "edit_review_comment_{$comment_no}";
+						$this->form_validation->set_rules ($comment_field_name, $this->lang->line('Comment'), 'required|min_length[10]');
+						$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
+	
+						if ($this->form_validation->run())
+						{
+							//
+							// TODO: should let sysadmin? to change comments???
+							//
+							$review_comment = $this->input->post($comment_field_name);
+							if ($this->code_review->updateReview ($projectid, $rev, (integer)$comment_no, $login['id'], $review_comment, TRUE) === FALSE)
+							{
+								$data['popup_error_message'] = 'Cannot edit code review comment';
+							}
+							else
+							{
+								// this is a hack to clear form data upon success
+								$this->form_validation->_field_data = array();
+							}
+						}
+						else
+						{
+							$data['popup_error_message'] = 'Invalid review comment';
+						}
+					}
+					else
+					{
+						$data['popup_error_message'] = 'Invalid review comment number';
+					}
 				}
 			}
 

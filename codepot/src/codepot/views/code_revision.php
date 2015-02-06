@@ -81,14 +81,12 @@ $(function() {
 	);
 
 	<?php
-	for ($i = $review_count; $i > 0; )
+	for ($i = $review_count; $i > 0; $i--)
 	{
-		$i--;
-
-		$rc = $reviews[$i];
+		$rc = $reviews[$i - 1];
 		if ($login['id'] == $rc->updatedby)
 		{
-			$edit_title = $this->lang->line('Comment') . ' ' . ($i + 1);
+			$edit_title = $this->lang->line('Comment') . " {$i}";
 			$label_ok = $this->lang->line('OK');
 			$label_cancel = $this->lang->line('Cancel');
 			print ("
@@ -164,8 +162,8 @@ function render_wiki()
 	?>
 
 	creole_render_wiki (
-		"code_revision_mainarea_review_comment_text_" + i , 
-		"code_revision_mainarea_review_comment_" + i, 
+		"code_revision_mainarea_review_comment_text_" + (i + 1) , 
+		"code_revision_mainarea_review_comment_" + (i + 1), 
 		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
 		""
 	);
@@ -356,12 +354,10 @@ $history = $file['history'];
 
 <div id="code_revision_mainarea_review_comment">
 <?php
-	for ($i = $review_count; $i > 0; )
+	for ($i = $review_count; $i > 0; $i--)
 	{
-		$i--;
-
-		$rc = $reviews[$i];
-		print "<div id='code_revision_mainarea_review_comment_title_$i' class='review_comment_title'>\n";
+		$rc = $reviews[$i - 1];
+		print "<div id='code_revision_mainarea_review_comment_title_{$i}' class='review_comment_title'>\n";
 		printf (" <span class='review_comment_title_no'>%d</span>", $rc->sno);
 		printf (" <span class='review_comment_title_updatedby'>%s</span>", $rc->updatedby);
 		printf (" <span class='review_comment_title_updatedon'>%s</span>", $rc->updatedon);
@@ -377,8 +373,8 @@ $history = $file['history'];
 
 		print ("</div>\n");
 
-		print "<div id='code_revision_mainarea_review_comment_$i' class='review_comment_text'>\n";
-		print "<pre id='code_revision_mainarea_review_comment_text_$i' style='visibility: hidden'>\n";
+		print "<div id='code_revision_mainarea_review_comment_{$i}' class='review_comment_text'>\n";
+		print "<pre id='code_revision_mainarea_review_comment_text_{$i}' style='visibility: hidden'>\n";
 
 		print $rc->comment;
 
@@ -425,29 +421,30 @@ $history = $file['history'];
 <?php
 	print form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_new_review_comment_form"');
 
-	print form_error('edit_review_comment');
+	print form_error('new_review_comment'); 
+	print '<br />';
 
 	print form_textarea (
-		array ('name' => 'edit_review_comment', 
-		       'value' => set_value('edit_review_comment', ''), 
-		       'rows'=> 25, 'cols' => 100,
-		       'id' => 'code_revision_edit_review_comment')
+		array ('name' => 'new_review_comment', 
+		       'value' => set_value('new_review_comment', ''), 
+		       'rows'=> 20, 'cols' => 90,
+		       'id' => 'code_revision_new_review_comment')
 	);
 	print form_close();
 
-	for ($i = $review_count; $i > 0; )
+	for ($i = $review_count; $i > 0; $i--)
 	{
-		$i--;
-
-		$rc = $reviews[$i];
+		$rc = $reviews[$i - 1];
 
 		if ($login['id'] == $rc->updatedby)
 		{
 			print "<div id='code_revision_edit_review_comment_div_{$i}'>\n";
 			print form_open("code/revision/{$project->id}${revreqroot}", "id='code_revision_edit_review_comment_form_{$i}'");
+			print form_error("edit_review_comment_{$i}");
+			print '<br />';
 			print form_textarea (
 				array ('name' => "edit_review_comment_{$i}",
-				       'value' => $rc->comment, 'rows'=> 10, 'cols' => 70,
+				       'value' => $rc->comment, 'rows'=> 20, 'cols' => 90,
 				       'id' => "code_revision_edit_review_comment_{$i}")
 			);
 			print form_close();
