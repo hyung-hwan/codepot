@@ -92,6 +92,11 @@
 	text-transform: uppercase;
 }
 
+#code_file_mainarea_result_info_locgraph {
+	width: 21em; 
+	height: auto;
+}
+
 /*----------------------------------------------- 
  * project source blame view 
  *-----------------------------------------------*/
