@@ -1,5 +1,6 @@
 wwwdir=$(WWWDIR)/codepot/models
 www_DATA =  \
+	codereviewmodel.php \
 	dbloginmodel.php \
 	filemodel.php \
 	index.html \
