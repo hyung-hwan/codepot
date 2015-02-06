@@ -791,68 +791,74 @@ class Code extends Controller
 			$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
 			if ($file === FALSE)
 			{
-				header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
-				return;
+				//header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
+				//return;
+				$stats = array ('no-data' => 0);
 			}
-
-			$history = $file['history'];
-			$history_count = count($history);
-
-			$stats = array();
-			for ($i = 0; $i < $history_count; $i++)
-			{
-				$h = $history[$i];
-				if (array_key_exists ('date', $h)) 
+			else 
+			{	
+	
+				$history = $file['history'];
+				$history_count = count($history);
+	
+				$stats = array();
+				for ($i = 0; $i < $history_count; $i++)
 				{
-					$date = substr($h['date'], 0, 7);
-					if (array_key_exists ($date, $stats))
-						$stats[$date]++;
-					else 
-						$stats[$date] = 1;
-				}
-			}
-
-
-			ksort ($stats);
-			$stats_count = count($stats);
-			$idx = 1;
-			foreach ($stats as $k => $v)
-			{
-				if ($idx == 1) 
-				{
-					$min_year = substr($k, 0, 4);
-					$min_month = substr($k, 5, 2);
-				}
-				else if ($idx == $stats_count) 
-				{
-					$max_year = substr($k, 0, 4);
-					$max_month = substr($k, 5, 2);
-				}
-				$idx++;	
-			}	
-
-			for ($year = $min_year; $year <= $max_year; $year++)
-			{
-				$month = ($year == $min_year)? $min_month: 1;
-				$month_end = ($year == $max_year)? $max_month: 12;
-
-				while ($month < $month_end)
-				{
-					$date = sprintf ("%04d-%02d", $year, $month);
-
-					if (!array_key_exists ($date, $stats)) 
+					$h = $history[$i];
+					if (array_key_exists ('date', $h)) 
 					{
-						// fill the holes
-						$stats[$date] = 0;
+						$date = substr($h['date'], 0, 7);
+						if (array_key_exists ($date, $stats))
+							$stats[$date]++;
+						else 
+							$stats[$date] = 1;
 					}
-
-					$month++;
+				}
+	
+	
+				ksort ($stats);
+				$stats_count = count($stats);
+				$idx = 1;
+				foreach ($stats as $k => $v)
+				{
+					if ($idx == 1) 
+					{
+						$min_year = substr($k, 0, 4);
+						$min_month = substr($k, 5, 2);
+					}
+	
+					if ($idx == $stats_count) 
+					{
+						$max_year = substr($k, 0, 4);
+						$max_month = substr($k, 5, 2);
+					}
+	
+					$idx++;	
+				}	
+	
+				for ($year = $min_year; $year <= $max_year; $year++)
+				{
+					$month = ($year == $min_year)? $min_month: 1;
+					$month_end = ($year == $max_year)? $max_month: 12;
+	
+					while ($month <= $month_end)
+					{
+						$date = sprintf ("%04d-%02d", $year, $month);
+	
+						if (!array_key_exists ($date, $stats)) 
+						{
+							// fill the holes
+							$stats[$date] = 0;
+						}
+	
+						$month++;
+					}
 				}
 			}
 
-
 			ksort ($stats);
 			$stats_count = count($stats);
+
 			$graph_width = $stats_count * 5;
 			if ($graph_width < 400) $graph_width = 400;
 			$this->load->library ('PHPGraphLib', array ('width' => $graph_width, 'height' => 150), 'graph');
@@ -864,8 +870,19 @@ class Code extends Controller
 			$this->graph->setLineColor("red");
 			$this->graph->setBars(FALSE);
 			$this->graph->setXValues(TRUE);
-			$this->graph->setXValuesInterval(12);
 			$this->graph->setXValuesHorizontal(TRUE);
+			if ($stats_count < 12)
+			{
+				if ($stats_count <= 1)
+				{
+					$this->graph->setDataPoints(TRUE);
+					$this->graph->setDataPointColor("red");
+				}
+			}
+			else
+			{
+				$this->graph->setXValuesInterval(11);
+			}
 			$this->graph->setGrid(FALSE);
 			$this->graph->createGraph();
 		}
