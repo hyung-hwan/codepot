@@ -786,6 +786,89 @@ class Code extends Controller
 			$this->graph->setYValues (FALSE);
 			$this->graph->createGraph();
 		}
+		else if ($type == 'commits-per-month')
+		{
+			$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
+			if ($file === FALSE)
+			{
+				header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
+				return;
+			}
+
+			$history = $file['history'];
+			$history_count = count($history);
+
+			$stats = array();
+			for ($i = 0; $i < $history_count; $i++)
+			{
+				$h = $history[$i];
+				if (array_key_exists ('date', $h)) 
+				{
+					$date = substr($h['date'], 0, 7);
+					if (array_key_exists ($date, $stats))
+						$stats[$date]++;
+					else 
+						$stats[$date] = 1;
+				}
+			}
+
+
+			ksort ($stats);
+			$stats_count = count($stats);
+			$idx = 1;
+			foreach ($stats as $k => $v)
+			{
+				if ($idx == 1) 
+				{
+					$min_year = substr($k, 0, 4);
+					$min_month = substr($k, 5, 2);
+				}
+				else if ($idx == $stats_count) 
+				{
+					$max_year = substr($k, 0, 4);
+					$max_month = substr($k, 5, 2);
+				}
+				$idx++;	
+			}	
+
+			for ($year = $min_year; $year <= $max_year; $year++)
+			{
+				$month = ($year == $min_year)? $min_month: 1;
+				$month_end = ($year == $max_year)? $max_month: 12;
+
+				while ($month < $month_end)
+				{
+					$date = sprintf ("%04d-%02d", $year, $month);
+
+					if (!array_key_exists ($date, $stats)) 
+					{
+						// fill the holes
+						$stats[$date] = 0;
+					}
+
+					$month++;
+				}
+			}
+
+
+			ksort ($stats);
+			$stats_count = count($stats);
+			$graph_width = $stats_count * 5;
+			if ($graph_width < 400) $graph_width = 400;
+			$this->load->library ('PHPGraphLib', array ('width' => $graph_width, 'height' => 150), 'graph');
+			$this->graph->addData($stats);
+			$this->graph->setTitle('Commits per month');
+			$this->graph->setDataPoints(FALSE);
+			$this->graph->setDataValues(FALSE);
+			$this->graph->setLine(TRUE);
+			$this->graph->setLineColor("red");
+			$this->graph->setBars(FALSE);
+			$this->graph->setXValues(TRUE);
+			$this->graph->setXValuesInterval(12);
+			$this->graph->setXValuesHorizontal(TRUE);
+			$this->graph->setGrid(FALSE);
+			$this->graph->createGraph();
+		}
 		else if ($type == 'commit-share-by-users')
 		{
 			// revision is ignored
@@ -818,7 +901,7 @@ class Code extends Controller
 			$this->graph->setLegendTextColor('50,50,50');
 			$this->graph->createGraph();
 		}
-		else
+		else /* if ($type == 'commits-by-users') */
 		{
 			// revision is ignored
 			$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
