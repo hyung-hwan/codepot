@@ -39,6 +39,15 @@
 	white-space: pre-wrap;
 }
 
+
+#project_home_mainarea_stat {
+	overflow: hidden;
+}
+
+#project_home_commits_per_month_graph {
+	max-width: 100%;
+}
+
 /*----------------------------------------------- 
  * project file edit view 
  *-----------------------------------------------*/
