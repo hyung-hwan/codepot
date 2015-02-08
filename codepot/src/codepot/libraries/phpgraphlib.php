@@ -303,7 +303,7 @@ class PHPGraphLib {
 		}
 		else
 		{
-			$unit_width = ($this->width - $this->y_axis_margin - $this->right_margin) / (($this->data_count * 2));
+			$unit_width = ($this->width - $this->y_axis_margin - $this->right_margin) / (($this->data_count * 2) + 1);
 		}
 
 		if ($unit_width < 1 && !$this->bool_ignore_data_fit_errors) {
