@@ -84,7 +84,9 @@ class PHPGraphLib {
 	protected $bool_y_axis = true;
 	protected $bool_x_axis_values = true;
 	protected $bool_y_axis_values = true;
-	protected $bool_grid = true;
+	//protected $bool_grid = true;
+	protected $bool_grid_horizontal = true;
+	protected $bool_grid_vertical = true;
 	protected $bool_line = false;
 	protected $bool_data_values = false;
 	protected $bool_x_axis_values_vert = true;
@@ -145,6 +147,7 @@ class PHPGraphLib {
 	protected $data_format_generic;
 
 	//bar vars / scale
+	protected $bool_bar_space = TRUE;
 	protected $bar_width;
 	protected $space_width;
 	protected $unit_scale;
@@ -294,16 +297,26 @@ class PHPGraphLib {
 
 	protected function setupData()
 	{
-		$unit_width = ($this->width - $this->y_axis_margin - $this->right_margin) / (($this->data_count * 2) + $this->data_count);
-		if ($unit_width < 1 && !$this->bool_ignore_data_fit_errors) {	
+		if ($this->bool_bar_space)
+		{
+			$unit_width = ($this->width - $this->y_axis_margin - $this->right_margin) / (($this->data_count * 2) + $this->data_count);
+		}
+		else
+		{
+			$unit_width = ($this->width - $this->y_axis_margin - $this->right_margin) / (($this->data_count * 2));
+		}
+
+		if ($unit_width < 1 && !$this->bool_ignore_data_fit_errors) {
 			//error units too small, too many data points or not large enough graph
 			$this->bool_bars_generate = false;
 			$this->error[] = "Graph too small or too many data points.";
 		} else {
+			
 			//default space between bars is 1/2 the width of the bar
 			//find bar and space widths. bar = 2 units, space = 1 unit
 			$this->bar_width = 2 * $unit_width;
-			$this->space_width = $unit_width;
+			$this->space_width = ($this->bool_bar_space)? $unit_width: 0;
+
 			//now calculate height (scale) units
 			$availVertSpace = $this->height - $this->x_axis_margin - $this->top_margin;	
 			if ($availVertSpace < 1) {
@@ -391,9 +404,14 @@ class PHPGraphLib {
 		foreach ($this->data_array as $data_set_num => $data_set) {
 			$lineX2 = null;
 			$xStart = $this->y_axis_x1 + ($this->space_width / 2);
+
+			$y1 = 0;
+			$y2 = 0;
 			foreach ($data_set as $key => $item) {
 				$hideBarOutline = false;
 
+				$old_y1 = $y1;
+				$old_y2 = $y2;
 				$x1 = round($xStart + ($dataset_offset * $data_set_num));
 				$x2 = round(($xStart + $this->bar_width) + ($dataset_offset * $data_set_num));
 				$y1 = round($this->x_axis_y1 - ($item * $this->unit_scale) + $adjustment);
@@ -418,10 +436,21 @@ class PHPGraphLib {
 					} else {
 						imagefilledrectangle($this->image, $x1, $y1,$x2, $y2,  $this->multi_bar_colors[$data_set_num]);
 					}
-					//draw bar outline	
+					//draw bar outline
 					if ($this->bool_bar_outline && !$hideBarOutline) { 
-						imagerectangle($this->image, $x1, $y2, $x2, $y1, $this->outline_color); 
+
+
+						if ($this->bool_bar_space)
+						{
+							imagerectangle($this->image, $x1, $y2, $x2, $y1, $this->outline_color); 
+						}
+						else
+						{
+							imageline ($this->image, $x1, $old_y1, $x1, $y1, $this->outline_color);
+							imageline ($this->image, $x1, $y1, $x2, $y1, $this->outline_color);
+						}
 					}
+					
 				}
 				// draw line
 				if ($this->bool_line) {
@@ -434,7 +463,7 @@ class PHPGraphLib {
 					} else {
 						$lineX2 = $lineX1;
 						$lineY2 = $lineY1;
-					}	
+					}
 				}
 				// display data points
 				if ($this->bool_data_points) {
@@ -522,6 +551,13 @@ class PHPGraphLib {
 						}
 					}
 				}
+
+				
+				if ($this->bool_bar_outline && !$hideBarOutline && !$this->bool_bar_space)
+				{
+					imageline ($this->image, $x2, $y1, $x2, $y2, $this->outline_color);
+				}
+
 				$xStart += $this->bar_width + $this->space_width;
 			}
 		}
@@ -699,7 +735,8 @@ class PHPGraphLib {
 		//loop through each horizontal line
 		foreach ($horizGridArray as $value) {
 			$yValue = round($this->x_axis_y1 - ($value * $this->unit_scale) + $adjustment);
-			if ($this->bool_grid) {
+			//if ($this->bool_grid) {
+			if ($this->bool_grid_horizontal) {
 				//imageline($this->image, $this->y_axis_x1, $yValue, $this->x_axis_x2 , $yValue, $this->grid_color);
 				$this->horiz_grid_lines[] = array('x1' => $this->y_axis_x1, 'y1' => $yValue, 
 					'x2' => $this->x_axis_x2, 'y2' => $yValue, 'color' => $this->grid_color);
@@ -740,7 +777,8 @@ class PHPGraphLib {
 		}
 		
 		//loop through each vertical line
-		if ($this->bool_grid) {
+		//if ($this->bool_grid) {
+		if ($this->bool_grid_vertical) {
 			$xValue = $this->y_axis_y1;
 			foreach ($vertGridArray as $value) {
 				//imageline($this->image, $value, $this->y_axis_y2, $value, $xValue , $this->grid_color);
@@ -1101,10 +1139,39 @@ class PHPGraphLib {
 		}
 	}
 
+	public function setBarSpace ($bool)
+	{
+		if (is_bool($bool)) {
+			$this->bool_bar_space = $bool;
+		} else {
+			$this->error[] = "Value arg for setBarSpace() not specified properly.";
+		}
+	}
+
 	public function setGrid($bool) 
 	{
 		if (is_bool($bool)) { 
-			$this->bool_grid = $bool;
+			//$this->bool_grid = $bool;
+			$this->bool_grid_horizontal = $bool;
+			$this->bool_grid_vertical = $bool;
+		} else { 
+			$this->error[] = "Boolean arg for setGrid() not specified properly.";
+		}
+	}
+
+	public function setGridHorizontal($bool) 
+	{
+		if (is_bool($bool)) { 
+			$this->bool_grid_horizontal = $bool;
+		} else { 
+			$this->error[] = "Boolean arg for setGrid() not specified properly.";
+		}
+	}
+
+	public function setGridVertical($bool) 
+	{
+		if (is_bool($bool)) { 
+			$this->bool_grid_vertical = $bool;
 		} else { 
 			$this->error[] = "Boolean arg for setGrid() not specified properly.";
 		}

@@ -16,7 +16,7 @@
 
 <?php $review_count = count($reviews); ?>
 <?php $is_loggedin = ($login['id'] != ''); ?>
-<?php $can_edit = ($login['id'] == $file['history']['author']); ?>
+<?php $can_edit = ($is_loggedin && $login['id'] == $file['history']['author']); ?>
 
 <?php if ($can_edit): ?>
 $(function() {

@@ -271,6 +271,18 @@ class ProjectModel extends Model
 		if ($force)
 		{
 			$this->db->where ('projectid', $project->id);
+			$query = $this->db->get ('wiki_attachment');
+			if ($this->db->trans_status() === FALSE)
+			{
+				$this->db->trans_rollback ();
+				return FALSE;
+			}
+			$wikiatts = $query->result ();
+
+			$this->db->where ('projectid', $project->id);
+			$this->db->delete ('wiki_attachment');
+
+			$this->db->where ('projectid', $project->id);
 			$this->db->delete ('wiki');
 
 			$this->db->where ('projectid', $project->id);
@@ -280,6 +292,9 @@ class ProjectModel extends Model
 			$this->db->delete ('issue');
 
 			$this->db->where ('projectid', $project->id);
+			$this->db->delete ('code_review');
+
+			$this->db->where ('projectid', $project->id);
 			$query = $this->db->get ('file');
 			if ($this->db->trans_status() === FALSE)
 			{
@@ -287,7 +302,7 @@ class ProjectModel extends Model
 				return FALSE;
 			}
 
-			$result = $query->result ();
+			$files = $query->result ();
 
 			$this->db->where ('projectid', $project->id);
 			$this->db->delete ('file');
@@ -319,11 +334,21 @@ class ProjectModel extends Model
 			}
 			else
 			{
-				if ($force && count($result) > 0)
+				if ($force)
 				{
-					// no way to roll back file delete.
-					// so deletion is done here.
-					$this->_delete_files_uploaded ($result);
+					if (count($files) > 0)
+					{
+						// no way to roll back file delete.
+						// so deletion is done here.
+						$this->_delete_files (CODEPOT_FILE_DIR, $files);
+					}
+
+					if (count($wikiatts) > 0)
+					{
+						// no way to roll back attachment delete.
+						// so deletion is done here.
+						$this->_delete_files (CODEPOT_ATTACHMENT_DIR, $wikiatts);
+					}
 				}
 
 				$this->db->trans_commit ();
@@ -455,10 +480,10 @@ class ProjectModel extends Model
 		return ($count == 1)? TRUE: FALSE;
 	}
 
-	function _delete_files_uploaded ($files)
+	function _delete_files ($basedir, $files)
 	{
 		foreach ($files as $file)
-			@unlink (CODEPOT_FILE_DIR . "/{$file->encname}");
+			@unlink ($basedir . "/{$file->encname}");
 	}
 
 	function getUserIcons ($users)

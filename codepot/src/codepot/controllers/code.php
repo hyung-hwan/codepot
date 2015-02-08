@@ -788,6 +788,10 @@ class Code extends Controller
 		}
 		else if ($type == 'commits-per-month')
 		{
+			$total_commits = 0;
+			$average_commits = 0;
+			$total_months = 0;
+
 			$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
 			if ($file === FALSE)
 			{
@@ -796,7 +800,7 @@ class Code extends Controller
 				$stats = array ('no-data' => 0);
 			}
 			else 
-			{	
+			{
 	
 				$history = $file['history'];
 				$history_count = count($history);
@@ -833,9 +837,12 @@ class Code extends Controller
 						$max_month = substr($k, 5, 2);
 					}
 	
+
 					$idx++;	
+					$total_commits += $v;
 				}	
 	
+				$total_months  = 0; 
 				for ($year = $min_year; $year <= $max_year; $year++)
 				{
 					$month = ($year == $min_year)? $min_month: 1;
@@ -852,23 +859,30 @@ class Code extends Controller
 						}
 	
 						$month++;
+						$total_months++;
 					}
 				}
+
+				if ($total_months > 0) $average_commits = $total_commits / $total_months;
 			}
 
 			ksort ($stats);
 			$stats_count = count($stats);
 
-			$graph_width = $stats_count * 5;
+			$graph_width = $stats_count * 8;
 			if ($graph_width < 400) $graph_width = 400;
-			$this->load->library ('PHPGraphLib', array ('width' => $graph_width, 'height' => 150), 'graph');
+			$this->load->library ('PHPGraphLib', array ('width' => $graph_width, 'height' => 180), 'graph');
 			$this->graph->addData($stats);
-			$this->graph->setTitle('Commits per month');
+			$this->graph->setTitle("Commits per month ({$total_commits}/{$total_months})");
 			$this->graph->setDataPoints(FALSE);
 			$this->graph->setDataValues(FALSE);
-			$this->graph->setLine(TRUE);
+			$this->graph->setLine(FALSE);
 			$this->graph->setLineColor("red");
-			$this->graph->setBars(FALSE);
+			$this->graph->setBars(TRUE);
+			$this->graph->setBarOutline (TRUE);
+			$this->graph->setBarColor ("#EEEEEE");
+			$this->graph->setBarOutlineColor ("#AAAAAA");
+			$this->graph->setBarSpace(FALSE);
 			$this->graph->setXValues(TRUE);
 			$this->graph->setXValuesHorizontal(TRUE);
 			if ($stats_count < 12)
@@ -883,7 +897,10 @@ class Code extends Controller
 			{
 				$this->graph->setXValuesInterval(11);
 			}
-			$this->graph->setGrid(FALSE);
+			//$this->graph->setGrid(FALSE);
+			$this->graph->setGridVertical(FALSE);
+			$this->graph->setGridHorizontal(TRUE);
+			if ($total_months > 0) $this->graph->setGoalLine ($average_commits, "red", "solid");
 			$this->graph->createGraph();
 		}
 		else if ($type == 'commit-share-by-users')
