@@ -29,7 +29,6 @@ INSTALLATION
  Here is how to install Codepot into the standard locations under Ubuntu Linux.
 
  * Install required packages.
-   $ sudo apt-get install wget
    $ sudo apt-get install subversion
    $ sudo apt-get install apache2-mpm-prefork
    $ sudo apt-get install libapache2-svn
