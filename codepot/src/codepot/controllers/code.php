@@ -857,7 +857,7 @@ class Code extends Controller
 							// fill the holes
 							$stats[$date] = 0;
 						}
-	
+
 						$month++;
 						$total_months++;
 					}
