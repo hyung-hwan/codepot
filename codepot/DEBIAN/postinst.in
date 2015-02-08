@@ -6,6 +6,7 @@
 [ -d "@DEPOTDIR@/svnrepo" ] || { mkdir -p "@DEPOTDIR@/svnrepo" && svnrepodir=1; } 
 [ -d "@DEPOTDIR@/files" ] || { mkdir -p "@DEPOTDIR@/files" && filesdir=1; }
 [ -d "@DEPOTDIR@/attachments" ] || { mkdir -p "@DEPOTDIR@/attachments" && attachmentsdir=1; }
+[ -d "@DEPOTDIR@/usericons" ] || { mkdir -p "@DEPOTDIR@/usericons" && usericonsdir=1; }
 
 [ -f "@SYSCONFDIR@/apache2/envvars" ] && {
 	GROUP=$(. "@SYSCONFDIR@/apache2/envvars" && echo "${APACHE_RUN_GROUP}")
@@ -29,6 +30,10 @@
 		[ "${attachmentsdir}" = "1" ] && {
 			chgrp -R "${GROUP}" "@DEPOTDIR@/attachments"
 			chmod 0775 "@DEPOTDIR@/attachments"
+		}
+		[ "${usericonsdir}" = "1" ] && {
+			chgrp -R "${GROUP}" "@DEPOTDIR@/usericons"
+			chmod 0775 "@DEPOTDIR@/usericons"
 		}
 	}
 }
