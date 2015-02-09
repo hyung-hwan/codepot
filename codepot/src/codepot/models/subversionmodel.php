@@ -399,6 +399,14 @@ class SubversionModel extends Model
 
 					switch ($mod) 
 					{
+						case "\\":
+							// ignore it .
+							// subversion seems to procude a like like this:
+							//  \ No newline at the end of file
+							//
+							$index--;
+							break;
+
 						case "-":
 							$listing[$index]["rev1diffclass"] = "diffdeleted";
 							$listing[$index]["rev2diffclass"] = "diff";
