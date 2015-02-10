@@ -124,6 +124,8 @@ function show_commits_per_month_graph(response)
 	{
 		commits_per_month_values.push (commits_per_month[commits_per_month_keys[i]]);
 		committers_per_month_values.push (committers_per_month[commits_per_month_keys[i]]);
+
+		if (commits_per_month_keys.length > 12 && (i % 3)) commits_per_month_keys[i] = '';
 	}
 
 	var commits_per_month_data = {
