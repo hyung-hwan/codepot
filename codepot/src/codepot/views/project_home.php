@@ -76,10 +76,10 @@ function show_commits_per_month_graph(response)
 
 	var year, month, min_year, max_year, min_month, max_month;
 
-	min_year = parseInt(min_date.substring (0, 4));
-	min_month = parseInt(min_date.substring (5));
-	max_year = parseInt(max_date.substring (0, 4));
-	max_month = parseInt(max_date.substring (5));
+	min_year = parseInt(min_date.substring (0, 4), 10);
+	min_month = parseInt(min_date.substring (5), 10);
+	max_year = parseInt(max_date.substring (0, 4), 10);
+	max_month = parseInt(max_date.substring (5), 10);
 
 	// fill empty data points
 	for (year = min_year; year <= max_year; year++)
