@@ -709,6 +709,12 @@ class Code extends Controller
 		else
 		{
 			$history = $file['history'];
+			$count = count($history);
+			for ($i = 0; $i < $count; $i++)
+			{
+				unset ($history[$i]['msg']);
+				unset ($history[$i]['paths']);
+			}
 		}
 
 		print codepot_json_encode ($history);
