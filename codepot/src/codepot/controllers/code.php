@@ -882,20 +882,31 @@ class Code extends Controller
 			$this->graph->setBarOutline (TRUE);
 			$this->graph->setBarColor ("#EEEEEE");
 			$this->graph->setBarOutlineColor ("#AAAAAA");
-			$this->graph->setBarSpace(FALSE);
+
 			$this->graph->setXValues(TRUE);
 			$this->graph->setXValuesHorizontal(TRUE);
-			if ($stats_count < 12)
+			if ($stats_count <= 1)
 			{
-				if ($stats_count <= 1)
-				{
-					$this->graph->setDataPoints(TRUE);
-					$this->graph->setDataPointColor("red");
-				}
+					$this->graph->setBarSpace(TRUE);
+					//$this->graph->setDataPoints(TRUE);
+					//$this->graph->setDataPointColor("red");
 			}
 			else
 			{
-				$this->graph->setXValuesInterval(11);
+					$this->graph->setBarSpace(FALSE);
+
+					if ($stats_count < 12)
+					{
+							// nothing
+					}
+					else if ($stats_count <= 15)
+					{
+							$this->graph->setXValuesInterval(1);
+					}
+					else
+					{
+							$this->graph->setXValuesInterval(11);
+					}
 			}
 			//$this->graph->setGrid(FALSE);
 			$this->graph->setGridVertical(FALSE);
