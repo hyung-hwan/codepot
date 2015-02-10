@@ -704,11 +704,13 @@ class Code extends Controller
 		$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
 		if ($file === FALSE)
 		{
-			header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
-			return;
+			$history = array();
+		}
+		else
+		{
+			$history = $file['history'];
 		}
 
-		$history = $file['history'];
 		print codepot_json_encode ($history);
 	}
 

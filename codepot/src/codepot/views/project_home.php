@@ -30,24 +30,48 @@ function show_commits_per_month_graph(response)
 	var log = $.parseJSON(response);
 	if (log == null)
 	{
-		alert ('Invalid data ...');
+		alert ('Invalid data received');
 		return;
 	}
 
 	var min_date = '9999-99', max_date = '0000-00';
-	var stats = [], stat_keys = [], stat_values = [];
+	var commits_per_month = [], commits_per_month_keys = [], commits_per_month_values = [];
+	var committers_per_month = [], committers_per_month_values = [], committer_list_per_month = [];
+	var commits_per_month_count = 0;
 	for (var i = 0; i < log.length; i++)
 	{
 		var date = log[i].date;
 		if (date)
 		{
 			date = date.substring (0, 7);
-			if (date in stats) stats[date]++;
-			else stats[date] = 1;
+			if (date in commits_per_month) commits_per_month[date]++;
+			else commits_per_month[date] = 1;
+
+			// TODO: calculate committers...
+			if (log[i].author)
+			{
+				committer_list_per_month[date + '-' + log[i].author] = 1;
+			}
 
 			if (date < min_date) min_date = date;
 			if (date > max_date) max_date = date;
+
+			commits_per_month_count++;
 		}
+	}
+
+	//if (Object.keys(commits_per_month).length <= 0)
+	if (commits_per_month_count <= 0)
+	{
+		// no data to show
+		return;
+	}
+
+	for (var key in committer_list_per_month)
+	{
+		date = key.substring (0, 7);
+		if (date in committers_per_month) committers_per_month[date]++;
+		else committers_per_month[date] = 1;
 	}
 
 	var year, month, min_year, max_year, min_month, max_month;
@@ -57,6 +81,7 @@ function show_commits_per_month_graph(response)
 	max_year = parseInt(max_date.substring (0, 4));
 	max_month = parseInt(max_date.substring (5));
 
+	// fill empty data points
 	for (year = min_year; year <= max_year; year++)
 	{
 		month = (year == min_year)? min_month: 1;
@@ -72,39 +97,56 @@ function show_commits_per_month_graph(response)
 
 			date = y + '-' + m;
 
-			if (!(date in stats))
+			if (!(date in commits_per_month))
 			{
 				// fill the holes
-				stats[date] = 0;
+				commits_per_month[date] = 0;
+			}
+
+			if (!(date in committers_per_month))
+			{
+				// fill the holes
+				committers_per_month[date] = 0;
 			}
 
 			month++;
 		}
 	}
 
-	for (var key in stats)
+	// for sorting
+	for (var key in commits_per_month)
 	{
-		stat_keys.push (key);
-		//stat_values.push (stats[key]);
+		commits_per_month_keys.push (key);
 	}
 
-	stat_keys = stat_keys.sort();
-	for (i = 0; i < stat_keys.length; i++)
+	commits_per_month_keys = commits_per_month_keys.sort();
+	for (i = 0; i < commits_per_month_keys.length; i++)
 	{
-		stat_values.push (stats[stat_keys[i]]);
+		commits_per_month_values.push (commits_per_month[commits_per_month_keys[i]]);
+		committers_per_month_values.push (committers_per_month[commits_per_month_keys[i]]);
 	}
 
 	var commits_per_month_data = {
-		labels : stat_keys,
+		labels : commits_per_month_keys,
 
 		datasets : [
 			{
 				label: 'Commits per month',
 				fillColor : 'rgba(151,187,205,0.2)',
 				strokeColor: "rgba(151,187,205,0.8)",
-				data : stat_values
+				pointColor: "rgba(151,187,205,0.8)",
+				data : commits_per_month_values
+			},
+			
+			{
+				label: 'Committers per month',
+				fillColor: "rgba(205,187,151,0.2)",
+				strokeColor: "rgba(205,187,151,0.8)",
+				pointColor: "rgba(205,187,151,0.8)",
+				data : committers_per_month_values
 			}
 		]
+
 	}
 
 	$('#commits-per-month-canvas').each (function() {
