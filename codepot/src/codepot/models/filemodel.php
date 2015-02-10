@@ -43,7 +43,7 @@ class FileModel extends Model
 		$this->db->set ('summary', $file->summary);
 		$this->db->set ('md5sum', $file->md5sum);
 		$this->db->set ('description', $file->description);
-		$this->db->set ('createdon', $userid);
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('createdby', $userid);
 		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
 		$this->db->set ('updatedby', $userid);

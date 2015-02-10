@@ -117,7 +117,7 @@ $this->load->view (
 <div id="file_show_mainarea_result_info">
 
 	<ul>
-	<li><?=$this->lang->line('Created on')?> <?= $file->updatedon ?></li>
+	<li><?=$this->lang->line('Created on')?> <?= $file->createdon ?></li>
 	<li><?=$this->lang->line('Created by')?> <?= $file->createdby ?></li>
 	<li><?=$this->lang->line('Last updated on')?> <?= $file->updatedon ?></li>
 	<li><?=$this->lang->line('Last updated by')?> <?= $file->updatedby ?></li>
