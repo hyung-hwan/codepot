@@ -386,7 +386,7 @@ class File extends Controller
 				{
 					$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 					$data['file'] = $file;
-					$this->load->view ($this->VIEW_EDIT, $data);	
+					$this->load->view ($this->VIEW_EDIT, $data);
 				}
 			}
 			else
@@ -408,7 +408,7 @@ class File extends Controller
 					else
 					{
 						$data['file'] = $file;
-						$this->load->view ($this->VIEW_EDIT, $data);	
+						$this->load->view ($this->VIEW_EDIT, $data);
 					}
 				}
 				else
