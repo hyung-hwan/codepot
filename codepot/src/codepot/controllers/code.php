@@ -677,6 +677,41 @@ class Code extends Controller
 		return $path;
 	}
 
+	function history_json ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+		{
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
+			return;
+		}
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE || ($project->public !== 'Y' && $login['id'] == ''))
+		{
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
+			return;
+		}
+
+		$this->load->model ('SubversionModel', 'subversion');
+
+		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
+		$path = $this->_normalize_path ($path);
+
+		$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
+		if ($file === FALSE)
+		{
+			header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
+			return;
+		}
+
+		$history = $file['history'];
+		print codepot_json_encode ($history);
+	}
+
 	function graph ($type = '', $projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');

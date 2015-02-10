@@ -19,7 +19,115 @@
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
 
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
+
+<script type="text/javascript" src="<?=base_url_make('/js/Chart.min.js')?>"></script>
+
 <script type="text/javascript">
+function show_commits_per_month_graph(response)
+{
+	var log = $.parseJSON(response);
+	if (log == null)
+	{
+		alert ('Invalid data ...');
+		return;
+	}
+
+	var min_date = '9999-99', max_date = '0000-00';
+	var stats = [], stat_keys = [], stat_values = [];
+	for (var i = 0; i < log.length; i++)
+	{
+		var date = log[i].date;
+		if (date)
+		{
+			date = date.substring (0, 7);
+			if (date in stats) stats[date]++;
+			else stats[date] = 1;
+
+			if (date < min_date) min_date = date;
+			if (date > max_date) max_date = date;
+		}
+	}
+
+	var year, month, min_year, max_year, min_month, max_month;
+
+	min_year = parseInt(min_date.substring (0, 4));
+	min_month = parseInt(min_date.substring (5));
+	max_year = parseInt(max_date.substring (0, 4));
+	max_month = parseInt(max_date.substring (5));
+
+	for (year = min_year; year <= max_year; year++)
+	{
+		month = (year == min_year)? min_month: 1;
+		month_end = (year == max_year)? max_month: 12;
+	
+		while (month <= month_end)
+		{
+			var m = month.toString();
+			while (m.length < 2) m = '0' + m;
+
+			var y = year.toString();
+			while (y.length < 4) y = '0' + y;
+
+			date = y + '-' + m;
+
+			if (!(date in stats))
+			{
+				// fill the holes
+				stats[date] = 0;
+			}
+
+			month++;
+		}
+	}
+
+	for (var key in stats)
+	{
+		stat_keys.push (key);
+		//stat_values.push (stats[key]);
+	}
+
+	stat_keys = stat_keys.sort();
+	for (i = 0; i < stat_keys.length; i++)
+	{
+		stat_values.push (stats[stat_keys[i]]);
+	}
+
+	var commits_per_month_data = {
+		labels : stat_keys,
+
+		datasets : [
+			{
+				label: 'Commits per month',
+				fillColor : 'rgba(151,187,205,0.2)',
+				strokeColor: "rgba(151,187,205,0.8)",
+				data : stat_values
+			}
+		]
+	}
+
+	$('#commits-per-month-canvas').each (function() {
+		var canvas = $(this)[0];
+		var ctx = canvas.getContext('2d');
+		var commits_per_month_chart = new Chart(ctx).Line(commits_per_month_data, {
+			responsive : true,
+			pointDot: false,
+			scaleShowGridLines: true,
+			scaleShowHorizontalLines: true,
+			scaleShowVerticalLines: false,
+			datasetFill: true,
+			datasetStroke: true,
+			bezierCurve: true,
+			legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></span></li><%}%></ul>"
+		});
+
+		var legend = commits_per_month_chart.generateLegend();
+		$('#commits-per-month-legend').html(legend);
+	});
+
+}
+
 function render_wiki() 
 {
 	creole_render_wiki (
@@ -30,6 +138,12 @@ function render_wiki()
 	);
 
 	prettyPrint ();
+
+	var ajax_req = $.ajax ({
+		url: '<?=site_url()?>/code/history_json/<?=$project->id?>/',
+		context: document.body,
+		success: show_commits_per_month_graph
+	});
 }
 </script>
 
@@ -280,9 +394,13 @@ foreach ($urls as $url)
 
 <div id="project_home_mainarea_stat">
 <?php
-$graph_url = codepot_merge_path (site_url(), "/code/graph/commits-per-month/{$project->id}");
-print "<img src='{$graph_url}' id='project_home_commits_per_month_graph' />";
+//$graph_url = codepot_merge_path (site_url(), "/code/graph/commits-per-month/{$project->id}");
+//print "<img src='{$graph_url}' id='project_home_commits_per_month_graph' />";
 ?>
+
+<div id='commits-per-month-legend'></div>
+<canvas id='commits-per-month-canvas'></canvas>
+
 </div> <!-- project_home_mainarea_stat -->
 
 </div> <!-- project_home_mainarea -->
