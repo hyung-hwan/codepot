@@ -895,17 +895,17 @@ class Code extends Controller
 			{
 					$this->graph->setBarSpace(FALSE);
 
-					if ($stats_count < 12)
+					if ($stats_count <= 8)
 					{
-							// nothing
+						$this->graph->setXValuesInterval(1);
 					}
-					else if ($stats_count <= 15)
+					else if ($stats_count <= 16)
 					{
-							$this->graph->setXValuesInterval(1);
+						$this->graph->setXValuesInterval(2);
 					}
 					else
 					{
-							$this->graph->setXValuesInterval(11);
+						$this->graph->setXValuesInterval(11);
 					}
 			}
 			//$this->graph->setGrid(FALSE);
