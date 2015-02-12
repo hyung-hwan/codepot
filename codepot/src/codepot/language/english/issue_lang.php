@@ -7,8 +7,9 @@ $lang['ISSUE_STATUS_NEW'] = 'New';
 $lang['ISSUE_STATUS_OTHER'] = 'Other';
 $lang['ISSUE_STATUS_ACCEPTED'] = 'Accepted';
 $lang['ISSUE_STATUS_REJECTED'] = 'Rejected';
-$lang['ISSUE_STATUS_STARTED'] = 'Started';
+$lang['ISSUE_STATUS_STARTED'] = 'In progress';
 $lang['ISSUE_STATUS_STALLED'] = 'Stalled';
+$lang['ISSUE_STATUS_TESTING'] = 'Testing';
 $lang['ISSUE_STATUS_RESOLVED'] = 'Resolved';
 $lang['ISSUE_STATUS_WORKED_AROUND'] = 'Worked-around';
 
