@@ -22,7 +22,7 @@
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/Chart.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/Chart.js')?>"></script>
 
 <script type="text/javascript">
 function show_commits_per_month_graph(response)
@@ -134,6 +134,8 @@ function show_commits_per_month_graph(response)
 	}
 
 	commits_per_month_keys = commits_per_month_keys.sort();
+	orig_commits_per_month_keys = commits_per_month_keys.slice (0); // clone the array
+
 	var max_value = 0;
 	var x_scale = Math.ceil(commits_per_month_keys.length / 12);
 	if (x_scale <= 0) x_scale = 1;
@@ -156,6 +158,11 @@ function show_commits_per_month_graph(response)
 
 	var commits_per_month_data = {
 		labels : commits_per_month_keys,
+
+		//////////////////////////////////////////////////
+		// this requires HYUNG-HWAN's change to Chart.js
+		tooltipLabels : orig_commits_per_month_keys,
+		//////////////////////////////////////////////////
 
 		datasets : [
 			{

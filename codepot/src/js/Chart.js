@@ -1013,7 +1013,12 @@
 						labels: tooltipLabels,
 						legendColors: tooltipColors,
 						legendColorBackground : this.options.multiTooltipKeyBackground,
-						title: ChartElements[0].label,
+						
+						// HYUNG-HWAN
+						//title: ChartElements[0].label,
+						title: ChartElements[0].tooltipLabel,
+						// END HYUNG-HWAN
+
 						chart: this.chart,
 						ctx: this.chart.ctx,
 						custom: this.options.customTooltips
@@ -2616,6 +2621,9 @@
 					datasetObject.points.push(new this.PointClass({
 						value : dataPoint,
 						label : data.labels[index],
+						// HYUNG-HWAN
+						tooltipLabel: (data.tooltipLabels? data.tooltipLabels[index]: data.labels[index]),
+						// END HYUNG-HWAN
 						datasetLabel: dataset.label,
 						strokeColor : dataset.pointStrokeColor,
 						fillColor : dataset.pointColor,
