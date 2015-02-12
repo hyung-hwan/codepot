@@ -79,7 +79,7 @@ class IssueHelper
 			$this->STATUS_STARTED => 
 				$lang->line('ISSUE_STATUS_STARTED'),
 			$this->STATUS_STALLED   => 
-				$lang->line('ISSUE_STATUS_STALLED')
+				$lang->line('ISSUE_STATUS_STALLED'),
 			$this->STATUS_TESTING   => 
 				$lang->line('ISSUE_STATUS_TESTING')
 		);
