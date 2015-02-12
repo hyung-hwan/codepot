@@ -82,6 +82,20 @@ function show_commits_per_month_graph(response)
 	max_month = parseInt(max_date.substring (5), 10);
 
 	// fill empty data points
+	if (min_year == max_year && min_month == max_month)
+	{
+		// only 1 data point if this condition is met 
+		// insert a fake data point to make at least 2 data points
+		if (min_month <= 1)
+		{
+			min_year--;
+			min_month = 12;
+		}
+		else
+		{
+			min_month--;
+		}
+	}
 	for (year = min_year; year <= max_year; year++)
 	{
 		month = (year == min_year)? min_month: 1;
