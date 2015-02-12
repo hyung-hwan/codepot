@@ -134,12 +134,24 @@ function show_commits_per_month_graph(response)
 	}
 
 	commits_per_month_keys = commits_per_month_keys.sort();
+	var max_value = 0;
+	var x_scale = Math.ceil(commits_per_month_keys.length / 12);
+	if (x_scale <= 0) x_scale = 1;
 	for (i = 0; i < commits_per_month_keys.length; i++)
 	{
-		commits_per_month_values.push (commits_per_month[commits_per_month_keys[i]]);
-		committers_per_month_values.push (committers_per_month[commits_per_month_keys[i]]);
+		var commits = commits_per_month[commits_per_month_keys[i]];
+		var committers = committers_per_month[commits_per_month_keys[i]];
 
-		if (commits_per_month_keys.length > 12 && (i % 3)) commits_per_month_keys[i] = '';
+		if (commits > max_value) max_value = commits;
+		if (committers > max_value) max_value = committers;
+
+		commits_per_month_values.push (commits);
+		committers_per_month_values.push (committers);
+
+		// to work around the problem of too many data points.
+		// chart.js doesn't provide a means to skip x-labels.
+		// empty some points despite the side effect to tooltip titles.
+		if (i % x_scale) commits_per_month_keys[i] = '';
 	}
 
 	var commits_per_month_data = {
@@ -148,40 +160,58 @@ function show_commits_per_month_graph(response)
 		datasets : [
 			{
 				label: 'Commits per month',
-				fillColor : 'rgba(151,187,205,0.2)',
-				strokeColor: "rgba(151,187,205,0.8)",
-				pointColor: "rgba(151,187,205,0.8)",
+				fillColor : 'rgba(151,187,245,0.2)',
+				strokeColor: "rgba(151,187,245,1.0)",
+				pointColor: "rgba(151,187,245,1.0)",
 				data : commits_per_month_values
 			},
 			
 			{
 				label: 'Committers per month',
-				fillColor: "rgba(205,187,151,0.2)",
-				strokeColor: "rgba(205,187,151,0.8)",
-				pointColor: "rgba(205,187,151,0.8)",
+				fillColor: "rgba(245,187,151,0.2)",
+				strokeColor: "rgba(245,187,151,1.0)",
+				pointColor: "rgba(245,187,151,1.0)",
 				data : committers_per_month_values
 			}
 		]
 
 	}
 
-	$('#commits-per-month-canvas').each (function() {
+	var scale_steps = 5;
+	$('#project_home_commits_per_month_canvas').each (function() {
 		var canvas = $(this)[0];
 		var ctx = canvas.getContext('2d');
 		var commits_per_month_chart = new Chart(ctx).Line(commits_per_month_data, {
 			responsive : true,
+			maintainAspectRatio: true,
+			animation: false,
 			pointDot: false,
 			scaleShowGridLines: true,
 			scaleShowHorizontalLines: true,
 			scaleShowVerticalLines: false,
+			scaleFontSize: 10,
+			scaleFontStyle: 'normal',
+			scaleFontColor: 'black',
+
+			scaleOverride: true,
+			scaleSteps: scale_steps,
+			scaleStepWidth: Math.ceil(max_value / scale_steps),
+			scaleStartValue: 0,
+
+			showTooltips: true,
+			tooltipFontSize: 10,
+			tooltipTitleFontSize: 10,
 			datasetFill: true,
 			datasetStroke: true,
+			datasetStrokeWidth: 1,
 			bezierCurve: true,
-			legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></span></li><%}%></ul>"
+			legendTemplate : '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></span></li><%}%></ul>',
+
+
 		});
 
 		var legend = commits_per_month_chart.generateLegend();
-		$('#commits-per-month-legend').html(legend);
+		$('#project_home_commits_per_month_legend').html(legend);
 	});
 
 }
@@ -456,8 +486,8 @@ foreach ($urls as $url)
 //print "<img src='{$graph_url}' id='project_home_commits_per_month_graph' />";
 ?>
 
-<div id='commits-per-month-legend'></div>
-<canvas id='commits-per-month-canvas'></canvas>
+<div id='project_home_commits_per_month_legend'></div>
+<canvas id='project_home_commits_per_month_canvas'></canvas>
 
 </div> <!-- project_home_mainarea_stat -->
 
