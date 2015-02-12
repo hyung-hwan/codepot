@@ -170,6 +170,10 @@ $this->load->view (
 		"code/diff/{$project->id}/{$xpar}{$revreq}",
 		$this->lang->line('Difference'));
 	print ' | ';
+	print anchor (
+		"code/fulldiff/{$project->id}/{$xpar}{$revreq}",
+		$this->lang->line('Full Difference'));
+	print ' | ';
 
 
 	if ($revision > 0)
