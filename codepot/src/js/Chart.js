@@ -164,7 +164,10 @@
 			tooltipXOffset: 10,
 
 			// String - Template string for single tooltips
-			tooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %>",
+			// HYUNG-HWAN
+			//tooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %>",
+			tooltipTemplate: "<%if (tooltipLabel) {%><%=tooltipLabel%>: <%} else if (label){%><%=label%>: <%}%><%= value %>",
+			// END HYUNG-HWAN
 
 			// String - Template string for single tooltips
 			multiTooltipTemplate: "<%= value %>",
