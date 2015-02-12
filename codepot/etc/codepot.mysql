@@ -94,6 +94,24 @@ CREATE TABLE issue (
 		ON DELETE RESTRICT ON UPDATE CASCADE
 ) charset=utf8 engine=InnoDB;
 
+CREATE TABLE issue_attachment (
+	projectid  VARCHAR(32)   NOT NULL,
+	issueid    BIGINT        NOT NULL,
+	name       VARCHAR(255)  NOT NULL,
+	encname    VARCHAR(255)  NOT NULL,
+
+	createdon  DATETIME      NOT NULL,
+	createdby  VARCHAR(32)   NOT NULL,
+
+	UNIQUE KEY issue_attachment_id (projectid, issueid, name),
+
+	CONSTRAINT issue_attachment_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+
+	CONSTRAINT issue_attachment_issueid FOREIGN KEY (projectid,issueid) REFERENCES issue(projectid,id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+) charset=utf8 engine=InnoDB;
+
 CREATE TABLE issue_change (
 	projectid VARCHAR(32)  NOT NULL,
 	id        BIGINT       NOT NULL,
@@ -114,6 +132,25 @@ CREATE TABLE issue_change (
 	CONSTRAINT issue_update_id FOREIGN KEY (projectid,id) REFERENCES issue(projectid,id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
 
+) charset=utf8 engine=InnoDB;
+
+CREATE TABLE issue_change_attachment (
+	projectid  VARCHAR(32)   NOT NULL,
+	issueid    BIGINT        NOT NULL,
+	issuesno   BIGINT        NOT NULL,
+	name       VARCHAR(255)  NOT NULL,
+	encname    VARCHAR(255)  NOT NULL,
+
+	createdon  DATETIME      NOT NULL,
+	createdby  VARCHAR(32)   NOT NULL,
+
+	UNIQUE KEY issue_change_attachment_id (projectid, issueid, name),
+
+	CONSTRAINT issue_change_attachment_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+
+	CONSTRAINT issue_change_attachment_issueidsno FOREIGN KEY (projectid,issueid,issuesno) REFERENCES issue_change(projectid,id,sno)
+		ON DELETE RESTRICT ON UPDATE CASCADE
 ) charset=utf8 engine=InnoDB;
 
 CREATE TABLE file (
