@@ -48,6 +48,11 @@
 	max-width: 100%;
 }
 
+#project_home_commits_per_month_canvas {
+	max-width: 100%;
+	width: 100%;
+}
+
 /*----------------------------------------------- 
  * project file edit view 
  *-----------------------------------------------*/

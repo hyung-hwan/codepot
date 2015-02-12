@@ -87,6 +87,10 @@ body {
 .content .taskbar a:active {
 }
 
+.content .taskbar form {
+	margin: 0;
+}
+
 .content .taskbar form input {
 	font-size: inherit;
 	font-family: inherit;
