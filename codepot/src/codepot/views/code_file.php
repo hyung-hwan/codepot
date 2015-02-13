@@ -230,7 +230,42 @@ if ($login['settings'] != NULL &&
 ?>
 
 <pre class="prettyprint <?=$prettyprint_linenums?> <?=$prettyprint_lang?>" id="code_file_mainarea_result_pre">
-<?php print htmlspecialchars($file['content']); ?>
+<?php 
+	$is_octet_stream = 0;
+	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+	{
+		foreach ($file['properties'] as $pn => $pv)
+		{
+			if ($pn == 'svn:mime-type' && $pv == 'application/octet-stream')
+			{
+				$is_octet_stream = 1;
+				break;
+			}
+			else if ($pn == 'svn:executable' && $pv == '*')
+			{
+				if (in_array (strtolower($fileext), array ('png', 'jpg', 'gif', 'tif', 'bmp', 'ico')))
+				{
+					$is_octet_stream = -1; /* not sure */
+					break;
+				}
+			}
+		}
+	}
+
+	$is_image_stream = FALSE;
+	if ($is_octet_stream != 0)
+	{
+		$img = @imagecreatefromstring ($file['content']);		
+		if ($img !== FALSE)
+		{
+			@imagedestroy ($img);
+			print ('<img src="data:image;base64,' . base64_encode ($file['content']) . '" alt="[image]" />');
+			$is_image_stream = TRUE;
+		}
+	}
+
+	if (!$is_image_stream) print htmlspecialchars($file['content']); 
+?>
 </pre>
 
 <div id="code_file_mainarea_result_info">
