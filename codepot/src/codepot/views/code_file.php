@@ -231,29 +231,22 @@ if ($login['settings'] != NULL &&
 
 <pre class="prettyprint <?=$prettyprint_linenums?> <?=$prettyprint_lang?>" id="code_file_mainarea_result_pre">
 <?php 
-	$is_octet_stream = 0;
+	$is_octet_stream = FALSE;
 	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 	{
 		foreach ($file['properties'] as $pn => $pv)
 		{
 			if ($pn == 'svn:mime-type' && $pv == 'application/octet-stream')
 			{
-				$is_octet_stream = 1;
+				$is_octet_stream = TRUE;
 				break;
-			}
-			else if ($pn == 'svn:executable' && $pv == '*')
-			{
-				if (in_array (strtolower($fileext), array ('png', 'jpg', 'gif', 'tif', 'bmp', 'ico')))
-				{
-					$is_octet_stream = -1; /* not sure */
-					break;
-				}
 			}
 		}
 	}
 
 	$is_image_stream = FALSE;
-	if ($is_octet_stream != 0)
+	if ($is_octet_stream || 
+	    in_array (strtolower($fileext), array ('png', 'jpg', 'gif', 'tif', 'bmp', 'ico')))
 	{
 		$img = @imagecreatefromstring ($file['content']);		
 		if ($img !== FALSE)
