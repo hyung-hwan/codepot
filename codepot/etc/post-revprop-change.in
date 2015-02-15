@@ -79,11 +79,11 @@ sub write_revprop_change_log
 	my $query = $dbh->prepare ("INSERT INTO ${prefix}log (type,projectid,message,createdon,action,userid) VALUES (?,?,?,?,?,?)");
 	if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'revpropchange', $userid))
 	{
-                my $errstr = $dbh->errstr();
-                $query->finish ();
-                $dbh->rollback ();
-                return (-1, $errstr);
-        }
+		my $errstr = $dbh->errstr();
+		$query->finish ();
+		$dbh->rollback ();
+		return (-1, $errstr);
+	}
 
 	$query->finish ();
 	$dbh->commit ();

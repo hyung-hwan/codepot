@@ -15,6 +15,23 @@ my $REPOFS = $ARGV[0];
 my $REPOBASE = basename($REPOFS);
 my $TRANSACTION = $ARGV[1];
 
+my %SVN_ACTIONS = 
+(
+	'A ' => 'add',
+	'U ' => 'update',
+	'D ' => 'delete',
+	'_U' => 'propset',
+	'UU' => 'update/propset'
+);
+
+my %SVN_ACTION_VERBS =
+(
+	$SVN::Fs::PathChange::modify => 'modify',
+	$SVN::Fs::PathChange::add => 'add',
+	$SVN::Fs::PathChange::delete => 'delete',
+	$SVN::Fs::PathChange::replace => 'replace'
+);
+
 sub get_config
 {
 	my $cfg = new Config::Simple();
@@ -137,6 +154,289 @@ sub check_commit_message
 	return 1;
 }
 
+sub restrict_changes_in_directory_old
+{
+	my ($dir, $min_level, $max_level) = @_;
+
+	my @change_info = `svnlook changed --copy-info -t "${TRANSACTION}" "${REPOFS}"`;
+
+	# 'A ' Item added to repository
+	# 'D ' Item deleted from repository
+	# 'U ' File contents changed
+	# '_U' Properties of item changed; note the leading underscore
+	# 'UU' File contents and properties changed
+	# ------------------------------------------------------------
+	# + on the third column to indicate copy
+	# fourth column is empty.
+	# ------------------------------------------------------------
+	# When copy-info is used, the source of the copy is shown
+	# on the next line aligned at the file name part and 
+	# begins with spaces.
+	# 
+	#    A + y/t/
+	#        (from c/:r2)
+	# ------------------------------------------------------------
+	#
+	# Renaming a file in the copied directory looks like this.
+	# D   tags/xxx-1.2.3/2/screenrc
+	# A + tags/xxx-1.2.3/2/screenrc.x
+	#     (from tags/xxx-1.2.3/2/screenrc:r10)
+	#
+	# If the deletion of the file is disallowed, the whole
+	# transaction is blocked. so I don't need to care about
+	# copied addition.
+	# ------------------------------------------------------------
+
+	foreach my $line(@change_info)
+	{
+		chomp ($line);
+		print (STDERR "... CHANGE INFO => $line\n");
+	}
+
+	my $disallowed = 0;
+	
+	while (@change_info) #foreach my $line(@change_info)
+	{
+		my $line = shift (@change_info);
+		chomp ($line);
+
+		if ($line =~ /^(A |U |D |_U|UU)  ${dir}\/(.*)$/)
+		{
+			my $action = "${1}";
+			my $affected_file = "${dir}/${2}";
+			my $affected_file_nodir = "${2}";
+
+			my $action_verb = $SVN_ACTIONS{$action};
+
+			if (rindex($affected_file, '/') + 1 == length($affected_file))
+			{
+				# the last character is a slash. so it's a directory.
+				# let's allow most of the operations on a directory.
+				#if ($action eq 'D ')
+				#{
+					my @segs = split ('/', $affected_file_nodir);
+					my $num_segs = scalar(@segs);
+					# NOTE: for a string like abc/def/, split() seems to return 2 segments only.
+
+					if ($affected_file_nodir eq '')
+					{
+						# it is the main directory itself.
+						# allow operation on it.
+					}
+					elsif ($num_segs < $min_level || $num_segs > $max_level)
+					{
+						# disallow deletion if the directory name to be deleted 
+						# matches a tag pattern
+						print (STDERR "Disallowed to ${action_verb} a directory - ${affected_file}\n");
+						$disallowed++;
+					}
+				#}
+			}
+			else
+			{
+				print (STDERR "Disallowed to ${action_verb} a file - ${affected_file}\n");
+				$disallowed++;
+			}
+		}
+		elsif ($line =~ /^(A )\+ ${dir}\/(.*)$/)
+		{
+			my $action = "${1}";
+			my $affected_file = "${dir}/${2}";
+
+			# copying 
+			# 
+			# A + tags/xxx-1.2.3/2/smi.conf.2
+			#     (from tags/xxx-1.2.3/2/smi.conf:r10)
+			#
+			my $source_line = shift (@change_info);
+			chomp ($source_line);
+
+			if ($source_line =~ /
+				^            # beginning of string
+				\W*          # 0 or more white-spaces
+				\(           # opening parenthesis
+				\S+          # 1 or more non-space characters
+				\W+          # 1 or more space characters
+				(.+)         # 1 or more characters
+				:r[0-9]+     # :rXXX where XXX is digits
+				\)           # closing parenthesis
+				$            # end of string
+				/x)
+			{
+				my $source_file = "${1}";
+
+				if (rindex($affected_file, '/') + 1 != length($affected_file))
+				{
+					# the file beging added by copyiung is not a directory.
+					# it disallows individual file copying.
+					# copy a whole directory at one go.
+					print (STDERR "Disallowed to copy $source_file to $affected_file\n");
+					$disallowed++;
+				}
+				elsif ($source_file =~ /^${dir}\/(.*)$/)
+				{
+					# i don't want to be a copied file or directory to be 
+					# a source of another copy operation.
+					print (STDERR "Disallowed to copy $source_file to $affected_file\n");
+					$disallowed++;
+				}
+				else
+				{
+					# Assume xxx is a directory.
+					# Assume min_level is 1 and max_level is 2.
+					#
+					# If the following two commans are executed,
+					#  svn copy trunk/xxx tags/my-4.0.0
+					#  svn copy trunk/xxx tags/my-4.0.0/1
+					#
+					# svnlook returns the following text.
+					#  A + tags/my-4.0.0/
+					#      (from trunk/xxx/:r16)
+					#  A + tags/my-4.0.0/1/
+					#      (from trunk/xxx/:r16)
+					#
+					# if the script knows that tags/my-4.0.0 is created via copying,
+					# i want this script  to prevent copying other sources into it.
+					# this case is not fully handled by this script.
+
+					# TODO: DISALLOW THIS if the parent directory is a copied directory
+					my $pardir = dirname ($affected_file);
+					
+				}
+			}
+		}
+		#else
+		#{
+		#	print (STDERR "OK ... ${line}\n");
+		#}
+	}
+
+	return ($disallowed > 0)? -1: 0;
+}
+
+sub restrict_changes_in_directory
+{
+	my ($dir, $min_level, $max_level) = @_;
+	my $disallowed = 0;
+
+	my $pool = SVN::Pool->new(undef); 
+	#my $config = SVN::Core::config_get_config(undef);
+	#my $fs = eval { SVN::Fs::open ($REPOFS, $config, $pool) };
+	my $svn = eval { SVN::Repos::open ($REPOFS, $pool) };
+	if (!defined($svn))
+	{
+		print (STDERR "Cannot open svn - $REPOFS\n");
+		return -1; # error
+	}
+
+	my $fs = $svn->fs ();
+	if (!defined($fs))
+	{
+		print (STDERR "Cannot open fs - $REPOFS\n");
+		return -1; # error
+	}
+
+	my $txn = eval { $fs->open_txn ($TRANSACTION) };
+	if (!defined($txn))
+	{
+		print (STDERR "Cannot open transaction - $TRANSACTION\n");
+		return -1;
+	}
+
+	my $root = $txn->root();
+	my $paths_changed = $root->paths_changed();
+	foreach my $affected_file(keys $paths_changed)
+	{
+		my $chg = $paths_changed->{$affected_file};
+		my $source_file = undef;
+
+		my $is_source_file_dir = 0;
+		my $is_affected_file_dir = eval { $root->is_dir($affected_file) };
+		#$chg->text_mod(), $chg->prop_mod()
+
+		my $action = $chg->change_kind();
+
+		my $action_verb = $SVN_ACTION_VERBS{$action};
+
+		if ($action == $SVN::Fs::PathChange::add)
+		{
+			$source_file = eval { $root->copied_from($affected_file) };
+		}
+		elsif ($action == $SVN::Fs::PathChange::delete)
+		{
+			# when a file is deleted, $root->is_dir() doesn't seem to
+			# return the right type. use the revision root to determine it.
+			my $rev_root = $fs->revision_root($fs->youngest_rev());
+			$is_affected_file_dir = eval { $rev_root->is_dir ($affected_file) };
+			$rev_root->close_root();
+		}
+
+print STDERR "@@@@@ [$affected_file] [$action_verb] [$source_file] [$is_source_file_dir] [$is_affected_file_dir]\n";
+
+		if ($affected_file =~ /\/${dir}\/(.*)$/)
+		{
+			# the affected file is located under the given directory.
+			my $affected_file_nodir = "${1}";
+
+			if (defined($source_file))
+			{
+				# it's being copied.
+				if (!$is_affected_file_dir)
+				{
+					# the file beging added by copying is not a directory.
+					# it disallows individual file copying.
+					# copy a whole directory at one go.
+					print (STDERR "Disallowed to copy ${source_file} to ${affected_file}\n");
+					$disallowed++;
+				}
+				elsif ($source_file =~ /^\/${dir}\/(.*)$/)
+				{
+					# i don't want to be a copied file or directory to be 
+					# a source of another copy operation.
+					print (STDERR "Disallowed to copy ${source_file} to ${affected_file}\n");
+					$disallowed++;
+				}
+				else
+				{
+					# TODO: DISALLOW THIS if the parent directory is a copied directory
+					#my $pardir = dirname ($affected_file);
+				}
+			}
+			else
+			{
+				if ($is_affected_file_dir)
+				{
+					my @segs = split ('/', $affected_file_nodir);
+					my $num_segs = scalar(@segs);
+					# NOTE: for a string like abc/def/, split() seems to return 2 segments only.
+
+					if ($affected_file_nodir eq '')
+					{
+						# it is the main directory itself.
+						# allow operation on it.
+					}
+					elsif ($num_segs < $min_level || $num_segs > $max_level)
+					{
+						# disallow deletion if the directory name to be deleted 
+						# matches a tag pattern
+						print (STDERR "Disallowed to ${action_verb} a directory - ${affected_file}\n");
+						$disallowed++;
+					}
+				}
+				else
+				{
+					print (STDERR "Disallowed to ${action_verb} a file - ${affected_file}\n");
+					$disallowed++;
+				}
+			}
+		}
+		
+	}
+
+	$root->close_root ();
+	return ($disallowed > 0)? -1: 0;
+}
+
 #------------------------------------------------------------
 # MAIN
 #------------------------------------------------------------
@@ -153,6 +453,11 @@ if (check_commit_message ($cfg->{svn_min_commit_message_length}) <= 0)
 	exit (1);
 }
 
+# TODO: make 'tags' configurable.
+if (restrict_changes_in_directory ('tags', 1, 2) <= -1)
+{
+	exit (1);
+}
 
 #my $dbh = open_database ($cfg);
 #if (!defined($dbh))
