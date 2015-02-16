@@ -78,10 +78,16 @@ function load_ini ($file)
 		array ('force_project_delete',         'boolean',     FALSE),
 		array ('allow_set_time_limit',         'boolean',     FALSE),
 		array ('signin_for_code_search',       'boolean',     TRUE),
-		array ('svn_for_members_only',         'boolean',     FALSE),
 
 		array ('footer',                       'string',      ''),
-		array ('cloc_command_path',            'string',      CODEPOT_CFG_DIR.'/cloc.pl')
+		array ('cloc_command_path',            'string',      CODEPOT_CFG_DIR.'/cloc.pl'),
+
+		// these items are not used by php but by subersion hooks written in perl.
+		array ('svn_read_access',                          'string',      'member'),
+		array ('svn_min_commit_message_length',            'integer',     0),
+		array ('svn_restricted_topdirs',                   'string',      ''),
+		array ('svn_restriction_allowed_subdir_depth_min', 'integer',     0),
+		array ('svn_restriction_allowed_subdir_depth_max', 'integer',     0)
 	);
 
 	foreach ($xcfgs as $x)

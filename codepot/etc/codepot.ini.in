@@ -199,19 +199,6 @@ allow_set_time_limit = "no"
 ;------------------------------------------------------------------------------
 signin_for_code_search = "yes"
 
-;------------------------------------------------------------------------------
-; Subversion read access is limited to the specified user type. The types 
-; include anonymous, authenticated, member. This applies to a public project 
-; only. Write access to any projects and read access to a non-public project
-; require membership regardless of this item.
-;------------------------------------------------------------------------------
-svn_read_access = "member"
-
-
-;------------------------------------------------------------------------------
-; The length of a commit message must be as long as this value.
-;------------------------------------------------------------------------------
-svn_min_commit_message_length = "0"
 
 ;------------------------------------------------------------------------------
 ; customized footer
@@ -226,3 +213,24 @@ footer = ""
 ; Full path to the CLOC command
 ;------------------------------------------------------------------------------
 cloc_command_path =  "@CFGDIR@/cloc.pl"
+
+;------------------------------------------------------------------------------
+; Subversion read access is limited to the specified user type. The types 
+; include anonymous, authenticated, member. This applies to a public project 
+; only. Write access to any projects and read access to a non-public project
+; require membership regardless of this item.
+;------------------------------------------------------------------------------
+svn_read_access = "member"
+
+;------------------------------------------------------------------------------
+; The length of a commit message must be as long as this value.
+;------------------------------------------------------------------------------
+svn_min_commit_message_length = "0"
+
+;------------------------------------------------------------------------------
+; The operations on the files under one of svn_restricted_topdirs 
+; is limited. The value can be separated by a comma.
+;------------------------------------------------------------------------------
+svn_restricted_topdirs = ""
+svn_restriction_allowed_subdir_depth_min = 1
+svn_restriction_allowed_subdir_depth_max = 1
