@@ -348,19 +348,25 @@ sub restrict_changes_in_directory
 	foreach my $affected_file(keys $paths_changed)
 	{
 		my $chg = $paths_changed->{$affected_file};
-		my $source_file = undef;
+		my $action = $chg->change_kind();
+		my $action_verb = $SVN_ACTION_VERBS{$action};
+		if (length($action_verb) <= 0) { $action_verb = "work on"; }
 
 		my $is_source_file_dir = 0;
 		my $is_affected_file_dir = eval { $root->is_dir($affected_file) };
 		#$chg->text_mod(), $chg->prop_mod()
 
-		my $action = $chg->change_kind();
-
-		my $action_verb = $SVN_ACTION_VERBS{$action};
+		#my $affected_rev_id = eval { SVN::Fs::unparse_id($chg->node_rev_id()) };
+		my $source_file = undef;
+		#my $source_id = undef;
 
 		if ($action == $SVN::Fs::PathChange::add)
 		{
 			$source_file = eval { $root->copied_from($affected_file) };
+			#if ($source_file) 
+			#{
+			#	$source_id = eval { SVN::Fs::unparse_id($root->node_id($source_file)) };
+			#}
 		}
 		elsif ($action == $SVN::Fs::PathChange::delete)
 		{
@@ -371,7 +377,7 @@ sub restrict_changes_in_directory
 			$rev_root->close_root();
 		}
 
-print STDERR "@@@@@ [$affected_file] [$action_verb] [$source_file] [$is_source_file_dir] [$is_affected_file_dir]\n";
+#print STDERR "@@@@@ [$affected_file] [$action_verb] [$source_file] [$is_source_file_dir] [$is_affected_file_dir]\n";
 
 		if ($affected_file =~ /\/${dir}\/(.*)$/)
 		{
@@ -433,6 +439,16 @@ print STDERR "@@@@@ [$affected_file] [$action_verb] [$source_file] [$is_source_f
 		
 	}
 
+	# 'svn rename' within the restricted directory is disallowed because
+	# it splits to deletion and addition.  for this reason, you're supposed
+	# to copy from the trunk or branch source again.
+	#
+	# $ svn rename tags/my-1.0.0 tags/my-2.0.0
+	# $ svn commit -m "XXXXXXXXXXXX"
+	# Deleting       tags/my-1.0.0
+	# Adding         tags/my-2.0.0
+	#
+
 	$root->close_root ();
 	return ($disallowed > 0)? -1: 0;
 }
@@ -453,7 +469,7 @@ if (check_commit_message ($cfg->{svn_min_commit_message_length}) <= 0)
 	exit (1);
 }
 
-# TODO: make 'tags' configurable.
+# TODO: make 'tags' and 'min_level', 'max_level' configurable.
 if (restrict_changes_in_directory ('tags', 1, 2) <= -1)
 {
 	exit (1);
