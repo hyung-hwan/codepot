@@ -48,8 +48,11 @@ sub get_config
 		database_name => $cfg->param ('database_name'),
 		database_driver => $cfg->param ('database_driver'),
 		database_prefix => $cfg->param ('database_prefix'),
-		
-		svn_min_commit_message_length => $cfg->param ('svn_min_commit_message_length')
+
+		svn_min_commit_message_length => $cfg->param ('svn_min_commit_message_length'),
+		svn_restricted_topdirs => $cfg->param('svn_restricted_topdirs'),
+		svn_restriction_allowed_subdir_depth_min => $cfg->param('svn_restriction_allowed_subdir_depth_min'),
+		svn_restriction_allowed_subdir_depth_max => $cfg->param('svn_restriction_allowed_subdir_depth_max')
 	};
 
 	return $config;
@@ -314,9 +317,9 @@ sub restrict_changes_in_directory_old
 	return ($disallowed > 0)? -1: 0;
 }
 
-sub restrict_changes_in_directory
+sub restrict_changes_in_topdirs
 {
-	my ($dir, $min_level, $max_level) = @_;
+	my ($min_level, $max_level, @topdirs) = @_;
 	my $disallowed = 0;
 
 	my $pool = SVN::Pool->new(undef); 
@@ -392,64 +395,66 @@ sub restrict_changes_in_directory
 
 #print STDERR "@@@@@ [$affected_file] [$action_verb] [$source_file] [$is_source_file_dir] [$is_affected_file_dir]\n";
 
-		if ($affected_file =~ /\/${dir}\/(.*)$/)
+		foreach my $topdir(@topdirs)
 		{
-			# the affected file is located under the given directory.
-			my $affected_file_nodir = "${1}";
-
-			if (defined($source_file))
+			if ($affected_file =~ /\/${topdir}\/(.*)$/)
 			{
-				# it's being copied.
-				if (!$is_affected_file_dir)
+				# the affected file is located under the given directory.
+				my $affected_file_nodir = "${1}";
+
+				if (defined($source_file))
 				{
-					# the file beging added by copying is not a directory.
-					# it disallows individual file copying.
-					# copy a whole directory at one go.
-					print (STDERR "Disallowed to copy ${source_file} to ${affected_file}\n");
-					$disallowed++;
-				}
-				elsif ($source_file =~ /^\/${dir}\/(.*)$/)
-				{
-					# i don't want to be a copied file or directory to be 
-					# a source of another copy operation.
-					print (STDERR "Disallowed to copy ${source_file} to ${affected_file}\n");
-					$disallowed++;
+					# it's being copied.
+					if (!$is_affected_file_dir)
+					{
+						# the file beging added by copying is not a directory.
+						# it disallows individual file copying.
+						# copy a whole directory at one go.
+						print (STDERR "Disallowed to copy ${source_file} to ${affected_file}\n");
+						$disallowed++;
+					}
+					elsif ($source_file =~ /^\/${topdir}\/(.*)$/)
+					{
+						# i don't want to be a copied file or directory to be 
+						# a source of another copy operation.
+						print (STDERR "Disallowed to copy ${source_file} to ${affected_file}\n");
+						$disallowed++;
+					}
+					else
+					{
+						# TODO: DISALLOW THIS if the parent directory is a copied directory
+						#my $pardir = dirname ($affected_file);
+					}
 				}
 				else
 				{
-					# TODO: DISALLOW THIS if the parent directory is a copied directory
-					#my $pardir = dirname ($affected_file);
-				}
-			}
-			else
-			{
-				if ($is_affected_file_dir)
-				{
-					my @segs = split ('/', $affected_file_nodir);
-					my $num_segs = scalar(@segs);
-					# NOTE: for a string like abc/def/, split() seems to return 2 segments only.
+					if ($is_affected_file_dir)
+					{
+						my @segs = split ('/', $affected_file_nodir);
+						my $num_segs = scalar(@segs);
+						# NOTE: for a string like abc/def/, split() seems to return 2 segments only.
 
-					if ($affected_file_nodir eq '')
-					{
-						# it is the main directory itself.
-						# allow operation on it.
+						if ($affected_file_nodir eq '')
+						{
+							# it is the main directory itself.
+							# allow operation on it.
+						}
+						elsif ($num_segs < $min_level || $num_segs > $max_level)
+						{
+							# disallow deletion if the directory name to be deleted 
+							# matches a tag pattern
+							print (STDERR "Disallowed to ${action_verb} a directory - ${affected_file}\n");
+							$disallowed++;
+						}
 					}
-					elsif ($num_segs < $min_level || $num_segs > $max_level)
+					else
 					{
-						# disallow deletion if the directory name to be deleted 
-						# matches a tag pattern
-						print (STDERR "Disallowed to ${action_verb} a directory - ${affected_file}\n");
+						print (STDERR "Disallowed to ${action_verb} a file - ${affected_file}\n");
 						$disallowed++;
 					}
 				}
-				else
-				{
-					print (STDERR "Disallowed to ${action_verb} a file - ${affected_file}\n");
-					$disallowed++;
-				}
 			}
 		}
-		
 	}
 
 	# 'svn rename' within the restricted directory is disallowed because
@@ -482,10 +487,24 @@ if (check_commit_message ($cfg->{svn_min_commit_message_length}) <= 0)
 	exit (1);
 }
 
-# TODO: make 'tags' and 'min_level', 'max_level' configurable.
-if (restrict_changes_in_directory ('tags', 1, 2) <= -1)
+
+# TODO: enable per-project settings for topdir restriction
+my $min_level = $cfg->{svn_restriction_allowed_subdir_depth_min};
+if (!defined($min_level)) { $min_level = 0; }
+my $max_level = $cfg->{svn_restriction_allowed_subdir_depth_max};
+if (!defined($max_level)) { $max_level = 0; }
+
+my $topdirs = $cfg->{svn_restricted_topdirs};
+if (defined($topdirs))
 {
-	exit (1);
+	my @topdir_array = split (/\s*,\s*/, $topdirs);
+	if (scalar(@topdir_array) > 0)
+	{
+		if (restrict_changes_in_topdirs ($min_level, $max_level, @topdir_array) <= -1)
+		{
+			exit (1);
+		}
+	}
 }
 
 #my $dbh = open_database ($cfg);
