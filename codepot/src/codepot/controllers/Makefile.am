@@ -3,6 +3,7 @@ www_DATA =  \
 	api.php \
 	code.php \
 	file.php \
+	graph.php \
 	index.html \
 	issue.php \
 	main.php \

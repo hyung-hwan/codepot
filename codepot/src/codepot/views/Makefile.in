@@ -208,6 +208,7 @@ www_DATA = \
 	file_home.php \
 	file_show.php \
 	footer.php \
+	graph_main.php \
 	index.html \
 	issue_delete.php \
 	issue_edit.php \
