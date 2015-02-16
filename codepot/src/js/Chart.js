@@ -2143,6 +2143,9 @@
 					datasetObject.bars.push(new this.BarClass({
 						value : dataPoint,
 						label : data.labels[index],
+						// HYUNG-HWAN
+						tooltipLabel: (data.tooltipLabels? data.tooltipLabels[index]: data.labels[index]),
+						// END HYUNG-HWAN
 						datasetLabel: dataset.label,
 						strokeColor : dataset.strokeColor,
 						fillColor : dataset.fillColor,
@@ -2433,6 +2436,9 @@
 				strokeColor : this.options.segmentStrokeColor,
 				startAngle : Math.PI * 1.5,
 				circumference : (this.options.animateRotate) ? 0 : this.calculateCircumference(segment.value),
+				// HYUNG-HWAN
+				tooltipLabel: (segment.tooltipLabel? segment.tooltipLabel: segment.label),
+				// END HYUNG-HWAN
 				label : segment.label
 			}));
 			if (!silent){

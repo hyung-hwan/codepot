@@ -43,7 +43,7 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 		foreach ($ctxmenuitems as $item)
 		{
 			$extra = (count($item) >= 3)? "id='{$item[2]}'": '';
-        		print anchor ($item[0], $item[1], $extra);
+			print anchor ($item[0], $item[1], $extra);
 		}
 	}
 	else print '&nbsp;';
@@ -58,7 +58,8 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 			array ("wiki/home/{$project->id}", $con->lang->line('Wiki')),
 			array ("issue/home/{$project->id}", $con->lang->line('Issues')),
 			array ("code/home/{$project->id}", $con->lang->line('Code')),
-			array ("file/home/{$project->id}", $con->lang->line('Files'))
+			array ("file/home/{$project->id}", $con->lang->line('Files')),
+			array ("graph/home/{$project->id}", $con->lang->line('Graphs'))
 		);
 
 		foreach ($menuitems as $item)
@@ -103,7 +104,6 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 			print anchor ($menulink, $item[1], $extra);
 		}
 	}
-		
 	else print '&nbsp;';
 
 	print '</div>';
