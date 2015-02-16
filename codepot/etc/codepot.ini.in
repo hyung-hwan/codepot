@@ -232,5 +232,5 @@ svn_min_commit_message_length = "0"
 ; is limited. The value can be separated by a comma.
 ;------------------------------------------------------------------------------
 svn_restricted_topdirs = ""
-svn_restriction_allowed_subdir_depth_min = 1
-svn_restriction_allowed_subdir_depth_max = 1
+svn_restriction_allowed_subdir_depth_min = 0
+svn_restriction_allowed_subdir_depth_max = 0
