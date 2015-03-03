@@ -26,6 +26,8 @@ class FileModel extends Model
 	{
 		$this->db->trans_start ();
 		$this->db->where ('projectid', $project->id);
+		$this->db->order_by ('tag', 'desc');
+		$this->db->order_by ('name', 'asc');
 		$query = $this->db->get ('file');
 		$this->db->trans_complete ();
 
