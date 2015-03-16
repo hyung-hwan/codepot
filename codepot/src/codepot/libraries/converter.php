@@ -9,10 +9,53 @@ class Converter
 	// convert an ascii string to its hex representation
 	function AsciiToHex($ascii)
 	{
-		$hex = '';
+		$len = strlen($ascii);
 
-		for($i = 0; $i < strlen($ascii); $i++)
-		$hex .= str_pad(base_convert(ord($ascii[$i]), 10, 16), 2, '0', STR_PAD_LEFT);
+/*
+		$hex = '';
+		for($i = 0; $i < $len; $i++)
+			$hex .= str_pad(base_convert(ord($ascii[$i]), 10, 16), 2, '0', STR_PAD_LEFT);
+*/
+
+		$hex = '!'; # the new style conversion begins with an exclamation mark.
+		for ($i = 0; $i < $len; $i++)
+		{
+
+			if ($ascii[$i] == '\\')
+			{
+				// backslash to double backslashes.
+				$seg = '\\\\';
+			}
+			else if ($ascii[$i] == ':')
+			{
+				// colon to backslash-colon
+				$seg = '\\:';
+			}
+			else if ($ascii[$i] == '/')
+			{
+				// slash to colon
+				$seg = ':';
+			}
+			else if ($ascii[$i] == '.')
+			{
+				// period - no conversion
+				$seg = '.';
+			}
+			else 
+			{
+				if (preg_match ('/^[A-Za-z0-9]$/', $ascii[$i]) === FALSE)
+				{
+					$seg = '\\' . str_pad(base_convert(ord($ascii[$i]), 10, 16), 2, '0', STR_PAD_LEFT);
+				}
+				else
+				{
+					$seg = $ascii[$i];
+				}
+			}
+
+			$hex .= $seg;
+		}
+
 
 		return $hex;
 	}
@@ -23,10 +66,51 @@ class Converter
 	{
 		$ascii = '';
    
-		if (strlen($hex) % 2 == 1) $hex = '0'.$hex;
+		$len = strlen($hex);
+		if ($len > 0 && $hex[0] == '!')
+		{
+			for ($i = 1; $i < $len; $i++)
+			{
+				if ($hex[$i] == '\\')
+				{
+					$j = $i + 1;
+					$k = $i + 2;
+
+					if ($k < $len && ctype_xdigit($hex[$j]) && ctype_xdigit($hex[$k]))
+					{
+						$seg = chr(base_convert(substr($hex, $j, 2), 16, 10));
+						$i = $k;
+					}
+					else if ($j < $len)
+					{
+						$seg = $hex[$j];
+						$i = $j;
+					}
+					else
+					{
+						// the last charater is a backslash
+						$seg = $hex[$i];
+					}
+				}
+				else if ($hex[$i] == ':')
+				{
+					$seg = '/';
+				}
+				else 
+				{
+					$seg = $hex[$i];
+				}
+
+				$ascii .= $seg;
+			}	
+		}
+		else
+		{
+			if (strlen($hex) % 2 == 1) $hex = '0' . $hex;
    
-		for($i = 0; $i < strlen($hex); $i += 2)
-		$ascii .= chr(base_convert(substr($hex, $i, 2), 16, 10));
+			for($i = 0; $i < strlen($hex); $i += 2)
+				$ascii .= chr(base_convert(substr($hex, $i, 2), 16, 10));
+		}
    
 		return $ascii;
 	}
