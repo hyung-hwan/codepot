@@ -21,31 +21,31 @@ class Converter
 		for ($i = 0; $i < $len; $i++)
 		{
 
-			if ($ascii[$i] == '\\')
+			if ($ascii[$i] == '!')
 			{
 				// backslash to double backslashes.
-				$seg = '\\\\';
+				$seg = '!!';
 			}
 			else if ($ascii[$i] == ':')
 			{
 				// colon to backslash-colon
-				$seg = '\\:';
+				$seg = '!:';
 			}
 			else if ($ascii[$i] == '/')
 			{
 				// slash to colon
 				$seg = ':';
 			}
-			else if ($ascii[$i] == '.')
+			else if ($ascii[$i] == '.' || $ascii[$i] == '_' || $ascii[$i] == '-' || $ascii[$i] == ' ')
 			{
-				// period - no conversion
-				$seg = '.';
+				// no conversion for a period, an underscore, a dash, and a space
+				$seg = $ascii[$i];
 			}
 			else 
 			{
-				if (preg_match ('/^[A-Za-z0-9]$/', $ascii[$i]) === FALSE)
+				if (preg_match ('/^[A-Za-z0-9]$/', $ascii[$i]) <= 0)
 				{
-					$seg = '\\' . str_pad(base_convert(ord($ascii[$i]), 10, 16), 2, '0', STR_PAD_LEFT);
+					$seg = '!' . str_pad(base_convert(ord($ascii[$i]), 10, 16), 2, '0', STR_PAD_LEFT);
 				}
 				else
 				{
@@ -71,18 +71,20 @@ class Converter
 		{
 			for ($i = 1; $i < $len; $i++)
 			{
-				if ($hex[$i] == '\\')
+				if ($hex[$i] == '!')
 				{
 					$j = $i + 1;
 					$k = $i + 2;
 
 					if ($k < $len && ctype_xdigit($hex[$j]) && ctype_xdigit($hex[$k]))
 					{
+						// !XY where X and Y are hexadeciman digits
 						$seg = chr(base_convert(substr($hex, $j, 2), 16, 10));
 						$i = $k;
 					}
 					else if ($j < $len)
 					{
+						// !X - X is taken as a character
 						$seg = $hex[$j];
 						$i = $j;
 					}
@@ -94,10 +96,12 @@ class Converter
 				}
 				else if ($hex[$i] == ':')
 				{
+					// colon to slash
 					$seg = '/';
 				}
 				else 
 				{
+					// normal character
 					$seg = $hex[$i];
 				}
 
