@@ -112,4 +112,26 @@ class Graph extends Controller
 
 		print codepot_json_encode ($history);
 	}
+
+	function total_loc_json ($projectid)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+		{
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
+			return;
+		}
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE || ($project->public !== 'Y' && $login['id'] == ''))
+		{
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
+			return;
+		}
+
+		// check out the whole project 
+		// run clock.pl againt it.
+	}
 }
