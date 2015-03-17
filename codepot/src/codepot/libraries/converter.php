@@ -26,17 +26,19 @@ class Converter
 				// backslash to double backslashes.
 				$seg = '!!';
 			}
-			else if ($ascii[$i] == ':')
+			else if ($ascii[$i] == '|')
 			{
 				// colon to backslash-colon
-				$seg = '!:';
+				$seg = '!|';
 			}
 			else if ($ascii[$i] == '/')
 			{
 				// slash to colon
-				$seg = ':';
+				$seg = '|';
 			}
-			else if ($ascii[$i] == '.' || $ascii[$i] == '_' || $ascii[$i] == '-' || $ascii[$i] == ' ')
+			else if ($ascii[$i] == '.' || $ascii[$i] == '_' || 
+			         $ascii[$i] == '-' || $ascii[$i] == ':' || 
+			         $ascii[$i] == '@' || $ascii[$i] == ' ')
 			{
 				// no conversion for a period, an underscore, a dash, and a space
 				$seg = $ascii[$i];
@@ -94,7 +96,7 @@ class Converter
 						$seg = $hex[$i];
 					}
 				}
-				else if ($hex[$i] == ':')
+				else if ($hex[$i] == '|')
 				{
 					// colon to slash
 					$seg = '/';

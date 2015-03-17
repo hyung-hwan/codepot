@@ -197,7 +197,7 @@ var asciiToHex = function (x,dir) {
 	{
 		var i;
 		/*
-		for(i = 0; i < x.length; i++)
+		for(i=0; i<x.length; i++)
 		{
 			var tmp = x.charCodeAt(i).toString(16);
 			if (tmp.length == 1) r += "0";
@@ -214,21 +214,22 @@ var asciiToHex = function (x,dir) {
 			{
 				seg = "!!";
 			}
-			else if (c == ":")
+			else if (c == "|")
 			{
-				seg = "!:";
+				seg = "!|";
 			}
 			else if (c == "/")
 			{
-				seg = ":";
+				seg = "|";
 			}
-			else if (c == "." || c == "_" || c == "-" || c == " ")
+			else if (c == "." || c == "_" || c == "-" || 
+			         c == ":" || c == "@" || c == " ")
 			{
 				seg = c;
 			}
 			else
 			{
-				if (/^[A-Za-z0-9]$/.test(c))
+				if (/^[A-Za-z0-9]$/.test (c))
 				{
 					seg = c;
 				}
@@ -241,7 +242,6 @@ var asciiToHex = function (x,dir) {
 
 			r += seg;
 		}
-		
 	}
 	else
 	{
