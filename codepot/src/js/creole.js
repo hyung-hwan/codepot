@@ -196,12 +196,52 @@ var asciiToHex = function (x,dir) {
 	if (dir == "A2H") 
 	{
 		var i;
-		for(i=0; i<x.length; i++)
+		/*
+		for(i = 0; i < x.length; i++)
 		{
 			var tmp = x.charCodeAt(i).toString(16);
 			if (tmp.length == 1) r += "0";
 			r += tmp;
 		}
+		*/
+
+		r = "!"; // the new style conversion begins with an exclamation mark
+		for(i = 0; i < x.length; i++)
+		{
+			var seg;
+			var c = x.charAt(i);
+			if (c == "!")
+			{
+				seg = "!!";
+			}
+			else if (c == ":")
+			{
+				seg = "!:";
+			}
+			else if (c == "/")
+			{
+				seg = ":";
+			}
+			else if (c == "." || c == "_" || c == "-" || c == " ")
+			{
+				seg = c;
+			}
+			else
+			{
+				if (/^[A-Za-z0-9]$/.test(c))
+				{
+					seg = c;
+				}
+				else
+				{
+					var seg = x.charCodeAt(i).toString(16);
+					if (seg.length == 1) seg = "0" + seg;
+				}
+			}
+
+			r += seg;
+		}
+		
 	}
 	else
 	{
