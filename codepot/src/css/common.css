@@ -78,6 +78,7 @@ body {
 	padding-left: 0.3em;
 	padding-right: 0.5em;
 	margin: 0.1em 0.1em 0.1em 0.1em;
+
 }
 
 .content .taskbar a:hover {
@@ -126,13 +127,21 @@ body {
 	padding: 0.5em 0.5em 0.5em 0.5em;
 	color: #FFFFFF;
 	background-color: #4665A2;
+
+	background-image: url("images/three-d.jpg");
+	background-repeat: repeat;
 }
 
 .content .projectbar .title {
-	font-size: 1.6em;
+	font-size: 2em;
 	font-weight: bold;
 	text-transform: uppercase;
 	white-space: nowrap;
+
+	//text-shadow: 2px 8px 6px rgba(0,0,0,0.2),
+	//            0px -5px 35px rgba(255,255,255,0.3);
+	text-shadow: 1px 1px 0 #7A7A7A;
+	letter-spacing: 0.1em;
 }
 
 .content .projectbar .ctxmenu {
