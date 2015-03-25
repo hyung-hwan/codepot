@@ -50,7 +50,7 @@ CREATE TABLE wiki (
 
 	CONSTRAINT wiki_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
-) charset=utf8 engine=InnoDB;	
+) charset=utf8 engine=InnoDB;
 
 CREATE TABLE wiki_attachment (
 	projectid  VARCHAR(32)   NOT NULL,

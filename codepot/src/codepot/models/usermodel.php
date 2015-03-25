@@ -37,14 +37,14 @@ class UserModel extends Model
 	{
 		$icon_name_set = strlen($settings->icon_name) > 0;
 
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$this->db->where ('userid', $userid);
 		$query = $this->db->get ('user_settings');
 
 		if ($this->db->trans_status() === FALSE)
 		{
-			$this->db->trans_complete ();
+			$this->db->trans_rollback ();
 			return FALSE;
 		}
 
@@ -86,7 +86,7 @@ class UserModel extends Model
 		return TRUE;
 
 		/* affected_rows() does not seem to work reliably ...
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$this->db->where ('userid', $userid);
 		$this->db->set ('code_hide_line_num', (string)$settings->code_hide_line_num);

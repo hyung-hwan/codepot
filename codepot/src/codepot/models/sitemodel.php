@@ -59,7 +59,7 @@ class SiteModel extends Model
 
 	function create ($userid, $site)
 	{
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$this->db->set ('id', $site->id);
 		$this->db->set ('name', $site->name);
@@ -84,7 +84,7 @@ class SiteModel extends Model
 
 	function update ($userid, $site)
 	{
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$this->db->where ('id', $site->id);
 		$this->db->set ('name', $site->name);
@@ -107,7 +107,7 @@ class SiteModel extends Model
 
 	function delete ($userid, $site)
 	{
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$this->db->where ('id', $site->id);
 		$this->db->delete ('site');

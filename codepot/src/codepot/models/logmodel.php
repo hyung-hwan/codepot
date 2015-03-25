@@ -152,7 +152,7 @@ class LogModel extends Model
 
 	function write ($log)
 	{
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$this->db->set ('type', $log->type);
 		$this->db->set ('action', $log->action);
@@ -176,7 +176,7 @@ class LogModel extends Model
 
 	function delete ($log)
 	{
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$this->db->where ('id', $log->id);
 		$this->db->delete ('log');
@@ -195,7 +195,7 @@ class LogModel extends Model
 
 	function purge ()
 	{
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$now = time();
 		$one_month_ago = $now - (24 * 60 * 60 * 30);

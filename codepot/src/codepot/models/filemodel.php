@@ -60,7 +60,7 @@ class FileModel extends Model
 		$this->db->insert ('log');
 
 		$this->db->trans_complete ();
-                return $this->db->trans_status();
+		return $this->db->trans_status();
 	}
 
 	function update ($userid, $file)
@@ -84,12 +84,12 @@ class FileModel extends Model
 		$this->db->insert ('log');
 
 		$this->db->trans_complete ();
-                return $this->db->trans_status();
+		return $this->db->trans_status();
 	}
 
 	function delete ($userid, $file)
 	{
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$this->db->where ('projectid', $file->projectid);
 		$this->db->where ('name', $file->name);
