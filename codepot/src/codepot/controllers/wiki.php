@@ -342,6 +342,11 @@ class Wiki extends Controller
 		}
 		else
 		{
+			if ($mode == 'update')
+			{
+				$this->form_validation->set_rules (
+					'wiki_original_name', 'original name', 'required|max_length[255]');
+			}
 			$this->form_validation->set_rules (
 				'wiki_projectid', 'project ID', 'required|alpha_dash|max_length[32]');
 			$this->form_validation->set_rules (
@@ -358,19 +363,31 @@ class Wiki extends Controller
 			if ($this->input->post('wiki'))
 			{
 				$wiki->projectid = $this->input->post('wiki_projectid');
-				$wiki->name = $this->input->post('wiki_name');
+				if ($mode == 'update')
+				{
+					$wiki->name = $this->input->post('wiki_original_name');
+					$new_wiki_name = $this->input->post('wiki_name');
+				}
+				else
+				{
+					$wiki->name = $this->input->post('wiki_name');
+					$new_wiki_name = NULL;
+				}
 				$wiki->text = $this->input->post('wiki_text');
 				$wiki->attachments = array();
 				$wiki->delete_attachments = array();
 
 				if ($this->form_validation->run())
 				{
+					// $new_wiki_name is not needed if it's not different from the orignal name
+					if ($mode == 'update' && $wiki->name == $new_wiki_name) $new_wiki_name = NULL;
+
 					$delatts = $this->input->post('wiki_delete_attachment');
 					if (!empty($delatts))
 					{
 						foreach ($delatts as $att)
 						{
-							$atpos = strpos ($att, '@');	
+							$atpos = strpos ($att, '@');
 							if ($atpos === FALSE) continue;
 	
 							$attinfo['name'] = $this->converter->HexToAscii(
@@ -384,27 +401,30 @@ class Wiki extends Controller
 							);
 						}
 					}
-	
+
 					$atts = $this->wikis->getAttachments (
 						$login['id'], $project, $wiki->name);
 					if ($atts === FALSE)
 					{
 						$data['wiki'] = $wiki;
 						$data['message'] = 'DATABASE ERROR';
-						$this->load->view ($this->VIEW_EDIT, $data);	
+						$this->load->view ($this->VIEW_EDIT, $data);
 						return;
 					}
 					$wiki->attachments = $atts;
 
-					if (strpos ($wiki->name, ':') !== FALSE)
+					// disallow : # [ ] |
+					if (strpbrk ($wiki->name, ':#[]|') !== FALSE ||
+					    (!is_null($new_wiki_name) && strpbrk ($new_wiki_name, ':#[]|') !== FALSE))
 					{
-						$data['message'] = $this->lang->line('WIKI_MSG_NAME_NO_COLON');
+						$data['message'] = $this->lang->line('WIKI_MSG_NAME_DISALLOWED_CHARS');
 						$data['wiki'] = $wiki;
-						$this->load->view ($this->VIEW_EDIT, $data);	
+						$this->load->view ($this->VIEW_EDIT, $data);
 						return;
 					}
 
-					if ($this->wikihelper->_is_reserved ($wiki->name, FALSE))
+					if ($this->wikihelper->_is_reserved ($wiki->name, FALSE) ||
+					    (!is_null($new_wiki_name) && $this->wikihelper->_is_reserved ($new_wiki_name, FALSE)))
 					{
 						$data['message'] = sprintf (
 							$this->lang->line('WIKI_MSG_RESERVED_WIKI_NAME'), 
@@ -428,17 +448,16 @@ class Wiki extends Controller
 						$wiki->new_attachments = $extra;
 
 						$result = ($mode == 'update')?
-							$this->wikis->update ($login['id'], $wiki):
+							$this->wikis->update ($login['id'], $wiki, $new_wiki_name):
 							$this->wikis->create ($login['id'], $wiki);
-
 						if ($result === FALSE)
 						{
-							foreach ($extra as $att) 
-								@unlink ($att['fullencpath']);
+							// delete uploaded attachments if database operation failed.
+							foreach ($extra as $att) @unlink ($att['fullencpath']);
 
 							$data['message'] = 'DATABASE ERROR';
 							$data['wiki'] = $wiki;
-							$this->load->view ($this->VIEW_EDIT, $data);	
+							$this->load->view ($this->VIEW_EDIT, $data);
 						}
 						else
 						{
@@ -447,16 +466,39 @@ class Wiki extends Controller
 							foreach ($wiki->delete_attachments as $att)
 								@unlink (CODEPOT_ATTACHMENT_DIR . "/{$att->encname}");
 
-							redirect ("wiki/show/{$project->id}/" . 
-								$this->converter->AsciiToHex($wiki->name));
+							if ($mode == 'update' && !is_null($new_wiki_name))
+							{
+								// renamed. redirect to a newly named page.
+								redirect ("wiki/show/{$project->id}/" . 
+									$this->converter->AsciiToHex($new_wiki_name));
+							}
+							else
+							{
+								redirect ("wiki/show/{$project->id}/" . 
+									$this->converter->AsciiToHex($wiki->name));
+							}
 						}
 					}
 				}
 				else
 				{
+					if ($mode == 'update')
+					{
+						$atts = $this->wikis->getAttachments (
+							$login['id'], $project, $wiki->name);
+						if ($atts === FALSE)
+						{
+							$data['wiki'] = $wiki;
+							$data['message'] = 'DATABASE ERROR';
+							$this->load->view ($this->VIEW_EDIT, $data);
+							return;
+						}
+						$wiki->attachments = $atts;
+					}
+
 					$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 					$data['wiki'] = $wiki;
-					$this->load->view ($this->VIEW_EDIT, $data);	
+					$this->load->view ($this->VIEW_EDIT, $data);
 				}
 			}
 			else
@@ -479,7 +521,7 @@ class Wiki extends Controller
 					else
 					{
 						$data['wiki'] = $wiki;
-						$this->load->view ($this->VIEW_EDIT, $data);	
+						$this->load->view ($this->VIEW_EDIT, $data);
 					}
 				}
 				else
@@ -489,7 +531,7 @@ class Wiki extends Controller
 					$wiki->text = '';
 
 					$data['wiki'] = $wiki;
-					$this->load->view ($this->VIEW_EDIT, $data);	
+					$this->load->view ($this->VIEW_EDIT, $data);
 				}
 			}
 

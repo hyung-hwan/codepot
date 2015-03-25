@@ -63,7 +63,7 @@ class WikiModel extends Model
 	{
 		$this->db->trans_start ();
 
-                $this->db->select ('name,encname,createdon,createdby');
+		$this->db->select ('name,encname,createdon,createdby');
 		$this->db->where ('projectid', $project->id);
 		$this->db->where ('wikiname', $wikiname);
 		$this->db->where ('name', $name);
@@ -98,7 +98,7 @@ class WikiModel extends Model
 	function create ($userid, $wiki)
 	{
 		// TODO: check if userid can do this..
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$now = date('Y-m-d H:i:s');
 
@@ -141,7 +141,7 @@ class WikiModel extends Model
 			$this->db->set ('createdon', $now);
 			$this->db->set ('createdby', $userid);
 			$this->db->insert ('wiki_attachment');
-		}	
+		}
 
 		$this->db->set ('createdon', $now);
 		$this->db->set ('type',      'wiki');
@@ -161,15 +161,59 @@ class WikiModel extends Model
 		return TRUE;
 	}
 
-	function update ($userid, $wiki)
+	function update ($userid, $wiki, $new_wiki_name = NULL)
 	{
 		// TODO: check if userid can do this..
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$now = date('Y-m-d H:i:s');
 
+		if (!is_null($new_wiki_name) && $wiki->name != $new_wiki_name)
+		{
+			// there is a change in name.
+			// rename the wiki document and its attachments
+
+			// check if the new name exists.
+			$this->db->where ('projectid', $wiki->projectid);
+			$this->db->where ('name', $new_wiki_name);
+			$query = $this->db->get ('wiki');
+			if ($this->db->trans_status() === FALSE) 
+			{
+				$this->db->trans_rollback ();
+				return FALSE;
+			}
+
+			$result = $query->result ();
+			if (!empty($result))
+			{
+				// the new name exists in the table.
+				$this->db->trans_rollback ();
+				return FALSE;
+			}
+
+			$this->db->where ('projectid', $wiki->projectid);
+			$this->db->where ('name', $wiki->name);
+			$this->db->set ('name', $new_wiki_name);
+			$this->db->set ('updatedon', $now);
+			$this->db->set ('updatedby', $userid);
+			$this->db->update ('wiki');
+
+			// attachment renaming isn't needed because the
+			// database table has a proper trigger set.
+			//$this->db->where ('projectid', $wiki->projectid);
+			//$this->db->where ('wikiname', $wiki->name);
+			//$this->db->set ('wikiname', $new_wiki_name);
+			//$this->db->update ('wiki_attachment');
+
+			$effective_wiki_name = $new_wiki_name;
+		}
+		else
+		{
+			$effective_wiki_name = $wiki->name;
+		}
+
 		$this->db->where ('projectid', $wiki->projectid);
-		$this->db->where ('name', $wiki->name);
+		$this->db->where ('name', $effective_wiki_name);
 		$this->db->set ('text', $wiki->text);
 		$this->db->set ('updatedon', $now);
 		$this->db->set ('updatedby', $userid);
@@ -178,7 +222,7 @@ class WikiModel extends Model
 		foreach ($wiki->delete_attachments as $att)
 		{
 			$this->db->where ('projectid', $wiki->projectid);
-			$this->db->where ('wikiname', $wiki->name);
+			$this->db->where ('wikiname', $effective_wiki_name);
 			$this->db->where ('name', $att->name);
 			$this->db->where ('encname', $att->encname);
 			$this->db->delete ('wiki_attachment');
@@ -199,20 +243,29 @@ class WikiModel extends Model
 		foreach ($wiki->new_attachments as $att)
 		{
 			$this->db->set ('projectid', $wiki->projectid);
-			$this->db->set ('wikiname', $wiki->name);
+			$this->db->set ('wikiname', $effective_wiki_name);
 			$this->db->set ('name', $att['name']);
 			$this->db->set ('encname', $att['encname']);
 			$this->db->set ('createdon', $now);
 			$this->db->set ('createdby', $userid);
 			$this->db->insert ('wiki_attachment');
-		}	
-		
+		}
+
+		// TODO: put rename message
+		//$this->db->set ('createdon', $now);
+		//$this->db->set ('type',      'wiki');
+		//$this->db->set ('action',    'rename');
+		//$this->db->set ('projectid', $wiki->projectid);
+		//$this->db->set ('userid',    $userid);
+		//$this->db->set ('message',   $effective_wiki_name);
+		//$this->db->insert ('log');
+
 		$this->db->set ('createdon', $now);
 		$this->db->set ('type',      'wiki');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $wiki->projectid);
 		$this->db->set ('userid',    $userid);
-		$this->db->set ('message',   $wiki->name);
+		$this->db->set ('message',   $effective_wiki_name);
 		$this->db->insert ('log');
 
 		if ($this->db->trans_status() === FALSE)

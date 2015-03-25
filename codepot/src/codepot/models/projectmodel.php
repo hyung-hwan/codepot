@@ -97,7 +97,7 @@ class ProjectModel extends Model
 	{
 		// TODO: check if userid can do this..
 
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$this->db->set ('id', $project->id);
 		$this->db->set ('name', $project->name);
@@ -209,7 +209,7 @@ class ProjectModel extends Model
 	{
 		// TODO: check if userid can do this..
 
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		$this->db->where ('id', $project->id);
 		$this->db->set ('name', $project->name);
@@ -266,7 +266,7 @@ class ProjectModel extends Model
 	function delete ($userid, $project, $force = FALSE)
 	{
 		// TODO: check if userid can do this..
-		$this->db->trans_begin ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
 		if ($force)
 		{

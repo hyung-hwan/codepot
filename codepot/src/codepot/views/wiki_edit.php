@@ -104,10 +104,11 @@ $this->load->view (
 		</div>
 		<div class='form_input_field'>
 			<?php 
-				$extra = ($mode == 'update')? 'readonly="readonly"': ''; 
-				$extra .= 'maxlength="80" size="40" id="wiki_edit_mainarea_name"';
+				$extra = 'maxlength="80" size="40" id="wiki_edit_mainarea_name"';
+				//$extra .= ($mode == 'update')? ' readonly="readonly"': ''; 
 			?>
 			<?=form_input('wiki_name', set_value('wiki_name', $wiki->name), $extra)?>
+			<?=($mode == 'update')? form_hidden('wiki_original_name', set_value('wiki_original_name', $wiki->name)): ''?>
 		</div>
 
 		<div class='form_input_label'>
