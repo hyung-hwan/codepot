@@ -11,6 +11,9 @@ function show_taskbar ($con, $login)
 		$title = (isset($login['email']) && $login['email'] != '')?
 			('title=' . htmlspecialchars($login['email'])): '';
 
+		$hex = $con->converter->AsciiToHex (current_url());
+		print form_open("main/signout/{$hex}", array('id' => 'taskbar_signout_form'));
+
 		/*
 		// attempt to load the user icon regardless of its upload state.
 		// if it has not been uploaded, it won't be found. 
@@ -33,8 +36,14 @@ function show_taskbar ($con, $login)
 
 		print anchor ('user/home', htmlspecialchars($login['id']), $title);
 
-		$hex = $con->converter->AsciiToHex (current_url());
-		print anchor ("main/signout/{$hex}", $con->lang->line('Sign out'));
+
+		print '&nbsp;';
+		print form_submit (
+			'login', 
+			$con->lang->line('Sign out'), 
+			'class="button" id="taskbar_signout_button"'
+		);
+		print form_close();
 	}
 	else
 	{
@@ -54,34 +63,38 @@ function show_taskbar ($con, $login)
 			set_value ('user_url', current_url())
 		);
 
+		/*
 		print form_label(
 			$con->lang->line('Username'), 
 			'taskbar_user_name'
 		);
 		print '&nbsp;';
+		*/
 		print form_input (
 			'user_name', 
 			set_value ('user_name', $user_name), 
-			'size="12" id="taskbar_user_name"'
+			"size='20' id='taskbar_user_name' placeholder={$con->lang->line('Username')}"
 		);
 
 		print '&nbsp;';
+		/*
 		print form_label (
 			$con->lang->line('Password'),
 			'taskbar_user_pass'
 		);
 		print '&nbsp;';
+		*/
 		print form_password (
 			'user_pass',
 			set_value ('user_pass', $user_pass),
-			'size="12" id="taskbar_user_pass"'
+			"size='20' id='taskbar_user_pass' placeholder={$con->lang->line('Password')}"
 		);
 
 		print '&nbsp;';
 		print form_submit (
 			'login', 
 			$con->lang->line('Sign in'), 
-			'class="button" id="taskbar_signin_ok_button"'
+			'class="button" id="taskbar_signin_button"'
 		);
 //print '</div>';
 
