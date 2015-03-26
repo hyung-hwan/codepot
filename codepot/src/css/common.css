@@ -734,12 +734,10 @@ pre.prettyprint li.L9 { background: #eee }
 
 #login_user_name {
 	background: url("images/username.png") no-repeat scroll 0% 0% rgb(234, 231, 231);
-	background-position: 0px 1px !important;
+	background-position: 0px 3px !important;
 	padding-left: 24px;
-	padding-top: 2px;
-	padding-bottom: 2px;
 
-	height: 2em; 
+	height: 2.2em; 
 	vertical-align: middle;
 
 	border: 1px solid #B9BDC1;
@@ -751,6 +749,7 @@ pre.prettyprint li.L9 { background: #eee }
 	border-radius: 3px;
 
 	font-size: 1em;
+	border: 0 none;
 }
 
 #login_user_name:focus {
@@ -760,10 +759,10 @@ pre.prettyprint li.L9 { background: #eee }
 
 #login_user_pass {
 	background: url("images/password.png") no-repeat scroll 0% 0% rgb(234, 231, 231);
-	background-position: 0px 1px !important;
+	background-position: 0px 3px !important;
 	padding-left: 24px;
 
-	height: 2em; 
+	height: 2.2em; 
 	vertical-align: middle;
 
 	border: 1px solid #B9BDC1;
@@ -775,6 +774,7 @@ pre.prettyprint li.L9 { background: #eee }
 	border-radius: 3px;
 
 	font-size: 1em;
+	border: 0 none;
 }
 
 #login_user_pass:focus {
