@@ -316,16 +316,18 @@ body {
 }
 
 .content .mainarea .form_input_preview {
-        width: 100%;
-        /*border: 1px solid #DDDDDD;*/
-        background-color: #FFFFF0;
-        font-size: 90%;
+	width: 100%;
+	/*border: 1px solid #DDDDDD;*/
+	background-color: #FFFFF0;
+	font-size: 90%;
 }
 
 .content .mainarea .form_input_preview pre {
-        background-color: inherit;
-        /*background-color: #FDF5D6;*/
-        /*border: none;*/
+	/*background-color: inherit;*/
+	background-color: #F8F8FA;
+	padding: 0.3em;
+	/*background-color: #FDF5D6;*/
+	/*border: none;*/
 }
 
 .content .mainarea .icon {
@@ -344,7 +346,7 @@ body {
 
 .content .mainarea pre.wiki {
 	white-space: pre-wrap;
-	padding: 1em;
+	padding: 0.3em;
 	line-height: 1.2em;
 	font-family: consolas, "Andale Mono", monospace;
 
