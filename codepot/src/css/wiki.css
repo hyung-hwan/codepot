@@ -5,7 +5,9 @@
 #wiki_show_mainarea_result {
 	position: relative;
 	min-height: 13em;
+}
 
+#wiki_show_mainarea_wiki {
 	-moz-column-rule: 1px dotted grey;
 	-webkit-column-rule: 1px dotted grey;
 	column-rule: 1px dotted grey;
