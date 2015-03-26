@@ -105,6 +105,7 @@ class WikiModel extends Model
 		$this->db->set ('projectid', $wiki->projectid);
 		$this->db->set ('name', $wiki->name);
 		$this->db->set ('text', $wiki->text);
+		$this->db->set ('columns', $wiki->columns);
 		$this->db->set ('createdon', $now);
 		$this->db->set ('updatedon', $now);
 		$this->db->set ('createdby', $userid);
@@ -215,6 +216,7 @@ class WikiModel extends Model
 		$this->db->where ('projectid', $wiki->projectid);
 		$this->db->where ('name', $effective_wiki_name);
 		$this->db->set ('text', $wiki->text);
+		$this->db->set ('columns', $wiki->columns);
 		$this->db->set ('updatedon', $now);
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('wiki');

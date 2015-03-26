@@ -5,6 +5,14 @@
 #wiki_show_mainarea_result {
 	position: relative;
 	min-height: 13em;
+
+	-moz-column-rule: 1px dotted grey;
+	-webkit-column-rule: 1px dotted grey;
+	column-rule: 1px dotted grey;
+
+	-moz-column-gap: 2em;
+	-webkit-column-gap: 2em;
+	column-gap: 2em;
 }
 
 #wiki_show_mainarea_result_info {
@@ -36,7 +44,22 @@
 /*---------------------------------------------
  * wiki edit
  *---------------------------------------------*/
+#wiki_edit_mainarea_form {
+	border: #D4DBE8 1px solid;
+	padding: 0.5em;
+}
+
 #wiki_edit_mainarea_text {
 	width: 100%;
+}
+
+#wiki_edit_mainarea_text_preview {
+	-moz-column-rule: 1px dotted grey;
+	-webkit-column-rule: 1px dotted grey;
+	column-rule: 1px dotted grey;
+
+	-moz-column-gap: 2em;
+	-webkit-column-gap: 2em;
+	column-gap: 2em;
 }
 
