@@ -446,7 +446,7 @@ body {
 	border: none;
 	font-family: consolas, "Andale Mono", monospace;
 	line-height: 1.2em;
-	padding: 1em;
+	padding: 0.3em;
 
 	tab-size: 5;
 	-moz-tab-size: 5;

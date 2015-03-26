@@ -27,6 +27,20 @@ $hexname = $this->converter->AsciiToHex ($wiki->name);
 
 function render_wiki(input_text)
 {
+	var column_count = $("#wiki_edit_mainarea_text_column_count").val();
+	var x_column_count = parseInt (column_count);
+	if (isNaN(x_column_count) || x_column_count < 1) x_column_count = 1;
+	else if (x_column_count > 9) x_column_count = 9; // sync this max value with wiki_show. TODO: put this into codepot.ini
+
+	column_count = x_column_count.toString();
+	$("#wiki_edit_mainarea_text_column_count").val(column_count);
+
+	$("#wiki_edit_mainarea_text_preview").css ({
+		"-moz-column-count":    column_count,
+		"-webkit-column-count": column_count,
+		"column-count":         column_count
+	});
+
 	creole_render_wiki_with_input_text (
 		input_text,
 		"wiki_edit_mainarea_text_preview", 
@@ -96,8 +110,9 @@ $this->load->view (
 
 <?php if ($message != "") print '<div id="wiki_edit_message" class="form_message">'.htmlspecialchars($message).'</div>'; ?>
 
+<div id="wiki_edit_mainarea_form">
 <?=form_open_multipart("wiki/{$mode}/{$project->id}/".$this->converter->AsciiToHex($wiki->name))?>
-	<?=form_fieldset()?>
+	<!-- <?=form_fieldset()?> field set is problematic. if text contains a wide pre block, preview with multi-columns overflows beyond its container.   -->
 		<div class='form_input_label'>
 			<?=form_label($this->lang->line('Name').': ', 'wiki_name')?>
 			<?=form_error('wiki_name');?>
@@ -113,7 +128,22 @@ $this->load->view (
 
 		<div class='form_input_label'>
 			<?=form_label($this->lang->line('Text').': ', 'wiki_text')?>
-			 <a href='#' id='wiki_edit_mainarea_text_preview_button'><?=$this->lang->line('Preview')?></a>
+			<a href='#' id='wiki_edit_mainarea_text_preview_button'><?=$this->lang->line('Preview')?></a>
+
+			<?php
+				$attrs = array (
+					'name' => 'wiki_columns',
+					'id' => 'wiki_edit_mainarea_text_column_count',
+					'value' => set_value('wiki_columns', $wiki->columns),
+					'size' => '2',
+					'min' => '1',
+					'max' => '9',
+					'type' => 'number');
+				print form_input ($attrs);
+			?>
+			
+			<?=$this->lang->line('Columns')?>(1-9)
+
 			<?=form_error('wiki_text');?>
 		</div>
 		<div class='form_input_field'>
@@ -184,8 +214,9 @@ $this->load->view (
 			<?=form_submit('wiki', $caption)?>
 		</div>
 
-	<?=form_fieldset_close()?>
+	<!-- <?=form_fieldset_close()?>  -->
 <?=form_close();?>
+</div> <!-- wiki_edit_mainarea_form -->
 
 </div> <!-- wiki_edit_mainarea -->
 

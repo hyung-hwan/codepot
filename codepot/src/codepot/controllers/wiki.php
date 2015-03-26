@@ -353,6 +353,8 @@ class Wiki extends Controller
 				'wiki_name', 'name', 'required|max_length[255]');
 			$this->form_validation->set_rules (
 				'wiki_text', 'text', 'required');
+			$this->form_validation->set_rules (
+				'wiki_columns', 'columns', 'required|integer|min_length[1]|max_length[1]|greater_than[0]|less_than[10]');
 			$this->form_validation->set_error_delimiters (
 				'<span class="form_field_error">','</span>');
 
@@ -374,6 +376,7 @@ class Wiki extends Controller
 					$new_wiki_name = NULL;
 				}
 				$wiki->text = $this->input->post('wiki_text');
+				$wiki->columns = $this->input->post('wiki_columns');
 				$wiki->attachments = array();
 				$wiki->delete_attachments = array();
 
@@ -529,6 +532,7 @@ class Wiki extends Controller
 					$wiki->projectid = $projectid;
 					$wiki->name = $name;
 					$wiki->text = '';
+					$wiki->columns = '1';
 
 					$data['wiki'] = $wiki;
 					$this->load->view ($this->VIEW_EDIT, $data);
