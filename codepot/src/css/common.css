@@ -804,6 +804,7 @@ pre.prettyprint li.L9 { background: #eee }
 	text-decoration: none;
 
 	font-size: 1em;
+	border: 0 none;
 }
 
 #login_signin_button:hover {
