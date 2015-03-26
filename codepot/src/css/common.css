@@ -651,6 +651,7 @@ pre.prettyprint li.L9 { background: #eee }
 	right: 0.8em;
 	top: 0.8em;
 }
+
 #taskbar_signin_form_panel {
 	background-color: black;
 	padding: 0.6em 0.6em 0.6em 0.6em;
@@ -661,10 +662,12 @@ pre.prettyprint li.L9 { background: #eee }
 	-moz-border-radius-topright:2px;
 	white-space: nowrap;
 }
+
 #taskbar_signin_button_panel {
 	float: right;
 	margin-left: 0.3em;
 }
+
 #taskbar_signin_button_panel a {
 	color: #0073EA;
 }
@@ -676,4 +679,14 @@ pre.prettyprint li.L9 { background: #eee }
 	white-space: nowrap;
 }
 
+#taskbar_user_name {
+	background: url("images/username.png") no-repeat scroll 0% 0% rgb(234, 231, 231);
+	background-position: 0px 1px !important;
+	padding-left: 24px;
+}
 
+#taskbar_user_pass {
+	background: url("images/password.png") no-repeat scroll 0% 0% rgb(234, 231, 231);
+	background-position: 0px 1px !important;
+	padding-left: 24px;
+}
