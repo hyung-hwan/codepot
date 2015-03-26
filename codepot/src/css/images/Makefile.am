@@ -31,6 +31,7 @@ www_DATA =  \
 	page_white_add.png \
 	page_white_delete.png \
 	page_white_edit.png \
+	password.png \
 	script.png \
 	sitemap_color.png \
 	submitbg.png \
@@ -52,7 +53,8 @@ www_DATA =  \
 	ui-icons_666666_256x240.png \
 	ui-icons_ff0084_256x240.png \
 	ui-icons_ffffff_256x240.png \
-	up.png 
+	up.png \
+	username.png
 
 EXTRA_DIST = $(www_DATA)
 
