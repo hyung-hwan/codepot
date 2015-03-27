@@ -42,27 +42,28 @@ $this->load->view (
 
 <?php if ($message != "") print '<div id="file_delete_message" class="form_message">'.htmlspecialchars($message).'</div>'; ?>
 
+<div class="form_container">
 <?=form_open("file/delete/{$project->id}/".$this->converter->AsciiToHex($file->name))?>
-	<?=form_fieldset()?>
-		<div>
-			<div>
-				<?=form_checkbox('file_confirm', 'yes', set_checkbox('file_confirm', $file_confirm))?>
-				<?=$this->lang->line('MSG_SURE_TO_DELETE_THIS') ?> - <?=htmlspecialchars($file->name)?>
-				<?=form_error('file_confirm')?>
-			</div>
-		</div>
 
+	<div>
 		<div>
-			<?=form_hidden('file_projectid', set_value('file_projectid', $file->projectid))?>
-			<?=form_hidden('file_name', set_value('file_name', $file->name))?>
+			<?=form_checkbox('file_confirm', 'yes', set_checkbox('file_confirm', $file_confirm))?>
+			<?=$this->lang->line('MSG_SURE_TO_DELETE_THIS') ?> - <?=htmlspecialchars($file->name)?>
+			<?=form_error('file_confirm')?>
 		</div>
+	</div>
 
-		<div>
-			<?=form_submit('file', $this->lang->line('Delete'))?>
-		</div>
+	<div>
+		<?=form_hidden('file_projectid', set_value('file_projectid', $file->projectid))?>
+		<?=form_hidden('file_name', set_value('file_name', $file->name))?>
+	</div>
 
-	<?=form_fieldset_close()?>
+	<div>
+		<?=form_submit('file', $this->lang->line('Delete'))?>
+	</div>
+
 <?=form_close();?>
+</div>
 
 </div>
 

@@ -41,27 +41,28 @@ $this->load->view (
 
 <?php if ($message != "") print "<div id='project_create_message' class='form_message'>$message</div>"; ?>
 
+<div class="form_container">
 <?=form_open('project/delete/'.$project->id)?>
-	<?=form_fieldset()?>
-		<div>
-			<div>
-				<?=form_checkbox('project_confirm', 'yes', set_checkbox('project_confirm', $project_confirm))?>
-				<?=$this->lang->line('MSG_SURE_TO_DELETE_THIS')?> - <?=htmlspecialchars($project->name)?>
-				<?=form_error('project_confirm')?>
-			</div>
-		</div>
 
+	<div>
 		<div>
-			<?=form_hidden('project_id', set_value('project_id', $project->id))?>
-			<?=form_hidden('project_name', set_value('project_name', $project->name))?>
+			<?=form_checkbox('project_confirm', 'yes', set_checkbox('project_confirm', $project_confirm))?>
+			<?=$this->lang->line('MSG_SURE_TO_DELETE_THIS')?> - <?=htmlspecialchars($project->name)?>
+			<?=form_error('project_confirm')?>
 		</div>
+	</div>
 
-		<div>
-			<?=form_submit('project', $this->lang->line('Delete'))?>
-		</div>
+	<div>
+		<?=form_hidden('project_id', set_value('project_id', $project->id))?>
+		<?=form_hidden('project_name', set_value('project_name', $project->name))?>
+	</div>
 
-	<?=form_fieldset_close()?>
+	<div>
+		<?=form_submit('project', $this->lang->line('Delete'))?>
+	</div>
+
 <?=form_close();?>
+</div>
 
 </div>
 

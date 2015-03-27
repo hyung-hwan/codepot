@@ -83,49 +83,49 @@ $this->load->view (
 	if ($mode == 'update') $formurl .= '/'.$site->id;
 ?>
 
+<div class='form_container'>
 <?=form_open($formurl, 'id="site_edit_form"')?>
-	<?=form_fieldset()?>
-		<div class='form_input_field'>
-			<?=form_label($this->lang->line('Language').': ', 'site_id')?>
-			<?php
-				$extra = ($mode == 'update')? 'readonly="readonly"': '';
-				$extra .= 'maxlength="32" size="16" class="id"';
-			?>
+	<div class='form_input_field'>
+		<?=form_label($this->lang->line('Language').': ', 'site_id')?>
+		<?php
+			$extra = ($mode == 'update')? 'readonly="readonly"': '';
+			$extra .= 'maxlength="32" size="16" class="id"';
+		?>
 
-			<?=form_input('site_id', 
-				set_value('site_id', $site->id), 
-				$extra)
-			?>
-			<?=form_error('site_id')?>
-		</div>
+		<?=form_input('site_id', 
+			set_value('site_id', $site->id), 
+			$extra)
+		?>
+		<?=form_error('site_id')?>
+	</div>
 
-		<div class='form_input_field'>
-			<?=form_label($this->lang->line('Name').': ', 'site_name')?>
-			<?=form_input('site_name', 
-				set_value('site_name', $site->name), 
-				'maxlength="80" size="40" class="name"');
-			?>
-			<?=form_error('site_name')?>
-		</div>
+	<div class='form_input_field'>
+		<?=form_label($this->lang->line('Name').': ', 'site_name')?>
+		<?=form_input('site_name', 
+			set_value('site_name', $site->name), 
+			'maxlength="80" size="40" class="name"');
+		?>
+		<?=form_error('site_name')?>
+	</div>
 
-		<div class='form_input_label'>
-			<?=form_label($this->lang->line('Text').': ', 'site_text')?>
-			<a href='#' id='site_edit_mainarea_text_preview_button'><?=$this->lang->line('Preview')?></a>
-			<?=form_error('site_text')?>
-		</div>
-		<div class='form_input_field'>
-			<?=form_textarea('site_text', 
-				set_value('site_text', $site->text),
-				'class="text" id="site_edit_mainarea_text"')
-			?>
-		</div>
-		<div id='site_edit_mainarea_text_preview' class='form_input_preview'></div>
+	<div class='form_input_label'>
+		<?=form_label($this->lang->line('Text').': ', 'site_text')?>
+		<a href='#' id='site_edit_mainarea_text_preview_button'><?=$this->lang->line('Preview')?></a>
+		<?=form_error('site_text')?>
+	</div>
+	<div class='form_input_field'>
+		<?=form_textarea('site_text', 
+			set_value('site_text', $site->text),
+			'class="text" id="site_edit_mainarea_text"')
+		?>
+	</div>
+	<div id='site_edit_mainarea_text_preview' class='form_input_preview'></div>
 
 
-		<?php $caption = ($mode == 'update')? $this->lang->line('Update'): $this->lang->line('Create'); ?>
-		<?=form_submit('site', $caption)?>
-	<?=form_fieldset_close()?>
+	<?php $caption = ($mode == 'update')? $this->lang->line('Update'): $this->lang->line('Create'); ?>
+	<?=form_submit('site', $caption)?>
 <?=form_close();?>
+</div> <!-- form_container -->
 
 </div> <!-- site_edit_mainarea -->
 
