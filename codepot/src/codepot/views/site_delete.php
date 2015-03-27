@@ -40,27 +40,28 @@ $this->load->view (
 
 <?php if ($message != "") print "<div id='site_create_message' class='form_message'>$message</div>"; ?>
 
+<div class="form_container">
 <?=form_open("site/delete/{$site->id}")?>
-	<?=form_fieldset()?>
-		<div>
-			<div>
-				<?=form_checkbox('site_confirm', 'yes', set_checkbox('site_confirm', $site_confirm))?>
-				<?=$this->lang->line('MSG_SURE_TO_DELETE_THIS')?> - <?=htmlspecialchars($site->name)?> (<?=$site->id?>)
-				<?=form_error('site_confirm')?>
-			</div>
-		</div>
 
+	<div>
 		<div>
-			<?=form_hidden('site_id', set_value('site_id', $site->id))?>
-			<?=form_hidden('site_name', set_value('site_name', $site->name))?>
+			<?=form_checkbox('site_confirm', 'yes', set_checkbox('site_confirm', $site_confirm))?>
+			<?=$this->lang->line('MSG_SURE_TO_DELETE_THIS')?> - <?=htmlspecialchars($site->name)?> (<?=$site->id?>)
+			<?=form_error('site_confirm')?>
 		</div>
+	</div>
 
-		<div>
-			<?=form_submit('site', $this->lang->line('Delete'))?>
-		</div>
+	<div>
+		<?=form_hidden('site_id', set_value('site_id', $site->id))?>
+		<?=form_hidden('site_name', set_value('site_name', $site->name))?>
+	</div>
 
-	<?=form_fieldset_close()?>
+	<div>
+		<?=form_submit('site', $this->lang->line('Delete'))?>
+	</div>
+
 <?=form_close();?>
+</div>
 
 </div>
 

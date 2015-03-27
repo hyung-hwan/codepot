@@ -135,8 +135,8 @@ body {
 	text-transform: uppercase;
 	white-space: nowrap;
 
-	//text-shadow: 2px 8px 6px rgba(0,0,0,0.2),
-	//            0px -5px 35px rgba(255,255,255,0.3);
+	/*text-shadow: 2px 8px 6px rgba(0,0,0,0.2),
+	             0px -5px 35px rgba(255,255,255,0.3); */
 	text-shadow: 1px 1px 0 #7A7A7A;
 	letter-spacing: 0.1em;
 }
@@ -213,46 +213,108 @@ body {
 	background-color: #BBCCDD;
 }
 
+.content .mainarea .form_container {
+	padding: 0.3em 0.5em 0.3em 0.5em;
+	border: 1px solid #BBCCDD;
+	line-height: 2.2em;
+	margin: 0;
+}
+
 .content .mainarea form {
 	margin: 0;
 }
 
-.content .mainarea form fieldset {
-	margin: 0;
-	border: 1px solid #BBCCDD;
-}
-
-.content .mainarea form label {
-	font-style: italic;
+.content .mainarea form label 
+{
 	font-weight: bold;
-}
-
-.content .mainarea form input[type="text"] {
-	border: 1px solid #BBCCDD;
-}
-
-.content .mainarea form input[type="password"] {
-	border: 1px solid #BBCCDD;
-}
-
-.content .mainarea form textarea {
-	border: 1px solid #BBCCDD;
-	font-family: consolas, "Andale Mono", monospace;
 	font-size: inherit;
 }
 
-.content .mainarea .form_input_label {
-	margin-bottom: 0.2em;
+.content .mainarea form input 
+{
+	vertical-align: middle;
+	border: none;
+	-moz-box-shadow: 0 2px 4px #bbb inset;
+	-webkit-box-shadow: 0 2px 4px #BBB inset;
+	box-shadow: 0 2px 4px #BBB inset;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	height: 1.8em;
+	font-size: inherit;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
 }
 
-.content .mainarea .form_input_label .ui-button {
+.content .mainarea form input:focus {
+	background-color: #E1E1E1;
+	outline: 0;
+}
+
+.content .mainarea form input[type="submit"]
+{
+	cursor: pointer;
+	height: 2em;
+	vertical-align: middle;
+	padding-left: 5px;
+	padding-right: 5px;
+	text-transform: uppercase;
+
+	background: #3498db;
+	background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+	background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+	background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+	background-image: -o-linear-gradient(top, #3498db, #2980b9);
+	background-image: linear-gradient(to bottom, #3498db, #2980b9);
+	-webkit-border-radius: 28;
+	-moz-border-radius: 28;
+	border-radius: 5px;
+	text-shadow: 1px 1px 3px #666666;
+	color: #ffffff;
+	text-decoration: none;
+
+	font-size: 1em;
+	border: 0 none;
+}
+
+.content .mainarea form input[type="submit"]:hover
+{
+	background: #3cb0fd;
+	background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+	background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+	background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+	background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+	background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+	text-decoration: none;
+}
+
+.content .mainarea form textarea 
+{
+	vertical-align: middle;
+	border: 1px solid #B9BDC1;
+	-moz-box-shadow: 0 2px 4px #bbb inset;
+	-webkit-box-shadow: 0 2px 4px #BBB inset;
+	box-shadow: 0 2px 4px #BBB inset;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	font-family: consolas, "Andale Mono", monospace;
+	font-size: inherit;
+	padding: 0.2em 0.2em 0.2em 0.2em;
+}
+
+.content .mainarea form textarea:focus
+{
+	background-color: #E1E1E1;
+	outline: 0;
+}
+
+.content .mainarea form .ui-button  
+{
+	/* jquery-ui button inside the form */
 	font-size: 80%;
-	font-style: italic;
-}
-
-
-.content .mainarea .form_input_field {
-	margin-bottom: 0.5em;
 }
 
 .content .mainarea .form_input_preview {
@@ -260,14 +322,13 @@ body {
 	/*border: 1px solid #DDDDDD;*/
 	background-color: #FFFFF0;
 	font-size: 90%;
+	padding: 0.2em 0.2em 0.2em 0.2em;
+	line-height: 1.2em;
 }
 
 .content .mainarea .form_input_preview pre {
-	/*background-color: inherit;*/
 	background-color: #F8F8FA;
-	padding: 0.3em;
-	/*background-color: #FDF5D6;*/
-	/*border: none;*/
+	padding: 0.2em 0.2em 0.2em 0.2em;
 }
 
 .content .mainarea .icon {
@@ -732,96 +793,48 @@ pre.prettyprint li.L9 { background: #eee }
 
 /* ================ login page =================== */
 
-#login_user_name {
+#login_user_name 
+{
 	background: url("images/username.png") no-repeat scroll 0% 0% rgb(234, 231, 231);
 	background-position: 0px 3px !important;
 	padding-left: 24px;
 
 	height: 2.2em; 
-	vertical-align: middle;
-
-	border: 1px solid #B9BDC1;
-	-moz-box-shadow: 0 2px 4px #bbb inset;
-	-webkit-box-shadow: 0 2px 4px #BBB inset;
-	box-shadow: 0 2px 4px #BBB inset;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-
-	font-size: 1em;
-	border: 0 none;
 }
 
-#login_user_name:focus {
-	background-color: #E7E8E7;
+#login_user_name:focus 
+{
+	background-color: #E1E1E1;
 	outline: 0;
 }
 
-#login_user_pass {
+#login_user_pass 
+{
 	background: url("images/password.png") no-repeat scroll 0% 0% rgb(234, 231, 231);
 	background-position: 0px 3px !important;
 	padding-left: 24px;
-
 	height: 2.2em; 
-	vertical-align: middle;
-
-	border: 1px solid #B9BDC1;
-	-moz-box-shadow: 0 2px 4px #bbb inset;
-	-webkit-box-shadow: 0 2px 4px #BBB inset;
-	box-shadow: 0 2px 4px #BBB inset;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-
-	font-size: 1em;
-	border: 0 none;
 }
 
-#login_user_pass:focus {
-	background-color: #E7E8E7;
+#login_user_pass:focus 
+{
+	background-color: #E1E1E1;
 	outline: 0;
 }
 
-#login_signin_button {
-	cursor: pointer;
-	height: 2em;
-	vertical-align: middle;
-	padding-left: 5px;
-	padding-right: 5px;
-	text-transform: uppercase;
-
-	background: #3498db;
-	background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
-	background-image: -moz-linear-gradient(top, #3498db, #2980b9);
-	background-image: -ms-linear-gradient(top, #3498db, #2980b9);
-	background-image: -o-linear-gradient(top, #3498db, #2980b9);
-	background-image: linear-gradient(to bottom, #3498db, #2980b9);
-	-webkit-border-radius: 28;
-	-moz-border-radius: 28;
-	border-radius: 5px;
-	text-shadow: 1px 1px 3px #666666;
-	color: #ffffff;
-	text-decoration: none;
-
-	font-size: 1em;
-	border: 0 none;
+#login_signin_button 
+{
+	/* make it higher than the standard submit buttons */
+	height: 2.5em;
 }
 
-#login_signin_button:hover {
-	background: #3cb0fd;
-	background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
-	text-decoration: none;
-}
-
-
-#login_mainarea .login_form_field_div { // keep it similar to taskbar
+#login_mainarea .form_container form .form_input_field 
+{
+	/* keep it similar to taskbar and make it higher than normal form */
 	text-transform: uppercase;
 	padding-top: 0.3em;
 	padding-bottom: 0.3em;
 	vertical-align: middle;
 	font-size: 1em;
 }
+

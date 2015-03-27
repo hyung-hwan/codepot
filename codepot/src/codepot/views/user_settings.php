@@ -61,43 +61,35 @@ $this->load->view (
 
 <div id="user_settings_mainarea_result">
 
+<div class="form_container">
 <?=form_open_multipart('user/settings/')?>
 
-	<?=form_fieldset($this->lang->line('Code'))?>
+	<?=form_checkbox('code_hide_line_num', 
+		'Y', $settings->code_hide_line_num == 'Y')
+	?>
+	<?= $this->lang->line('USER_MSG_HIDE_LINE_NUMBER')?>
 
-		<?=form_checkbox('code_hide_line_num', 
-			'Y', $settings->code_hide_line_num == 'Y')
+	<?=form_checkbox('code_hide_details',
+		'Y', $settings->code_hide_details == 'Y')
+	?>
+	<?= $this->lang->line('USER_MSG_HIDE_DETAILS')?>
+
+	<div class='form_input_field'>
+		<?=form_label($this->lang->line('Icon').': ', 'icon_img_file_name')?>
+		<?php
+			$extra = 'maxlength="255" size="40"';
+			print form_upload('icon_img_file_name', set_value('icon_img_file_name', ''), $extra);
 		?>
-		<?= $this->lang->line('USER_MSG_HIDE_LINE_NUMBER')?>
-
-		<?=form_checkbox('code_hide_details',
-			'Y', $settings->code_hide_details == 'Y')
-		?>
-		<?= $this->lang->line('USER_MSG_HIDE_DETAILS')?>
-
-		<div class='form_input_field'>
-			<?=form_label($this->lang->line('Icon').': ', 'icon_img_file_name')?>
-			<?php
-				$extra = 'maxlength="255" size="40"';
-				print form_upload('icon_img_file_name', set_value('icon_img_file_name', ''), $extra);
-			?>
-			<?=form_error('icon_img_file_name');?>
-			(.png, max. 100x100)
-		</div>
-	
-	<?=form_fieldset_close()?>
-
-	<!--
-	<?=form_fieldset($this->lang->line('Issue'))?>
-	<?=form_fieldset_close()?>
-	-->
+		<?=form_error('icon_img_file_name');?>
+		(.png, max. 100x100)
+	</div>
 
 	<div class="buttons">
 		<?=form_submit('settings', $this->lang->line('OK'))?>
 	</div>
 
 <?=form_close();?>
-
+</div>
 
 </div> <!-- user_settings_mainarea_result -->
 

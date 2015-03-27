@@ -21,8 +21,8 @@
 
 <?php
 $this->load->view (
-        'projectbar',
-        array (
+	'projectbar',
+	array (
 		'banner' => NULL,
 
 		'page' => array (
@@ -31,8 +31,8 @@ $this->load->view (
 			'project' => $project,
 		),
 
-                'ctxmenuitems' => array ()
-        )
+		'ctxmenuitems' => array ()
+	)
 );
 ?>
 
@@ -42,27 +42,28 @@ $this->load->view (
 
 <?php if ($message != "") print '<div id="wiki_delete_message" class="form_message">'.htmlspecialchars($message).'</div>'; ?>
 
+<div class="form_container">
 <?=form_open("wiki/delete/{$project->id}/".$this->converter->AsciiToHex($wiki->name))?>
-	<?=form_fieldset()?>
-		<div>
-			<div>
-				<?=form_checkbox('wiki_confirm', 'yes', set_checkbox('wiki_confirm', $wiki_confirm))?>
-				<?=$this->lang->line('MSG_SURE_TO_DELETE_THIS')?> - <?=htmlspecialchars($wiki->name)?>
-				<?=form_error('wiki_confirm')?>
-			</div>
-		</div>
 
+	<div>
 		<div>
-			<?=form_hidden('wiki_projectid', set_value('wiki_projectid', $wiki->projectid))?>
-			<?=form_hidden('wiki_name', set_value('wiki_name', $wiki->name))?>
+			<?=form_checkbox('wiki_confirm', 'yes', set_checkbox('wiki_confirm', $wiki_confirm))?>
+			<?=$this->lang->line('MSG_SURE_TO_DELETE_THIS')?> - <?=htmlspecialchars($wiki->name)?>
+			<?=form_error('wiki_confirm')?>
 		</div>
+	</div>
 
-		<div>
-			<?=form_submit('wiki', $this->lang->line('Delete'))?>
-		</div>
+	<div>
+		<?=form_hidden('wiki_projectid', set_value('wiki_projectid', $wiki->projectid))?>
+		<?=form_hidden('wiki_name', set_value('wiki_name', $wiki->name))?>
+	</div>
 
-	<?=form_fieldset_close()?>
+	<div>
+		<?=form_submit('wiki', $this->lang->line('Delete'))?>
+	</div>
+
 <?=form_close();?>
+</div>
 
 </div> <!-- mainarea -->
 
