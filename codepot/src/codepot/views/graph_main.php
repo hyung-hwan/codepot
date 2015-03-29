@@ -372,14 +372,18 @@ $this->load->view (
 <?=htmlspecialchars($project->name)?>
 </div>
 
-<div id="graph_main_commits_per_month" style="width:50%; height: 400px; margin-bottom: 1em;">
+<div>
+
+<div id="graph_main_commits_per_month" style="width:500px; height: 400px; margin-bottom: 1em; float: left; position: relative;">
 </div> <!-- graph_main_commits_per_month-->
 
-<div id="graph_main_commits_per_user" style="width:50%; height: 400px; margin-bottom: 1em;">
+<div id="graph_main_commits_per_user" style="width:500px; height: 400px; margin-bottom: 1em; float: left; position: relative;">
 </div> <!-- graph_main_commits_per_user-->
 
-<div id="graph_main_commit_share_by_user" style="width:50%; height: 400px; margin-bottom: 1em;">
+<div id="graph_main_commit_share_by_user" style="width:500px; height: 400px; margin-bottom: 1em; float: left; position: relative;">
 </div> <!-- graph_main_commits_per_user-->
+
+</div>
 
 </div> <!-- graph_main_mainarea -->
 
