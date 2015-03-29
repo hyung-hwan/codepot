@@ -269,7 +269,7 @@ function show_commits_per_user_graph(log)
 
 		xaxes: [
 			{ mode: "categories",
-			  autoscaleMargin: 0.1 
+			  autoscaleMargin: 0.05 
 			}
 		],
 
