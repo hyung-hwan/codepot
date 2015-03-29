@@ -19,8 +19,13 @@
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
 
+<!--[if lte IE 8]><script type="text/javascript" src="<?=base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.time.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.pie.min.js')?>"></script>
 
 <script type="text/javascript" src="<?=base_url_make('/js/Chart.js')?>"></script>
 
@@ -129,94 +134,91 @@ function show_commits_per_month_graph(log)
 	commits_per_month_keys = commits_per_month_keys.sort();
 	orig_commits_per_month_keys = commits_per_month_keys.slice (0); // clone the array
 
-	var max_value = 0;
-	var x_scale = Math.ceil(commits_per_month_keys.length / 12);
-	if (x_scale <= 0) x_scale = 1;
 	for (i = 0; i < commits_per_month_keys.length; i++)
 	{
 		var commits = commits_per_month[commits_per_month_keys[i]];
 		var committers = committers_per_month[commits_per_month_keys[i]];
 
-		if (commits > max_value) max_value = commits;
-		if (committers > max_value) max_value = committers;
+		var time = (new Date(commits_per_month_keys[i] + "-01")).getTime();
+		commits_per_month_values.push ([time, commits]);
+		committers_per_month_values.push ([time, committers]);
 
-		commits_per_month_values.push (commits);
-		committers_per_month_values.push (committers);
-
-		// to work around the problem of too many data points.
-		// chart.js doesn't provide a means to skip x-labels.
-		// empty some points despite the side effect to tooltip titles.
-		if (i % x_scale) commits_per_month_keys[i] = '';
 	}
 
-	var commits_per_month_data = {
-		labels : commits_per_month_keys,
+	var dataset =
+	[
+		{
+			label: "Commits Per Month",
+			data: commits_per_month_values,
+			//color: "#FF0000"
+		},
+		{
+			label: "Commiters Per Month",
+			data: committers_per_month_values,
+			//color: "#00FF00"
+		}
+	];
 
-		//////////////////////////////////////////////////
-		// this requires HYUNG-HWAN's change to Chart.js
-		tooltipLabels : orig_commits_per_month_keys,
-		//////////////////////////////////////////////////
+	var options =
+	{
+		series: {
+			shadowSize: 0,
+			lines: { show: true, fill: true /*, lineWidth: 2*/ },
+			points: { show: false /*,lineWidth: 1*/ }
+		},
 
-		datasets : [
+		grid: { hoverable: true, clickable: true },
+
+		xaxes: [
+			{ mode: "time" },
+			{ mode: "time" }
+		],
+
+		yaxes: { }
+	}
+
+	$.plot($("#graph_main_commits_per_month"), dataset, options);
+
+	var previousPoint = null;
+	$("#graph_main_commits_per_month").bind("plothover", function (event, pos, item) {
+		function show_tooltip(x, y, contents) {
+		    $('<div id="graph_main_commits_per_month_tooltip">' + contents + '</div>').css( {
+		        position: 'absolute',
+		        display: 'none',
+		        top: y + 5,
+		        left: x + 5,
+		        border: '1px solid #fdd',
+		        padding: '2px',
+		        'background-color': '#fee',
+		        'font-size': '0.8em',
+		        'font-family': 'inherit',
+		        opacity: 0.80
+		    }).appendTo("body").fadeIn(200);
+		}
+
+		if (item) 
+		{
+			if (previousPoint != item.datapoint) 
 			{
-				label: 'Commits per month',
-				fillColor : 'rgba(151,187,245,0.2)',
-				strokeColor: "rgba(151,187,245,1.0)",
-				pointColor: "rgba(151,187,245,1.0)",
-				data : commits_per_month_values
-			},
-			
-			{
-				label: 'Committers per month',
-				fillColor: "rgba(245,187,151,0.2)",
-				strokeColor: "rgba(245,187,151,1.0)",
-				pointColor: "rgba(245,187,151,1.0)",
-				data : committers_per_month_values
+				previousPoint = item.datapoint;
+				$("#graph_main_commits_per_month_tooltip").remove();
+				//show_tooltip(item.pageX, item.pageY, '(' + item.datapoint[0] + ', ' + item.datapoint[1]+')');
+				//show_tooltip(item.pageX, item.pageY - 20, item.datapoint[1]);
+				show_tooltip(item.pageX, item.pageY - 20, '(' + (new Date(item.datapoint[0])).toISOString().substring(0, 7) + ', ' + item.datapoint[1]+')');
 			}
-		]
-
-	}
-
-	var scale_steps = 5;
-	$('#graph_main_commits_per_month_canvas').each (function() {
-		var canvas = $(this)[0];
-		var ctx = canvas.getContext('2d');
-		var commits_per_month_chart = new Chart(ctx).Line(commits_per_month_data, {
-			responsive : true,
-			maintainAspectRatio: true,
-			animation: false,
-			pointDot: false,
-			scaleShowGridLines: true,
-			scaleShowHorizontalLines: true,
-			scaleShowVerticalLines: false,
-			scaleFontSize: 10,
-			scaleFontStyle: 'normal',
-			scaleFontColor: 'black',
-
-			scaleOverride: true,
-			scaleSteps: scale_steps,
-			scaleStepWidth: Math.ceil(max_value / scale_steps),
-			scaleStartValue: 0,
-
-			showTooltips: true,
-			tooltipFontSize: 10,
-			tooltipTitleFontSize: 10,
-			datasetFill: true,
-			datasetStroke: true,
-			datasetStrokeWidth: 1,
-			bezierCurve: true,
-			legendTemplate : '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].strokeColor%>"><%if(datasets[i].label){%><%=datasets[i].label%><%}%></span></li><%}%></ul>'
-		});
-
-		var legend = commits_per_month_chart.generateLegend();
-		$('#graph_main_commits_per_month_legend').html(legend);
+		} 
+		else 
+		{
+			$("#graph_main_commits_per_month_tooltip").remove();
+			previousPoint = null;
+		}
 	});
-
 }
 
 function show_commits_per_user_graph(log)
 {
-	var commits_per_user = [], commits_per_user_keys = [], commits_per_user_values = [];
+	var commits_per_user = [];
+	var commits_per_user_data = [];
 	var commit_share_by_user = [];
 
 	for (var i = 0; i < log.length; i++)
@@ -230,70 +232,59 @@ function show_commits_per_user_graph(log)
 
 	for (var key in commits_per_user)
 	{
-		commits_per_user_keys.push (key);
-		commits_per_user_values.push (commits_per_user[key]);
-
-		commit_share_by_user.push (
-			{ 
-				value: commits_per_user[key],
-				label: key,
-
-				//////////////////////////////////////////////////
-				// this requires HYUNG-HWAN's change to Chart.js
-				//tooltipLabel: key,
-				//////////////////////////////////////////////////
-
-				color: ('#' + Math.random().toString(16).substring(2, 8)) // generate random color
-			}
-		);
+		commits_per_user_data.push ([key, commits_per_user[key]]);
+		commit_share_by_user.push ({ 
+			label: key,
+			data: commits_per_user[key],
+		});
 	}
 
-	var commits_per_user_data = {
-		labels : commits_per_user_keys,
+	var dataset =
+	[
+		{
+			label: "Commits Per User",
+			data: commits_per_user_data
+			//color: "#FF0000"
+		}
+	];
 
-		//////////////////////////////////////////////////
-		// this requires HYUNG-HWAN's change to Chart.js
-		tooltipLabels : commits_per_user_keys,
-		//////////////////////////////////////////////////
-
-		datasets : [
-			{
-				label: 'Commits per user',
-				fillColor : 'rgba(151,187,245,0.2)',
-				strokeColor: "rgba(151,187,245,1.0)",
-				pointColor: "rgba(151,187,245,1.0)",
-				data : commits_per_user_values
+	var options =
+	{
+		series: {
+			shadowSize: 0,
+			bars: { 
+				show: true, 
+				fill: true,
+				align: "center",
+				barWidth: 0.1
 			}
-		]
-	}
+		},
 
-	$('#graph_main_commits_per_user_canvas').each (function() {
-		var canvas = $(this)[0];
-		var ctx = canvas.getContext('2d');
-		var commits_per_user_chart = new Chart(ctx).Bar(commits_per_user_data, {
-			responsive : true,
-			maintainAspectRatio: true,
-			animation: false,
+		//grid: { hoverable: true, clickable: true },
 
-			showTooltips: true,
-			tooltipFontSize: 10,
-			tooltipTitleFontSize: 10
-		});
-	});
+		xaxes: [
+			{ mode: "categories" },
+		],
 
-	$('#graph_main_commit_share_by_user_canvas').each (function() {
-		var canvas = $(this)[0];
-		var ctx = canvas.getContext('2d');
-		var commit_share_by_user_chart = new Chart(ctx).Pie(commit_share_by_user, {
-			responsive : true,
-			maintainAspectRatio: true,
-			animation: false
-		});
+		yaxes: { }
+	};
 
-		var legend = commit_share_by_user_chart.generateLegend();
-		$('#graph_main_commit_share_by_user_legend').html(legend);
-	});
+	$.plot($("#graph_main_commits_per_user"), dataset, options);
+
+
+	options =
+	{
+		series: {
+			shadowSize: 0,
+			pie: { 
+				show: true, 
+				fill: true
+			}
+		}
+	};
+	$.plot($("#graph_main_commit_share_by_user"), commit_share_by_user, options);
 }
+
 
 function show_all_graphs (response)
 {
@@ -306,6 +297,10 @@ function show_all_graphs (response)
 
 	show_commits_per_month_graph (log);
 	show_commits_per_user_graph (log);
+
+
+
+
 }
 
 function render_graphs() 
@@ -377,18 +372,13 @@ $this->load->view (
 <?=htmlspecialchars($project->name)?>
 </div>
 
-<div id="graph_main_commits_per_month">
-<div id='graph_main_commits_per_month_legend'></div>
-<canvas id='graph_main_commits_per_month_canvas'></canvas>
+<div id="graph_main_commits_per_month" style="width:50%; height: 400px; margin-bottom: 1em;">
 </div> <!-- graph_main_commits_per_month-->
 
-<div id="graph_main_commits_per_user">
-<canvas id='graph_main_commits_per_user_canvas'></canvas>
+<div id="graph_main_commits_per_user" style="width:50%; height: 400px; margin-bottom: 1em;">
 </div> <!-- graph_main_commits_per_user-->
 
-<div id="graph_main_commit_share_by_user">
-<div id='graph_main_commit_share_by_user_legend'></div>
-<canvas id='graph_main_commit_share_by_user_canvas'></canvas>
+<div id="graph_main_commit_share_by_user" style="width:50%; height: 400px; margin-bottom: 1em;">
 </div> <!-- graph_main_commits_per_user-->
 
 </div> <!-- graph_main_mainarea -->
