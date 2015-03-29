@@ -26,8 +26,9 @@
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.time.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.pie.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.pie.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/Chart.js')?>"></script>
 
 <script type="text/javascript">
 function show_commits_per_month_graph(log)
@@ -249,7 +250,6 @@ function show_commits_per_user_graph(log)
 		{
 			label: "Commits Per User",
 			data: commits_per_user_data
-			//color: "#FF0000"
 		}
 	];
 
@@ -269,7 +269,8 @@ function show_commits_per_user_graph(log)
 
 		xaxes: [
 			{ mode: "categories",
-			  autoscaleMargin: 0.05 
+			  autoscaleMargin: 0.05,
+			  rotateTicks: ((commits_per_user_data.length >= 8)? 135: 0)
 			}
 		],
 
@@ -313,10 +314,6 @@ function show_all_graphs (response)
 
 	show_commits_per_month_graph (log);
 	show_commits_per_user_graph (log);
-
-
-
-
 }
 
 function render_graphs() 
