@@ -215,6 +215,11 @@ function show_commits_per_month_graph(log)
 	});
 }
 
+function labelFormatter(label, series) 
+{
+	return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
+}
+
 function show_commits_per_user_graph(log)
 {
 	var commits_per_user = [];
@@ -256,14 +261,16 @@ function show_commits_per_user_graph(log)
 				show: true, 
 				fill: true,
 				align: "center",
-				barWidth: 0.1
+				barWidth: 0.8
 			}
 		},
 
 		//grid: { hoverable: true, clickable: true },
 
 		xaxes: [
-			{ mode: "categories" },
+			{ mode: "categories",
+			  autoscaleMargin: 0.1 
+			}
 		],
 
 		yaxes: { }
@@ -278,8 +285,17 @@ function show_commits_per_user_graph(log)
 			shadowSize: 0,
 			pie: { 
 				show: true, 
-				fill: true
+				innerRadius: 0.1,
+				label: {
+					show: true,
+					radius: 7/10,
+					formatter: labelFormatter,
+					background: { opacity: 0.8 }
+				}
 			}
+		},
+		legend: {
+			show: true
 		}
 	};
 	$.plot($("#graph_main_commit_share_by_user"), commit_share_by_user, options);
