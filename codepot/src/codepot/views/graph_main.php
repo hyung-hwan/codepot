@@ -263,9 +263,8 @@ function show_commits_per_month_graph(log)
 				align: "center",
 				barWidth: 1000 * 60 * 60 * 24 * 10
 			},
-			//lines: { show: true, fill: true /*, lineWidth: 2*/ },
-			//points: { show: false /*,lineWidth: 1*/ }
-			
+			lines: { show: false, fill: true /*, lineWidth: 2*/ },
+			points: { show: false /*,lineWidth: 1*/ }
 		},
 
 		grid: { hoverable: true, clickable: true },
