@@ -26,17 +26,33 @@
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.time.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.pie.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.pie.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
 
-
 <script type="text/javascript">
+function show_tooltip(id, x, y, contents) {
+	$('<div id="' + id + '">' + contents + '</div>').css( {
+		position: 'absolute',
+		display: 'none',
+		top: y + 5,
+		left: x + 5,
+		border: '1px solid #fdd',
+		padding: '2px',
+		'background-color': '#fee',
+		'font-size': '0.8em',
+		'font-family': 'inherit',
+		opacity: 0.80
+	}).appendTo("body").fadeIn(200);
+}
+
 function show_commits_per_month_graph(log)
 {
 	var min_date = '9999-99', max_date = '0000-00';
 	var commits_per_month = [], commits_per_month_keys = [], commits_per_month_values = [];
-	var committers_per_month = [], committers_per_month_values = [], committer_list_per_month = [];
+	var committers_per_month = [], committers_per_month_values = []; 
+	var committer_list_per_month = [], committer_table = [];
 	var commits_per_month_count = 0;
+
 	for (var i = 0; i < log.length; i++)
 	{
 		var date = log[i].date;
@@ -46,10 +62,26 @@ function show_commits_per_month_graph(log)
 			if (date in commits_per_month) commits_per_month[date]++;
 			else commits_per_month[date] = 1;
 
-			// TODO: calculate committers...
 			if (log[i].author)
 			{
-				committer_list_per_month[date + '-' + log[i].author] = 1;
+				var date_author = date + '-' + log[i].author;
+				if (date_author in committer_list_per_month)
+					committer_list_per_month[date_author]++;
+				else
+					committer_list_per_month[date_author] = 1;
+
+
+				if (!(log[i].author in committer_table))
+					committer_table[log[i].author] = [];
+
+				if (date in committer_table[log[i].author])
+				{
+					committer_table[log[i].author][date]++;
+				}
+				else
+				{
+					committer_table[log[i].author][date] = 1;
+				}
 			}
 
 			if (date < min_date) min_date = date;
@@ -122,6 +154,14 @@ function show_commits_per_month_graph(log)
 				committers_per_month[date] = 0;
 			}
 
+			for (var author in committer_table)
+			{
+				if (!(date in committer_table[author]))
+				{
+					committer_table[author][date] = 0;
+				}
+			}
+
 			month++;
 		}
 	}
@@ -133,9 +173,8 @@ function show_commits_per_month_graph(log)
 	}
 
 	commits_per_month_keys = commits_per_month_keys.sort();
-	orig_commits_per_month_keys = commits_per_month_keys.slice (0); // clone the array
 
-	for (i = 0; i < commits_per_month_keys.length; i++)
+	for (var i = 0; i < commits_per_month_keys.length; i++)
 	{
 		var commits = commits_per_month[commits_per_month_keys[i]];
 		var committers = committers_per_month[commits_per_month_keys[i]];
@@ -143,20 +182,17 @@ function show_commits_per_month_graph(log)
 		var time = (new Date(commits_per_month_keys[i] + "-01")).getTime();
 		commits_per_month_values.push ([time, commits]);
 		committers_per_month_values.push ([time, committers]);
-
 	}
 
 	var dataset =
 	[
 		{
-			label: "Commits Per Month",
-			data: commits_per_month_values,
-			//color: "#FF0000"
+			label: "Total Commits Per Month",
+			data: commits_per_month_values
 		},
 		{
-			label: "Commiters Per Month",
-			data: committers_per_month_values,
-			//color: "#00FF00"
+			label: "Total Committers Per Month",
+			data: committers_per_month_values
 		}
 	];
 
@@ -171,8 +207,8 @@ function show_commits_per_month_graph(log)
 		grid: { hoverable: true, clickable: true },
 
 		xaxes: [
-			{ mode: "time" },
-			{ mode: "time" }
+			{ mode: "time", minTickSize: [1, "month"] },
+			{ mode: "time", minTickSize: [1, "month"] }
 		],
 
 		yaxes: { }
@@ -180,38 +216,87 @@ function show_commits_per_month_graph(log)
 
 	$.plot($("#graph_main_commits_per_month"), dataset, options);
 
-	var previousPoint = null;
+	var graph_main_commits_per_month_previous_point = null;
 	$("#graph_main_commits_per_month").bind("plothover", function (event, pos, item) {
-		function show_tooltip(x, y, contents) {
-		    $('<div id="graph_main_commits_per_month_tooltip">' + contents + '</div>').css( {
-		        position: 'absolute',
-		        display: 'none',
-		        top: y + 5,
-		        left: x + 5,
-		        border: '1px solid #fdd',
-		        padding: '2px',
-		        'background-color': '#fee',
-		        'font-size': '0.8em',
-		        'font-family': 'inherit',
-		        opacity: 0.80
-		    }).appendTo("body").fadeIn(200);
-		}
-
 		if (item) 
 		{
-			if (previousPoint != item.datapoint) 
+			if (graph_main_commits_per_month_previous_point != item.datapoint) 
 			{
-				previousPoint = item.datapoint;
+				var datestr = (new Date(item.datapoint[0])).toISOString().substring(0, 7);
+				graph_main_commits_per_month_previous_point = item.datapoint;
 				$("#graph_main_commits_per_month_tooltip").remove();
+
 				//show_tooltip(item.pageX, item.pageY, '(' + item.datapoint[0] + ', ' + item.datapoint[1]+')');
-				//show_tooltip(item.pageX, item.pageY - 20, item.datapoint[1]);
-				show_tooltip(item.pageX, item.pageY - 20, '(' + (new Date(item.datapoint[0])).toISOString().substring(0, 7) + ', ' + item.datapoint[1]+')');
+				show_tooltip ("graph_main_commits_per_month_tooltip",
+				              item.pageX, item.pageY - 20,
+					      '(' + datestr + ',' + item.datapoint[1] + ')');
 			}
 		} 
 		else 
 		{
 			$("#graph_main_commits_per_month_tooltip").remove();
-			previousPoint = null;
+			graph_main_commits_per_month_previous_point = null;
+		}
+	});
+
+
+	////////////////////////////////////////////////////////////////////////////////
+	dataset = [];
+	for (var author in committer_table)
+	{
+		var committer_data = [];
+		for (var i = 0; i < commits_per_month_keys.length; i++)
+		{
+			var date = commits_per_month_keys[i];
+			var time = (new Date(date + "-01")).getTime();
+			committer_data.push ([time, committer_table[author][date]]);
+		}
+		dataset.push ({ label: author,  data: committer_data });
+	}
+	options = {
+		series: {
+			stack: true,
+			shadowSize: 0,
+			bars: { 
+				show: true, 
+				fill: true,
+				align: "center",
+				barWidth: 1000 * 60 * 60 * 24 * 10
+			},
+			//lines: { show: true, fill: true /*, lineWidth: 2*/ },
+			//points: { show: false /*,lineWidth: 1*/ }
+			
+		},
+
+		grid: { hoverable: true, clickable: true },
+
+		xaxes: [
+			{ mode: "time", minTickSize: [1, "month"] }
+		],
+
+		yaxes: { }
+		
+	};
+	$.plot($("#graph_main_committer_dissect_per_month"), dataset, options);
+
+	var graph_main_committer_dissect_per_month_previous_point = null;
+	$("#graph_main_committer_dissect_per_month").bind("plothover", function (event, pos, item) {
+		if (item) 
+		{
+			if (graph_main_committer_dissect_per_month_previous_point != item.datapoint) 
+			{
+				var datestr = (new Date(item.datapoint[0])).toISOString().substring(0, 7);
+				graph_main_committer_dissect_per_month_previous_point = item.datapoint;
+				$("#graph_main_committer_dissect_per_month_tooltip").remove();
+				show_tooltip ("graph_main_committer_dissect_per_month_tooltip", 
+				              item.pageX, item.pageY - 20,
+				              '(' + datestr + ',' + item.datapoint[1] + ')');
+			}
+		} 
+		else 
+		{
+			$("#graph_main_committer_dissect_per_month_tooltip").remove();
+			graph_main_committer_dissect_per_month_previous_point = null;
 		}
 	});
 }
@@ -248,7 +333,7 @@ function show_commits_per_user_graph(log)
 	var dataset =
 	[
 		{
-			label: "Commits Per User",
+			label: "Total Commits Per User",
 			data: commits_per_user_data
 		}
 	];
@@ -387,14 +472,17 @@ $this->load->view (
 
 <div>
 
-<div id="graph_main_commits_per_month" style="width:500px; height: 400px; margin-bottom: 1em; float: left; position: relative;">
-</div> <!-- graph_main_commits_per_month-->
+<div id="graph_main_commits_per_month" style="width:550px; height: 400px; margin-bottom: 1em; float: left; position: relative;">
+</div>
 
-<div id="graph_main_commits_per_user" style="width:500px; height: 400px; margin-bottom: 1em; float: left; position: relative;">
-</div> <!-- graph_main_commits_per_user-->
+<div id="graph_main_committer_dissect_per_month" style="width:550px; height: 400px; margin-bottom: 1em; float: left; position: relative;">
+</div> 
 
-<div id="graph_main_commit_share_by_user" style="width:500px; height: 400px; margin-bottom: 1em; float: left; position: relative;">
-</div> <!-- graph_main_commits_per_user-->
+<div id="graph_main_commits_per_user" style="width:550px; height: 400px; margin-bottom: 1em; float: left; position: relative;">
+</div>
+
+<div id="graph_main_commit_share_by_user" style="width:550px; height: 400px; margin-bottom: 1em; float: left; position: relative;">
+</div>
 
 </div>
 
