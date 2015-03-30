@@ -21,7 +21,6 @@
 
 <!--[if lte IE 8]><script type="text/javascript" src="<?=base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.time.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
@@ -229,7 +228,7 @@ function show_commits_per_month_graph(log)
 				//show_tooltip(item.pageX, item.pageY, '(' + item.datapoint[0] + ', ' + item.datapoint[1]+')');
 				show_tooltip ("graph_main_commits_per_month_tooltip",
 				              item.pageX, item.pageY - 20,
-					      '(' + datestr + ',' + item.datapoint[1] + ')');
+				              '(' + datestr + ',' + item.datapoint[1] + ')');
 			}
 		} 
 		else 
@@ -393,11 +392,17 @@ function show_all_graphs (response)
 	if (log == null)
 	{
 		alert ('Invalid data received');
-		return;
 	}
-
-	show_commits_per_month_graph (log);
-	show_commits_per_user_graph (log);
+	else if (log.length > 0)
+	{
+		show_commits_per_month_graph (log);
+		show_commits_per_user_graph (log);
+	}
+	else
+	{
+		//$("#graph_main_commits_per_month").text("No data available");
+		alert ('No data available');
+	}
 }
 
 function render_graphs() 

@@ -88,9 +88,6 @@ body {
 .content .taskbar a:active {
 }
 
-
-
-
 .content .taskbar form {
 	margin: 0;
 }
@@ -114,6 +111,10 @@ body {
 	border: 0 none;
 	height: 1.8em; 
 	vertical-align: middle;
+}
+
+.content .mainarea .result {
+	min-height: 30em;
 }
 
 .content .mainarea form input:focus {
