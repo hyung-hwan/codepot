@@ -78,7 +78,7 @@ $this->load->view (
 <div class="menu" id="code_history_mainarea_menu">
 </div> <!-- code_history_mainarea_menu -->
 
-<div id="code_history_mainarea_result">
+<div class="result" id="code_history_mainarea_result">
 
 <?php
 	$xfullpath = $this->converter->AsciiToHex (($fullpath == '')? '.': $fullpath);

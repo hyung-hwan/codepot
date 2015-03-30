@@ -172,7 +172,7 @@ print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $this->lang->line('D
 	<a id="code_blame_mainarea_details_button" href='#'><?=$this->lang->line('Details')?></a>
 </div>
 
-<div id="code_blame_mainarea_result">
+<div class="result" id="code_blame_mainarea_result">
 
 <?php 
 $fileext = substr(strrchr($file['name'], '.'), 1);

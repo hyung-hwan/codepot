@@ -70,7 +70,7 @@ class Graph extends Controller
 		}
 	}
 
-	function history_json ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
+	function history_json ($projectid = '', $path = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
@@ -113,7 +113,7 @@ class Graph extends Controller
 		print codepot_json_encode ($history);
 	}
 
-	function total_loc_json ($projectid)
+	function folder_loc_json ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
@@ -131,7 +131,13 @@ class Graph extends Controller
 			return;
 		}
 
-		// check out the whole project 
-		// run clock.pl againt it.
+		$this->load->model ('SubversionModel', 'subversion');
+
+		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
+		$path = $this->_normalize_path ($path);
+
+		$cloc = $this->subversion->clocRev ($projectid, $path, $rev);
+		print codepot_json_encode ($cloc);
 	}
 }

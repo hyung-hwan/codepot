@@ -286,7 +286,7 @@ foreach ($latest_projects as $project)
 
 
 
-<div id="site_home_mainarea_wiki">
+<div class="result" id="site_home_mainarea_wiki">
 <pre id="site_home_mainarea_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($site->text); ?>
 </pre>

@@ -106,7 +106,7 @@ $this->load->view (
 <div id="file_show_mainarea_result">
 
 
-<div id="file_show_mainarea_wiki">
+<div class="result" id="file_show_mainarea_wiki">
 <pre id="file_show_mainarea_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($file->description); ?>
 </pre>
