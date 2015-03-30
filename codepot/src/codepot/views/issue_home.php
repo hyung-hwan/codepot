@@ -154,7 +154,7 @@ $this->load->view (
 </div>
 
 
-<div id="issue_home_mainarea_result">
+<div class="result" id="issue_home_mainarea_result">
 <?php
 if (empty($issues))
 {

@@ -789,6 +789,8 @@ class Code extends Controller
 			while (!feof($cloc))
 			{
 				$line = @fgets ($cloc);
+				if ($line === FALSE) break;
+
 				if ($line_count == 2)
 				{
 					$counter = explode (':', $line);

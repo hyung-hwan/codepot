@@ -110,3 +110,35 @@ if ( !function_exists ('codepot_json_encode'))
 
 }
 
+if ( !function_exists ('codepot_delete_files'))
+{
+	function codepot_delete_files($path, $del_dir = FALSE, $level = 0)
+	{	
+		// Trim the trailing slash
+		$path = rtrim($path, DIRECTORY_SEPARATOR);
+			
+		if ( ! $current_dir = @opendir($path))
+			return;
+	
+		while(FALSE !== ($filename = @readdir($current_dir)))
+		{
+			if ($filename != "." && $filename != "..")
+			{
+				if (is_dir($path.DIRECTORY_SEPARATOR.$filename))
+				{
+					codepot_delete_files($path.DIRECTORY_SEPARATOR.$filename, $del_dir, $level + 1);
+				}
+				else
+				{
+					@unlink($path.DIRECTORY_SEPARATOR.$filename);
+				}
+			}
+		}
+		@closedir($current_dir);
+	
+		if ($del_dir == TRUE /*&& $level > 0*/)
+		{
+			@rmdir($path);
+		}
+	}
+}

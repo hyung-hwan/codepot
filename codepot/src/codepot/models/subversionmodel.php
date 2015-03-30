@@ -101,8 +101,7 @@ class SubversionModel extends Model
 				$fileinfo['properties'] = $prop[$orgurl];
 			else $fileinfo['properties'] = NULL;
 
-			$fileinfo['fullpath'] = substr (
-				$info[0]['url'], strlen($info[0]['repos']));
+			$fileinfo['fullpath'] = substr ($info[0]['url'], strlen($info[0]['repos']));
 			$fileinfo['name'] =  $info[0]['path'];
 			$fileinfo['type'] = 'dir';
 			$fileinfo['size'] = 0;
@@ -234,7 +233,7 @@ class SubversionModel extends Model
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		/* Compose a URL with a peg revision if a specific revision is given. However, 
-		 * It skipps composition if the path indicates the project root. Read the comment
+		 * It skips composition if the path indicates the project root. Read the comment
 		 * in getFile() to know more about this skipping.
 		 */
 		if ($rev != SVN_REVISION_HEAD && $path != '') $url = $url . '@' . $rev;
@@ -838,6 +837,134 @@ class SubversionModel extends Model
 
 		@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $orguser);
 		return $result;
+	}
+
+
+	function _cloc_revision ($projectid, $path, $rev)
+	{
+		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+
+		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
+		$info = @svn_info ($workurl, FALSE, $rev);
+		if ($info === FALSE || count($info) != 1) 
+		{
+			// If a URL is at the root of repository and the url type is file://
+			// (e.g. file:///svnrepo/codepot/ where /svnrepo/codepot is a project root),
+			// some versions of libsvn end up with an assertion failure like
+			//  ... libvvn_subr/path.c:114: svn_path_join: Assertion `svn_path_is_canonical(base, pool)' failed. 
+			// 
+			// Since the root directory is guaranteed to exist at the head revision,
+			// the information can be acquired without using a peg revision.
+			// In this case, a normal operational revision is used to work around
+			// the assertion failure. Other functions that has to deal with 
+			// the root directory should implement this check to work around it.
+			//
+			if ($rev == SVN_REVISION_HEAD || $path == '') return FALSE;
+
+			// rebuild the URL with a peg revision and retry it.
+			$workurl = "{$orgurl}@{$rev}";
+			$info = @svn_info ($workurl, FALSE, $rev);
+			if ($info === FALSE || count($info) != 1)  return FALSE;
+		}
+
+		if ($info[0]['kind'] == SVN_NODE_FILE) return FALSE;
+
+		// pass __FILE__ as the first argument so that tempnam creates a name
+		// in the system directory. __FILE__ can never be a valid directory.
+		$tfname = @tempnam(__FILE__, 'codepot-cloc-rev-');
+		if ($tfname === FALSE) return FALSE;
+
+		$actual_tfname = $tfname . '.d';
+		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
+
+		if (svn_checkout ($workurl, $actual_tfname, $rev, 0) === FALSE)
+		{
+			codepot_delete_files ($actual_tfname, TRUE);
+			@unlink ($tfname);
+			return FALSE;
+		}
+
+		$cloc_cmd = sprintf ('%s --quiet --csv --csv-delimiter=":" %s', CODEPOT_CLOC_COMMAND_PATH, $actual_tfname);
+		$cloc = @popen ($cloc_cmd, 'r');
+		if ($cloc === FALSE)
+		{
+				codepot_delete_files ($actual_tfname, TRUE);
+				@unlink ($tfname);
+				return FALSE;
+		}
+
+		$line_count = 0;
+		$cloc_data = array ();
+		while (!feof($cloc))
+		{
+				$line = @fgets ($cloc);
+				if ($line === FALSE) break;
+
+				$line_count++;
+				$line = trim($line);
+				if ($line_count >= 3)
+				{
+					$counter = explode (':', $line);
+					$cloc_data[$counter[1]] = array ($counter[0], $counter[2], $counter[3], $counter[4]);
+				}
+		}
+
+		@pclose ($cloc);
+		codepot_delete_files ($actual_tfname, TRUE);
+		@unlink ($tfname);
+
+		return $cloc_data;
+	}
+
+	function clocRev ($projectid, $path, $rev)
+	{
+		return $this->_cloc_revision ($projectid, $path, $rev);
+	}
+
+	function clocRevBySubdir ($projectid, $path, $rev)
+	{
+		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+
+		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
+		$info = @svn_info ($workurl, FALSE, $rev);
+		if ($info === FALSE || count($info) != 1) 
+		{
+			// If a URL is at the root of repository and the url type is file://
+			// (e.g. file:///svnrepo/codepot/ where /svnrepo/codepot is a project root),
+			// some versions of libsvn end up with an assertion failure like
+			//  ... libvvn_subr/path.c:114: svn_path_join: Assertion `svn_path_is_canonical(base, pool)' failed. 
+			// 
+			// Since the root directory is guaranteed to exist at the head revision,
+			// the information can be acquired without using a peg revision.
+			// In this case, a normal operational revision is used to work around
+			// the assertion failure. Other functions that has to deal with 
+			// the root directory should implement this check to work around it.
+			//
+			if ($rev == SVN_REVISION_HEAD || $path == '') return FALSE;
+
+			// rebuild the URL with a peg revision and retry it.
+			$workurl = "{$orgurl}@{$rev}";
+			$info = @svn_info ($workurl, FALSE, $rev);
+			if ($info === FALSE || count($info) != 1)  return FALSE;
+		}
+
+		if ($info[0]['kind'] == SVN_NODE_FILE) return FALSE;
+
+		$lsinfo = @svn_ls ($workurl, $rev, FALSE, TRUE);
+
+		$cloc_data = array ();
+		foreach ($lsinfo as $key => $value) 
+		{
+			if ($value['type'] == 'dir')
+			{
+				$cloc = $this->_cloc_revision ($projectid, "{$path}/{$key}", $rev);
+				if ($cloc === FALSE) return FALSE;
+
+				$cloc_data[$key] = $cloc;
+			}
+		}
+
+		return $cloc_data;
 	}
 }
 

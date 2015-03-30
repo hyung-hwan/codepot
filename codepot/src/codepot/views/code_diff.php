@@ -129,7 +129,7 @@ $this->load->view (
 	if ($fileext == "") $fileext = "html"
 ?>
 
-<div id="code_diff_mainarea_result">
+<div class="result" id="code_diff_mainarea_result">
 <?php
 function format_diff ($a, $b, $css_class)
 {

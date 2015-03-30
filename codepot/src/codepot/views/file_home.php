@@ -45,7 +45,7 @@ $this->load->view (
 <div class="mainarea" id="file_home_mainarea">
 <div class="title"><?=$this->lang->line('Files')?></div>
 
-<div id="file_home_mainarea_result">
+<div class="result" id="file_home_mainarea_result">
 <?php
 if (empty($files))
 {

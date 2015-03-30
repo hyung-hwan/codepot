@@ -46,6 +46,8 @@ $this->load->view (
 
 <div class="mainarea" id="site_catalog_mainarea">
 
+
+<div class="result" id="site_catalog_mainarea_result">
 <ul>
 <?php 
 foreach ($sites as $site) 
@@ -56,6 +58,7 @@ foreach ($sites as $site)
 }
 ?>
 </ul>
+</div>
 
 </div> <!-- site_catalog_mainarea -->
 

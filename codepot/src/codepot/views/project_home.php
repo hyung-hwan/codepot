@@ -274,7 +274,7 @@ foreach ($urls as $url)
 <?=htmlspecialchars($project->name)?>
 </div>
 
-<div id="project_home_mainarea_wiki">
+<div class="result" id="project_home_mainarea_wiki">
 <pre id="project_home_mainarea_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($project->description); ?>
 </pre>

@@ -284,7 +284,7 @@ $history = $file['history'];
 </div>
 
 
-<div id="code_revision_mainarea_result">
+<div class="result" id="code_revision_mainarea_result">
 
 <div class="title"><?=$this->lang->line('Message')?>&nbsp;
 <?php if ($can_edit): ?>

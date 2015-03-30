@@ -12,11 +12,127 @@
 <script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
 
+<!--[if lte IE 8]><script type="text/javascript" src="<?=base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.time.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
+
+
+
 <?php
 	$file_count = count($file['content']);
+
+	if ($revision <= 0)
+	{
+		$revreq = '';
+		$revreqroot = '';
+	}
+	else
+	{
+		$revreq = "/{$revision}";
+		$revreqroot = '/' . $this->converter->AsciiToHex('.') . $revreq;
+	}
 ?>
 
 <script type="text/javascript">
+function show_tooltip(id, x, y, contents) {
+	$('<div id="' + id + '">' + contents + '</div>').css( {
+		position: 'absolute',
+		display: 'none',
+		top: y + 5,
+		left: x + 5,
+		border: '1px solid #fdd',
+		padding: '2px',
+		'background-color': '#fee',
+		'font-size': '0.8em',
+		'font-family': 'inherit',
+		opacity: 0.80
+	}).appendTo("body").fadeIn(200);
+}
+
+function show_loc_graph (response)
+{
+	var loc = $.parseJSON(response);
+	if (loc == null)
+	{
+		alert ('Invalid data received');
+	}
+	else
+	{
+		var blank = [];
+		for (var key in loc) blank.push ([ key, loc[key][1]] );
+
+		var comment = [];
+		for (var key in loc) comment.push ([ key, loc[key][2]] );
+
+		var code = [];
+		for (var key in loc) code.push ([ key, loc[key][3]] );
+
+		var dataset = 
+		[
+			{ label: "blank",  data: blank },
+			{ label: "comment",  data: comment },
+			{ label: "code",  data: code }
+		];
+
+		var options = {
+
+			series: {
+				stack: true,
+				shadowSize: 0,
+				bars: { 
+					show: true, 
+					fill: true,
+					align: "center",
+					barWidth: 0.8
+				},
+				lines: { show: false, fill: true },
+				points: { show: false }
+			},
+
+			grid: { hoverable: true, clickable: true },
+
+			xaxes: [
+				{ mode: "categories",
+				  autoscaleMargin: 0.05,
+				  rotateTicks: ((code.length >= 8)? 135: 0)
+				},
+			],
+
+			yaxes: { }
+		};
+
+		$("#code_folder_mainarea_result_info_loc_graph").width(550).height(400);
+		$.plot($("#code_folder_mainarea_result_info_loc_graph"), dataset, options);
+
+
+		var code_folder_mainarea_result_info_loc_graph_previous_point = null;
+
+		$("#code_folder_mainarea_result_info_loc_graph").bind("plothover", function (event, pos, item) {
+			if (item) 
+			{
+				if (code_folder_mainarea_result_info_loc_graph_previous_point != item.datapoint) 
+				{
+					
+					code_folder_mainarea_result_info_loc_graph_previous_point = item.datapoint;
+					$("#code_folder_mainarea_result_info_loc_graph_tooltip").remove();
+					show_tooltip("code_folder_mainarea_result_info_loc_graph_tooltip", item.pageX, item.pageY - 20, item.datapoint[1]);
+				}
+			} 
+			else 
+			{
+				$("#code_folder_mainarea_result_info_loc_graph_tooltip").remove();
+				code_folder_mainarea_result_info_loc_graph_previous_point = null;
+			}
+		});
+	}
+
+	$("#code_folder_mainarea_result_info_loc_button").button("enable");
+	//$("#code_folder_mainarea_result_info_loc_progress" ).progressbar().hide();
+}
+
 <?php if ($file_count > 0): ?>
 $(function () {
 	<?php
@@ -44,6 +160,27 @@ $(function () {
 				"option", "label", "<?=$this->lang->line('Hide details')?>");
 		}
 	});
+
+	btn = $("#code_folder_mainarea_result_info_loc_button").button().click (function () {
+		$("#code_folder_mainarea_result_info_loc_button").button("disable");
+		//$("#code_folder_mainarea_result_info_loc_progress" ).progressbar("value", 0).show();
+
+		//function show_progress ()
+		//{
+		//	var progress = $("#code_folder_mainarea_result_info_loc_progress");
+		//	progress.progressbar ("value", progress.progressbar("value") + 1);
+		//	setTimeout (show_progress, 1000);
+		//}
+		//setTimeout (show_progress, 1000);
+
+		var ajax_req = $.ajax ({
+			url: '<?=site_url()?>/graph/folder_loc_json/<?=$project->id?>/<?=$this->converter->AsciiToHex($headpath)?><?=$revreq?>',
+			context: document.body,
+			success: show_loc_graph
+		});
+	});
+
+	//$("#code_folder_mainarea_result_info_loc_progress" ).progressbar().hide();
 });
 <?php endif; ?>
 </script>
@@ -84,17 +221,6 @@ $this->load->view (
 
 <div class="title">
 <?php
-	if ($revision <= 0)
-	{
-		$revreq = '';
-		$revreqroot = '';
-	}
-	else
-	{
-		$revreq = "/{$revision}";
-		$revreqroot = '/' . $this->converter->AsciiToHex('.') . $revreq;
-	}
-
 	// print the main anchor for the root folder. 
 	// let the anchor text be the project name.
 	print anchor (
@@ -144,10 +270,14 @@ $this->load->view (
 	<?=form_close()?>
 </div>
 
-<div id="code_folder_mainarea_result">
+<div class="result" id="code_folder_mainarea_result">
+
+<div id="code_folder_mainarea_result_info_loc_progress"></div> 
+<div id="code_folder_mainarea_result_info_loc_graph">
+</div>
 
 <?php
-	function comp_files ($a, $b)	
+	function comp_files ($a, $b)
 	{
 		if ($a['type'] == $b['type'])
 		{
@@ -233,7 +363,7 @@ $this->load->view (
 			{
 				// file
 				$hexpath = $this->converter->AsciiToHex($fullpath);
-       		         	print "<tr class='{$rowclass}'>";
+				print "<tr class='{$rowclass}'>";
 				print '<td>';
 				print anchor (
 					"code/file/{$project->id}/{$hexpath}{$revreq}",
@@ -308,7 +438,14 @@ $this->load->view (
 			print '</ul>';
 		}
 
+
+		print '<div class="title">LOC</div>';
+		print '<a id="code_folder_mainarea_result_info_loc_button" href="#">';
+		print $this->lang->line('Graph');
+		print '</a>';
+
 		print '</div>';
+
 	}
 ?>
 
