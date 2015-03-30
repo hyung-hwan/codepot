@@ -88,35 +88,77 @@ body {
 .content .taskbar a:active {
 }
 
+
+
+
 .content .taskbar form {
 	margin: 0;
 }
 
 .content .taskbar form input {
-	font-size: inherit;
+/*	font-size: inherit;
 	font-family: inherit;
 	border: 0;
 	margin: 0;
 	padding: 0;
+*/
+
+	-moz-box-shadow: 0 2px 4px #bbb inset;
+	-webkit-box-shadow: 0 2px 4px #BBB inset;
+	box-shadow: 0 2px 4px #BBB inset;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	font-size: 1em;
+	border: 0 none;
+	height: 1.8em; 
+	vertical-align: middle;
+}
+
+.content .mainarea form input:focus {
+	background-color: #E7E8E7;
+	outline: 0;
 }
 
 .content .taskbar form input[type="text"] {
-	height: 1.8em; /* lower than line-height of taskbar  */
-	vertical-align: middle;
 }
 
 .content .taskbar form input[type="password"] {
-	height: 1.8em; /* lower than line-height of taskbar  */
-	vertical-align: middle;
 }
 
 .content .taskbar form input[type="submit"] {
 	cursor: pointer;
-	height: 1.8em; /* lower than line-height of taskbar  */
+	height: 1.8em;
 	vertical-align: middle;
 	padding-left: 5px;
 	padding-right: 5px;
 	text-transform: uppercase;
+
+	background: #3498db;
+	background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+	background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+	background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+	background-image: -o-linear-gradient(top, #3498db, #2980b9);
+	background-image: linear-gradient(to bottom, #3498db, #2980b9);
+	-webkit-border-radius: 28;
+	-moz-border-radius: 28;
+	border-radius: 5px;
+	text-shadow: 1px 1px 3px #666666;
+	color: #ffffff;
+	text-decoration: none;
+
+	font-size: 1em;
+	border: 0 none;
+}
+
+.content .taskbar form input[type="submit"]:hover {
+	background: #3cb0fd;
+	background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+	background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+	background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+	background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+	background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
 }
 
 .content .projectbar {
@@ -213,36 +255,103 @@ body {
 	background-color: #BBCCDD;
 }
 
+
+.content .mainarea .form_container {
+	padding: 0.5em 0.5em 0.5em 0.5em;
+	padding-bottom: 0.3em;
+	vertical-align: middle;
+	font-size: 1em;
+	border: 1px solid #CCDDEE;
+}
+
 .content .mainarea form {
 	margin: 0;
 }
 
-.content .mainarea form fieldset {
-	margin: 0;
-	border: 1px solid #BBCCDD;
+.content .mainarea form label {
 }
 
-.content .mainarea form label {
-	font-style: italic;
-	font-weight: bold;
+.content .mainarea form input {
+	-moz-box-shadow: 0 2px 4px #bbb inset;
+	-webkit-box-shadow: 0 2px 4px #BBB inset;
+	box-shadow: 0 2px 4px #BBB inset;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	font-size: 1em;
+	border: 0 none;
+	height: 1.8em; 
+	vertical-align: middle;
+	padding: 0.2em 0.2em 0.2em 0.2em;
+}
+
+.content .mainarea form input:focus {
+	background-color: #E7E8E7;
+	outline: 0;
 }
 
 .content .mainarea form input[type="text"] {
-	border: 1px solid #BBCCDD;
 }
 
 .content .mainarea form input[type="password"] {
-	border: 1px solid #BBCCDD;
+}
+
+.content .mainarea form input[type="checkbox"] {
+	height: inherit;
+}
+
+.content .mainarea form input[type="submit"] {
+	cursor: pointer;
+	height: 2em;
+	vertical-align: middle;
+	padding-left: 5px;
+	padding-right: 5px;
+	text-transform: uppercase;
+
+	background: #3498db;
+	background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+	background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+	background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+	background-image: -o-linear-gradient(top, #3498db, #2980b9);
+	background-image: linear-gradient(to bottom, #3498db, #2980b9);
+	-webkit-border-radius: 28;
+	-moz-border-radius: 28;
+	border-radius: 5px;
+	text-shadow: 1px 1px 3px #666666;
+	color: #ffffff;
+	text-decoration: none;
+
+	font-size: 1em;
+	border: 0 none;
+}
+
+.content .mainarea form input[type="submit"]:hover {
+	background: #3cb0fd;
+	background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+	background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+	background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+	background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+	background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
 }
 
 .content .mainarea form textarea {
-	border: 1px solid #BBCCDD;
-	font-family: consolas, "Andale Mono", monospace;
+	-moz-box-shadow: 0 2px 4px #bbb inset;
+	-webkit-box-shadow: 0 2px 4px #BBB inset;
+	box-shadow: 0 2px 4px #BBB inset;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
 	font-size: inherit;
+	border: 0 none;
+	font-family: consolas, "Andale Mono", monospace;
+	padding: 0.2em 0.2em 0.2em 0.2em;
 }
 
 .content .mainarea .form_input_label {
-	margin-bottom: 0.2em;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
 }
 
 .content .mainarea .form_input_label .ui-button {
@@ -250,24 +359,21 @@ body {
 	font-style: italic;
 }
 
-
 .content .mainarea .form_input_field {
-	margin-bottom: 0.5em;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
 }
 
 .content .mainarea .form_input_preview {
-	width: 100%;
-	/*border: 1px solid #DDDDDD;*/
 	background-color: #FFFFF0;
 	font-size: 90%;
+	padding: 0.2em 0.2em 0.2em 0.2em;
+	margin-bottom: 0.5em;
 }
 
 .content .mainarea .form_input_preview pre {
-	/*background-color: inherit;*/
 	background-color: #F8F8FA;
-	padding: 0.3em;
-	/*background-color: #FDF5D6;*/
-	/*border: none;*/
+	padding: 0.2em 0.2em 0.2em 0.2em;
 }
 
 .content .mainarea .icon {
@@ -275,9 +381,6 @@ body {
 }
 
 .content .mainarea pre {
-	/*padding: .3em .3em .3em .3em;*/
-	/*border: 1px dashed #BBCCDD;*/
-	/*background-color: #F1F1FF;*/
 	border: none;
 	background-color: #F8F8FA;
 	overflow: auto;
@@ -623,17 +726,6 @@ pre.prettyprint li.L9 { background: #eee }
 	background: url("images/username.png") no-repeat scroll 0% 0% rgb(234, 231, 231);
 	background-position: 0px 1px !important;
 	padding-left: 24px;
-
-	height: 1.8em; /* lower than line-height of taskbar */
-	vertical-align: middle;
-
-	border: 1px solid #B9BDC1;
-	-moz-box-shadow: 0 2px 4px #bbb inset;
-	-webkit-box-shadow: 0 2px 4px #BBB inset;
-	box-shadow: 0 2px 4px #BBB inset;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
 }
 
 #taskbar_user_name:focus {
@@ -645,17 +737,6 @@ pre.prettyprint li.L9 { background: #eee }
 	background: url("images/password.png") no-repeat scroll 0% 0% rgb(234, 231, 231);
 	background-position: 0px 1px !important;
 	padding-left: 24px;
-
-	height: 1.8em; /* lower than line-height of taskbar  */
-	vertical-align: middle;
-
-	border: 1px solid #B9BDC1;
-	-moz-box-shadow: 0 2px 4px #bbb inset;
-	-webkit-box-shadow: 0 2px 4px #BBB inset;
-	box-shadow: 0 2px 4px #BBB inset;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
 }
 
 #taskbar_user_pass:focus {
@@ -663,72 +744,13 @@ pre.prettyprint li.L9 { background: #eee }
 	outline: 0;
 }
 
+/*
 #taskbar_signin_button {
-	cursor: pointer;
-	height: 1.8em; /* lower than line-height of taskbar */
-	vertical-align: middle;
-	padding-left: 5px;
-	padding-right: 5px;
-	text-transform: uppercase;
-
-	background: #3498db;
-	background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
-	background-image: -moz-linear-gradient(top, #3498db, #2980b9);
-	background-image: -ms-linear-gradient(top, #3498db, #2980b9);
-	background-image: -o-linear-gradient(top, #3498db, #2980b9);
-	background-image: linear-gradient(to bottom, #3498db, #2980b9);
-	-webkit-border-radius: 28;
-	-moz-border-radius: 28;
-	border-radius: 5px;
-	text-shadow: 1px 1px 3px #666666;
-	color: #ffffff;
-	text-decoration: none;
-}
-
-#taskbar_signin_button:hover {
-	background: #3cb0fd;
-	background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
-	text-decoration: none;
 }
 
 #taskbar_signout_button {
-	cursor: pointer;
-	height: 1.8em; /* lower than line-height of taskbar  */
-	vertical-align: middle;
-	padding-left: 5px;
-	padding-right: 5px;
-	text-transform: uppercase;
-
-	background: #3498db;
-	background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
-	background-image: -moz-linear-gradient(top, #3498db, #2980b9);
-	background-image: -ms-linear-gradient(top, #3498db, #2980b9);
-	background-image: -o-linear-gradient(top, #3498db, #2980b9);
-	background-image: linear-gradient(to bottom, #3498db, #2980b9);
-	-webkit-border-radius: 28;
-	-moz-border-radius: 28;
-	border-radius: 5px;
-	text-shadow: 1px 1px 3px #666666;
-	color: #ffffff;
-	text-decoration: none;
 }
-
-#taskbar_signout_button:hover {
-	background: #3cb0fd;
-	background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
-	text-decoration: none;
-}
-
-
-
+*/
 
 /* ================ login page =================== */
 
@@ -736,20 +758,7 @@ pre.prettyprint li.L9 { background: #eee }
 	background: url("images/username.png") no-repeat scroll 0% 0% rgb(234, 231, 231);
 	background-position: 0px 3px !important;
 	padding-left: 24px;
-
 	height: 2.2em; 
-	vertical-align: middle;
-
-	border: 1px solid #B9BDC1;
-	-moz-box-shadow: 0 2px 4px #bbb inset;
-	-webkit-box-shadow: 0 2px 4px #BBB inset;
-	box-shadow: 0 2px 4px #BBB inset;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-
-	font-size: 1em;
-	border: 0 none;
 }
 
 #login_user_name:focus {
@@ -761,20 +770,7 @@ pre.prettyprint li.L9 { background: #eee }
 	background: url("images/password.png") no-repeat scroll 0% 0% rgb(234, 231, 231);
 	background-position: 0px 3px !important;
 	padding-left: 24px;
-
 	height: 2.2em; 
-	vertical-align: middle;
-
-	border: 1px solid #B9BDC1;
-	-moz-box-shadow: 0 2px 4px #bbb inset;
-	-webkit-box-shadow: 0 2px 4px #BBB inset;
-	box-shadow: 0 2px 4px #BBB inset;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-
-	font-size: 1em;
-	border: 0 none;
 }
 
 #login_user_pass:focus {
@@ -783,45 +779,8 @@ pre.prettyprint li.L9 { background: #eee }
 }
 
 #login_signin_button {
-	cursor: pointer;
 	height: 2em;
-	vertical-align: middle;
-	padding-left: 5px;
-	padding-right: 5px;
-	text-transform: uppercase;
-
-	background: #3498db;
-	background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
-	background-image: -moz-linear-gradient(top, #3498db, #2980b9);
-	background-image: -ms-linear-gradient(top, #3498db, #2980b9);
-	background-image: -o-linear-gradient(top, #3498db, #2980b9);
-	background-image: linear-gradient(to bottom, #3498db, #2980b9);
-	-webkit-border-radius: 28;
-	-moz-border-radius: 28;
-	border-radius: 5px;
-	text-shadow: 1px 1px 3px #666666;
-	color: #ffffff;
-	text-decoration: none;
-
-	font-size: 1em;
-	border: 0 none;
-}
-
-#login_signin_button:hover {
-	background: #3cb0fd;
-	background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
-	text-decoration: none;
 }
 
 
-#login_mainarea .login_form_field_div { /* keep it similar to taskbar */
-	text-transform: uppercase;
-	padding-top: 0.3em;
-	padding-bottom: 0.3em;
-	vertical-align: middle;
-	font-size: 1em;
-}
+
