@@ -4,6 +4,7 @@ $lang['All'] = 'All';
 $lang['Attachment'] = 'Attachment';
 $lang['Attachments'] = 'Attachments';
 $lang['Blame'] = 'Blame';
+$lang['Blank'] = 'Blank';
 $lang['Cancel'] = 'Cancel';
 $lang['Change'] = 'Change';
 $lang['Change log'] = 'Change log';
