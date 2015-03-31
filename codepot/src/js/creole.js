@@ -237,6 +237,7 @@ var asciiToHex = function (x,dir) {
 				{
 					var seg = x.charCodeAt(i).toString(16);
 					if (seg.length == 1) seg = "0" + seg;
+					seg = "!" + seg;
 				}
 			}
 
