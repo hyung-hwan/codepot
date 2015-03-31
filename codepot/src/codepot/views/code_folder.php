@@ -72,9 +72,9 @@ function show_loc_graph (response)
 
 		var dataset = 
 		[
-			{ label: "code",  data: code },
-			{ label: "comment",  data: comment },
-			{ label: "blank",  data: blank }
+			{ label: "<?=$this->lang->line('Code')?>",  data: code },
+			{ label: "<?=$this->lang->line('Comment')?>",  data: comment },
+			{ label: "<?=$this->lang->line('Blank')?>",  data: blank }
 		];
 
 		var options = {
