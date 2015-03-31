@@ -72,9 +72,9 @@ function show_loc_graph (response)
 
 		var dataset = 
 		[
-			{ label: "blank",  data: blank },
+			{ label: "code",  data: code },
 			{ label: "comment",  data: comment },
-			{ label: "code",  data: code }
+			{ label: "blank",  data: blank }
 		];
 
 		var options = {
