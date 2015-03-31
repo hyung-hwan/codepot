@@ -4,6 +4,7 @@ $lang['All'] = '모두';
 $lang['Attachment'] = '첨부';
 $lang['Attachments'] = '첨부';
 $lang['Blame'] = '책임전가';
+$lang['Blank'] = '공백';
 $lang['Cancel'] = '취소';
 $lang['Change'] = '변경';
 $lang['Change log'] = '변경기록';

@@ -1,7 +1,10 @@
 <?php
 $lang['Administration'] = 'Administration';
 $lang['All'] = 'Semua';
+$lang['Attachment'] = 'Attachment';
+$lang['Attachments'] = 'Attachments';
 $lang['Blame'] = 'Menyalahkan';
+$lang['Blank'] = 'Blank';
 $lang['Cancel'] = 'Cancel';
 $lang['Change'] = 'Change';
 $lang['Change log'] = 'Change log';
