@@ -104,6 +104,12 @@ class Wiki extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$link = $this->wikihelper->parseLink (
 				$name, $projectid, $this->converter);
 			if ($link === FALSE)
@@ -200,6 +206,7 @@ class Wiki extends Controller
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
+
 		if ($wikiname == '' || $name == '')
 		{
 			$data['login'] = $login;
@@ -244,6 +251,12 @@ class Wiki extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$att = $this->wikis->getAttachment ($login['id'], $project, $wikiname, $name);
 			if ($att === FALSE)
 			{
@@ -596,6 +609,12 @@ class Wiki extends Controller
 		}
 		else
 		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
 			$data['message'] = '';
 			$data['project'] = $project;
 
