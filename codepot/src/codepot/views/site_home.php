@@ -26,11 +26,12 @@ function render_wiki()
 }
 </script>
 
-<?php
-	$caption = $this->lang->line('Home');
-	if ($login['id'] != '') $caption .= "({$login['id']})";
-?>
-<title><?=htmlspecialchars($caption)?></title>
+<title><?php
+	if (!isset($login['id']) || $login['id'] == '') 
+		printf ('%s', htmlspecialchars($site->name));
+	else
+		printf ('%s - %s', htmlspecialchars($site->name), $login['id']);
+?></title>
 </head>
 
 <body onload="render_wiki()">
