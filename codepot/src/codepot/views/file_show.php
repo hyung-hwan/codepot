@@ -57,7 +57,7 @@ function render_wiki()
 }
 </script>
 
-<title><?=htmlspecialchars($file->name)?></title>
+<title><?=htmlspecialchars($project->name)?> - <?=htmlspecialchars($file->name)?></title>
 </head>
 
 <body onload="render_wiki()">

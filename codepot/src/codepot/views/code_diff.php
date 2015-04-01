@@ -12,7 +12,12 @@
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
 
-<title><?=htmlspecialchars($project->name)?></title>
+<title><?php 
+	if ($headpath == '')
+		printf ('%s', htmlspecialchars($project->name));
+	else
+		printf ('%s - %s', htmlspecialchars($project->name), htmlspecialchars($headpath));
+?></title>
 </head>
 
 <body onload="prettyPrint()">

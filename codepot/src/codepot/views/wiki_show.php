@@ -19,7 +19,9 @@
 <script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
 
-<title><?=htmlspecialchars($wiki->name)?></title>
+<title><?php 
+	printf ('%s - %s', htmlspecialchars($project->name), htmlspecialchars($wiki->name));
+?></title>
 </head>
 
 <?php

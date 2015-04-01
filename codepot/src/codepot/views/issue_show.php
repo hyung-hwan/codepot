@@ -151,7 +151,7 @@ $(function () {
 });
 </script>
 
-<title><?=htmlspecialchars($project->id)?> <?=htmlspecialchars($issue->type)?> <?=htmlspecialchars($issue->id)?></title>
+<title><?=htmlspecialchars($project->name)?> - <?=$this->lang->line('Issue')?> <?=htmlspecialchars($issue->id)?></title>
 </head>
 
 <body onload="render_wiki()">
