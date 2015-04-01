@@ -6,7 +6,12 @@
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
 
-<title><?=htmlspecialchars($project->name)?></title>
+<title><?php 
+	if ($fullpath == '')
+		printf ('%s', htmlspecialchars($project->name));
+	else
+		printf ('%s - %s', htmlspecialchars($project->name), htmlspecialchars($fullpath));
+?></title>
 </head>
 
 <body>
