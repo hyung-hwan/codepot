@@ -32,6 +32,11 @@ body {
 
 .content ul {
 	list-style: square;
+	white-space: normal;
+}
+
+.content ol {
+	white-space: normal;
 }
 
 .content a
