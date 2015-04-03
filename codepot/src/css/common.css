@@ -489,6 +489,11 @@ body {
 	margin-top: 0;
 }
 
+/* this is used for line numbering. */
+.content .mainarea pre.prettyprint ol {
+	white-space: pre-wrap;
+} 
+
 .content .mainarea pre.prettyprint {
 	/* anything that make prettyprint area different from other pres? */
 	/*background-color: #FFFFFF;*/
