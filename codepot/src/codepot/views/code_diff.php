@@ -136,6 +136,63 @@ $this->load->view (
 
 <div class="result" id="code_diff_mainarea_result">
 <?php
+
+function format_diff2 ($a, $b, $css_class)
+{
+	$ms = codepot_find_matching_sequences ($a, $b);
+	$ms_count = count($ms);
+
+        $k = 0;
+	$cc = ''; 
+
+	if ($css_class == 'diffchangedold')
+	{
+		for ($i = 0; $i < $ms_count; $i++)
+		{
+			list($mp1, $mp2, $ml) = $ms[$i];
+			if ($mp1 > $k)
+			{
+				$cc .= sprintf ('<span class="%s">', $css_class);
+				$cc .= htmlspecialchars(substr($a, $k, $mp1 - $k));
+				$cc .= '</span>';
+			}
+			$cc .= htmlspecialchars(substr($a, $mp1, $ml));
+			$k = $mp1 + $ml;	
+		}
+		if ($k < strlen($a)) 
+		{
+			$cc .= sprintf ('<span class="%s">', $css_class);
+			$cc .= htmlspecialchars(substr($a, $k));
+			$cc .= '</span>';
+		}
+	}
+	else
+	{
+		for ($i = 0; $i < $ms_count; $i++)
+		{
+			list($mp1, $mp2, $ml) = $ms[$i];
+			if ($mp2 > $k)
+			{
+				$cc .= sprintf ('<span class="%s">', $css_class);
+				$cc .= htmlspecialchars(substr($b, $k, $mp2 - $k));
+				$cc .= '</span>';
+			}
+			$cc .= htmlspecialchars(substr($b, $mp2, $ml));
+			$k = $mp2 + $ml;	
+		}
+		if ($k < strlen($b)) 
+		{
+			$cc .= sprintf ('<span class="%s">', $css_class);
+			$cc .= htmlspecialchars(substr($b, $k));
+			$cc .= '</span>';
+		}
+	}
+
+
+	return $cc;
+}
+
+/*
 function format_diff ($a, $b, $css_class)
 {
 	if ($b == '') return htmlspecialchars($a);
@@ -183,6 +240,7 @@ function format_diff ($a, $b, $css_class)
 
 	return $cc;
 }
+*/
 
 //if (!$fullview)
 if (FALSE) // don't want to delete code for the original diff view. 
@@ -358,9 +416,14 @@ else
 				print "<span class='{$diffclass}'>";
 
 				if ($diffclass == 'diffchanged')
-					$xline = format_diff ($x['rev1line'], $x['rev2line'], 'diffchangedold');
+				{
+					//$xline = format_diff ($x['rev1line'], $x['rev2line'], 'diffchangedold');
+					$xline = format_diff2 ($x['rev1line'], $x['rev2line'], 'diffchangedold');
+				}
 				else 
+				{
 					$xline = htmlspecialchars($x['rev1line']);
+				}
 
 				if ($is_msie && $xline == '') $xline = '&nbsp;';
 				print $xline;
@@ -407,9 +470,14 @@ else
 				print "<span class='{$diffclass}'>";
 
 				if ($diffclass == 'diffchanged')
-					$xline = format_diff ($x['rev2line'], $x['rev1line'], 'diffchangednew');
+				{
+					//$xline = format_diff ($x['rev2line'], $x['rev1line'], 'diffchangednew');
+					$xline = format_diff2 ($x['rev1line'], $x['rev2line'], 'diffchangednew');
+				}
 				else 
+				{
 					$xline = htmlspecialchars($x['rev2line']);
+				}
 
 				if ($is_msie && $xline == '') $xline = '&nbsp;';
 				print $xline;
