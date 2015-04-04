@@ -142,3 +142,117 @@ if ( !function_exists ('codepot_delete_files'))
 		}
 	}
 }
+
+if ( !function_exists ('codepot_find_longest_matching_sequence'))
+{
+	function codepot_find_longest_matching_sequence ($old, $old_start, $old_len, $new, $new_start, $new_len)
+	{
+		$old_end = $old_start + $old_len;
+		$new_end = $new_start + $new_len;
+	
+		$match_start_in_old = $old_start;
+		$match_start_in_new = $new_start;
+		$match_len = 0;
+	
+		$runs = array ();
+		for ($i = $old_start; $i < $old_end; $i++)
+		{
+			$new_runs = array();
+			for ($j = $new_start; $j < $new_end; $j++)
+			{
+				if ($old[$i] == $new[$j])
+				{
+					if (isset($runs[$j - 1]))
+						$new_runs[$j] = $runs[$j - 1] + 1;
+					else
+						$new_runs[$j] = 1;
+					if ($new_runs[$j] > $match_len)
+					{
+						$match_len = $new_runs[$j];
+						$match_start_in_old = ($i + 1) - $match_len;
+						$match_start_in_new = ($j + 1) - $match_len;
+					}
+				}
+			}
+			$runs = $new_runs;
+		}
+
+
+		//print "$match_start_in_old\n";
+		//print "$match_start_in_new\n";
+		//print "$match_len\n";
+		//print "----------------\n";
+
+		return array ($match_len, $match_start_in_old, $match_start_in_new);
+	}
+}
+
+
+if ( !function_exists ('codepot_find_matching_sequences'))
+{
+	function codepot_find_matching_sequences ($old, $new)
+	{
+		$stack = array ();
+		$result = array ();
+	
+		if (is_array($old) && is_array($new))
+		{
+			$old_size = count($old);
+			$new_size = count($new);
+		}
+		else if (is_string($old) && is_string($new))
+		{
+			$old_size = strlen($old);
+			$new_size = strlen($new);
+		}
+		else
+		{
+			return FALSE;
+		}
+	
+		// push the whole range for the initial search.
+		array_push ($stack, array (0, 0, $old_size, 0, $new_size));
+	
+		while (count($stack) > 0)
+		{
+			$item = array_pop($stack);
+	
+			if ($item[0] == 0)
+			{
+				$old_seg_pos = $item[1];
+				$old_seg_len = $item[2];
+				$new_seg_pos = $item[3];
+				$new_seg_len = $item[4];
+			
+				list ($match_len, $match_start_in_old, $match_start_in_new) = 
+					codepot_find_longest_matching_sequence ($old, $old_seg_pos, $old_seg_len, $new, $new_seg_pos, $new_seg_len);
+				if ($match_len > 0)
+				{
+					// push the back part
+					$a = $match_start_in_old + $match_len;   // beginning of the back part of $old
+					$b = $old_seg_len - ($a - $old_seg_pos); // length of the back part of $old
+					$c = $match_start_in_new + $match_len;   // beginning of the back part in $new
+					$d = $new_seg_len - ($c - $new_seg_pos); // length of the back part of $new
+					if ($b > 0 && $d > 0) array_push ($stack, array (0, $a, $b, $c, $d));
+	
+					// push the longest sequence found to hold it until the front part 
+					// has been processed.
+					array_push ($stack, array (1, $match_start_in_old, $match_start_in_new, $match_len));
+	
+					// push the front part
+					$b = $match_start_in_old - $old_seg_pos; // length of the front part of $old
+					$d = $match_start_in_new - $new_seg_pos; // length of the front part of $new
+					if ($b > 0 && $d > 0) array_push ($stack, array (0, $old_seg_pos, $b, $new_seg_pos, $d));
+				}
+			}
+			else
+			{
+				// move the result item to the result array
+				array_push ($result, array_slice ($item, 1, 3));
+			}
+		}
+	
+	
+		return $result;
+	}
+}
