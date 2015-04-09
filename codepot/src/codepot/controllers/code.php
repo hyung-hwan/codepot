@@ -110,13 +110,18 @@ class Code extends Controller
 
 				$data['readme_text'] = '';
 				$data['readme_file'] = '';
-				foreach (array('README.wiki', 'README.txt', 'README') as $rf)
+				foreach (explode(',', CODEPOT_CODE_FOLDER_README) as $rf)
 				{
-					$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
-					if ($readme !== FALSE)
+					$rf = trim($rf);
+					if (strlen($rf) > 0)
 					{
-						$data['readme_text'] = $readme['content'];
-						$data['readme_file'] = $rf;
+						$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
+						if ($readme !== FALSE)
+						{
+							$data['readme_text'] = $readme['content'];
+							$data['readme_file'] = $rf;
+							break;
+						}
 					}
 				}
 				$this->load->view ($this->VIEW_FOLDER, $data);
@@ -576,13 +581,18 @@ class Code extends Controller
 
 				$data['readme_text'] = '';
 				$data['readme_file'] = '';
-				foreach (array('README.wiki', 'README.txt', 'README') as $rf)
+				foreach (explode(',', CODEPOT_CODE_FOLDER_README) as $rf)
 				{
-					$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
-					if ($readme !== FALSE)
+					$rf = trim($rf);
+					if (strlen($rf) > 0)
 					{
-						$data['readme_text'] = $readme['content'];
-						$data['readme_file'] = $rf;
+						$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
+						if ($readme !== FALSE)
+						{
+							$data['readme_text'] = $readme['content'];
+							$data['readme_file'] = $rf;
+							break;
+						}
 					}
 				}
 				$this->load->view ($this->VIEW_FOLDER, $data);
@@ -648,13 +658,18 @@ class Code extends Controller
 
 				$data['readme_text'] = '';
 				$data['readme_file'] = '';
-				foreach (array('README.wiki', 'README.txt', 'README') as $rf)
+				foreach (explode(',', CODEPOT_CODE_FOLDER_README) as $rf)
 				{
-					$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
-					if ($readme !== FALSE)
+					$rf = trim($rf);
+					if (strlen($rf) > 0)
 					{
-						$data['readme_text'] = $readme['content'];
-						$data['readme_file'] = $rf;
+						$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
+						if ($readme !== FALSE)
+						{
+							$data['readme_text'] = $readme['content'];
+							$data['readme_file'] = $rf;
+							break;
+						}
 					}
 				}
 				$this->load->view ($this->VIEW_FOLDER, $data);

@@ -87,7 +87,9 @@ function load_ini ($file)
 		array ('svn_min_commit_message_length',            'integer',     0),
 		array ('svn_restricted_topdirs',                   'string',      ''),
 		array ('svn_restriction_allowed_subdir_depth_min', 'integer',     0),
-		array ('svn_restriction_allowed_subdir_depth_max', 'integer',     0)
+		array ('svn_restriction_allowed_subdir_depth_max', 'integer',     0),
+
+		array ('code_folder_readme',           'string',     'README')
 	);
 
 	foreach ($xcfgs as $x)
