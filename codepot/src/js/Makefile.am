@@ -21,8 +21,7 @@ www_DATA = \
 	jquery.flot.threshold.min.js \
 	jquery.flot.time.min.js \
 	excanvas.min.js \
-	jquery.flot.tickrotor.js \
-	Chart.js 
+	jquery.flot.tickrotor.js
 
 EXTRA_DIST = $(www_DATA)
 
