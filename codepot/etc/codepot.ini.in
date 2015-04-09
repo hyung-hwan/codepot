@@ -124,7 +124,7 @@ max_latest_projects = "10"
 ;------------------------------------------------------------------------------
 ; Maximum number of projects to show 
 ;------------------------------------------------------------------------------
-max_projects_per_page = "50"
+max_projects_per_page = "100"
 
 ;------------------------------------------------------------------------------
 ; Maximum number of issues to show 
@@ -139,12 +139,12 @@ max_logs_per_page = "50"
 ;------------------------------------------------------------------------------
 ; Maximum number of log entries to show in the front page
 ;------------------------------------------------------------------------------
-max_logs_in_site_home = "10"
+max_logs_in_site_home = "20"
 
 ;------------------------------------------------------------------------------
 ; Maximum number of log entries to show in the project home page
 ;------------------------------------------------------------------------------
-max_logs_in_project_home = "5"
+max_logs_in_project_home = "10"
 
 ;------------------------------------------------------------------------------
 ; directory to accomodate subversion repositories
