@@ -239,7 +239,6 @@ svn_restricted_topdirs = ""
 svn_restriction_allowed_subdir_depth_min = 0
 svn_restriction_allowed_subdir_depth_max = 0
 
-
 ;------------------------------------------------------------------------------
 ; List of README files to show in the code folder view.
 ; The first file found is shown. You can specify multiple file name 
