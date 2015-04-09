@@ -8,6 +8,15 @@
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
 
+<script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
+
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
+
 <script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
@@ -183,6 +192,23 @@ $(function () {
 	//$("#code_folder_mainarea_result_info_loc_progress" ).progressbar().hide();
 });
 <?php endif; ?>
+
+function renderReadme()
+{
+	<?php
+	// if the readme file name ends with '.wiki', perform pretty printing
+	if (strlen($readme_text) > 0 && substr_compare($readme_file, '.wiki', -5) === 0):
+	?>
+	creole_render_wiki (
+		"code_folder_mainarea_result_readme_text",
+		"code_folder_mainarea_result_readme",
+		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
+		"<?=site_url()?>/wiki/attachment0/<?=$project->id?>/"
+        );
+	prettyPrint();
+	<?php endif; ?>
+
+}
 </script>
 
 <title><?php 
@@ -193,7 +219,7 @@ $(function () {
 ?></title>
 </head>
 
-<body>
+<body onload="renderReadme()">
 
 <div class="content" id="code_folder_content">
 
@@ -407,6 +433,15 @@ $this->load->view (
 			}
 		}
 		print '</table>';
+
+		if (strlen($readme_text) > 0)
+		{
+			print '<div id="code_folder_mainarea_result_readme">';
+			print '<pre id="code_folder_mainarea_result_readme_text">';
+			print htmlspecialchars($readme_text);	
+			print '</pre>';
+			print '</div>';
+		}
 
 		print '<div id="code_folder_mainarea_result_info">';
 
