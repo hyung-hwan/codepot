@@ -148,6 +148,12 @@ $(function () {
 		}
 	);
 
+
+	$("#issue_change_comment_preview_button").button().click(
+		function () {
+			render_wiki_comment_preview ($("#issue_change_comment").val());
+		}
+	);
 });
 </script>
 
@@ -424,6 +430,7 @@ $this->load->view (
 
 		<div>
 			<?=form_label ($this->lang->line('Comment'), 'issue_change_comment')?>
+			<a href='#' id='issue_change_comment_preview_button'><?=$this->lang->line('Preview')?></a>
 			<?php
 				$xdata = array (
 					'name' => 'issue_change_comment',
@@ -434,6 +441,8 @@ $this->load->view (
 				);
 				print form_textarea ($xdata);
 			?>
+
+			<div id='issue_change_comment_preview' class='form_input_preview'></div>
 		</div>
 	<?=form_close()?>
 </div> <!-- issue_show_change_form -->
@@ -453,14 +462,14 @@ $this->load->view (
 
 </div> <!--  issue_show_content -->
 
+<?php 
+	$creole_base = site_url() . "/wiki/show/{$project->id}/"; 
+	$creole_attachment_base = site_url() . "/wiki/attachment0/{$project->id}/"; 
+?>
+
 <script type="text/javascript">
 function render_wiki()
 {
-	<?php 
-		$creole_base = site_url() . "/wiki/show/{$project->id}/"; 
-		$creole_attachment_base = site_url() . "/wiki/attachment0/{$project->id}/"; 
-	?>
-
 	creole_render_wiki (
 		"issue_show_mainarea_description_pre", 
 		"issue_show_mainarea_description", 
@@ -481,6 +490,18 @@ function render_wiki()
 		}
 	}
 	?>
+
+	prettyPrint ();
+}
+
+function render_wiki_comment_preview(input_text)
+{
+	creole_render_wiki_with_input_text (
+		input_text,
+		"issue_change_comment_preview", 
+		"<?=$creole_base?>",
+		"<?=$creole_attachment_base?>"
+	);
 
 	prettyPrint ();
 }
