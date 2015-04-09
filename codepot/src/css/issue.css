@@ -104,11 +104,18 @@
 }
 
 #issue_show_mainarea_change_form textarea {
-	display: block;
-	padding: 1px;
-	font-size: inherit;
+	-moz-box-shadow: 0 2px 4px #bbb inset;
+	-webkit-box-shadow: 0 2px 4px #BBB inset;
+	box-shadow: 0 2px 4px #BBB inset;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	border: 0 none;
 	font-family: consolas, "Andale Mono", monospace;
+
 	width: 100%;
+	font-size: 0.9em;
 }
 
 #issue_show_mainarea_changes {
@@ -166,6 +173,32 @@
 
 #issue_show_mainarea_changes_table td.details .list ul li {
 	padding-bottom: 0.3em;
+}
+
+#issue_change_form {
+	font-size: 1em;
+}
+
+/* all these elements inside the form requires a lot of refinement.
+ * many of these are duplicates of elemenents in common.css */
+#issue_change_form .form_input_preview {
+	background-color: #FFFFF0;
+	font-size: 0.9em;
+	padding: 0.2em 0.2em 0.2em 0.2em;
+	margin-bottom: 0.5em;
+}
+
+#issue_change_form .form_input_preview table {
+	font-size: 1em;
+}
+
+#issue_change_form .form_input_preview pre {
+	background-color: #F8F8FA;
+	padding: 0.2em 0.2em 0.2em 0.2em;
+}
+
+#issue_change_comment_preview_button {
+	font-size: 0.8em;
 }
 
 /*---------------------------------------------
