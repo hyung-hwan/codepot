@@ -7,9 +7,9 @@ CODEPOT
 
 INSTALLATION
 
- An RPM package is provided for RedHat/CentOS Linux. The RPM package specifies
- dependency which must met prior to or at the same time as the installation of
- the rpm package. 
+ A RPM package is provided for RedHat/CentOS Linux. The RPM package specifies
+ dependency which must be met prior to or at the same time as the installation
+ of the rpm package. 
 
    rpm -ivh codepot-X.X.X-X.noarch.rpm
 
