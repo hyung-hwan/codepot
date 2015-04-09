@@ -48,6 +48,14 @@
 	text-transform: uppercase;
 }
 
+#code_folder_mainarea_result_readme {
+	padding: 0.2em 0.2em 0.2em 0.2em;
+}
+
+#code_folder_mainarea_result_readme_text {
+	padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
 /*----------------------------------------------- 
  * project source file view 
  *-----------------------------------------------*/

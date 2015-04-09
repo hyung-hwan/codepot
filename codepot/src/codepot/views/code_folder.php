@@ -438,7 +438,9 @@ $this->load->view (
 		{
 			print '<div id="code_folder_mainarea_result_readme">';
 			print '<pre id="code_folder_mainarea_result_readme_text">';
+			print "\n";
 			print htmlspecialchars($readme_text);	
+			print "\n";
 			print '</pre>';
 			print '</div>';
 		}
