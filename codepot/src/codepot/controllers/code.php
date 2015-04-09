@@ -108,6 +108,17 @@ class Code extends Controller
 				$data['next_revision'] =
 					$this->subversion->getNextRev ($projectid, $path, $rev);
 
+				$data['readme_text'] = '';
+				$data['readme_file'] = '';
+				foreach (array('README.wiki', 'README.txt', 'README') as $rf)
+				{
+					$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
+					if ($readme !== FALSE)
+					{
+						$data['readme_text'] = $readme['content'];
+						$data['readme_file'] = $rf;
+					}
+				}
 				$this->load->view ($this->VIEW_FOLDER, $data);
 			}
 		}
@@ -563,6 +574,17 @@ class Code extends Controller
 				$data['next_revision'] =
 					$this->subversion->getNextRev ($projectid, $path, $rev);
 
+				$data['readme_text'] = '';
+				$data['readme_file'] = '';
+				foreach (array('README.wiki', 'README.txt', 'README') as $rf)
+				{
+					$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
+					if ($readme !== FALSE)
+					{
+						$data['readme_text'] = $readme['content'];
+						$data['readme_file'] = $rf;
+					}
+				}
 				$this->load->view ($this->VIEW_FOLDER, $data);
 			}
 		}
@@ -623,6 +645,18 @@ class Code extends Controller
 					$this->subversion->getPrevRev ($project->id, $path, $rev);
 				$data['next_revision'] =
 					$this->subversion->getNextRev ($project->id, $path, $rev);
+
+				$data['readme_text'] = '';
+				$data['readme_file'] = '';
+				foreach (array('README.wiki', 'README.txt', 'README') as $rf)
+				{
+					$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
+					if ($readme !== FALSE)
+					{
+						$data['readme_text'] = $readme['content'];
+						$data['readme_file'] = $rf;
+					}
+				}
 				$this->load->view ($this->VIEW_FOLDER, $data);
 			}
 		}
