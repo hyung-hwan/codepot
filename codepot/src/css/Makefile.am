@@ -11,7 +11,6 @@ www_DATA =  \
 	project.css \
 	site.css \
 	user.css \
-	websvn.css \
 	wiki.css
 
 EXTRA_DIST = $(www_DATA)
