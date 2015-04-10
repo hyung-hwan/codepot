@@ -3,13 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/user.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/user.css')?>" />
      
 <!--
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 -->
 
 <script type="text/javascript">
@@ -18,7 +18,7 @@ $(function () {
 });
 </script>
 
-<title><?=htmlspecialchars($login['id'])?></title>
+<title><?php print htmlspecialchars($login['id'])?></title>
 </head>
 
 <body>
@@ -62,33 +62,33 @@ $this->load->view (
 <div id="user_settings_mainarea_result">
 
 <div class="form_container">
-<?=form_open_multipart('user/settings/')?>
+<?php print form_open_multipart('user/settings/')?>
 
-	<?=form_checkbox('code_hide_line_num', 
+	<?php print form_checkbox('code_hide_line_num', 
 		'Y', $settings->code_hide_line_num == 'Y')
 	?>
-	<?= $this->lang->line('USER_MSG_HIDE_LINE_NUMBER')?>
+	<?php print  $this->lang->line('USER_MSG_HIDE_LINE_NUMBER')?>
 
-	<?=form_checkbox('code_hide_details',
+	<?php print form_checkbox('code_hide_details',
 		'Y', $settings->code_hide_details == 'Y')
 	?>
-	<?= $this->lang->line('USER_MSG_HIDE_DETAILS')?>
+	<?php print  $this->lang->line('USER_MSG_HIDE_DETAILS')?>
 
 	<div class='form_input_field'>
-		<?=form_label($this->lang->line('Icon').': ', 'icon_img_file_name')?>
+		<?php print form_label($this->lang->line('Icon').': ', 'icon_img_file_name')?>
 		<?php
 			$extra = 'maxlength="255" size="40"';
 			print form_upload('icon_img_file_name', set_value('icon_img_file_name', ''), $extra);
 		?>
-		<?=form_error('icon_img_file_name');?>
+		<?php print form_error('icon_img_file_name');?>
 		(.png, max. 100x100)
 	</div>
 
 	<div class="buttons">
-		<?=form_submit('settings', $this->lang->line('OK'))?>
+		<?php print form_submit('settings', $this->lang->line('OK'))?>
 	</div>
 
-<?=form_close();?>
+<?php print form_close();?>
 </div>
 
 </div> <!-- user_settings_mainarea_result -->

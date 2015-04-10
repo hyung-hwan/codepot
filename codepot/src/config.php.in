@@ -81,6 +81,7 @@ function load_ini ($file)
 
 		array ('footer',                       'string',      ''),
 		array ('cloc_command_path',            'string',      CODEPOT_CFG_DIR.'/cloc.pl'),
+		array ('code_folder_readme',           'string',     'README'),
 
 		// these items are not used by php but by subersion hooks written in perl.
 		array ('svn_read_access',                          'string',      'member'),
@@ -89,7 +90,8 @@ function load_ini ($file)
 		array ('svn_restriction_allowed_subdir_depth_min', 'integer',     0),
 		array ('svn_restriction_allowed_subdir_depth_max', 'integer',     0),
 
-		array ('code_folder_readme',           'string',     'README')
+		// this item is used by the codepot-user command.
+		array ('codepot_user_executor',                    'string',      'root')
 	);
 
 	foreach ($xcfgs as $x)

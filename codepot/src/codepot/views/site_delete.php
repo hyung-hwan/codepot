@@ -3,10 +3,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/site.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/site.css')?>" />
 
-<title><?=htmlspecialchars($site->name)?></title>
+<title><?php print htmlspecialchars($site->name)?></title>
 </head>
 
 <body>
@@ -41,26 +41,26 @@ $this->load->view (
 <?php if ($message != "") print "<div id='site_create_message' class='form_message'>$message</div>"; ?>
 
 <div class="form_container">
-<?=form_open("site/delete/{$site->id}")?>
+<?php print form_open("site/delete/{$site->id}")?>
 
 	<div>
 		<div>
-			<?=form_checkbox('site_confirm', 'yes', set_checkbox('site_confirm', $site_confirm))?>
-			<?=$this->lang->line('MSG_SURE_TO_DELETE_THIS')?> - <?=htmlspecialchars($site->name)?> (<?=$site->id?>)
-			<?=form_error('site_confirm')?>
+			<?php print form_checkbox('site_confirm', 'yes', set_checkbox('site_confirm', $site_confirm))?>
+			<?php print $this->lang->line('MSG_SURE_TO_DELETE_THIS')?> - <?php print htmlspecialchars($site->name)?> (<?php print $site->id?>)
+			<?php print form_error('site_confirm')?>
 		</div>
 	</div>
 
 	<div>
-		<?=form_hidden('site_id', set_value('site_id', $site->id))?>
-		<?=form_hidden('site_name', set_value('site_name', $site->name))?>
+		<?php print form_hidden('site_id', set_value('site_id', $site->id))?>
+		<?php print form_hidden('site_name', set_value('site_name', $site->name))?>
 	</div>
 
 	<div>
-		<?=form_submit('site', $this->lang->line('Delete'))?>
+		<?php print form_submit('site', $this->lang->line('Delete'))?>
 	</div>
 
-<?=form_close();?>
+<?php print form_close();?>
 </div>
 
 </div>

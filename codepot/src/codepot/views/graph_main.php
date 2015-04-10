@@ -4,29 +4,29 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="keywords" content="<?=$project->id?>" />
-<meta name="description" content="<?=htmlspecialchars($project->summary)?>" />
+<meta name="keywords" content="<?php print $project->id?>" />
+<meta name="description" content="<?php print htmlspecialchars($project->summary)?>" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/project.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/project.css')?>" />
 
-<script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/prettify.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-css.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lisp.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lua.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-vb.js')?>"></script>
 
-<!--[if lte IE 8]><script type="text/javascript" src="<?=base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.time.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.pie.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
+<!--[if lte IE 8]><script type="text/javascript" src="<?php print base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.time.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.pie.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
 
 <script type="text/javascript">
 function show_tooltip(id, x, y, contents) {
@@ -408,14 +408,14 @@ function show_all_graphs (response)
 function render_graphs() 
 {
 	var ajax_req = $.ajax ({
-		url: '<?=site_url()?>/graph/history_json/<?=$project->id?>/',
+		url: '<?php print site_url()?>/graph/history_json/<?php print $project->id?>/',
 		context: document.body,
 		success: show_all_graphs
 	});
 }
 </script>
 
-<title><?=htmlspecialchars($project->name)?></title>
+<title><?php print htmlspecialchars($project->name)?></title>
 </head>
 
 <body onload="render_graphs()">
@@ -457,10 +457,10 @@ $this->load->view (
 <div class="sidebar" id="graph_main_sidebar">
 <div class="box">
 <ul>
-<li><?=$this->lang->line('Created on')?> <?=$project->createdon?></li>
-<li><?=$this->lang->line('Created by')?> <?=$project->createdby?></li>
-<li><?=$this->lang->line('Last updated on')?> <?=$project->updatedon?></li>
-<li><?=$this->lang->line('Last updated by')?> <?=$project->updatedby?></li>
+<li><?php print $this->lang->line('Created on')?> <?php print $project->createdon?></li>
+<li><?php print $this->lang->line('Created by')?> <?php print $project->createdby?></li>
+<li><?php print $this->lang->line('Last updated on')?> <?php print $project->updatedon?></li>
+<li><?php print $this->lang->line('Last updated by')?> <?php print $project->updatedby?></li>
 </ul>
 </div>
 </div> --> <!-- graph_main_sidebar -->
@@ -471,7 +471,7 @@ $this->load->view (
 <div class="mainarea" id="graph_main_mainarea">
 
 <div class="title">
-<?=htmlspecialchars($project->name)?>
+<?php print htmlspecialchars($project->name)?>
 </div>
 
 <div>

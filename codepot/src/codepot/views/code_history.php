@@ -3,8 +3,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
 
 <title><?php 
 	if ($fullpath == '')
@@ -97,10 +97,10 @@ $this->load->view (
 
 <table id="code_history_mainarea_result_table">
 <tr class='heading'>
-	<th><?=$this->lang->line('Revision')?></th>
-	<th><?=$this->lang->line('Committer')?></th>
-	<th><?=$this->lang->line('Date')?></th>
-	<th><?=$this->lang->line('Message')?></th>
+	<th><?php print $this->lang->line('Revision')?></th>
+	<th><?php print $this->lang->line('Committer')?></th>
+	<th><?php print $this->lang->line('Date')?></th>
+	<th><?php print $this->lang->line('Message')?></th>
 	<?php if ($file['type'] == 'file' || $file['type'] == 'dir') print '<th></th>'; ?>
 </tr>
 <?php 

@@ -1,9 +1,12 @@
 ACLOCAL_AMFLAGS = -I ac/m4
 AUTOMAKE_OPTION = foreign
 
-SUBDIRS = etc src sbin
+SUBDIRS = etc src sbin pecl-svn
 
 EXTRA_DIST = README mkmf.sh DEBIAN
+
+PHP_PACKAGE_NAME ?= php
+TARGET_ARCH ?= $(shell uname -m)
 
 install-data-hook:
 	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@"
@@ -25,6 +28,7 @@ uninstall-hook:
 
 distclean-local:
 	$(RM) -r autom4te.cache config.h.in~ "$(PACKAGE)-$(VERSION)"
+
 
 deb: dist-gzip
 	tar -zxvf "$(PACKAGE)-$(VERSION).tar.gz"
@@ -52,4 +56,4 @@ rpm: dist
 	mkdir -p "@abs_top_builddir@/RPM/SRPMS"
 	mkdir -p "@abs_top_builddir@/RPM/RPMS"
 	cp codepot-@VERSION@.tar.gz "@abs_top_builddir@/RPM/SOURCES"
-	rpmbuild --define "_topdir @abs_top_builddir@/RPM" -ba codepot.spec --target noarch
+	rpmbuild --define "_topdir @abs_top_builddir@/RPM" --define "php_package_name $(PHP_PACKAGE_NAME)" -ba codepot.spec --target="$(TARGET_ARCH)"

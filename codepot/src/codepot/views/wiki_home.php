@@ -5,10 +5,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/wiki.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/wiki.css')?>" />
 
-<title><?=htmlspecialchars($project->name)?></title>
+<title><?php print htmlspecialchars($project->name)?></title>
 </head>
 
 <body>
@@ -43,7 +43,7 @@ $this->load->view (
 <!-- =================================================================== -->
 
 <div class="mainarea" id="wiki_home_mainarea">
-<div class="title"><?=$this->lang->line('Wikis')?></div>
+<div class="title"><?php print $this->lang->line('Wikis')?></div>
 
 <div id="wiki_home_textarea">
 <?php

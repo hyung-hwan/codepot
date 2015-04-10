@@ -3,14 +3,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
 
-<script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <script type="text/javascript">
 
@@ -22,18 +22,18 @@
 $(function() {
 	$("#code_revision_edit_div").dialog (
 		{
-			title: '<?=$this->lang->line('Edit')?>',
+			title: '<?php print $this->lang->line('Edit')?>',
 			width: 'auto',
 			height: 'auto',
 			resizable: false,
 			autoOpen: false,
 			modal: true,
 			buttons: {
-				'<?=$this->lang->line('OK')?>': function () {
+				'<?php print $this->lang->line('OK')?>': function () {
 					$('#code_revision_edit_logmsg_form').submit ();
 					$(this).dialog('close');
 				},
-				'<?=$this->lang->line('Cancel')?>': function () {
+				'<?php print $this->lang->line('Cancel')?>': function () {
 					$(this).dialog('close');
 				}
 			},
@@ -54,18 +54,18 @@ $(function() {
 $(function() {
 	$("#code_revision_new_review_comment_div").dialog (
 		{
-			title: '<?=$this->lang->line('Comment')?>',
+			title: '<?php print $this->lang->line('Comment')?>',
 			width: 'auto',
 			height: 'auto',
 			resizable: false,
 			autoOpen: false,
 			modal: true,
 			buttons: {
-				'<?=$this->lang->line('OK')?>': function () {
+				'<?php print $this->lang->line('OK')?>': function () {
 					$('#code_revision_new_review_comment_form').submit ();
 					$(this).dialog('close');
 				},
-				'<?=$this->lang->line('Cancel')?>': function () {
+				'<?php print $this->lang->line('Cancel')?>': function () {
 					$(this).dialog('close');
 				}
 			},
@@ -130,13 +130,13 @@ $(function() {
 <?php if (strlen($popup_error_message) > 0): ?>
 $(function() {
 	$("#code_revision_popup_error_div").dialog( { 
-		title: '<?=$this->lang->line('Error')?>',
+		title: '<?php print $this->lang->line('Error')?>',
 		width: 'auto',
 		height: 'auto',
 		modal: true,
 		autoOpen: true,
 		buttons: {
-			"<?=$this->lang->line('OK')?>": function() {
+			"<?php print $this->lang->line('OK')?>": function() {
 				$( this ).dialog( "close" );
 			}
 		}
@@ -153,7 +153,7 @@ function render_wiki()
 	creole_render_wiki (
 		"code_revision_mainarea_result_msg_text", 
 		"code_revision_mainarea_result_msg", 
-		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
+		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
 		""
 	);
 
@@ -164,7 +164,7 @@ function render_wiki()
 	creole_render_wiki (
 		"code_revision_mainarea_review_comment_text_" + (i + 1) , 
 		"code_revision_mainarea_review_comment_" + (i + 1), 
-		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
+		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
 		""
 	);
 
@@ -281,20 +281,20 @@ $history = $file['history'];
 </div> <!-- code_revision_mainarea_menu -->
 
 <div class="infostrip" id="code_revision_mainarea_infostrip">
-	<?=anchor ("code/revision/{$project->id}/${xpar}/{$prev_revision}", '<<')?> 
-	<?=$this->lang->line('Revision')?>: <?=$history['rev']?> 
-	<?=anchor ("code/revision/{$project->id}/${xpar}/{$next_revision}", '>>')?> | 
-	<?=$this->lang->line('Committer')?>: <?=htmlspecialchars($history['author'])?> | 
-	<?=$this->lang->line('Last updated on')?>: <?=date('r', strtotime($history['date']))?>
+	<?php print anchor ("code/revision/{$project->id}/${xpar}/{$prev_revision}", '<<')?> 
+	<?php print $this->lang->line('Revision')?>: <?php print $history['rev']?> 
+	<?php print anchor ("code/revision/{$project->id}/${xpar}/{$next_revision}", '>>')?> | 
+	<?php print $this->lang->line('Committer')?>: <?php print htmlspecialchars($history['author'])?> | 
+	<?php print $this->lang->line('Last updated on')?>: <?php print date('r', strtotime($history['date']))?>
 </div>
 
 
 <div class="result" id="code_revision_mainarea_result">
 
-<div class="title"><?=$this->lang->line('Message')?>&nbsp;
+<div class="title"><?php print $this->lang->line('Message')?>&nbsp;
 <?php if ($can_edit): ?>
 	<span class='anchor'>
-		<?=anchor ("#", $this->lang->line('Edit'),
+		<?php print anchor ("#", $this->lang->line('Edit'),
 		           array ('id' => 'code_revision_edit_logmsg_button'));
 		?>
 	</span>
@@ -307,7 +307,7 @@ $history = $file['history'];
 </pre>
 </div>
 
-<div class="title"><?=$this->lang->line('Files')?></div>
+<div class="title"><?php print $this->lang->line('Files')?></div>
 <table id="code_revision_mainarea_result_table">
 <?php 
 	/*
@@ -347,10 +347,10 @@ $history = $file['history'];
 
 
 
-<div class="title"><?=$this->lang->line('Comment')?>&nbsp;
+<div class="title"><?php print $this->lang->line('Comment')?>&nbsp;
 <?php if ($is_loggedin): ?>
 <span class='anchor'>
-	<?=anchor ("#", $this->lang->line('New'),
+	<?php print anchor ("#", $this->lang->line('New'),
 	           array ('id' => 'code_revision_new_review_comment_button'));
 	?>
 </span>
@@ -408,8 +408,8 @@ $history = $file['history'];
 
 <?php if ($can_edit): ?>
 <div id="code_revision_edit_div">
-	<?=form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_edit_logmsg_form"')?>
-		<?=
+	<?php print form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_edit_logmsg_form"')?>
+		<?php print 
 			form_textarea (
 				array ('name' => 'edit_log_message', 
 				       'value' => $history['msg'], 'rows'=> 10, 'cols' => 70,
@@ -417,7 +417,7 @@ $history = $file['history'];
 			)
 
 		?>
-	<?=form_close()?>
+	<?php print form_close()?>
 </div>
 <?php endif; ?> <!-- $can_edit -->
 
@@ -462,7 +462,7 @@ $history = $file['history'];
 
 <?php if (strlen($popup_error_message) > 0): ?>
 <div id="code_revision_popup_error_div">
-<?=$popup_error_message?>
+<?php print $popup_error_message?>
 </div>
 <?php endif; ?>
 

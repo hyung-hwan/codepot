@@ -3,21 +3,21 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/prettify.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-ada.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-basic.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-css.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lisp.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lua.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-pascal.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-ada.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-basic.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-pascal.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-vb.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <script type="text/javascript">
 $(function () {
@@ -27,9 +27,9 @@ $(function () {
 	?>
 
 	if ($("#code_file_mainarea_result_info").is(":visible"))
-		btn_label = "<?=$this->lang->line('Hide details')?>";
+		btn_label = "<?php print $this->lang->line('Hide details')?>";
 	else
-		btn_label = "<?=$this->lang->line('Show details')?>";
+		btn_label = "<?php print $this->lang->line('Show details')?>";
 	
 
 	btn = $("#code_file_mainarea_details_button").button({"label": btn_label}).click (function () {
@@ -38,13 +38,13 @@ $(function () {
 		{
 			$("#code_file_mainarea_result_info").hide("blind",{},200);
 			$("#code_file_mainarea_details_button").button(
-				"option", "label", "<?=$this->lang->line('Show details')?>");
+				"option", "label", "<?php print $this->lang->line('Show details')?>");
 		}
 		else
 		{
 			$("#code_file_mainarea_result_info").show("blind",{},200);
 			$("#code_file_mainarea_details_button").button(
-				"option", "label", "<?=$this->lang->line('Hide details')?>");
+				"option", "label", "<?php print $this->lang->line('Hide details')?>");
 		}
 	});
 });
@@ -62,13 +62,13 @@ function showRawCode()
 	if (showing_raw_code)
 	{
 		
-		$("#code_file_style_anchor").text("<?=$this->lang->line('Destyle')?>");
+		$("#code_file_style_anchor").text("<?php print $this->lang->line('Destyle')?>");
 		$("#code_file_mainarea_result_pre").removeClass("prettyprinted");
 		prettyPrint();
 	}
 	else
 	{
-		$("#code_file_style_anchor").text("<?=$this->lang->line('Enstyle')?>");
+		$("#code_file_style_anchor").text("<?php print $this->lang->line('Enstyle')?>");
 		$("#code_file_mainarea_result_pre").html($("#code_file_mainarea_result_raw").html());
 	}
 
@@ -212,11 +212,11 @@ $this->load->view (
 </div> <!-- code_file_mainarea_menu -->
 
 <div class="infostrip" id="code_file_mainarea_infostrip">
-	<?=anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<')?> 
-	<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
-	<?=anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>')?> |
-	<?=$this->lang->line('Size')?>: <?=$file['size']?> |
-	<a id="code_file_mainarea_details_button" href='#'><?=$this->lang->line('Details')?></a>
+	<?php print anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<')?> 
+	<?php print $this->lang->line('Revision')?>: <?php print $file['created_rev']?> 
+	<?php print anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>')?> |
+	<?php print $this->lang->line('Size')?>: <?php print $file['size']?> |
+	<a id="code_file_mainarea_details_button" href='#'><?php print $this->lang->line('Details')?></a>
 </div>
 
 <div class="result" id="code_file_mainarea_result">
@@ -234,7 +234,7 @@ if ($login['settings'] != NULL &&
     $login['settings']->code_hide_line_num == 'Y') $prettyprint_linenums = '';
 ?>
 
-<pre class="prettyprint <?=$prettyprint_linenums?> <?=$prettyprint_lang?>" id="code_file_mainarea_result_pre">
+<pre class="prettyprint <?php print $prettyprint_linenums?> <?php print $prettyprint_lang?>" id="code_file_mainarea_result_pre">
 <?php 
 	$is_octet_stream = FALSE;
 	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
@@ -267,12 +267,12 @@ if ($login['settings'] != NULL &&
 </pre>
 
 <div id="code_file_mainarea_result_info">
-<div class="title"><?= $this->lang->line('CODE_COMMIT') ?></div>
+<div class="title"><?php print  $this->lang->line('CODE_COMMIT') ?></div>
 <?php printf ($this->lang->line('CODE_MSG_COMMITTED_BY_ON'), $file['last_author'], $file['time']); ?>
 
-<div class="title"><?= $this->lang->line('Message') ?></div>
+<div class="title"><?php print  $this->lang->line('Message') ?></div>
 <pre id="code_file_mainarea_result_info_logmsg">
-<?= htmlspecialchars ($file['logmsg']) ?>
+<?php print  htmlspecialchars ($file['logmsg']) ?>
 </pre>
 
 <?php
