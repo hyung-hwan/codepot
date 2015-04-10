@@ -53,7 +53,14 @@
 }
 
 #code_folder_mainarea_result_readme_text {
-	padding: 0.5em 0.5em 0.5em 0.5em;
+	white-space: pre-wrap;
+	padding: 0.3em;
+	line-height: 1.2em;
+	font-family: consolas, "Andale Mono", monospace;
+
+	tab-size: 5;
+	-moz-tab-size: 5;
+	-o-tab-size: 5;
 }
 
 /*----------------------------------------------- 
