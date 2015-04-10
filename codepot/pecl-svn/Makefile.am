@@ -1,4 +1,4 @@
-EXTRA_DIST = config.m4 svn.c php_svn.h svn.ini
+EXTRA_DIST = config.m4 svn.c php_svn.h svn.ini README
 
 all-local:
 	mkdir -p @abs_builddir@/pecl
@@ -19,4 +19,4 @@ install-data-hook:
 	$(INSTALL) -D @abs_srcdir@/svn.ini $(DESTDIR)@PHPEXTINIDIR@/svn.ini
 
 uninstall-hook:
-	-rm -f @PHPEXTDIR@/svn.so $(DESTDIR)@PHPEXTINIDIR@/svn.ini
+	-rm -f $(DESTDIR)@PHPEXTDIR@/svn.so $(DESTDIR)@PHPEXTINIDIR@/svn.ini

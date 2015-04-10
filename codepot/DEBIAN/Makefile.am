@@ -3,6 +3,7 @@ EXTRA_DIST = conffiles copyright changelog
 docdir=$(DOCDIR)
 doc_DATA = copyright changelog
 
+# Specifying debdir to /DEBIAN conflicts with 'make distcheck'
 debdir=/DEBIAN
 deb_DATA = control conffiles
 deb_SCRIPTS = postinst postrm
