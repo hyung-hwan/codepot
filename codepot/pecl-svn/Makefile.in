@@ -168,7 +168,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 wwwdir = @wwwdir@
-EXTRA_DIST = config.m4 svn.c php_svn.h svn.ini
+EXTRA_DIST = config.m4 svn.c php_svn.h svn.ini README
 all: all-am
 
 .SUFFIXES:
@@ -377,7 +377,7 @@ install-data-hook:
 	$(INSTALL) -D @abs_srcdir@/svn.ini $(DESTDIR)@PHPEXTINIDIR@/svn.ini
 
 uninstall-hook:
-	-rm -f @PHPEXTDIR@/svn.so $(DESTDIR)@PHPEXTINIDIR@/svn.ini
+	-rm -f $(DESTDIR)@PHPEXTDIR@/svn.so $(DESTDIR)@PHPEXTINIDIR@/svn.ini
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
