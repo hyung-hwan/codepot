@@ -5,12 +5,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
 
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <?php
 	$file_count = count($file['content']);
@@ -98,14 +98,14 @@ $this->load->view (
 
 
 <div class="infostrip" id="code_search_mainarea_infostrip">
-	<?=form_open("code/search/{$project->id}/", 'id="code_search_search_form"')?>
-	<?=form_hidden ('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_search_search_folder"')?>
-	<?=form_hidden ('search_revision', set_value('search_revision', $revision), 'id="code_search_search_revision"')?>
-	<?=form_input ('search_pattern', set_value('search_pattern', ''), 'id="code_search_search_pattern"')?>
-	<?=form_submit ('search_submit', $this->lang->line('Search'), 'id="code_search_search_submit"')?>
+	<?php print form_open("code/search/{$project->id}/", 'id="code_search_search_form"')?>
+	<?php print form_hidden ('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_search_search_folder"')?>
+	<?php print form_hidden ('search_revision', set_value('search_revision', $revision), 'id="code_search_search_revision"')?>
+	<?php print form_input ('search_pattern', set_value('search_pattern', ''), 'id="code_search_search_pattern"')?>
+	<?php print form_submit ('search_submit', $this->lang->line('Search'), 'id="code_search_search_submit"')?>
 	| 
-	<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
-	<?=form_close()?>
+	<?php print $this->lang->line('Revision')?>: <?php print $file['created_rev']?> 
+	<?php print form_close()?>
 </div>
 
 <div id="code_search_mainarea_result">

@@ -1,5 +1,7 @@
-
-USE codepot;
+-- ---------------------------------------------------------
+-- This file is the Codepot database schema file for MySQL.
+-- Note this file doesn't mandate which database to use.
+-- ---------------------------------------------------------
 
 CREATE TABLE site (
 	id          VARCHAR(32)  PRIMARY KEY,

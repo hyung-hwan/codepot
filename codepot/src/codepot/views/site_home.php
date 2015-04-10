@@ -5,14 +5,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="keywords" content="codepot" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/site.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/site.css')?>" />
 
-<script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <script type="text/javascript">
 function render_wiki()
@@ -20,8 +20,8 @@ function render_wiki()
 	creole_render_wiki (
 		"site_home_mainarea_wiki_text",
 		"site_home_mainarea_wiki",
-		"<?=site_url()?>/site/wiki/",
-		"<?=site_url()?>/site/image/"
+		"<?php print site_url()?>/site/wiki/",
+		"<?php print site_url()?>/site/image/"
 	);
 }
 </script>
@@ -69,7 +69,7 @@ $this->load->view (
 <div class="sidebar" id="site_home_mainarea_sidebar">
 
 <div class="box">
-<div class="boxtitle"><?=$this->lang->line('Latest projects')?></div>
+<div class="boxtitle"><?php print $this->lang->line('Latest projects')?></div>
 <ul>
 <?php
 foreach ($latest_projects as $project)
@@ -92,7 +92,7 @@ foreach ($latest_projects as $project)
 
 <div class="box">
 <div class="boxtitle">
-<?= anchor ("/site/log", $this->lang->line('Change log')) ?>
+<?php print  anchor ("/site/log", $this->lang->line('Change log')) ?>
 </div>
 <table id="site_home_mainarea_sidebar_log_table">
 <?php 
@@ -229,7 +229,7 @@ foreach ($latest_projects as $project)
 
 <?php if ($issues && count($issues) > 0): ?>
 	<div id="site_home_mainarea_issues">
-	<div><?=$this->lang->line('Open issues')?></div>
+	<div><?php print $this->lang->line('Open issues')?></div>
 	<ul>
 		<?php 
 		foreach ($issues as $issue) 
@@ -258,7 +258,7 @@ foreach ($latest_projects as $project)
 
 <?php if ($recently_resolved_issues && count($recently_resolved_issues) > 0): ?>
 	<div id="site_home_mainarea_issues">
-	<div><?=$this->lang->line('Recently resolved issues')?></div>
+	<div><?php print $this->lang->line('Recently resolved issues')?></div>
 	<ul>
 		<?php 
 		foreach ($recently_resolved_issues as $issue) 

@@ -3,17 +3,17 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/site.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/site.css')?>" />
 
-<script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/prettify.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-css.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lisp.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lua.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-vb.js')?>"></script>
 
 <script type="text/javascript">
 function render_wiki()
@@ -21,8 +21,8 @@ function render_wiki()
 	creole_render_wiki (
 		"site_show_mainarea_wiki_text",
 		"site_show_mainarea_wiki",
-		"<?=site_url()?>/site/wiki/",
-		"<?=site_url()?>/site/image/"
+		"<?php print site_url()?>/site/wiki/",
+		"<?php print site_url()?>/site/image/"
 	);
 
 	prettyPrint ();
@@ -31,7 +31,7 @@ function render_wiki()
 
 <?php
 ?>
-<title><?=htmlspecialchars($site->name)?> (<?=$site->id?>)</title>
+<title><?php print htmlspecialchars($site->name)?> (<?php print $site->id?>)</title>
 </head>
 
 <body onload="render_wiki()">
@@ -77,7 +77,7 @@ $this->load->view (
 <div class="mainarea" id="site_show_mainarea">
 
 <div class="title">
-<?=htmlspecialchars($site->name)?> (<?=htmlspecialchars($site->id)?>)
+<?php print htmlspecialchars($site->name)?> (<?php print htmlspecialchars($site->id)?>)
 </div>
 
 <div id="site_show_mainarea_wiki">

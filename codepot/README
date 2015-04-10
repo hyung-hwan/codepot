@@ -3,30 +3,110 @@ CODEPOT
 
  Codepot is a simple web-based source code manager. It incorporates the
  subversion revision control system and wiki-based documentation, and supports
- authentication via LDAP.
+ authentication via LDAP or DBMS.
 
-INSTALLATION
+INSTALLATION ON CENTOS
 
  A RPM package is provided for RedHat/CentOS Linux. The RPM package specifies
  dependency which must be met prior to or at the same time as the installation
- of the rpm package. 
+ of the rpm package. Some required packages are available in RPMforge. You may
+ have to add the RPMforge repository for automatic installation with yum.
 
-   rpm -ivh codepot-X.X.X-X.noarch.rpm
+   $ rpm -ivh codepot-X.X.X-Y.Y.Y.Y.rpm
 
- You can use the yum utility to be hassle-free instead.
+ You can use the yum utility to be hassle-free instead. However, some required
+ packages are not available in the base CentOS repository but in the RPMforge
+ repository. You may be required to add the RPMforge repository to the system.
+ View http://wiki.centos.org/AdditionalResources/Repositories/RPMForge for 
+ RPMforge set-up.
 
-   yum localinstall --nogpgcheck codepot-X.X.X-X.noarch.rpm
+   $ yum localinstall --nogpgcheck codepot-X.X.X-Y.Y.Y.Y.rpm
 
- You should perform the following tasks after the RPM installation.
+ Once you have all required package installed, you can proceed to configure
+ the system. The following steps shown assume the default installation of
+ CentOS 5.
 
-   * Initialize the mysql database using /etc/codepot/codepot.mysql.
-   * Add the following switch to /etc/httpd/conf.d/perl.conf
-      PerlSwitches -Mlib=/etc/codepot/perl
-   * Configure /etc/httpd/conf.d/codepot.conf
-   * Configure /etc/codepot/codepot.ini
-   * Restart httpd
+ X.X.X is the version number and Y.Y.Y.Y is the release number. For example,
+ to install Codepot 0.2.0 for a 32-bit x86 CentOS 5 server running PHP 5.3,
+ you should get the RPM package file - codepot-0.2.0-php53.1.el5.i686.rpm.
+
+ 1. Add the following line to /etc/httpd/conf.d/perl.conf. It must be placed 
+ after 'LoadModule perl_module modules/mod_perl.so'.
+
+   PerlSwitches -Mlib=/etc/codepot/perl
+
+ 2. Customize the Subversion WebDAV access in /etc/httpd/conf.d/codepot.conf
+ which the RPM package copies from /etc/codepot/codepot.http upon fresh
+ installation. You can skip this step if you don't need any customizations.
+
+ 3. Create a database named 'codepot' into the running MySQL server. The
+ schema is defined in /etc/codepot/codepot.mysql. You can execute the following
+ in the MySQL command prompt.
+
+   mysql> create database codepot;
+   mysql> use codepot;
+   mysql> source /etc/codepot/codepot.mysql;
+
+ 4. Customize various configuration items in /etc/codepot/codepot.ini.
+ Set all items beginning with database_  to match the database settings.
+ Customize the values to match your system database.
+ 
+   database_hostname = "localhost"
+   database_username = "root"
+   database_password = ""
+   database_name = "codepot"
+   database_driver = "mysql"
+   database_prefix = ""
+
+ 5. Add a local user using the 'codepot-user' command. This command is used
+ to add a user to the database and a user entry added is effective if codepot
+ is configured to use 'DbLoginModel'. You can change it by chaning the value
+ of 'login_mode' in /etc/codepot/codepot.ini.
+
+   $ codepot-user add username password username@your.domain
+
+ 6. Enable the user added.
    
- Here is how to install Codepot into the standard locations under Ubuntu Linux.
+   $ codepot-user enable username
+
+ 7. Optionally, you can set this user to be a system administrator
+ in /etc/codepot/codepot.ini.
+
+   sysadmin_userids = "username"
+
+ 8. If you don't have the right subversion extension for PHP installed, you can
+ install the codepot-peclsvn package. Codepot requires the 'svn.so' extension 
+ built of at least r333800 from http://svn.php.net/repository/pecl/svn/trunk.
+
+   $ rpm -ivh codepot-peclsvn-X.X.X-Y.Y.Y.Y.rpm
+
+ 9. If you have SELinux on in the enforcing mode, check if the data directories
+ used by Codepot has the right context set. The 'httpd_sys_content_t' context
+ type should be set. The Codepot RPM package sets the context type upon fresh 
+ installation only.
+
+   $ ls -Zd /var/lib/codepot
+   drwxr-xr-x  root root user_u:object_r:httpd_sys_content_t /var/lib/codepot
+
+   $ ls -Z /var/lib/codepot
+   drwxr-xr-x  apache apache system_u:object_r:httpd_sys_content_t attachments
+   drwxr-xr-x  apache apache system_u:object_r:httpd_sys_content_t files
+   drwxr-xr-x  apache apache system_u:object_r:httpd_sys_content_t svnrepo
+   drwxr-xr-x  apache apache system_u:object_r:httpd_sys_content_t usericons
+
+   $ ls -lZd /var/cache/codepot
+   drwxr-xr-x  apache apache system_u:object_r:httpd_sys_content_t /var/cache/codepot
+
+ 10. Restart httpd.
+
+   $ service httpd restart
+
+ 11. Access http://your-server/codepot/
+
+
+INSTALLATION ON DEBIAN
+
+ Here is how to install Codepot into the standard locations under Debian Linux.
 
  * Install required packages.
    $ sudo apt-get install subversion
@@ -77,6 +157,7 @@ INSTALLATION
    $ sudo /etc/init.d/apache2 restart
  
    Note that make-ssl-cert is provided by the ssl-cert package.
+
 
 LICENSE
 
