@@ -28,7 +28,9 @@ sub get_config
                 database_password => $cfg->param ("database_password"),
                 database_name => $cfg->param ("database_name"),
                 database_driver => $cfg->param ("database_driver"),
-                database_prefix => $cfg->param ("database_prefix")
+                database_prefix => $cfg->param ("database_prefix"),
+
+		codepot_user_executor => $cfg->param("codepot_user_executor")
         };
 
         return $config;
@@ -238,6 +240,31 @@ my $cfg = get_config ();
 if (!defined($cfg))
 {
 	print (STDERR "Cannot load codepot configuration file\n");
+	exit (1);
+}
+
+my $allowed_to_execute = 1;
+my @executors = split (/\s*,\s*/, $cfg->{codepot_user_executor});
+if (scalar(@executors) > 0)
+{
+	for my $executor (@executors) 
+	{
+		my $uid = getpwnam ($executor);	
+		if (defined($uid) && $> == $uid) 
+		{
+			$allowed_to_execute = 1;
+			last;
+		}
+		else
+		{
+			$allowed_to_execute = 0;
+		}
+	}
+}
+
+if ($allowed_to_execute == 0)
+{
+	print (STDERR "Not allowed to run this program\n");
 	exit (1);
 }
 

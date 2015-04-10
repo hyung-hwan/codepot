@@ -5,12 +5,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/issue.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/issue.css')?>" />
 
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <script type="text/javascript">
 /* <![CDATA[ */
@@ -27,20 +27,20 @@ function AsciiToHex (x) {
 
 $(function () { 
 	$("#issue_home_mainarea_search_form").dialog ({
-		title: '<?=$this->lang->line('Search')?>',
+		title: '<?php print $this->lang->line('Search')?>',
 		autoOpen: false,
 		modal: true,
 		width: '80%',
 		buttons: { 
-			'<?=$this->lang->line('OK')?>': function () { 
+			'<?php print $this->lang->line('OK')?>': function () { 
 				$(this).dialog('close'); 
 				var filter = AsciiToHex($('#issue_search_form').serialize());
-				var url='<?=site_url()?>/issue/home/<?=$project->id?>/' + filter;	
+				var url='<?php print site_url()?>/issue/home/<?php print $project->id?>/' + filter;	
 
 				$('body').append('<form id="magic_form" method="get" action="'+url+'"></form>');
 				$('#magic_form').submit();
 			},
-			'<?=$this->lang->line('Cancel')?>': function () { 
+			'<?php print $this->lang->line('Cancel')?>': function () { 
 				$(this).dialog('close'); 
 			}
 		},
@@ -57,7 +57,7 @@ $(function () {
 /* ]]> */
 </script>
 
-<title><?=htmlspecialchars($project->name)?></title>
+<title><?php print htmlspecialchars($project->name)?></title>
 </head>
 
 <body>
@@ -92,11 +92,11 @@ $this->load->view (
 <!-- ============================================================ -->
 
 <div class="mainarea" id="issue_home_mainarea">
-<div class="title"><?=$this->lang->line('Issues')?></div>
+<div class="title"><?php print $this->lang->line('Issues')?></div>
 
 <div class="infostrip">
 <?php printf ($this->lang->line('ISSUE_MSG_TOTAL_NUM_ISSUES'), $total_num_issues); ?> | 
-<a id="issue_home_mainarea_search_button" href='#'><?=$this->lang->line('Search')?></a>
+<a id="issue_home_mainarea_search_button" href='#'><?php print $this->lang->line('Search')?></a>
 </div>
 
 <div id="issue_home_mainarea_search_form">
@@ -107,24 +107,24 @@ $this->load->view (
 	?>
 	<form id="issue_search_form" action="">
 		<div>
-			<?=form_label ($this->lang->line('Type'), 'issue_search_type')
+			<?php print form_label ($this->lang->line('Type'), 'issue_search_type')
 			?>
-			<?=form_dropdown('type',
+			<?php print form_dropdown('type',
 				$issue_type_array,
 				set_value('type', $search->type), 
 				'id="issue_search_type"')
 			?>
 	
-			<?=form_label ($this->lang->line('Status'), 'issue_search_status')
+			<?php print form_label ($this->lang->line('Status'), 'issue_search_status')
 			?>
-			<?=form_dropdown('status',
+			<?php print form_dropdown('status',
 				$issue_status_array,
 				set_value('status', $search->status), 'id="issue_search_status"')
 			?>
 
-			<?=form_label ($this->lang->line('Priority'), 'issue_search_priority')
+			<?php print form_label ($this->lang->line('Priority'), 'issue_search_priority')
 			?>
-			<?=form_dropdown('priority',
+			<?php print form_dropdown('priority',
 				$issue_priority_array,
 				set_value('priority', $search->priority),
 				'id="issue_search_priority"')
@@ -133,18 +133,18 @@ $this->load->view (
 
 
 		<div>
-			<?=form_label ($this->lang->line('Owner'), 'issue_search_owner')
+			<?php print form_label ($this->lang->line('Owner'), 'issue_search_owner')
 			?>
-			<?=form_input('owner',
+			<?php print form_input('owner',
 				set_value('owner', $search->owner),
 				'id="issue_search_owner"')
 			?>
 		</div>
 
 		<div>
-			<?=form_label ($this->lang->line('Summary'), 'issue_search_summary')
+			<?php print form_label ($this->lang->line('Summary'), 'issue_search_summary')
 			?>
-			<?=form_input('summary',
+			<?php print form_input('summary',
 				set_value('summary', $search->summary),
 				'id="issue_search_summary" size="50"')
 			?>

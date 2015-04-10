@@ -3,14 +3,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/log.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/log.css')?>" />
      
 <?php if ($login['sysadmin?'] && isset($site)): ?>
 
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <script type="text/javascript">
 $(function () {
@@ -20,12 +20,12 @@ $(function () {
 		height:140,
 		modal: true,
 		buttons: {
-			'<?=$this->lang->line('OK')?>': function() {
+			'<?php print $this->lang->line('OK')?>': function() {
 				$(this).dialog('close');
 				$('#purge_log').val ('yes');
 				$('#purge_form').submit();
 			},
-			'<?=$this->lang->line('Cancel')?>': function() {
+			'<?php print $this->lang->line('Cancel')?>': function() {
 				$(this).dialog('close');
 				$('#purge_log').val ('no');
 			}
@@ -48,7 +48,7 @@ $(function () {
 
 
 
-<title><?=htmlspecialchars($caption)?></title>
+<title><?php print htmlspecialchars($caption)?></title>
 </head>
 
 <body>
@@ -123,15 +123,15 @@ $this->load->view (
 <div class="mainarea" id="log_mainarea">
 
 <div class="title" id="log_mainarea_title">
-<?= anchor ("site/log", $this->lang->line ('Change log')) ?>
+<?php print  anchor ("site/log", $this->lang->line ('Change log')) ?>
 </div>
 
 <?php if ($login['sysadmin?'] && isset($site)): ?>
-	<?=form_open("site/log", 'id="purge_form"')?>
+	<?php print form_open("site/log", 'id="purge_form"')?>
 		<input type='hidden' name='purge_log' id='purge_log' value='' />
-	<?=form_close()?>
+	<?php print form_close()?>
 
-	<div id="purge_confirm" title="<?= $this->lang->line('Purge') ?>">
+	<div id="purge_confirm" title="<?php print  $this->lang->line('Purge') ?>">
 	<p>
 		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
 		Are you sure?
@@ -139,7 +139,7 @@ $this->load->view (
 	</div>
 
 	<div class="infostrip">
-	<a id="log_mainarea_purge" href="#"><?= $this->lang->line('Purge') ?></a>
+	<a id="log_mainarea_purge" href="#"><?php print  $this->lang->line('Purge') ?></a>
 	</div>
 
 <?php endif; ?>
@@ -288,7 +288,7 @@ $this->load->view (
 	}
 ?>
 <tr class='foot'>
-<td colspan='<?=$numcols?>' class='pages'><?= $page_links ?></td>
+<td colspan='<?php print $numcols?>' class='pages'><?php print  $page_links ?></td>
 </tr>
 </table>
 

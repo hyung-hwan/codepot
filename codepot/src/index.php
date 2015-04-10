@@ -23,6 +23,47 @@ $application_folder = dirname (__FILE__) . '/codepot';
 
 /*
 |---------------------------------------------------------------
+| SET DEFAULT TIMZEONE USING THE SYSTEM TIMEZONE
+|---------------------------------------------------------------
+*/
+if (function_exists('date_default_timezone_set') && !ini_get('date.timezone'))
+{
+	$tz = '';
+  
+	// On many systems (Mac, for instance) "/etc/localtime" is a symlink
+	// to the file with the timezone info
+	if (@is_link('/etc/localtime') === TRUE) 
+	{
+		// If it is, that file's name is actually the "Olsen" format timezone
+		$filename = @readlink('/etc/localtime');
+		if ($filename !== FALSE)
+		{
+			$pos = strpos($filename, 'zoneinfo');
+			if ($pos !== FALSE) 
+			{
+				// When it is, it's in the "/usr/share/zoneinfo/" folder
+				$tz = substr($filename, $pos + 9);
+			} 
+		}
+	}
+	else if (file_exists('/etc/timezone'))
+	{
+		// Debian
+		$tz = file_get_contents('/etc/timezone');
+	}
+	else if (file_exists('/etc/sysconfig/clock'))
+	{
+		// CentOS
+		$clock = @parse_ini_file ('/etc/sysconfig/clock');
+		if ($clock !== FALSE && array_key_exists('ZONE', $clock)) $tz = $clock['ZONE'];
+	}
+
+	if (strlen($tz) <= 0) $tz = 'GMT';
+	date_default_timezone_set ($tz);
+}
+
+/*
+|---------------------------------------------------------------
 | DEFINE APPLICATION CONSTANTS
 |---------------------------------------------------------------
 |

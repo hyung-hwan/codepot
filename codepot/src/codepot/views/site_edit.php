@@ -3,22 +3,22 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/site.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/site.css')?>" />
 
 
-<script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/prettify.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-css.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lisp.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lua.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-vb.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <script type="text/javascript">
 
@@ -27,8 +27,8 @@ function render_wiki(input_text)
 	creole_render_wiki_with_input_text (
 		input_text,
 		"site_edit_mainarea_text_preview", 
-		"<?=site_url()?>/site/wiki/",
-		"<?=site_url()?>/site/image/"
+		"<?php print site_url()?>/site/wiki/",
+		"<?php print site_url()?>/site/image/"
 	);
 
 	prettyPrint ();
@@ -43,7 +43,7 @@ $(function () {
 });
 </script>
 
-<title><?=htmlspecialchars($site->name)?></title>
+<title><?php print htmlspecialchars($site->name)?></title>
 </head>
 
 <body>
@@ -84,37 +84,37 @@ $this->load->view (
 ?>
 
 <div class='form_container'>
-<?=form_open($formurl, 'id="site_edit_form"')?>
+<?php print form_open($formurl, 'id="site_edit_form"')?>
 	<div class='form_input_field'>
-		<?=form_label($this->lang->line('Language').': ', 'site_id')?>
+		<?php print form_label($this->lang->line('Language').': ', 'site_id')?>
 		<?php
 			$extra = ($mode == 'update')? 'readonly="readonly"': '';
 			$extra .= 'maxlength="32" size="16" class="id"';
 		?>
 
-		<?=form_input('site_id', 
+		<?php print form_input('site_id', 
 			set_value('site_id', $site->id), 
 			$extra)
 		?>
-		<?=form_error('site_id')?>
+		<?php print form_error('site_id')?>
 	</div>
 
 	<div class='form_input_field'>
-		<?=form_label($this->lang->line('Name').': ', 'site_name')?>
-		<?=form_input('site_name', 
+		<?php print form_label($this->lang->line('Name').': ', 'site_name')?>
+		<?php print form_input('site_name', 
 			set_value('site_name', $site->name), 
 			'maxlength="80" size="40" class="name"');
 		?>
-		<?=form_error('site_name')?>
+		<?php print form_error('site_name')?>
 	</div>
 
 	<div class='form_input_label'>
-		<?=form_label($this->lang->line('Text').': ', 'site_text')?>
-		<a href='#' id='site_edit_mainarea_text_preview_button'><?=$this->lang->line('Preview')?></a>
-		<?=form_error('site_text')?>
+		<?php print form_label($this->lang->line('Text').': ', 'site_text')?>
+		<a href='#' id='site_edit_mainarea_text_preview_button'><?php print $this->lang->line('Preview')?></a>
+		<?php print form_error('site_text')?>
 	</div>
 	<div class='form_input_field'>
-		<?=form_textarea('site_text', 
+		<?php print form_textarea('site_text', 
 			set_value('site_text', $site->text),
 			'class="text" id="site_edit_mainarea_text"')
 		?>
@@ -123,8 +123,8 @@ $this->load->view (
 
 
 	<?php $caption = ($mode == 'update')? $this->lang->line('Update'): $this->lang->line('Create'); ?>
-	<?=form_submit('site', $caption)?>
-<?=form_close();?>
+	<?php print form_submit('site', $caption)?>
+<?php print form_close();?>
 </div> <!-- form_container -->
 
 </div> <!-- site_edit_mainarea -->

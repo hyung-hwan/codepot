@@ -128,7 +128,7 @@ function show_taskbar ($con, $login)
 $(function () {
 	$("#taskbar_signin_form_panel").hide();
 
-	btn_label = "<?=$this->lang->line('Sign in')?>";
+	btn_label = "<?php print $this->lang->line('Sign in')?>";
 	btn = $("#taskbar_signin_button").button({"label": btn_label}).click (function () {
 		if ($("#taskbar_signin_form_panel").is(":visible"))
 		{

@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/user.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/user.css')?>" />
      
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
      
 
 
@@ -18,7 +18,7 @@ $(function () {
 });
 </script>
 
-<title><?=htmlspecialchars($login['id'])?></title>
+<title><?php print htmlspecialchars($login['id'])?></title>
 </head>
 
 <body>
@@ -66,8 +66,8 @@ $num_activities = 0;
 <div id="tabs">
 
 	<ul>
-	 	<li><a href="#user_home_mainarea_result_issues"> <?=$this->lang->line('Open issues')?> (<?=$num_issues?>) </a></li>
-		<li><a href="#user_home_mainarea_result_projects"> <?=$this->lang->line('Projects')?> (<?=$num_projects?>) </a></li>
+	 	<li><a href="#user_home_mainarea_result_issues"> <?php print $this->lang->line('Open issues')?> (<?php print $num_issues?>) </a></li>
+		<li><a href="#user_home_mainarea_result_projects"> <?php print $this->lang->line('Projects')?> (<?php print $num_projects?>) </a></li>
 	</ul>
 
 	<div id="user_home_mainarea_result_issues">

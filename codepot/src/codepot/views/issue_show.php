@@ -2,21 +2,21 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/issue.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/issue.css')?>" />
 
-<script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/prettify.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-css.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lisp.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lua.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-vb.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <script type="text/javascript">
 
@@ -85,12 +85,12 @@ $(function () {
 
 	$("#issue_show_mainarea_change_form").dialog (
 		{
-			title: '<?=$this->lang->line('Change')?>',
+			title: '<?php print $this->lang->line('Change')?>',
 			autoOpen: false,
 			modal: true,
 			width: '85%',
 			buttons: { 
-				'<?=$this->lang->line('OK')?>': function () { 
+				'<?php print $this->lang->line('OK')?>': function () { 
 					var comment = $('#issue_change_comment');
 					if (comment.val().trim().length <= 0)
 					{
@@ -106,7 +106,7 @@ $(function () {
 						$('#issue_change_form').submit ();
 					}
 				},
-				'<?=$this->lang->line('Cancel')?>': function () { 
+				'<?php print $this->lang->line('Cancel')?>': function () { 
 					$(this).dialog('close'); 
 				}
 			},
@@ -123,17 +123,17 @@ $(function () {
 
 	$("#issue_show_mainarea_undo_change_confirm").dialog (
 		{
-			title: '<?=$this->lang->line('Undo')?>',
+			title: '<?php print $this->lang->line('Undo')?>',
 			resizable: false,
 			autoOpen: false,
 			modal: true,
 			buttons: { 
-				'<?=$this->lang->line('OK')?>': function () { 
+				'<?php print $this->lang->line('OK')?>': function () { 
 					$('#issue_change').val ('undo');
 					$('#issue_change_form').submit ();
 					$(this).dialog('close'); 
 				},
-				'<?=$this->lang->line('Cancel')?>': function () { 
+				'<?php print $this->lang->line('Cancel')?>': function () { 
 					$(this).dialog('close'); 
 				}
 			},
@@ -157,7 +157,7 @@ $(function () {
 });
 </script>
 
-<title><?=htmlspecialchars($project->name)?> - <?=$this->lang->line('Issue')?> <?=htmlspecialchars($issue->id)?></title>
+<title><?php print htmlspecialchars($project->name)?> - <?php print $this->lang->line('Issue')?> <?php print htmlspecialchars($issue->id)?></title>
 </head>
 
 <body onload="render_wiki()">
@@ -197,8 +197,8 @@ $this->load->view (
 
 <div class="mainarea" id="issue_show_mainarea">
 <div class="title">
-	<?=$this->lang->line('Issue')?> <?=htmlspecialchars($issue->id)?>: 
-	<?=htmlspecialchars($issue->summary)?>
+	<?php print $this->lang->line('Issue')?> <?php print htmlspecialchars($issue->id)?>: 
+	<?php print htmlspecialchars($issue->summary)?>
 </div>
 
 <div class="infostrip" id="issue_show_mainarea_infostrip">
@@ -234,7 +234,7 @@ $this->load->view (
 			print ' | ';
 		}
 	?>
-	<a id="issue_show_mainarea_change_form_open" href="#"><?=$this->lang->line('Change')?></a>
+	<a id="issue_show_mainarea_change_form_open" href="#"><?php print $this->lang->line('Change')?></a>
 </div>
 
 <div id="issue_show_mainarea_description">
@@ -369,34 +369,34 @@ $this->load->view (
 
 <div id="issue_show_mainarea_change_form">
 
-	<?=form_open("issue/show/{$project->id}/{$hexid}/", 'id="issue_change_form"')?>
+	<?php print form_open("issue/show/{$project->id}/{$hexid}/", 'id="issue_change_form"')?>
 
 		<input type='hidden' name='issue_change' id='issue_change' value='change' />
 
 		<div>
-			<?=form_label ($this->lang->line('Type'),
+			<?php print form_label ($this->lang->line('Type'),
 				'issue_change_type')
 			?>
-			<?=form_dropdown('issue_change_type', 
+			<?php print form_dropdown('issue_change_type', 
 				$issue_type_array,
 				set_value('issue_change_type', $issue->type),
 				'id="issue_change_type"')
 			?>
 
-			<?=form_label ($this->lang->line('Status'),
+			<?php print form_label ($this->lang->line('Status'),
 				'issue_change_status')
 			?>
-			<?=form_dropdown('issue_change_status', 
+			<?php print form_dropdown('issue_change_status', 
 				$issue_status_array,
 				set_value('issue_change_status', $issue->status),
 				'id="issue_change_status"')
 			?>
 
-			<?=form_label ($this->lang->line('Priority'),
+			<?php print form_label ($this->lang->line('Priority'),
 				'issue_change_priority')
 			?>
 
-			<?=form_dropdown (
+			<?php print form_dropdown (
 				'issue_change_priority', 
 				$issue_priority_array,
 				set_value('issue_change_priority', $issue->priority),
@@ -405,7 +405,7 @@ $this->load->view (
 		</div>
 
 		<div>
-			<?=form_label ($this->lang->line('Owner'),
+			<?php print form_label ($this->lang->line('Owner'),
 				'issue_change_owner')
 			?>
 
@@ -420,7 +420,7 @@ $this->load->view (
 			if ($found === FALSE) $owner_array[$issue->owner] = $issue->owner;
 			?>
 			
-			<?=form_dropdown (
+			<?php print form_dropdown (
 				'issue_change_owner', 
 				$owner_array,
 				set_value('issue_change_owner', $issue->owner),
@@ -429,8 +429,8 @@ $this->load->view (
 		</div>
 
 		<div>
-			<?=form_label ($this->lang->line('Comment'), 'issue_change_comment')?>
-			<a href='#' id='issue_change_comment_preview_button'><?=$this->lang->line('Preview')?></a>
+			<?php print form_label ($this->lang->line('Comment'), 'issue_change_comment')?>
+			<a href='#' id='issue_change_comment_preview_button'><?php print $this->lang->line('Preview')?></a>
 			<?php
 				$xdata = array (
 					'name' => 'issue_change_comment',
@@ -444,12 +444,12 @@ $this->load->view (
 
 			<div id='issue_change_comment_preview' class='form_input_preview'></div>
 		</div>
-	<?=form_close()?>
+	<?php print form_close()?>
 </div> <!-- issue_show_change_form -->
 
 
 <div id="issue_show_mainarea_undo_change_confirm">
-	<?=$this->lang->line ('ISSUE_MSG_CONFIRM_UNDO')?>
+	<?php print $this->lang->line ('ISSUE_MSG_CONFIRM_UNDO')?>
 </div>
 
 </div> <!-- issue_show_mainarea -->
@@ -473,8 +473,8 @@ function render_wiki()
 	creole_render_wiki (
 		"issue_show_mainarea_description_pre", 
 		"issue_show_mainarea_description", 
-		"<?=$creole_base?>",
-		"<?=$creole_attachment_base?>"
+		"<?php print $creole_base?>",
+		"<?php print $creole_attachment_base?>"
 	);
 
 	<?php
@@ -499,8 +499,8 @@ function render_wiki_comment_preview(input_text)
 	creole_render_wiki_with_input_text (
 		input_text,
 		"issue_change_comment_preview", 
-		"<?=$creole_base?>",
-		"<?=$creole_attachment_base?>"
+		"<?php print $creole_base?>",
+		"<?php print $creole_attachment_base?>"
 	);
 
 	prettyPrint ();

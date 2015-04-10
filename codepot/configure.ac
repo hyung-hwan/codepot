@@ -1,7 +1,7 @@
 
 dnl AC_PREREQ(2.59)
 
-AC_INIT([codepot],[0.1.2],[Hyung-Hwan Chung <hyunghwan.chung@gmail.com>],,[http://www.abiyo.net/codepot])
+AC_INIT([codepot],[0.2.0],,,[http://code.abiyo.net/@codepot])
 AC_CONFIG_HEADER([./config.h])
 AC_CONFIG_AUX_DIR([ac/aux])
 AC_CONFIG_MACRO_DIR([ac/m4])
@@ -63,6 +63,22 @@ AC_ARG_WITH(cachedir,
 	[cachedir=$withval])
 AC_SUBST(cachedir, $cachedir)
 
+phpextdir="${libdir}/php/modules"
+AC_ARG_WITH(phpextdir,
+	AC_HELP_STRING(
+		[--with-phpextdir],
+		[directory where a php extension file is stored]),
+	[phpextdir=$withval])
+AC_SUBST(phpextdir, $phpextdir)
+
+phpextinidir="${sysconfdir}/php.d"
+AC_ARG_WITH(phpextinidir,
+	AC_HELP_STRING(
+		[--with-phpextinidir],
+		[directory where a php extension is enabled]),
+	[phpextinidir=$withval])
+AC_SUBST(phpextinidir, $phpextinidir)
+
 AS_AC_EXPAND(PREFIX, $prefix)
 AS_AC_EXPAND(LIBDIR, $libdir)
 AS_AC_EXPAND(LIBEXECDIR, $libexecdir)
@@ -74,11 +90,13 @@ AS_AC_EXPAND(LOCALSTATEDIR, $localstatedir)
 AS_AC_EXPAND(BINDIR, $bindir)
 AS_AC_EXPAND(SBINDIR, $sbindir)
 
-AS_AC_EXPAND(DEPOTDIR, $depotdir)
-AS_AC_EXPAND(CFGDIR,   $cfgdir)
-AS_AC_EXPAND(WWWDIR,   $wwwdir)
-AS_AC_EXPAND(LOGDIR,   $logdir)
-AS_AC_EXPAND(CACHEDIR, $cachedir)
+AS_AC_EXPAND(DEPOTDIR,     $depotdir)
+AS_AC_EXPAND(CFGDIR,       $cfgdir)
+AS_AC_EXPAND(WWWDIR,       $wwwdir)
+AS_AC_EXPAND(LOGDIR,       $logdir)
+AS_AC_EXPAND(CACHEDIR,     $cachedir)
+AS_AC_EXPAND(PHPEXTDIR,    $phpextdir)
+AS_AC_EXPAND(PHPEXTINIDIR, $phpextinidir)
 
 
 AC_CONFIG_FILES([
@@ -95,6 +113,7 @@ AC_CONFIG_FILES([
 	etc/post-revprop-change
 	sbin/Makefile
 	sbin/codepot-user
+	pecl-svn/Makefile
 	DEBIAN/Makefile
 	DEBIAN/control
 	DEBIAN/postinst

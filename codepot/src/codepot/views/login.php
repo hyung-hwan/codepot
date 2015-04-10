@@ -2,7 +2,7 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 </head>
 
 <body>
@@ -16,8 +16,8 @@
 	</div>
 
 	<div class="boxa">
-        <?= anchor ('site/home', $this->lang->line('Home')) ?>
-        <?= anchor ('project/catalog', $this->lang->line('Projects')) ?>
+        <?php print  anchor ('site/home', $this->lang->line('Home')) ?>
+        <?php print  anchor ('project/catalog', $this->lang->line('Projects')) ?>
 	</div>
 </div>
 
@@ -46,13 +46,13 @@ $this->load->view (
 <?php if ($message != "") print "<div id='project_create_message' class='form_message'>$message</div>"; ?>
 
 <div class='form_container'>
-<?=form_open('main/signin/')?>
-	<?=form_hidden('user_url', set_value ('user_url', $user_url))?>
+<?php print form_open('main/signin/')?>
+	<?php print form_hidden('user_url', set_value ('user_url', $user_url))?>
 
 	<div class="form_input_field">
 		<!--
-		<?=form_label($this->lang->line('Username'), 'user_name')?>
-		<?=form_input('user_name', set_value ('user_name', $user_name))?>
+		<?php print form_label($this->lang->line('Username'), 'user_name')?>
+		<?php print form_input('user_name', set_value ('user_name', $user_name))?>
 		-->
 
 		<?php
@@ -63,13 +63,13 @@ $this->load->view (
 		);
 		?>
 
-		<?=form_error('user_name')?>
+		<?php print form_error('user_name')?>
 	</div>
 
 	<div class="form_input_field">
 		<!--
-		<?=form_label($this->lang->line('Password'), 'user_pass')?>
-		<?=form_password('user_pass')?>
+		<?php print form_label($this->lang->line('Password'), 'user_pass')?>
+		<?php print form_password('user_pass')?>
 		-->
 		<?php
 		print form_password (
@@ -78,12 +78,12 @@ $this->load->view (
 			"size='30' id='login_user_pass' placeholder={$this->lang->line('Password')}"
 		);
 		?>
-		<?=form_error('user_pass')?>
+		<?php print form_error('user_pass')?>
 	</div>
 
 	<div class="form_input_field">
 		<!--
-		<?=form_submit('login', $this->lang->line('Sign in'))?>
+		<?php print form_submit('login', $this->lang->line('Sign in'))?>
 		-->
 
 		<?php
@@ -94,7 +94,7 @@ $this->load->view (
 		);
 		?>
 	</div>
-<?=form_close();?>
+<?php print form_close();?>
 </div> <!-- form_container -->
 
 </div>

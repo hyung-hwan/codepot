@@ -1,21 +1,39 @@
 %define _prefix /usr
 %define _sysconfdir /etc
 
+%if %{?php_package_name:0}%{!?php_package_name:1}
+# if php_package_name is not defined
+%define php_package_name php
+%endif
+
 Summary: Codepot code repository manager
 Name: @PACKAGE_NAME@
 Version: @PACKAGE_VERSION@
-Release: 1
+Release: %{php_package_name}.1%{?dist}
 License: GPL
 Group: Applications/Utilities
+#BuildArch: noarch
 Source0: %{name}-%{version}.tar.gz
 
-Requires: httpd php php-ldap php-mysql php-gd subversion subversion-perl mod_dav_svn mod_perl perl perl-LDAP perl-Config-Simple perl-URI perl-DBI perl-Digest-SHA1
+Requires: httpd %{php_package_name} %{php_package_name}-ldap %{php_package_name}-mysql %{php_package_name}-gd subversion subversion-perl mod_dav_svn mod_perl perl perl-LDAP perl-Config-Simple perl-URI perl-DBI perl-Digest-SHA1
+# %{php_package_name}-pecl-svn > 1.2.0
 
-#BuildRequires:
+BuildRequires: subversion-devel neon-devel %{php_package_name}-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
 Codepot code repository manager
+
+%package peclsvn
+Summary: PHP Subversion extension
+Group: Development/Languages
+#BuildArch: %{_target_platform}
+Requires: @PACKAGE_NAME@ = %{PACKAGE_VERSION}
+Conflicts: %{php_package_name}-pecl-svn
+
+%description peclsvn
+This package contains svn.so for PHP. You can install this package
+if your system doesn't have a proper Subversion extenstion for PHP.
 
 %prep
 %setup -q
@@ -23,12 +41,15 @@ Codepot code repository manager
 %build
 ./configure \
 	--prefix=/usr \
+	--libdir=%{_libdir} \
 	--sysconfdir=/etc \
 	--with-wwwdir=/var/www/html/codepot \
 	--with-cfgdir=/etc/codepot \
 	--with-depotdir=/var/lib/codepot \
 	--with-logdir=/var/log/codepot \
-	--with-cachedir=/var/cache/codepot
+	--with-cachedir=/var/cache/codepot \
+	--with-phpextdir=%{_libdir}/php/modules \
+	--with-phpextinidir=%{_sysconfdir}/php.d
 make
 
 %install
@@ -69,13 +90,23 @@ rm -rf $RPM_BUILD_ROOT
 %dir /var/log/codepot
 %dir /var/cache/codepot
 
+%files peclsvn
+%{_libdir}/php/modules/svn.so
+%config(noreplace) %{_sysconfdir}/php.d/svn.ini
+
 %pre
 exit 0
 
 %post
-[ $1 -eq 0 ] && {
+[ $1 -eq 1 ] && {
+	# Fresh installation.
+
 	# install the httpd configuration file for the first installation
 	install -D -m 0644 %{_sysconfdir}/codepot/codepot.httpd %{_sysconfdir}/httpd/conf.d/codepot.conf
+
+	# change the selinux context on data directories
+	chcon -Rv --type=httpd_sys_content_t /var/lib/codepot >/dev/null 2>&1
+	chcon -Rv --type=httpd_sys_content_t /var/cache/codepot >/dev/null 2>&1
 }
 exit 0
 
@@ -84,6 +115,7 @@ exit 0
 
 %postun
 [ $1 -eq 0 ] && {
+	# Uninstallation
 	rm -f %{_sysconfdir}/httpd/conf.d/codepot.conf	
 }
 exit 0

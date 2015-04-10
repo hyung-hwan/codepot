@@ -5,28 +5,28 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/code.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
 
-<script type="text/javascript" src="<?=base_url_make('/js/creole.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/prettify.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-css.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lisp.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-lua.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-sql.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/prettify/lang-vb.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-vb.js')?>"></script>
 
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery-ui.min.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/jquery-ui.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
-<!--[if lte IE 8]><script type="text/javascript" src="<?=base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.time.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
-<script type="text/javascript" src="<?=base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
+<!--[if lte IE 8]><script type="text/javascript" src="<?php print base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.time.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
 
 
 
@@ -81,9 +81,9 @@ function show_loc_graph (response)
 
 		var dataset = 
 		[
-			{ label: "<?=$this->lang->line('Code')?>",  data: code },
-			{ label: "<?=$this->lang->line('Comment')?>",  data: comment },
-			{ label: "<?=$this->lang->line('Blank')?>",  data: blank }
+			{ label: "<?php print $this->lang->line('Code')?>",  data: code },
+			{ label: "<?php print $this->lang->line('Comment')?>",  data: comment },
+			{ label: "<?php print $this->lang->line('Blank')?>",  data: blank }
 		];
 
 		var options = {
@@ -150,9 +150,9 @@ $(function () {
 	?>
 
 	if ($("#code_folder_mainarea_result_info").is(":visible"))
-		btn_label = "<?=$this->lang->line('Hide details')?>";
+		btn_label = "<?php print $this->lang->line('Hide details')?>";
 	else
-		btn_label = "<?=$this->lang->line('Show details')?>";
+		btn_label = "<?php print $this->lang->line('Show details')?>";
 	
 	btn = $("#code_folder_mainarea_details_button").button({"label": btn_label}).click (function () {
 		
@@ -160,13 +160,13 @@ $(function () {
 		{
 			$("#code_folder_mainarea_result_info").hide("blind",{},200);
 			$("#code_folder_mainarea_details_button").button(
-				"option", "label", "<?=$this->lang->line('Show details')?>");
+				"option", "label", "<?php print $this->lang->line('Show details')?>");
 		}
 		else
 		{
 			$("#code_folder_mainarea_result_info").show("blind",{},200);
 			$("#code_folder_mainarea_details_button").button(
-				"option", "label", "<?=$this->lang->line('Hide details')?>");
+				"option", "label", "<?php print $this->lang->line('Hide details')?>");
 		}
 	});
 
@@ -183,7 +183,7 @@ $(function () {
 		//setTimeout (show_progress, 1000);
 
 		var ajax_req = $.ajax ({
-			url: '<?=site_url()?>/graph/folder_loc_json/<?=$project->id?>/<?=$this->converter->AsciiToHex($headpath)?><?=$revreq?>',
+			url: '<?php print site_url()?>/graph/folder_loc_json/<?php print $project->id?>/<?php print $this->converter->AsciiToHex($headpath)?><?php print $revreq?>',
 			context: document.body,
 			success: show_loc_graph
 		});
@@ -202,8 +202,8 @@ function renderReadme()
 	creole_render_wiki (
 		"code_folder_mainarea_result_readme_text",
 		"code_folder_mainarea_result_readme",
-		"<?=site_url()?>/wiki/show/<?=$project->id?>/",
-		"<?=site_url()?>/wiki/attachment0/<?=$project->id?>/"
+		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
+		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
         );
 	prettyPrint();
 	<?php endif; ?>
@@ -284,21 +284,21 @@ $this->load->view (
 <div class="infostrip" id="code_folder_mainarea_infostrip">
 	
 	<?php if (CODEPOT_SIGNIN_FOR_CODE_SEARCH === FALSE || (isset($login['id']) && $login['id'] != '')): ?>
-	<?=form_open("code/search/{$project->id}/", 'id="code_folder_search_form"')?>
-	<?=form_hidden('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_folder_search_folder"')?>
-	<?=form_hidden('search_revision', set_value('search_revision', $revision), 'id="code_folder_search_revision"')?>
-	<?=form_input('search_pattern', set_value('search_pattern', ''), 'id="code_folder_search_pattern"')?>
-	<?=form_submit('search_submit', $this->lang->line('Search'), 'id="code_folder_search_submit"')?>
+	<?php print form_open("code/search/{$project->id}/", 'id="code_folder_search_form"')?>
+	<?php print form_hidden('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_folder_search_folder"')?>
+	<?php print form_hidden('search_revision', set_value('search_revision', $revision), 'id="code_folder_search_revision"')?>
+	<?php print form_input('search_pattern', set_value('search_pattern', ''), 'id="code_folder_search_pattern"')?>
+	<?php print form_submit('search_submit', $this->lang->line('Search'), 'id="code_folder_search_submit"')?>
 	| 
 	<?php endif; ?>
 
-	<?=$this->lang->line('Revision')?>: <?=$file['created_rev']?> 
+	<?php print $this->lang->line('Revision')?>: <?php print $file['created_rev']?> 
 	<?php if ($file_count > 0): ?>
 	| 
-	<a id="code_folder_mainarea_details_button" href='#'><?=$this->lang->line('Details')?></a>
+	<a id="code_folder_mainarea_details_button" href='#'><?php print $this->lang->line('Details')?></a>
 	<?php endif; ?>
 
-	<?=form_close()?>
+	<?php print form_close()?>
 </div>
 
 <div class="result" id="code_folder_mainarea_result">

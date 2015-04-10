@@ -2,12 +2,12 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="keywords" content="<?=$project->id?>" />
+<meta name="keywords" content="<?php print $project->id?>" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/project.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/project.css')?>" />
 
-<title><?=htmlspecialchars($project->name)?></title>
+<title><?php print htmlspecialchars($project->name)?></title>
 </head>
 
 <body>
@@ -42,26 +42,26 @@ $this->load->view (
 <?php if ($message != "") print "<div id='project_create_message' class='form_message'>$message</div>"; ?>
 
 <div class="form_container">
-<?=form_open('project/delete/'.$project->id)?>
+<?php print form_open('project/delete/'.$project->id)?>
 
 	<div>
 		<div>
-			<?=form_checkbox('project_confirm', 'yes', set_checkbox('project_confirm', $project_confirm))?>
-			<?=$this->lang->line('MSG_SURE_TO_DELETE_THIS')?> - <?=htmlspecialchars($project->name)?>
-			<?=form_error('project_confirm')?>
+			<?php print form_checkbox('project_confirm', 'yes', set_checkbox('project_confirm', $project_confirm))?>
+			<?php print $this->lang->line('MSG_SURE_TO_DELETE_THIS')?> - <?php print htmlspecialchars($project->name)?>
+			<?php print form_error('project_confirm')?>
 		</div>
 	</div>
 
 	<div>
-		<?=form_hidden('project_id', set_value('project_id', $project->id))?>
-		<?=form_hidden('project_name', set_value('project_name', $project->name))?>
+		<?php print form_hidden('project_id', set_value('project_id', $project->id))?>
+		<?php print form_hidden('project_name', set_value('project_name', $project->name))?>
 	</div>
 
 	<div>
-		<?=form_submit('project', $this->lang->line('Delete'))?>
+		<?php print form_submit('project', $this->lang->line('Delete'))?>
 	</div>
 
-<?=form_close();?>
+<?php print form_close();?>
 </div>
 
 </div>

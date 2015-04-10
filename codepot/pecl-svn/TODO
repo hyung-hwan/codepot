@@ -1,0 +1,12 @@
+Functions that need to be added:
+svn_merge
+svn_propset
+svn_url_from_path
+svn_uuid_from_url
+svn_uuid_from_path
+
+
+New 1.5 functions that need to be added:
+svn_add_to_changelist
+svn_get_changelists
+svn_remove_from_changelists

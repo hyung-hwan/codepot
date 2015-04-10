@@ -5,10 +5,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/file.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/file.css')?>" />
 
-<title><?=htmlspecialchars($project->name)?></title>
+<title><?php print htmlspecialchars($project->name)?></title>
 </head>
 
 <body>
@@ -43,7 +43,7 @@ $this->load->view (
 <!-- ============================================================ -->
 
 <div class="mainarea" id="file_home_mainarea">
-<div class="title"><?=$this->lang->line('Files')?></div>
+<div class="title"><?php print $this->lang->line('Files')?></div>
 
 <div class="result" id="file_home_mainarea_result">
 <?php

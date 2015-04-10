@@ -4,9 +4,9 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/common.css')?>" />
-<link type="text/css" rel="stylesheet" href="<?=base_url_make('/css/project.css')?>" />
-<title><?=$title?></title>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/project.css')?>" />
+<title><?php print $title?></title>
 </head>
 
 <body>
@@ -44,9 +44,9 @@ $this->load->view (
 <!---------------------------------------------------------------------------->
 <div class="mainarea" id="project_error_mainarea">
 <div class="title" id="project_error_title">
-<?= htmlspecialchars($title) ?>
+<?php print  htmlspecialchars($title) ?>
 </div>
-<?= htmlspecialchars($message) ?>
+<?php print  htmlspecialchars($message) ?>
 </div>
 
 <?php $this->load->view ('footer'); ?>

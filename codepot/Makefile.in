@@ -168,6 +168,8 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PHPEXTDIR = @PHPEXTDIR@
+PHPEXTINIDIR = @PHPEXTINIDIR@
 PREFIX = @PREFIX@
 RM = @RM@
 RMDIR = @RMDIR@
@@ -211,6 +213,8 @@ mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
+phpextdir = @phpextdir@
+phpextinidir = @phpextinidir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
@@ -225,7 +229,7 @@ top_srcdir = @top_srcdir@
 wwwdir = @wwwdir@
 ACLOCAL_AMFLAGS = -I ac/m4
 AUTOMAKE_OPTION = foreign
-SUBDIRS = etc src sbin
+SUBDIRS = etc src sbin pecl-svn
 EXTRA_DIST = README mkmf.sh DEBIAN
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -734,6 +738,9 @@ uninstall-am:
 	uninstall-hook
 
 
+PHP_PACKAGE_NAME ?= php
+TARGET_ARCH ?= $(shell uname -m)
+
 install-data-hook:
 	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@"
 	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@/svnrepo"
@@ -781,7 +788,7 @@ rpm: dist
 	mkdir -p "@abs_top_builddir@/RPM/SRPMS"
 	mkdir -p "@abs_top_builddir@/RPM/RPMS"
 	cp codepot-@VERSION@.tar.gz "@abs_top_builddir@/RPM/SOURCES"
-	rpmbuild --define "_topdir @abs_top_builddir@/RPM" -ba codepot.spec --target noarch
+	rpmbuild --define "_topdir @abs_top_builddir@/RPM" --define "php_package_name $(PHP_PACKAGE_NAME)" -ba codepot.spec --target="$(TARGET_ARCH)"
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

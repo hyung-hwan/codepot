@@ -98,7 +98,7 @@ api_base_url = "http://127.0.0.1"
 svn_base_url = "${REQUEST_PROTOCOL}://${HTTP_HOST}/svn"
 
 ;------------------------------------------------------------------------------
-; Login model to use. 
+; Login model to use. LdapLoginModel or DbLoginModel. 
 ;------------------------------------------------------------------------------
 #login_model = "LdapLoginModel"
 login_model = "DbLoginModel"
@@ -203,7 +203,9 @@ signin_for_code_search = "yes"
 ;------------------------------------------------------------------------------
 ; customized footer
 ;------------------------------------------------------------------------------
-; Leave this empty for the default footer message
+; Leave this empty for the default footer message. You can use a HTML tag as 
+; well as a plain text. For example,
+;  footer = "<u>Code Repository</u>"
 ;------------------------------------------------------------------------------
 footer = ""
 
@@ -213,6 +215,13 @@ footer = ""
 ; Full path to the CLOC command
 ;------------------------------------------------------------------------------
 cloc_command_path =  "@CFGDIR@/cloc.pl"
+
+;------------------------------------------------------------------------------
+; List of README files to show in the code folder view.
+; The first file found is shown. You can specify multiple file name 
+; separated by a comma.
+;------------------------------------------------------------------------------
+code_folder_readme = "README.wiki,README.txt,README"
 
 ;------------------------------------------------------------------------------
 ; Subversion read access is limited to the specified user type. The types 
@@ -240,8 +249,7 @@ svn_restriction_allowed_subdir_depth_min = 0
 svn_restriction_allowed_subdir_depth_max = 0
 
 ;------------------------------------------------------------------------------
-; List of README files to show in the code folder view.
-; The first file found is shown. You can specify multiple file name 
-; separated by a comma.
+; Command separated list of user names who can execute /usr/sbin/codepot-user.
+; Set it to an empty string to allow all users.
 ;------------------------------------------------------------------------------
-code_folder_readme = "README.wiki,README.txt,README";
+codepot_user_executor = "root"
