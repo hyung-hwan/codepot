@@ -762,6 +762,7 @@ uninstall-hook:
 distclean-local:
 	$(RM) -r autom4te.cache config.h.in~ "$(PACKAGE)-$(VERSION)"
 
+# TODO: specify --with-phpextdir and --with-phpextinidir for the deb target
 deb: dist-gzip
 	tar -zxvf "$(PACKAGE)-$(VERSION).tar.gz"
 	cd "$(PACKAGE)-$(VERSION)"; ./configure \
