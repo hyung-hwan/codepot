@@ -97,11 +97,27 @@ INSTALLATION ON CENTOS
    $ ls -lZd /var/cache/codepot
    drwxr-xr-x  apache apache system_u:object_r:httpd_sys_content_t /var/cache/codepot
 
- 10. Restart httpd.
+ 10. If you have SELinux on in the enforcing mode, ensure to allow httpd to
+ execute an external command.
+
+   $ /usr/sbin/getsebool httpd_ssi_exec
+   httpd_ssi_exec --> off
+
+ If httpd_ssi_exec is off, switch it to on.
+
+   $ /usr/sbin/setsebool -P httpd_ssi_exec=1
+   $ /usr/sbin/getsebool httpd_ssi_exec
+   httpd_ssi_exec --> on
+
+ The only external command Codepot executes is '/etc/codepot/cloc.pl' which
+ is configured under 'cloc_command_path' in /etc/codepot/codepot.ini. Some
+ CLOC graphs won't work properly when the execution of this command fails.
+
+ 11. Restart httpd.
 
    $ service httpd restart
 
- 11. Access http://your-server/codepot/
+ 12. Access http://your-server/codepot/
 
 
 INSTALLATION ON DEBIAN
