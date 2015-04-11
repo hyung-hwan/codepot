@@ -360,9 +360,9 @@ uninstall-am:
 
 all-local:
 	mkdir -p @abs_builddir@/pecl
-	cp -pf @abs_srcdir@/svn.c @abs_builddir@/pecl/
-	cp -pf @abs_srcdir@/php_svn.h @abs_builddir@/pecl/
-	cp -pf @abs_srcdir@/config.m4 @abs_builddir@/pecl/
+	cp -f @abs_srcdir@/svn.c @abs_builddir@/pecl/
+	cp -f @abs_srcdir@/php_svn.h @abs_builddir@/pecl/
+	cp -f @abs_srcdir@/config.m4 @abs_builddir@/pecl/
 	cd @abs_builddir@/pecl/; phpize
 	cd @abs_builddir@/pecl/; ./configure
 	cd @abs_builddir@/pecl/; make
