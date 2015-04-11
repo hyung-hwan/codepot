@@ -28,7 +28,9 @@ Codepot code repository manager
 Summary: PHP Subversion extension
 Group: Development/Languages
 #BuildArch: %{_target_platform}
-Requires: @PACKAGE_NAME@ = %{PACKAGE_VERSION}
+# %{PACKAGE_VERSION} is deprecated. %{Version} is supported in some
+# recent distros. Never mind. Let's just resort to the autoconf replacement.
+Requires: @PACKAGE_NAME@ = @PACKAGE_VERSION@
 Conflicts: %{php_package_name}-pecl-svn
 
 %description peclsvn
