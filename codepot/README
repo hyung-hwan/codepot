@@ -3,7 +3,9 @@ CODEPOT
 
  Codepot is a simple web-based source code manager. It incorporates the
  subversion revision control system and wiki-based documentation, and supports
- authentication via LDAP or DBMS.
+ authentication via LDAP or DBMS. If you opt for the simplest, you can manage
+ multiple subversion repositories independent of each other. Going beyond it,
+ you can track issues, write documents, and upload release files.
 
 INSTALLATION ON CENTOS
 
