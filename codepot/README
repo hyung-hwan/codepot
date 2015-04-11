@@ -9,8 +9,7 @@ INSTALLATION ON CENTOS
 
  A RPM package is provided for RedHat/CentOS Linux. The RPM package specifies
  dependency which must be met prior to or at the same time as the installation
- of the rpm package. Some required packages are available in RPMforge. You may
- have to add the RPMforge repository for automatic installation with yum.
+ of the rpm package. 
 
    $ rpm -ivh codepot-X.X.X-Y.Y.Y.Y.rpm
 
@@ -37,7 +36,10 @@ INSTALLATION ON CENTOS
 
  2. Customize the Subversion WebDAV access in /etc/httpd/conf.d/codepot.conf
  which the RPM package copies from /etc/codepot/codepot.http upon fresh
- installation. You can skip this step if you don't need any customizations.
+ installation. The default file installed specify the location '/svn'. It
+ must match the path part of the subversion base URL(svn_base_url) specified
+ in /etc/codepot/codepot.ini. You can skip this step if you don't need any
+ customizations.
 
  3. Create a database named 'codepot' into the running MySQL server. The
  schema is defined in /etc/codepot/codepot.mysql. You can execute the following
@@ -63,11 +65,11 @@ INSTALLATION ON CENTOS
  is configured to use 'DbLoginModel'. You can change it by chaning the value
  of 'login_mode' in /etc/codepot/codepot.ini.
 
-   $ codepot-user add username password username@your.domain
+   $ /usr/sbin/codepot-user add username password username@your.domain
 
  6. Enable the user added.
    
-   $ codepot-user enable username
+   $ /usr/sbin/codepot-user enable username
 
  7. Optionally, you can set this user to be a system administrator
  in /etc/codepot/codepot.ini.
@@ -80,7 +82,17 @@ INSTALLATION ON CENTOS
 
    $ rpm -ivh codepot-peclsvn-X.X.X-Y.Y.Y.Y.rpm
 
- 9. If you have SELinux on in the enforcing mode, check if the data directories
+ 9. Check if you have SELinux on and its current mode with the sestatus command.
+
+   $ /usr/sbin/sestatus
+   SELinux status:                 enabled
+   SELinuxfs mount:                /selinux
+   Current mode:                   enforcing
+   Mode from config file:          enforcing
+   Policy version:                 21
+   Policy from config file:        targeted
+
+ If you have SELinux on in the enforcing mode, check if the data directories
  used by Codepot has the right context set. The 'httpd_sys_content_t' context
  type should be set. The Codepot RPM package sets the context type upon fresh 
  installation only.
