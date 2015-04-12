@@ -246,12 +246,12 @@ svn_min_commit_message_length = "0"
 ; are limited. The value can be separated by a comma.
 ; To allow 1 subdirectory under the tags directory, set the followings:
 ;  svn_restricted_topdirs = "tags"
-;  svn_restriction_allowed_subdir_depth_min = 0
-;  svn_restriction_allowed_subdir_depth_max = 1
+;  svn_restriction_allowed_subdir_depth_min = "0"
+;  svn_restriction_allowed_subdir_depth_max = "1"
 ;------------------------------------------------------------------------------
 svn_restricted_topdirs = ""
-svn_restriction_allowed_subdir_depth_min = 0
-svn_restriction_allowed_subdir_depth_max = 0
+svn_restriction_allowed_subdir_depth_min = "0"
+svn_restriction_allowed_subdir_depth_max = "0"
 
 ;------------------------------------------------------------------------------
 ; Command separated list of user names who can execute /usr/sbin/codepot-user.
