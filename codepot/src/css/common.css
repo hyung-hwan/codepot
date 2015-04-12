@@ -699,6 +699,32 @@ pre.prettyprint li.L9 { background: #eee }
 	font-style: italic;
 }
 
+
+.content span.left_arrow_indicator { 
+	position: relative;
+	background: #FA5240;
+	color: #FFFFFF;;
+	font-size: 0.9em;
+	margin-left: 0.5em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+} 
+
+.content span.left_arrow_indicator:after {
+	right: 100%;
+	top: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: rgba(245, 230, 17, 0);
+	border-right-color: #FA5240;
+	border-width: 5px;
+	margin-top: -5px; 
+}
+
 /* === signin panel === */
 #taskbar_signin_panel {
 	position: absolute;

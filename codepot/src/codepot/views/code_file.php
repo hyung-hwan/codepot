@@ -212,10 +212,21 @@ $this->load->view (
 </div> <!-- code_file_mainarea_menu -->
 
 <div class="infostrip" id="code_file_mainarea_infostrip">
-	<?php print anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<')?> 
-	<?php print $this->lang->line('Revision')?>: <?php print $file['created_rev']?> 
-	<?php print anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>')?> |
-	<?php print $this->lang->line('Size')?>: <?php print $file['size']?> |
+
+	<?php 
+		print anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<');
+		printf ('%s: %s', $this->lang->line('Revision'), $file['created_rev']);
+                if (!empty($file['created_tag']))
+                {
+                        print ('<span class="left_arrow_indicator">');
+                        print htmlspecialchars($file['created_tag']);
+                        print ('</span>');
+                }
+		print anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>');
+
+		print ' | ';
+		printf ('%s: %s', $this->lang->line('Size'), $file['size']);
+	?>
 	<a id="code_file_mainarea_details_button" href='#'><?php print $this->lang->line('Details')?></a>
 </div>
 

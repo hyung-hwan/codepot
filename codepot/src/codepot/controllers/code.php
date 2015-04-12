@@ -89,15 +89,27 @@ class Code extends Controller
 					$file['next_rev'] = $this->subversion->getNextRev (
 						$projectid, $path, $file['created_rev']);
 
+					$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
+					if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
+
+					$file['head_tag'] = $this->subversion->getRevProp ($projectid, $file['head_rev'], CODEPOT_SVN_TAG_PROPERTY);
+					if ($file['head_tag'] === FALSE) $file['head_tag'] = '';
+
+
 					$data['project'] = $project;
 					$data['headpath'] = $path;
 					$data['file'] = $file; 
 					$data['revision'] = $rev;
+
+
 					$this->load->view ($this->VIEW_FILE, $data);
 				}
 			}
 			else
 			{
+				$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
+				if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
+
 				$data['project'] = $project;
 				$data['headpath'] = $path;
 				$data['file'] = $file;
@@ -188,11 +200,19 @@ class Code extends Controller
 					$file['next_rev'] = $this->subversion->getNextRev (
 						$projectid, $path, $file['created_rev']);
 
+					$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
+					if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
+
+					$file['head_tag'] = $this->subversion->getRevProp ($projectid, $file['head_rev'], CODEPOT_SVN_TAG_PROPERTY);
+					if ($file['head_tag'] === FALSE) $file['head_tag'] = '';
+
+
 					$data['project'] = $project;
 					$data['headpath'] = $path;
 
 					$data['file'] = $file;
 					$data['revision'] = $rev;
+
 					$this->load->view ($this->VIEW_BLAME, $data);
 				}
 			}
@@ -243,6 +263,21 @@ class Code extends Controller
 			}
 			else
 			{
+				if (array_key_exists('history', $file))
+				{
+					// Inject the codepot defined tag.
+					foreach ($file['history'] as &$h)
+					{
+						if (array_key_exists('rev', $h))
+						{
+							$h['tag'] = $this->subversion->getRevProp ($projectid, $h['rev'], CODEPOT_SVN_TAG_PROPERTY);
+							if ($h['tag'] === FALSE) $h['tag'] = '';
+						}
+						else $h['tag'] = '';
+					}
+				}
+
+
 				$data['project'] = $project;
 				$data['fullpath'] = $path;
 				$data['file'] = $file;
@@ -295,38 +330,64 @@ class Code extends Controller
 			}
 
 			$data['popup_error_message'] = '';
-			if ($login['id'] != '' && 
-			    $login['id'] == $this->subversion->getRevProp($projectid, $rev, 'svn:author') &&
-			    $this->input->post('edit_log_message'))
+			if ($login['id'] != '')
 			{
-				// the current user must be the author of the revision to be able to 
-				// change the log message.
-				$this->load->helper ('form');
-				$this->load->library ('form_validation');
-
-				$this->form_validation->set_rules ('edit_log_message', 'Message', 'required|min_length[2]');
-				$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
-
-				if ($this->form_validation->run())
+				$tag = $this->input->post('tag_revision');
+				if ($tag !== FALSE)
 				{
-					$logmsg = $this->input->post('edit_log_message');
-					if ($logmsg != $this->subversion->getRevProp ($projectid, $rev, 'svn:log'))
+					$tag = trim($tag);
+					if (empty($tag)) 
 					{
-						$actual_rev = $this->subversion->setRevProp (
-							$projectid, $rev, 'svn:log', $logmsg, $login['id']);
-						if ($actual_rev === FALSE)
-						{
-							$data['popup_error_message'] = 'Cannot change revision log message';
-						}
-						else 
-						{
-							$this->form_validation->_field_data = array();
-						}
+						// delete the tag if the value is empty
+						$affected_rev = $this->subversion->killRevProp (
+							$projectid, $rev, CODEPOT_SVN_TAG_PROPERTY, $login['id']);
+					}
+					else
+					{
+						$affected_rev = $this->subversion->setRevProp (
+							$projectid, $rev, CODEPOT_SVN_TAG_PROPERTY, $tag, $login['id']);
+					}
+					if ($affected_rev === FALSE)
+					{
+						$data['popup_error_message'] = 'Cannot tag revision';
+					}
+					else 
+					{
+						$this->form_validation->_field_data = array();
 					}
 				}
-				else
+				else if ($login['id'] == $this->subversion->getRevProp($projectid, $rev, 'svn:author') &&
+				         $this->input->post('edit_log_message'))
 				{
-					$data['popup_error_message'] = 'Invalid revision log message';
+					// the current user must be the author of the revision to be able to 
+					// change the log message.
+					$this->load->helper ('form');
+					$this->load->library ('form_validation');
+	
+					$this->form_validation->set_rules ('edit_log_message', 'Message', 'required|min_length[2]');
+					$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
+	
+					if ($this->form_validation->run())
+					{
+						$logmsg = $this->input->post('edit_log_message');
+						if ($logmsg != $this->subversion->getRevProp ($projectid, $rev, 'svn:log'))
+						{
+							$affected_rev = $this->subversion->setRevProp (
+								$projectid, $rev, 'svn:log', $logmsg, $login['id']);
+							if ($affected_rev === FALSE)
+							{
+								$data['popup_error_message'] = 'Cannot change revision log message';
+							}
+							else 
+							{
+								$this->form_validation->_field_data = array();
+							}
+						}
+					}
+					else
+					{
+						$data['popup_error_message'] = 'Invalid revision log message';
+					}
 				}
 			}
 
@@ -421,6 +482,18 @@ class Code extends Controller
 				}
 				else
 				{
+					if (array_key_exists('history', $file))
+					{
+						// Inject the codepot defined tag.
+						$h = &$file['history'];
+						if (array_key_exists('rev', $h))
+						{
+							$h['tag'] = $this->subversion->getRevProp ($projectid, $h['rev'], CODEPOT_SVN_TAG_PROPERTY);
+							if ($h['tag'] === FALSE) $h['tag'] = '';
+						}
+						else $h['tag'] = '';
+					}
+
 					$data['project'] = $project;
 					$data['headpath'] = $path;
 					$data['file'] = $file;
@@ -431,7 +504,7 @@ class Code extends Controller
 						$this->subversion->getPrevRev ($projectid, $path, $rev);
 					$data['next_revision'] =
 						$this->subversion->getNextRev ($projectid, $path, $rev);
-	
+
 					$this->load->view ($this->VIEW_REVISION, $data);
 				}
 			}

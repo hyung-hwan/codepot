@@ -292,7 +292,15 @@ $this->load->view (
 	| 
 	<?php endif; ?>
 
-	<?php print $this->lang->line('Revision')?>: <?php print $file['created_rev']?> 
+	<?php 
+		printf ('%s: %s', $this->lang->line('Revision'), $file['created_rev']);
+		if (!empty($file['created_tag']))
+		{
+			print ('<span class="left_arrow_indicator">');
+			print htmlspecialchars($file['created_tag']);
+			print ('</span>');
+		}
+	?> 
 	<?php if ($file_count > 0): ?>
 	| 
 	<a id="code_folder_mainarea_details_button" href='#'><?php print $this->lang->line('Details')?></a>

@@ -120,6 +120,13 @@ $this->load->view (
 			($fullpath == '')? '.': $fullpath);
 
 		print anchor ("code/file/{$project->id}/{$xfullpath}/{$h['rev']}", $h['rev']);
+
+		if (!empty($h['tag']))
+		{
+			print '<span class="left_arrow_indicator">';
+			print htmlspecialchars($h['tag']);
+			print '</span>';
+		}
 		print '</td>';
 
 		print '<td>';
@@ -138,7 +145,6 @@ $this->load->view (
 		print htmlspecialchars($h['msg']);
 		print '</pre>';
 		print '</td>';
-
 
 		if ($file['type'] == 'file')
 		{
