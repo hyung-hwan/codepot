@@ -1,7 +1,7 @@
 
 dnl AC_PREREQ(2.59)
 
-AC_INIT([codepot],[0.2.0],,,[http://code.abiyo.net/@codepot])
+AC_INIT([codepot],[0.3.0],,,[http://code.abiyo.net/@codepot])
 AC_CONFIG_HEADER([./config.h])
 AC_CONFIG_AUX_DIR([ac/aux])
 AC_CONFIG_MACRO_DIR([ac/m4])
