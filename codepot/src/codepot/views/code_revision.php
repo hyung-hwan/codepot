@@ -20,6 +20,27 @@
 
 <?php if ($can_edit): ?>
 $(function() {
+	$("#code_revision_tag_div").dialog (
+		{
+			title: '<?php print $this->lang->line('Tag')?>',
+			width: 'auto',
+			height: 'auto',
+			resizable: false,
+			autoOpen: false,
+			modal: true,
+			buttons: {
+				'<?php print $this->lang->line('OK')?>': function () {
+					$('#code_revision_tag_form').submit ();
+					$(this).dialog('close');
+				},
+				'<?php print $this->lang->line('Cancel')?>': function () {
+					$(this).dialog('close');
+				}
+			},
+			close: function() { }
+		}
+	);
+
 	$("#code_revision_edit_div").dialog (
 		{
 			title: '<?php print $this->lang->line('Edit')?>',
@@ -38,6 +59,13 @@ $(function() {
 				}
 			},
 			close: function() { }
+		}
+	);
+
+	$("#code_revision_tag_button").button().click (
+		function () {
+			$("#code_revision_tag_div").dialog('open');
+			return false;
 		}
 	);
 
@@ -281,11 +309,30 @@ $history = $file['history'];
 </div> <!-- code_revision_mainarea_menu -->
 
 <div class="infostrip" id="code_revision_mainarea_infostrip">
-	<?php print anchor ("code/revision/{$project->id}/${xpar}/{$prev_revision}", '<<')?> 
-	<?php print $this->lang->line('Revision')?>: <?php print $history['rev']?> 
-	<?php print anchor ("code/revision/{$project->id}/${xpar}/{$next_revision}", '>>')?> | 
-	<?php print $this->lang->line('Committer')?>: <?php print htmlspecialchars($history['author'])?> | 
-	<?php print $this->lang->line('Last updated on')?>: <?php print date('r', strtotime($history['date']))?>
+	<?php
+		print anchor ("code/revision/{$project->id}/${xpar}/{$prev_revision}", '<<');
+		printf ('%s: %s',  $this->lang->line('Revision'), $history['rev']);
+		if (!empty($history['tag']))
+		{
+			print ('<span class="left_arrow_indicator">');
+			print htmlspecialchars($history['tag']);
+			print ('</span>');
+		}
+		print anchor ("code/revision/{$project->id}/${xpar}/{$next_revision}", '>>');
+
+		if ($can_edit)
+		{
+			print '<span class="anchor">';
+			print anchor ("#", $this->lang->line('Tag'), array ('id' => 'code_revision_tag_button'));
+			print '</span>';
+		}
+
+		print ' | ';
+		printf ('%s: %s',  $this->lang->line('Committer'), htmlspecialchars($history['author']));
+		print ' | ';
+
+		printf ('%s: %s',  $this->lang->line('Last updated on'), date('r', strtotime($history['date'])));
+	?>
 </div>
 
 
@@ -407,6 +454,19 @@ $history = $file['history'];
 </div> <!-- code_revision_content -->
 
 <?php if ($can_edit): ?>
+<div id="code_revision_tag_div">
+	<?php print form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_tag_form"')?>
+		<?php print 
+			form_input (
+				array ('name' => 'tag_revision', 
+				       'value' => $history['tag'], 
+				       'id' => 'code_revision_tag')
+			)
+
+		?>
+	<?php print form_close()?>
+</div>
+
 <div id="code_revision_edit_div">
 	<?php print form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_edit_logmsg_form"')?>
 		<?php print 

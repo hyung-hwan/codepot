@@ -224,6 +224,11 @@ cloc_command_path =  "@CFGDIR@/cloc.pl"
 code_folder_readme = "README.wiki,README.txt,README"
 
 ;------------------------------------------------------------------------------
+; Codepot sets this revision property to assign a tag to a specific revision. 
+;------------------------------------------------------------------------------
+svn_tag_property = "codepot:tag"
+
+;------------------------------------------------------------------------------
 ; Subversion read access is limited to the specified user type. The types 
 ; include anonymous, authenticated, member. This applies to a public project 
 ; only. Write access to any projects and read access to a non-public project

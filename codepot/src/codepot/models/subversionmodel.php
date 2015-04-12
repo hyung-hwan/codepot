@@ -179,7 +179,7 @@ class SubversionModel extends Model
 			if ($info === FALSE || count($info) != 1) 
 			{
 				//
-				// Try further with a given operatal revision 
+				// Try further with the original revision 
 				//
 				$rev = $orgrev;
 				$info = @svn_info ($url, FALSE, $rev);
@@ -834,6 +834,19 @@ class SubversionModel extends Model
 		@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $user);
 
 		$result = @svn_revprop_set ($url, $rev, $prop, $propval);
+
+		@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $orguser);
+		return $result;
+	}
+
+	function killRevProp ($projectid, $rev, $prop, $user)
+	{
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
+
+		$orguser = @svn_auth_get_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME);
+		@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $user);
+
+		$result = @svn_revprop_delete ($url, $rev, $prop);
 
 		@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $orguser);
 		return $result;
