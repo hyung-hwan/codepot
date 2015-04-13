@@ -217,7 +217,7 @@ function hide_unneeded_divs()
 ?></title>
 </head>
 
-<body onload="render_wiki(); hide_unneeded_divs()">
+<body onload="hide_unneeded_divs(); render_wiki();">
 
 <div class="content" id="code_revision_content">
 
