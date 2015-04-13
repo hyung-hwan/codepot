@@ -314,6 +314,7 @@ $history = $file['history'];
 		printf ('%s: %s',  $this->lang->line('Revision'), $history['rev']);
 		if (!empty($history['tag']))
 		{
+			print ' ';
 			print ('<span class="left_arrow_indicator">');
 			print htmlspecialchars($history['tag']);
 			print ('</span>');
