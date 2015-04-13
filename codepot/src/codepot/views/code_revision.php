@@ -200,6 +200,13 @@ function render_wiki()
 	print "}\n";
 	?>
 }
+
+function hide_unneeded_divs()
+{
+	// hide the properties division if its table contains no rows
+	var nrows = $('#code_revision_mainarea_result_properties_table tr').length;
+	if (nrows <= 0) $('#code_revision_mainarea_result_properties').hide();
+}
 </script>
 
 <title><?php 
@@ -210,7 +217,7 @@ function render_wiki()
 ?></title>
 </head>
 
-<body onload="render_wiki()">
+<body onload="render_wiki(); hide_unneeded_divs()">
 
 <div class="content" id="code_revision_content">
 
@@ -355,8 +362,9 @@ $history = $file['history'];
 </pre>
 </div>
 
+<div id="code_revision_mainarea_result_files">
 <div class="title"><?php print $this->lang->line('Files')?></div>
-<table id="code_revision_mainarea_result_table">
+<table id="code_revision_mainarea_result_files_table">
 <?php 
 	/*
 	print '<tr class="heading">';
@@ -367,7 +375,7 @@ $history = $file['history'];
 	
 	$rowclasses = array ('odd', 'even');
 	$rowcount = 0;
-	foreach ($history['paths'] as $p)
+	foreach ($history['paths'] as &$p)
 	{
 		$rowclass = $rowclasses[++$rowcount % 2];
 		print "<tr class='{$rowclass}'>";
@@ -392,9 +400,73 @@ $history = $file['history'];
 	}
 ?>
 </table>
+</div>
 
+<div id="code_revision_mainarea_result_properties">
+<div class="title"><?php print $this->lang->line('CODE_PROPERTIES');?></div>
+<table id="code_revision_mainarea_result_properties_table">
+<?php
+	$rowclasses = array ('odd', 'even');
+	$rowcount = 0;
+	foreach ($history['paths'] as &$p)
+	{
+		if (array_key_exists('props', $p) && array_key_exists('prev_props', $p))
+		{
+			$common_props = array_intersect_assoc ($p['props'], $p['prev_props']);
+			$added_props = array_diff_assoc ($p['props'], $common_props);	
+			$deleted_props = array_diff_assoc ($p['prev_props'], $common_props);	
 
+			if (count($added_props) > 0 || count($deleted_props) > 0)
+			{
+				$rowclass = $rowclasses[++$rowcount % 2];
+				$first = TRUE;
 
+				foreach ($added_props as $k => $v)
+				{
+					print "<tr class='{$rowclass}'>";
+					if ($first)
+					{
+						print "<td class='{$p['action']}'>";
+						$xpar = $this->converter->AsciiToHex ($p['path']);
+						print anchor ("code/file/{$project->id}/{$xpar}/{$history['rev']}", htmlspecialchars($p['path']));
+						$first = FALSE;
+					}
+					else print "<td>";
+					print '</td>';
+
+					print '<td class="A">';
+					printf ('%s - %s', htmlspecialchars($k), htmlspecialchars($v));
+					print '</td>';
+					print '</tr>';
+				}
+
+				foreach ($deleted_props as $k => $v)
+				{
+					print "<tr class='{$rowclass}'>";
+					if ($first)
+					{
+						print "<td class='{$p['action']}'>";
+						$xpar = $this->converter->AsciiToHex ($p['path']);
+						print anchor ("code/file/{$project->id}/{$xpar}/{$history['rev']}", htmlspecialchars($p['path']));
+						$first = FALSE;
+					}
+					else print "<td>";
+					print '</td>';
+
+					print '<td class="D">';
+					printf ('%s - %s', htmlspecialchars($k), htmlspecialchars($v));
+					print '</td>';
+					print '</tr>';
+				}
+
+			}
+		}
+	}
+?>
+</table>
+</div>
+
+<div id="code_revision_mainarea_result_comments">
 <div class="title"><?php print $this->lang->line('Comment')?>&nbsp;
 <?php if ($is_loggedin): ?>
 <span class='anchor'>
@@ -437,7 +509,7 @@ $history = $file['history'];
 
 ?>
 </div> <!-- code_revision_mainarea_review_comment -->
-
+</div> <!-- code_revision_mainarea_result_comments -->
 
 
 </div> <!-- code_revision_mainarea_result -->

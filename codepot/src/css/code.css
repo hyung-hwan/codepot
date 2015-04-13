@@ -215,11 +215,11 @@
 	white-space: pre-wrap;
 }
 
-#code_revision_mainarea_result_table td {
+#code_revision_mainarea_result_files_table td {
 	white-space: nowrap;
 }
 
-#code_revision_mainarea_result_table td.M {
+#code_revision_mainarea_result_files_table td.M {
 	white-space: nowrap;
 	background-image:url(images/page_white_edit.png);
 	background-position:2px 50%;
@@ -227,7 +227,7 @@
 	padding-left: 22px;
 }
 
-#code_revision_mainarea_result_table td.D {
+#code_revision_mainarea_result_files_table td.D {
 	white-space: nowrap;
 	background-image:url(images/page_white_delete.png);
 	background-position:2px 50%;
@@ -235,7 +235,7 @@
 	padding-left: 22px;
 }
 
-#code_revision_mainarea_result_table td.A {
+#code_revision_mainarea_result_files_table td.A {
 	white-space: nowrap;
 	background-image:url(images/page_white_add.png);
 	background-position:2px 50%;
@@ -243,7 +243,36 @@
 	padding-left: 22px;
 }
 
-#code_revision_mainarea_result_table td.R {
+#code_revision_mainarea_result_files_table td.R {
+	white-space: nowrap;
+	background-image:url(images/page_white_add.png);
+	background-position:2px 50%;
+	background-repeat:no-repeat;
+	padding-left: 22px;
+}
+
+#code_revision_mainarea_result_properties_table {
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+#code_revision_mainarea_result_properties_table td.M {
+	white-space: nowrap;
+	background-image:url(images/page_white_edit.png);
+	background-position:2px 50%;
+	background-repeat:no-repeat;
+	padding-left: 22px;
+}
+
+#code_revision_mainarea_result_properties_table td.D {
+	white-space: nowrap;
+	background-image:url(images/page_white_delete.png);
+	background-position:2px 50%;
+	background-repeat:no-repeat;
+	padding-left: 22px;
+}
+
+#code_revision_mainarea_result_properties_table td.A {
 	white-space: nowrap;
 	background-image:url(images/page_white_add.png);
 	background-position:2px 50%;
