@@ -21,7 +21,7 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: svn.c 333800 2014-06-16 05:22:31Z alan_k $ */
+/* $Id: svn.c 336509 2015-04-13 04:45:28Z alan_k $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -168,6 +168,8 @@ zend_function_entry svn_functions[] = {
 	PHP_FE(svn_move, NULL)
 	PHP_FE(svn_proplist, NULL)
 	PHP_FE(svn_propget, NULL)
+	PHP_FE(svn_propset, NULL)
+	PHP_FE(svn_prop_delete, NULL)
 	PHP_FE(svn_revprop_get, NULL)
 	PHP_FE(svn_revprop_set, NULL)
 	PHP_FE(svn_revprop_delete, NULL)
@@ -2851,6 +2853,122 @@ PHP_FUNCTION(svn_propget)
 			add_assoc_stringl(row, (char *)propname, (char *)propval->data, propval->len, 1);
 			add_assoc_zval(return_value, (char *)svn_path_local_style(pname, subpool), row);
 		}
+	}
+
+cleanup:
+	svn_pool_destroy(subpool);
+
+}
+/* }}} */
+
+/* {{{ proto mixed svn_propset(string path, string property_name, string property_value [, bool recurse [, bool skip_checks [, int revision]]])
+	Returns TRUE on success, FALSE on failure. */
+PHP_FUNCTION(svn_propset)
+{
+	const char *path = NULL, *utf8_path = NULL;
+	const char *propname = NULL, *propval = NULL;
+	int pathlen, propnamelen, propvallen;
+	zend_bool recurse = 0, skip_checks = 0;
+	apr_pool_t *subpool;
+	svn_error_t *err;
+	svn_opt_revision_t revision = { 0 }, peg_revision = { 0 };
+	apr_hash_index_t *hi;
+	const char *true_path;
+
+	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|bbl", 
+			&path, &pathlen, &propname, &propnamelen, &propval, &propvallen, &recurse, &skip_checks, &revision.value.number)) { 
+		return;
+	}
+
+	PHP_SVN_INIT_CLIENT();
+	subpool = svn_pool_create(SVN_G(pool));
+	if (!subpool) {
+		RETURN_FALSE;
+	}
+
+	err = svn_utf_cstring_to_utf8 (&utf8_path, path, subpool); 
+	if (err) { 
+		php_svn_handle_error(err TSRMLS_CC); 
+		RETVAL_FALSE; 
+		goto cleanup; 
+	} 
+
+	path = svn_path_canonicalize(utf8_path, subpool);
+	
+	revision.kind = php_svn_get_revision_kind(revision); 
+
+	err = svn_opt_parse_path(&peg_revision, &true_path, path, subpool);
+	if (err) {
+		php_svn_handle_error(err TSRMLS_CC); 
+		RETVAL_FALSE; 
+		goto cleanup; 
+	}
+ 
+	err = svn_client_propset2(propname, svn_string_ncreate(propval, propvallen, subpool), true_path, recurse, skip_checks, SVN_G(ctx), subpool);
+
+	if (err) {
+		php_svn_handle_error(err TSRMLS_CC);
+		RETVAL_FALSE;
+	} else {
+		RETVAL_TRUE;
+	}
+
+cleanup:
+	svn_pool_destroy(subpool);
+
+}
+/* }}} */
+
+/* {{{ proto mixed svn_prop_delete(string path, string property_name, [, bool recurse [, bool skip_checks [, int revision]]])
+	Returns TRUE on success, FALSE on failure. */
+PHP_FUNCTION(svn_prop_delete)
+{
+	const char *path = NULL, *utf8_path = NULL;
+	const char *propname = NULL;
+	int pathlen, propnamelen;
+	zend_bool recurse = 0, skip_checks = 0;
+	apr_pool_t *subpool;
+	svn_error_t *err;
+	svn_opt_revision_t revision = { 0 }, peg_revision = { 0 };
+	apr_hash_index_t *hi;
+	const char *true_path;
+
+	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|bbl", 
+			&path, &pathlen, &propname, &propnamelen, &recurse, &skip_checks, &revision.value.number)) { 
+		return;
+	}
+
+	PHP_SVN_INIT_CLIENT();
+	subpool = svn_pool_create(SVN_G(pool));
+	if (!subpool) {
+		RETURN_FALSE;
+	}
+
+	err = svn_utf_cstring_to_utf8 (&utf8_path, path, subpool); 
+	if (err) { 
+		php_svn_handle_error(err TSRMLS_CC); 
+		RETVAL_FALSE; 
+		goto cleanup; 
+	} 
+
+	path = svn_path_canonicalize(utf8_path, subpool);
+	
+	revision.kind = php_svn_get_revision_kind(revision); 
+
+	err = svn_opt_parse_path(&peg_revision, &true_path, path, subpool);
+	if (err) {
+		php_svn_handle_error(err TSRMLS_CC); 
+		RETVAL_FALSE; 
+		goto cleanup; 
+	}
+ 
+	err = svn_client_propset2(propname, NULL, true_path, recurse, skip_checks, SVN_G(ctx), subpool);
+
+	if (err) {
+		php_svn_handle_error(err TSRMLS_CC);
+		RETVAL_FALSE;
+	} else {
+		RETVAL_TRUE;
 	}
 
 cleanup:
