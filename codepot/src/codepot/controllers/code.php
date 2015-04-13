@@ -389,16 +389,8 @@ class Code extends Controller
 						$data['popup_error_message'] = 'Invalid revision log message';
 					}
 				}
-			}
-
-			if ($login['id'] != '')
-			{
-				if ($this->input->post('new_review_comment'))
+				else if ($this->input->post('new_review_comment'))
 				{
-					// Note that edit_log_message and new_review_comment are not 
-					// supposed to be/ POSTed at the same time. 
-					// this program may break if that happens.
-	
 					$this->load->helper ('form');
 					$this->load->library ('form_validation');
 	
@@ -482,6 +474,8 @@ class Code extends Controller
 				}
 				else
 				{
+					$prev_revision = $this->subversion->getPrevRev ($projectid, $path, $rev);
+
 					if (array_key_exists('history', $file))
 					{
 						// Inject the codepot defined tag.
@@ -492,18 +486,64 @@ class Code extends Controller
 							if ($h['tag'] === FALSE) $h['tag'] = '';
 						}
 						else $h['tag'] = '';
+
+
+						foreach ($h['paths'] as &$chg)
+						{
+							if ($chg['action'] == 'A' || $chg['action'] == 'M' || $chg['action'] == 'R')
+							{
+								$props = $this->subversion->listProps ($projectid, $chg['path'], $h['rev']);
+								if ($props === FALSE) $props = array ();
+								else 
+								{
+									if (empty($props))
+									{
+										$props = array();
+									}
+									else
+									{	
+										// get the first element in the associative array.
+										foreach ($props as &$p) break; 
+										$props = $p;
+									}
+								}
+
+								$prev_props = $this->subversion->listProps ($projectid, $chg['path'], $prev_revision);
+								if ($prev_props === FALSE) $prev_props = array ();
+								else 
+								{
+									if (empty($prev_props))
+									{
+										$prev_props = array();
+									}
+									else
+									{	
+										// get the first element in the associative array.
+										foreach ($prev_props as &$p) break;
+										$prev_props = $p;
+									}
+								}
+							
+								$chg['props'] = $props;	
+								$chg['prev_props'] = $prev_props;	
+
+								//print_r ($props);
+								//print_r ($prev_props);
+								//$common_props = array_intersect_assoc($props, $prev_props);
+								//print_r (array_diff_assoc($props, $common_props)); // added
+								//print_r (array_diff_assoc($prev_props, $common_props)); // deleted
+							}
+						}
 					}
 
 					$data['project'] = $project;
 					$data['headpath'] = $path;
 					$data['file'] = $file;
-					$data['reviews'] = $reviews;
+					$data['reviews'] = $reviews; 
 	
 					$data['revision'] = $rev;
-					$data['prev_revision'] =
-						$this->subversion->getPrevRev ($projectid, $path, $rev);
-					$data['next_revision'] =
-						$this->subversion->getNextRev ($projectid, $path, $rev);
+					$data['prev_revision'] = $prev_revision;
+					$data['next_revision'] = $this->subversion->getNextRev ($projectid, $path, $rev);
 
 					$this->load->view ($this->VIEW_REVISION, $data);
 				}
