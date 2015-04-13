@@ -175,9 +175,10 @@ print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $this->lang->line('D
 		printf ('%s: %s', $this->lang->line('Revision'), $file['created_rev']);
                 if (!empty($file['created_tag']))
                 {
-                        print ('<span class="left_arrow_indicator">');
-                        print htmlspecialchars($file['created_tag']);
-                        print ('</span>');
+			print ' ';
+			print ('<span class="left_arrow_indicator">');
+			print htmlspecialchars($file['created_tag']);
+			print ('</span>');
                 }
 		print anchor ("code/blame/{$project->id}/${xpar}/{$file['next_rev']}", '>>');
 
