@@ -2,7 +2,7 @@ This directory contains the source code of the PECL Subversion module.
 The whole directory has been checked out using the following command
 except the 'tests' subdirectory.
 
- svn checkout -r 333800 http://svn.php.net/repository/pecl/svn/trunk pecl-svn
+ svn checkout -r 336509 http://svn.php.net/repository/pecl/svn/trunk pecl-svn
 
 I include this PHP extension as its package which is new enough to support
 Codepot is not widely available on many Linux distros. Codepot requires 
