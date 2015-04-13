@@ -123,6 +123,7 @@ $this->load->view (
 
 		if (!empty($h['tag']))
 		{
+			print ' ';
 			print '<span class="left_arrow_indicator">';
 			print htmlspecialchars($h['tag']);
 			print '</span>';

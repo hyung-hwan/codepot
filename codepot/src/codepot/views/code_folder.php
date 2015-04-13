@@ -296,6 +296,7 @@ $this->load->view (
 		printf ('%s: %s', $this->lang->line('Revision'), $file['created_rev']);
 		if (!empty($file['created_tag']))
 		{
+			print ' ';
 			print ('<span class="left_arrow_indicator">');
 			print htmlspecialchars($file['created_tag']);
 			print ('</span>');
