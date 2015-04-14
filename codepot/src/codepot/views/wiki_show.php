@@ -121,10 +121,7 @@ $this->load->view (
 	<a id="wiki_show_mainarea_details_button" href='#'><?php print $this->lang->line('Details')?></a>
 </div>
 
-
-
-
-<div id="wiki_show_mainarea_result">
+<div id="wiki_show_mainarea_result" class="result">
 
 
 <div class="result" id="wiki_show_mainarea_wiki">
@@ -134,7 +131,7 @@ $this->load->view (
 </div> <!-- wiki_show_mainarea_wiki -->
 
 
-<div id="wiki_show_mainarea_result_info"> 
+<div id="wiki_show_mainarea_result_info" class="infobox"> 
 
 <ul>
 <li><?php print $this->lang->line('Created on')?> <?php print  $wiki->createdon ?></li>
