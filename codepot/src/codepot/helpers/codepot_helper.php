@@ -151,9 +151,10 @@ if ( !function_exists ('codepot_zip_dir'))
 	// $exclude: file names to exclude. string or array of strings
 	function codepot_zip_dir ($output_file, $path, $local_path = NULL, $exclude = NULL)
 	{
-		$stack = array ();
-
 		if (!is_dir($path)) return FALSE;
+		if (!class_exists('ZipArchive')) return FALSE;
+
+		$stack = array ();
 
 		array_push ($stack, $path); 
 		$prefix = strlen($path);
