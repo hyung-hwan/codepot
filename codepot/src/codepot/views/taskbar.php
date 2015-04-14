@@ -113,10 +113,20 @@ function show_taskbar ($con, $login)
 	print '</div>'; // boxb
 
 	print '<div class="boxa">';
+	print '<ul>';
+	print '<li>';
 	print anchor ('site/home', $con->lang->line('Home'));
+	print '</li>';
+	print '<li>';
 	print anchor ('project/catalog', $con->lang->line('Projects'));
+	print '</li>';
 	if ($login['sysadmin?'])
+	{
+		print '<li>';
 		print anchor ('site/catalog', $con->lang->line('Administration'));
+		print '</li>';
+	}
+	print '</ul>';
 	print '</div>';
 
 	print '</div>';

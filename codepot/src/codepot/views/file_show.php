@@ -114,7 +114,7 @@ $this->load->view (
 
 
 
-<div id="file_show_mainarea_result_info">
+<div id="file_show_mainarea_result_info" class="infobox">
 
 	<ul>
 	<li><?php print $this->lang->line('Created on')?> <?php print  $file->createdon ?></li>
