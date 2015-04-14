@@ -216,13 +216,13 @@ $this->load->view (
 	<?php 
 		print anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<');
 		printf ('%s: %s', $this->lang->line('Revision'), $file['created_rev']);
-                if (!empty($file['created_tag']))
-                {
+		if (!empty($file['created_tag']))
+		{
 			print ' ';
 			print ('<span class="left_arrow_indicator">');
 			print htmlspecialchars($file['created_tag']);
 			print ('</span>');
-                }
+		}
 		print anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>');
 
 		print ' | ';
@@ -278,7 +278,7 @@ if ($login['settings'] != NULL &&
 ?>
 </pre>
 
-<div id="code_file_mainarea_result_info">
+<div id="code_file_mainarea_result_info" class="infobox">
 <div class="title"><?php print  $this->lang->line('CODE_COMMIT') ?></div>
 <?php printf ($this->lang->line('CODE_MSG_COMMITTED_BY_ON'), $file['last_author'], $file['time']); ?>
 

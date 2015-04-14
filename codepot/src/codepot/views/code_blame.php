@@ -248,7 +248,7 @@ if ($login['settings'] != NULL &&
 ?>
 </pre>
 
-<div id="code_blame_mainarea_result_info">
+<div id="code_blame_mainarea_result_info" class="infobox">
 <div class="title"><?php print  $this->lang->line('CODE_COMMIT') ?></div>
 <?php printf ($this->lang->line('CODE_MSG_COMMITTED_BY_ON'), $file['last_author'], $file['time']); ?>
 

@@ -458,7 +458,7 @@ $this->load->view (
 			print '</div>';
 		}
 
-		print '<div id="code_folder_mainarea_result_info">';
+		print '<div id="code_folder_mainarea_result_info" class="infobox">';
 
 		print '<div class="title">';
 		print $this->lang->line('CODE_COMMIT');

@@ -16,8 +16,10 @@
 	</div>
 
 	<div class="boxa">
-        <?php print  anchor ('site/home', $this->lang->line('Home')) ?>
-        <?php print  anchor ('project/catalog', $this->lang->line('Projects')) ?>
+		<ul>
+		<li><?php print  anchor ('site/home', $this->lang->line('Home')); ?></li>
+		<li><?php print  anchor ('project/catalog', $this->lang->line('Projects')); ?></li>
+		</ul>
 	</div>
 </div>
 

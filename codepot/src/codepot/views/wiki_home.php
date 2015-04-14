@@ -45,7 +45,7 @@ $this->load->view (
 <div class="mainarea" id="wiki_home_mainarea">
 <div class="title"><?php print $this->lang->line('Wikis')?></div>
 
-<div id="wiki_home_textarea">
+<div id="wiki_home_mainarea_result" class="result">
 <?php
 if (empty($wikis))
 {
