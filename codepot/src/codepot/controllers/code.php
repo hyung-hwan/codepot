@@ -101,7 +101,6 @@ class Code extends Controller
 					$data['file'] = $file; 
 					$data['revision'] = $rev;
 
-
 					$this->load->view ($this->VIEW_FILE, $data);
 				}
 			}
