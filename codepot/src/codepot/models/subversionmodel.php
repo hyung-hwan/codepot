@@ -1047,11 +1047,12 @@ class SubversionModel extends Model
 			return FALSE;
 		}
 
-		if (codepot_zip_dir ("{$tfname}.zip", $actual_tfname, $topdir, array('.svn')) === FALSE) 
+		$zip_name = "{$tfname}.zip";
+		if (codepot_zip_dir ($zip_name, $actual_tfname, $topdir, array('.svn')) === FALSE) 
 		{
 			codepot_delete_files ($actual_tfname, TRUE);
 			@unlink ($tfname);
-			@unlink ("{$tfname}.zip"); // delete potentially residual zip file 
+			@unlink ($zip_name); // delete potentially residual zip file 
 			return FALSE;
 		}
 
