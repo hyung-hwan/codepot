@@ -1002,6 +1002,11 @@ class SubversionModel extends Model
 
 	function zipSubdir ($projectid, $path, $rev, $topdir)
 	{
+		// codepot_zip_dir() uses ZipArchive. Check if the class
+		// exists not to perform any intermediate steps when it's
+		// not available.
+		if (!class_exists('ZipArchive')) return FALSE;
+		
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
@@ -1050,7 +1055,9 @@ class SubversionModel extends Model
 			return FALSE;
 		}
 
-		//codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
+		// temporary files are not deleted here.
+		// the caller must clear temporary files.
+
 		return $tfname;
 	}
 }
