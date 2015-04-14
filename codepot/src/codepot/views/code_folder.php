@@ -282,7 +282,7 @@ $this->load->view (
 
 
 <div class="infostrip" id="code_folder_mainarea_infostrip">
-	
+
 	<?php if (CODEPOT_SIGNIN_FOR_CODE_SEARCH === FALSE || (isset($login['id']) && $login['id'] != '')): ?>
 	<?php print form_open("code/search/{$project->id}/", 'id="code_folder_search_form"')?>
 	<?php print form_hidden('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_folder_search_folder"')?>
@@ -350,6 +350,11 @@ $this->load->view (
 		else
 			print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
 
+		print ' | ';
+		print anchor (
+			"code/fetch/{$project->id}/${xpar}{$revreq}",
+			$this->lang->line('Download'));
+		
 		print '</div>';
 
 		usort ($file['content'], 'comp_files');
