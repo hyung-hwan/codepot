@@ -143,6 +143,82 @@ if ( !function_exists ('codepot_delete_files'))
 	}
 }
 
+if ( !function_exists ('codepot_zip_dir'))
+{
+	// $output_file: zip file to create
+	// $path: directory to zip recursively
+	// $local_path: the leading $path part is translated to $local_path
+	// $exclude: file names to exclude. string or array of strings
+	function codepot_zip_dir ($output_file, $path, $local_path = NULL, $exclude = NULL)
+	{
+		$stack = array ();
+
+		if (!is_dir($path)) return FALSE;
+
+		array_push ($stack, $path); 
+		$prefix = strlen($path);
+
+		$zip = new ZipArchive();
+		if (@$zip->open ($output_file, ZipArchive::OVERWRITE) === FALSE) return FALSE;
+
+		while (!empty($stack))
+		{
+			$dir = array_pop($stack);
+
+			$d = @opendir ($dir);
+			if ($d === FALSE) continue;
+
+			$new_path = empty($local_path)? $dir: substr_replace($dir, $local_path, 0, $prefix);
+			if (@$zip->addEmptyDir($new_path) == FALSE)
+			{
+				@closedir ($dir);
+				$zip->close ();
+				return FALSE;
+			}
+
+			//printf (">> [%s] [%s]\n", $dir, $new_path);
+			while (($f = @readdir($d)) !== FALSE)
+			{
+				if ($f == '.' || $f == '..') continue;
+				if (!empty($exclude))
+				{
+					$found = FALSE;
+					if (is_array($exclude))
+					{
+						foreach ($exclude as $ex)
+						{
+							if (fnmatch ($ex, $f, FNM_PERIOD | FNM_PATHNAME)) 
+							{
+								$found = TRUE;
+								break;
+							}
+						}
+						if ($found) continue;
+					}
+					else if (fnmatch($exclude, $f, FNM_PERIOD | FNM_PATHNAME)) continue;
+				}
+
+				$full_path = $dir . DIRECTORY_SEPARATOR . $f;
+				if (is_dir($full_path))
+				{
+					array_push ($stack, $full_path);
+				}
+				else
+				{
+					$new_path = empty($local_path)? $dir: substr_replace($full_path, $local_path, 0, $prefix);
+					@$zip->addFile ($full_path, $new_path);
+					//printf ("[%s] [%s]\n", $full_path, $new_path);
+				}
+			}
+
+			@closedir ($dir);
+		}
+
+		$zip->close ();
+		return TRUE;
+	}
+}
+
 if ( !function_exists ('codepot_find_longest_matching_sequence'))
 {
 	function codepot_find_longest_matching_sequence ($old, $old_start, $old_len, $new, $new_start, $new_len)

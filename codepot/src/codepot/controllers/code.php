@@ -223,7 +223,7 @@ class Code extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
-	
+
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
@@ -665,7 +665,7 @@ class Code extends Controller
 			if ($file === FALSE)
 			{
 				$data['project'] = $project;
-				$data['message'] = 'Failed to get file';
+				$data['message'] = "Failed to get a file - $path";
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
 			else if ($file['type'] == 'file')
@@ -682,33 +682,49 @@ class Code extends Controller
 			}
 			else
 			{
-				$data['project'] = $project;
-				$data['headpath'] = $path;
-				$data['file'] = $file;
+				$forced_name = $projectid . $file['fullpath'];
+				$forced_name = str_replace ('/', '-', $forced_name);
+				//$tag = $this->subversion->getRevProp (
+					//	$projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
+				//if ($tag === FALSE) $tag = '';
+				//if (!empty($tag)) 
+				//{
+				//	$forced_name = $forced_name . '-' . $tag;
+				//}
+				//else
+				//{
+					$forced_name = $forced_name . '-r' . $file['created_rev'];
+				//}
 
-				$data['revision'] = $rev;
-				$data['prev_revision'] =
-					$this->subversion->getPrevRev ($projectid, $path, $rev);
-				$data['next_revision'] =
-					$this->subversion->getNextRev ($projectid, $path, $rev);
-
-				$data['readme_text'] = '';
-				$data['readme_file'] = '';
-				foreach (explode(',', CODEPOT_CODE_FOLDER_README) as $rf)
+				$filename = $this->subversion->zipSubdir ($projectid, $path, $rev, $forced_name);
+				if ($filename === FALSE)
 				{
-					$rf = trim($rf);
-					if (strlen($rf) > 0)
-					{
-						$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
-						if ($readme !== FALSE)
-						{
-							$data['readme_text'] = $readme['content'];
-							$data['readme_file'] = $rf;
-							break;
-						}
-					}
+					$data['project'] = $project;
+					$data['message'] = "Failed to zip a directory for $path";
+					$this->load->view ($this->VIEW_ERROR, $data);
 				}
-				$this->load->view ($this->VIEW_FOLDER, $data);
+				else
+				{
+					$dir_name = $filename . '.d';
+					$zip_name = $filename . '.zip';
+
+					$forced_zip_name = $forced_name . '.zip';
+
+					header ('Content-Description: File Transfer');
+					header ('Content-Type: application/zip');
+					header ('Content-Disposition: attachment; filename='. $forced_zip_name);
+					header ('Content-Transfer-Encoding: binary');
+					header ('Content-Length: ' . filesize($zip_name));
+					flush ();
+
+					@readfile ($zip_name);
+					// meaningless to show the error page after headers
+					// have been sent event if readfile fails.
+
+					codepot_delete_files ($dir_name, TRUE);
+					@unlink ($zip_name);
+					@unlink ($filename);
+				}
 			}
 		}
 	}
@@ -737,7 +753,7 @@ class Code extends Controller
 			if ($file === FALSE)
 			{
 				$data['project'] = $project;
-				$data['message'] = "Failed to get file - %path";
+				$data['message'] = "Failed to get file - $path";
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
 
@@ -982,8 +998,7 @@ class Code extends Controller
 							$stats[$date] = 1;
 					}
 				}
-	
-	
+
 				ksort ($stats);
 				$stats_count = count($stats);
 				$idx = 1;
@@ -994,24 +1009,23 @@ class Code extends Controller
 						$min_year = substr($k, 0, 4);
 						$min_month = substr($k, 5, 2);
 					}
-	
+
 					if ($idx == $stats_count) 
 					{
 						$max_year = substr($k, 0, 4);
 						$max_month = substr($k, 5, 2);
 					}
-	
 
 					$idx++;	
 					$total_commits += $v;
-				}	
-	
+				}
+
 				$total_months  = 0; 
 				for ($year = $min_year; $year <= $max_year; $year++)
 				{
 					$month = ($year == $min_year)? $min_month: 1;
 					$month_end = ($year == $max_year)? $max_month: 12;
-	
+
 					while ($month <= $month_end)
 					{
 						$date = sprintf ("%04d-%02d", $year, $month);
