@@ -921,25 +921,25 @@ class SubversionModel extends Model
 		$cloc = @popen ($cloc_cmd, 'r');
 		if ($cloc === FALSE)
 		{
-				codepot_delete_files ($actual_tfname, TRUE);
-				@unlink ($tfname);
-				return FALSE;
+			codepot_delete_files ($actual_tfname, TRUE);
+			@unlink ($tfname);
+			return FALSE;
 		}
 
 		$line_count = 0;
 		$cloc_data = array ();
 		while (!feof($cloc))
 		{
-				$line = @fgets ($cloc);
-				if ($line === FALSE) break;
+			$line = @fgets ($cloc);
+			if ($line === FALSE) break;
 
-				$line_count++;
-				$line = trim($line);
-				if ($line_count >= 3)
-				{
-					$counter = explode (':', $line);
-					$cloc_data[$counter[1]] = array ($counter[0], $counter[2], $counter[3], $counter[4]);
-				}
+			$line_count++;
+			$line = trim($line);
+			if ($line_count >= 3)
+			{
+				$counter = explode (':', $line);
+				$cloc_data[$counter[1]] = array ($counter[0], $counter[2], $counter[3], $counter[4]);
+			}
 		}
 
 		@pclose ($cloc);
@@ -998,6 +998,61 @@ class SubversionModel extends Model
 		}
 
 		return $cloc_data;
+	}
+
+	function zipSubdir ($projectid, $path, $rev, $topdir)
+	{
+		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+
+		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
+		$info = @svn_info ($workurl, FALSE, $rev);
+		if ($info === FALSE || count($info) != 1) 
+		{
+			// If a URL is at the root of repository and the url type is file://
+			// (e.g. file:///svnrepo/codepot/ where /svnrepo/codepot is a project root),
+			// some versions of libsvn end up with an assertion failure like
+			//  ... libvvn_subr/path.c:114: svn_path_join: Assertion `svn_path_is_canonical(base, pool)' failed. 
+			// 
+			// Since the root directory is guaranteed to exist at the head revision,
+			// the information can be acquired without using a peg revision.
+			// In this case, a normal operational revision is used to work around
+			// the assertion failure. Other functions that has to deal with 
+			// the root directory should implement this check to work around it.
+			//
+			if ($rev == SVN_REVISION_HEAD || $path == '') return FALSE;
+
+			// rebuild the URL with a peg revision and retry it.
+			$workurl = "{$orgurl}@{$rev}";
+			$info = @svn_info ($workurl, FALSE, $rev);
+			if ($info === FALSE || count($info) != 1)  return FALSE;
+		}
+
+		// pass __FILE__ as the first argument so that tempnam creates a name
+		// in the system directory. __FILE__ can never be a valid directory.
+		$tfname = @tempnam(__FILE__, 'codepot-fetch-folder-');
+		if ($tfname === FALSE) return FALSE;
+
+		$actual_tfname = $tfname . '.d';
+		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
+
+		if (@svn_checkout ($workurl, $actual_tfname, $rev, 0) === FALSE)
+		{
+			codepot_delete_files ($actual_tfname, TRUE);
+			@unlink ($tfname);
+			return FALSE;
+		}
+
+		//exec ("zip {$tfname}.zip -r {$actual_tfname}");
+		if (codepot_zip_dir ("{$tfname}.zip", $actual_tfname, $topdir, array('.svn')) === FALSE) 
+		{
+			codepot_delete_files ($actual_tfname, TRUE);
+			@unlink ($tfname);
+			@unlink ("{$tfname}.zip"); // delete potentially residual zip file 
+			return FALSE;
+		}
+
+		//codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
+		return $tfname;
 	}
 }
 
