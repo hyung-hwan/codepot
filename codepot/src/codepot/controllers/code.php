@@ -626,6 +626,16 @@ class Code extends Controller
 		return $this->_do_diff ($projectid, $path, $rev1, $rev2, TRUE);
 	}
 
+	protected function _clear_zip_residue ($filename)
+	{
+		$dir_name = $filename . '.d';
+		$zip_name = $filename . '.zip';
+
+		codepot_delete_files ($dir_name, TRUE);
+		@unlink ($zip_name);
+		@unlink ($filename);
+	}
+
 	function fetch ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
@@ -710,6 +720,12 @@ class Code extends Controller
 
 					$forced_zip_name = $forced_name . '.zip';
 
+					// deleting residue files after @readfile() didn't
+					// work reliably when file download has been
+					// interrupted or cancelled. using the shutdown
+					// hook seemed more reliable.
+					@register_shutdown_function (array($this, '_clear_zip_residue'), $filename);
+
 					header ('Content-Description: File Transfer');
 					header ('Content-Type: application/zip');
 					header ('Content-Disposition: attachment; filename='. $forced_zip_name);
@@ -721,9 +737,7 @@ class Code extends Controller
 					// meaningless to show the error page after headers
 					// have been sent event if readfile fails.
 
-					codepot_delete_files ($dir_name, TRUE);
-					@unlink ($zip_name);
-					@unlink ($filename);
+					exit (0); // it looks like the shutdown callback is not called without exit().
 				}
 			}
 		}
