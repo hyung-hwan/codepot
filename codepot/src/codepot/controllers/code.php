@@ -665,7 +665,7 @@ class Code extends Controller
 			if ($file === FALSE)
 			{
 				$data['project'] = $project;
-				$data['message'] = "Failed to get a file - $path";
+				$data['message'] = "Failed to get a file";
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
 			else if ($file['type'] == 'file')
@@ -700,7 +700,7 @@ class Code extends Controller
 				if ($filename === FALSE)
 				{
 					$data['project'] = $project;
-					$data['message'] = "Failed to zip a directory for $path";
+					$data['message'] = "Failed to zip a directory";
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 				else
