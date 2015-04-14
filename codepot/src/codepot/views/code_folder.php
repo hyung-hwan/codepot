@@ -280,7 +280,6 @@ $this->load->view (
 ?>
 </div>
 
-
 <div class="infostrip" id="code_folder_mainarea_infostrip">
 
 	<?php if (CODEPOT_SIGNIN_FOR_CODE_SEARCH === FALSE || (isset($login['id']) && $login['id'] != '')): ?>
