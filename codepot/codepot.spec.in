@@ -35,7 +35,9 @@ Conflicts: %{php_package_name}-pecl-svn
 
 %description peclsvn
 This package contains svn.so for PHP. You can install this package
-if your system doesn't have a proper Subversion extenstion for PHP.
+if your system doesn't have a proper Subversion extenstion required by Codepot.
+It is also safe to install this RPM package without Codepot by ignoring the
+dependency.
 
 %prep
 %setup -q
