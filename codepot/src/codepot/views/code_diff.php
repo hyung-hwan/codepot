@@ -16,6 +16,12 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
+<script type="text/javascript">
+$(function() {
+	prettyPrint();
+});
+</script>
+
 <title><?php 
 	if ($headpath == '')
 		printf ('%s', htmlspecialchars($project->name));
@@ -24,7 +30,7 @@
 ?></title>
 </head>
 
-<body onload="prettyPrint()">
+<body>
 
 <div class="content" id="code_diff_content">
 
@@ -161,7 +167,7 @@ function format_diff2 ($a, $b, $css_class)
 				$cc .= '</span>';
 			}
 			$cc .= htmlspecialchars(substr($a, $mp1, $ml));
-			$k = $mp1 + $ml;	
+			$k = $mp1 + $ml;
 		}
 		if ($k < strlen($a)) 
 		{
@@ -348,7 +354,7 @@ if (FALSE) // don't want to delete code for the original diff view.
 				print $x['rev1lineno'];
 				print '</td>';
 			}
-	
+
 			if (array_key_exists('rev2line', $x)) 
 			{
 				$diffclass = array_key_exists('rev2diffclass', $x)? $x['rev2diffclass']: 'diff';
@@ -398,11 +404,11 @@ else
 		$prevanc = "code/fulldiff/{$project->id}/{$xpar}/{$currev}/{$prevrev}";
 		print anchor ($prevanc, '<<');
 		print '&nbsp;&nbsp;&nbsp;';
-	
+
 		print $this->lang->line('Revision');
 		print ' ';
 		print $file['against']['created_rev'];
-	
+
 		$currev = $file['created_rev'];
 		$nextrev = $file['against']['next_rev'];
 		$nextanc = "code/fulldiff/{$project->id}/{$xpar}/{$currev}/{$nextrev}";
@@ -442,7 +448,6 @@ else
 		}
 		printf ("</div>");
 		print '</pre>';
-
 
 		print ("<div style='float:left; width: 49%;'>");
 

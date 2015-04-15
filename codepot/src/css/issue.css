@@ -179,11 +179,12 @@
 	font-size: 1em;
 }
 
+
 /* all these elements inside the form requires a lot of refinement.
  * many of these are duplicates of elemenents in common.css */
 #issue_change_form .form_input_preview {
 	background-color: #FFFFF0;
-	font-size: 0.9em;
+	font-size: 1em;
 	padding: 0.2em 0.2em 0.2em 0.2em;
 	margin-bottom: 0.5em;
 }
@@ -194,10 +195,24 @@
 
 #issue_change_form .form_input_preview pre {
 	background-color: #F8F8FA;
-	padding: 0.2em 0.2em 0.2em 0.2em;
+	/*padding: 0.2em 0.2em 0.2em 0.2em;*/
+
+	background-color: #F8F8FA;
+	border: none;
+	font-family: consolas, "Andale Mono", monospace;
+	line-height: 1.2em;
+	padding: 0.3em;
+
+	tab-size: 5;
+	-moz-tab-size: 5;
+	-o-tab-size: 5;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 }
 
-#issue_change_comment_preview_button {
+#issue_change_comment_preview_button.ui-button {
 	font-size: 0.8em;
 }
 
