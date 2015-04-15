@@ -82,24 +82,13 @@ body {
 	float: right;
 }
 
-.content .taskbar .boxb .user_icon_img {
-	height: 2em; /* as large as line-height of taskbar */
-	width: auto;
-	vertical-align: middle;
-	margin-right: 2px;
-	
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-}
-
-.content .taskbar a {
+.content .taskbar .boxa a {
 	text-decoration: none;
 	color: #FFFFFF;
 	padding: 6px;
 }
 
-.content .taskbar a:hover {
+.content .taskbar .boxa a:hover {
 	padding: 6px;
 	background-color: #4472B9;
 	color: #FFFFFF;
@@ -109,86 +98,19 @@ body {
 	border-radius: 3px;
 }
 
-.content .taskbar a:active {
+.content .taskbar .boxa a:active {
 	text-decoration: none;
 }
 
-.content .taskbar form {
-	margin: 0;
-	padding-right: 5px;
-}
-
-.content .taskbar form input {
-/*	font-size: inherit;
-	font-family: inherit;
-	border: 0;
-	margin: 0;
-	padding: 0;
-*/
-
-	-moz-box-shadow: 0 2px 4px #bbb inset;
-	-webkit-box-shadow: 0 2px 4px #BBB inset;
-	box-shadow: 0 2px 4px #BBB inset;
-
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-
-	font-size: 1em;
-	border: 0 none;
-	height: 1.8em; 
-	vertical-align: middle;
-}
-
-.content .taskbar ul {
+.content .taskbar .boxa ul {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
+	white-space: nowrap;
 }
 
-.content .taskbar ul li {
+.content .taskbar .boxa ul li {
 	display: inline;
-}
-
-
-.content .taskbar form input[type="text"] {
-}
-
-.content .taskbar form input[type="password"] {
-}
-
-.content .taskbar form input[type="submit"] {
-	cursor: pointer;
-	height: 1.8em;
-	vertical-align: middle;
-	padding-left: 5px;
-	padding-right: 5px;
-	text-transform: uppercase;
-
-	background: #3498db;
-	background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
-	background-image: -moz-linear-gradient(top, #3498db, #2980b9);
-	background-image: -ms-linear-gradient(top, #3498db, #2980b9);
-	background-image: -o-linear-gradient(top, #3498db, #2980b9);
-	background-image: linear-gradient(to bottom, #3498db, #2980b9);
-	-webkit-border-radius: 28;
-	-moz-border-radius: 28;
-	border-radius: 5px;
-	text-shadow: 1px 1px 3px #666666;
-	color: #ffffff;
-	text-decoration: none;
-
-	font-size: 1em;
-	border: 0 none;
-}
-
-.content .taskbar form input[type="submit"]:hover {
-	background: #3cb0fd;
-	background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
-	background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
 }
 
 .content .projectbar {
@@ -832,29 +754,7 @@ pre.prettyprint li.L9 { background: #eee }
 }
 
 /* === signin panel === */
-#taskbar_signin_panel {
-	position: absolute;
-	right: 0.8em;
-	top: 0.8em;
-}
-
-#taskbar_signin_form_panel {
-	background-color: black;
-	padding: 0.6em 0.6em 0.6em 0.6em;
-	float: right;
-	white-space: nowrap;
-}
-
-#taskbar_signin_button_panel {
-	float: right;
-	margin-left: 0.3em;
-}
-
-#taskbar_signin_button_panel a {
-	color: #0073EA;
-}
-
-#taskbar_signin_form fieldset {
+#taskbar_signinout_form fieldset {
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -865,6 +765,7 @@ pre.prettyprint li.L9 { background: #eee }
 	background: url("images/username.png") no-repeat scroll 0% 0% rgb(234, 231, 231);
 	background-position: 0px 1px !important;
 	padding-left: 24px;
+	text-align: left;
 }
 
 #taskbar_user_name:focus {
@@ -876,6 +777,7 @@ pre.prettyprint li.L9 { background: #eee }
 	background: url("images/password.png") no-repeat scroll 0% 0% rgb(234, 231, 231);
 	background-position: 0px 1px !important;
 	padding-left: 24px;
+	text-align: left;
 }
 
 #taskbar_user_pass:focus {
@@ -883,13 +785,47 @@ pre.prettyprint li.L9 { background: #eee }
 	outline: 0;
 }
 
-/*
-#taskbar_signin_button {
+#taskbar_user_title {
+	text-decoration: none;
+	color: #FFFFFF;
+	padding: 6px;
 }
 
-#taskbar_signout_button {
+#taskbar_user_title:hover {
+	padding: 6px;
+	background-color: #4472B9;
+	color: #FFFFFF;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 }
-*/
+
+#taskbar_user_title:active {
+	text-decoration: none;
+}
+
+#taskbar_user_icon {
+	height: 2em; /* as large as line-height of taskbar */
+	width: auto;
+	vertical-align: middle;
+	margin-right: 2px;
+	
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+#taskbar_project_to_find {
+	text-align: left;
+}
+
+#taskbar_signinout_button {
+
+}
+
+#taskbar_signinout_button .ui-button-text {
+	line-height: 1em;
+}
 
 /* ================ login page =================== */
 

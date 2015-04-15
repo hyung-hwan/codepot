@@ -154,13 +154,15 @@ $(function () {
 			render_wiki_comment_preview ($("#issue_change_comment").val());
 		}
 	);
+
+	render_wiki();
 });
 </script>
 
 <title><?php print htmlspecialchars($project->name)?> - <?php print $this->lang->line('Issue')?> <?php print htmlspecialchars($issue->id)?></title>
 </head>
 
-<body onload="render_wiki()">
+<body>
 
 <div class="content" id="issue_show_content">
 
@@ -405,11 +407,9 @@ $this->load->view (
 		</div>
 
 		<div>
-			<?php print form_label ($this->lang->line('Owner'),
-				'issue_change_owner')
-			?>
+		<?php
+			print form_label ($this->lang->line('Owner'), 'issue_change_owner');
 
-			<?php
 			$owner_array = array ();
 			$found = FALSE;
 			foreach ($project->members as $t) 
@@ -418,19 +418,20 @@ $this->load->view (
 				$owner_array[$t] = $t;
 			}
 			if ($found === FALSE) $owner_array[$issue->owner] = $issue->owner;
-			?>
-			
-			<?php print form_dropdown (
+
+			print form_dropdown (
 				'issue_change_owner', 
 				$owner_array,
 				set_value('issue_change_owner', $issue->owner),
-				'id="issue_change_owner"')
+				'id="issue_change_owner"');
 			?>
 		</div>
 
 		<div>
 			<?php print form_label ($this->lang->line('Comment'), 'issue_change_comment')?>
 			<a href='#' id='issue_change_comment_preview_button'><?php print $this->lang->line('Preview')?></a>
+		</div>
+		<div>
 			<?php
 				$xdata = array (
 					'name' => 'issue_change_comment',
@@ -441,9 +442,9 @@ $this->load->view (
 				);
 				print form_textarea ($xdata);
 			?>
-
-			<div id='issue_change_comment_preview' class='form_input_preview'></div>
 		</div>
+
+		<div id='issue_change_comment_preview' class='form_input_preview'></div>
 	<?php print form_close()?>
 </div> <!-- issue_show_change_form -->
 

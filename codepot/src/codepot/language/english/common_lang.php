@@ -69,6 +69,7 @@ $lang['Path'] = 'Path';
 $lang['Preview'] = 'Preview';
 $lang['Priority'] = 'Priority';
 $lang['Project'] = 'Project';
+$lang['Project ID'] = 'Project ID';
 $lang['Projects'] = 'Projects';
 $lang['Public'] = 'Public';
 $lang['Purge'] = 'Purge';

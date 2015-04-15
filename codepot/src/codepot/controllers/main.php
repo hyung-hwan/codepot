@@ -32,7 +32,7 @@ class Main extends Controller
 		
 		$data['message'] = '';
 
-		if($this->input->post('login'))
+		if($this->input->post('user_name'))
 		{
 			$user_name = $this->input->post('user_name');
 			$user_pass = $this->input->post('user_pass');

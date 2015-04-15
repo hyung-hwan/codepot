@@ -21,6 +21,7 @@
 
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <script type="text/javascript">
 function render_wiki() 
@@ -34,12 +35,16 @@ function render_wiki()
 
 	prettyPrint ();
 }
+
+$(function() {
+	render_wiki ();
+});
 </script>
 
 <title><?php print htmlspecialchars($project->name)?></title>
 </head>
 
-<body onload="render_wiki()">
+<body>
 
 <div class="content" id="project_home_content">
 

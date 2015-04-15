@@ -30,10 +30,8 @@ $(function () {
 		btn_label = "<?php print $this->lang->line('Hide details')?>";
 	else
 		btn_label = "<?php print $this->lang->line('Show details')?>";
-	
 
 	btn = $("#code_file_mainarea_details_button").button({"label": btn_label}).click (function () {
-		
 		if ($("#code_file_mainarea_result_info").is(":visible"))
 		{
 			$("#code_file_mainarea_result_info").hide("blind",{},200);
@@ -47,13 +45,11 @@ $(function () {
 				"option", "label", "<?php print $this->lang->line('Hide details')?>");
 		}
 	});
-});
 
-function renderCode()
-{
+	// for code rendering
 	$("#code_file_mainarea_result_raw").html ($("#code_file_mainarea_result_pre").html())
 	prettyPrint ();
-}
+});
 
 var showing_raw_code = false;
 
@@ -85,7 +81,7 @@ function showRawCode()
 ?></title>
 </head>
 
-<body onload="renderCode()">
+<body>
 
 <div class="content" id="code_file_content">
 

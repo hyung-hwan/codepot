@@ -20,12 +20,24 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <script type="text/javascript">
+function render_wiki()
+{
+	creole_render_wiki (
+		"file_show_mainarea_wiki_text", 
+		"file_show_mainarea_wiki", 
+		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
+		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
+	);
+
+	prettyPrint ();
+}
+
 $(function () {
 	if ($("#file_show_mainarea_result_info").is(":visible"))
 		btn_label = "<?php print $this->lang->line('Hide details')?>";
 	else
 		btn_label = "<?php print $this->lang->line('Show details')?>";
-	
+
 
 	btn = $("#file_show_mainarea_details_button").button({"label": btn_label}).click (function () {
 		
@@ -42,25 +54,16 @@ $(function () {
 				"option", "label", "<?php print $this->lang->line('Hide details')?>");
 		}
 	});
+
+	render_wiki ();
 });
 
-function render_wiki()
-{
-	creole_render_wiki (
-		"file_show_mainarea_wiki_text", 
-		"file_show_mainarea_wiki", 
-		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
-	);
-
-	prettyPrint ();
-}
 </script>
 
 <title><?php print htmlspecialchars($project->name)?> - <?php print htmlspecialchars($file->name)?></title>
 </head>
 
-<body onload="render_wiki()">
+<body>
 
 <div class="content" id="file_show_content">
 
