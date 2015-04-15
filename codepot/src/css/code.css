@@ -465,3 +465,105 @@
 	font-weight: bold;
 	background-color: black;
 }
+
+/*----------------------------------------------- 
+ * project source search view (including folder view)
+ *-----------------------------------------------*/
+ 
+
+/*
+label.code_search_option {
+	display: inline-block;
+	cursor: pointer;
+	position: relative;
+	font-size: 13px;
+	margin-left: 9px;
+	margin-right: 9px;
+} 
+
+label.code_search_option:before {
+	content:"";
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin-right: 10px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	background-color: #aaa;
+	box-shadow: inset 0px 2px 3px 0px rgba(0, 0, 0, .3), 0px 1px 0px 0px rgba(255, 255, 255, .8);
+	border-radius: 3px;
+}
+
+input[type=checkbox].code_search_option {
+	display: none;
+}
+
+
+input[type=checkbox].code_search_option:checked  + label:before {
+	content:"\2713";
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
+	font-size: 15px;
+	color: #f3f3f3;
+	text-align: center;
+	line-height: 15px;
+}
+
+#code_search_invertedly:checked + label:before {
+	content: "v";
+}
+
+#code_search_case_insensitively:checked + label:before {
+	content: "i";
+}
+
+#code_search_recursively:checked + label:before {
+	content: "r";
+}
+
+#code_search_is_regex:checked + label:before {
+	content: "x";
+}
+
+#code_folder_search_submit {
+	margin-left: 0.5em;
+}
+
+#code_search_search_submit {
+	margin-left: 0.5em;
+} */
+
+#code_search_invertedly_label .ui-button-text {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	width: 1em;
+	margin: 0;
+}
+
+#code_search_case_insensitively_label .ui-button-text {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	width: 1em;
+	margin: 0;
+}
+
+#code_search_recursively_label .ui-button-text {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	width: 1em;
+	margin: 0;
+}
+
+#code_search_in_name_label .ui-button-text {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	width: 1em;
+	margin: 0;
+}
+
+#code_search_is_regex_label .ui-button-text {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	width: 1em;
+	margin: 0;
+}
