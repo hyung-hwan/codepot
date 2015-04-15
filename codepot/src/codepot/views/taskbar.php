@@ -9,10 +9,10 @@ function show_taskbar ($con, $login)
 	if (isset($login['id']) && $login['id'] != '')
 	{
 		$title = (isset($login['email']) && $login['email'] != '')?
-			('title=' . htmlspecialchars($login['email'])): '';
+			htmlspecialchars($login['email']): '';
 
 		$hex = $con->converter->AsciiToHex (current_url());
-		print form_open("main/signout/{$hex}", array('id' => 'taskbar_signout_form'));
+		print form_open("main/signout/{$hex}", array('id' => 'taskbar_signinout_form'));
 
 		/*
 		// attempt to load the user icon regardless of its upload state.
@@ -32,28 +32,25 @@ function show_taskbar ($con, $login)
 		print $icon_src;
 		*/
 		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $con->converter->AsciiToHex($login['id']));
-		print "<img src='{$user_icon_url}' class='user_icon_img' />";
+		print "<img src='{$user_icon_url}' class='user_icon_img' id='taskbar_user_icon'/>";
 
-		print anchor ('user/home', htmlspecialchars($login['id']), $title);
+		print anchor ('user/home', htmlspecialchars($login['id']), array('title' => $title, 'id' => 'taskbar_user_title'));
 
 
 		print '&nbsp;';
-		print form_submit (
-			'login', 
-			$con->lang->line('Sign out'), 
-			'class="button" id="taskbar_signout_button"'
-		);
+		//print form_submit (
+		//	'login', 
+		//	$con->lang->line('Sign out'), 
+		//	'class="button" id="taskbar_signinout_button"'
+		//);
+		printf ('<a href="#" id="taskbar_signinout_button">%s</a>', $con->lang->line('Sign out'));
 		print form_close();
 	}
 	else
 	{
-
-//print '<div id="taskbar_signin_panel">';
-
-		print form_open('main/signin', array('id' => 'taskbar_signin_form'));
+		print form_open('main/signin', array('id' => 'taskbar_signinout_form'));
 
 		print form_fieldset();
-//print '<div id="taskbar_signin_form_panel">';
 
 		$user_name = "";
 		$user_pass = "";
@@ -73,7 +70,7 @@ function show_taskbar ($con, $login)
 		print form_input (
 			'user_name', 
 			set_value ('user_name', $user_name), 
-			"size='20' id='taskbar_user_name' placeholder={$con->lang->line('Username')}"
+			"size='16' id='taskbar_user_name' placeholder={$con->lang->line('Username')}"
 		);
 
 		print '&nbsp;';
@@ -87,28 +84,19 @@ function show_taskbar ($con, $login)
 		print form_password (
 			'user_pass',
 			set_value ('user_pass', $user_pass),
-			"size='20' id='taskbar_user_pass' placeholder={$con->lang->line('Password')}"
+			"size='16' id='taskbar_user_pass' placeholder={$con->lang->line('Password')}"
 		);
 
 		print '&nbsp;';
-		print form_submit (
-			'login', 
-			$con->lang->line('Sign in'), 
-			'class="button" id="taskbar_signin_button"'
-		);
-//print '</div>';
-
-//print '<div id="taskbar_signin_button_panel">';
-//		print '<a href="#" id="taskbar_signin_button">';
-//		print $con->lang->line('Sign in');
-//		print '</a>';
-//print '</div>';
+		//print form_submit (
+		//	'login', 
+		//	$con->lang->line('Sign in'), 
+		//	'class="button" id="taskbar_signinout_button"'
+		//);
+		printf ('<a href="#" id="taskbar_signinout_button">%s</a>', $con->lang->line('Sign in'));
 
 		print form_fieldset_close();
 		print form_close();
-
-//print '</div>';
-
 	}
 	print '</div>'; // boxb
 
@@ -120,9 +108,9 @@ function show_taskbar ($con, $login)
 	print '<li>';
 	print anchor ('project/catalog', $con->lang->line('Projects'));
 	print '</li>';
-	print '<li>';
-	print " <input id='taskbar_project_to_find' placeholder='Project ID'>";
-	print '</li>';
+	print '<li><span class="ui-widget">';
+	print " <input id='taskbar_project_to_find' placeholder='{$con->lang->line('Project ID')}' size=40>";
+	print '</span></li>';
 	if ($login['sysadmin?'])
 	{
 		print '<li>';
@@ -130,6 +118,7 @@ function show_taskbar ($con, $login)
 		print '</li>';
 	}
 	print '</ul>';
+
 	print '</div>';
 
 	print '</div>';
@@ -138,32 +127,46 @@ function show_taskbar ($con, $login)
 
 <script type="text/javascript">
 
-$(function () {
-	/*
-	$("#taskbar_signin_form_panel").hide();
 
-	btn_label = "<?php print $this->lang->line('Sign in')?>";
-	btn = $("#taskbar_signin_button").button({"label": btn_label}).click (function () {
-		if ($("#taskbar_signin_form_panel").is(":visible"))
-		{
-			$("#taskbar_signin_form_panel").hide("slide",{direction: 'right'},200);
+function ready_to_signinout()
+{
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+	// signed in already. can signout anytime.
+	return true;
+<?php else: ?>
+	// not signed-in yet. both username and password must be filled.
+	return $("#taskbar_user_name").val() != "" && $("#taskbar_user_pass").val();
+<?php endif; ?>
+}
+
+$(function () {
+	$("#taskbar_user_name").button().bind ('keyup', function(e) {
+		if (e.keyCode == 13) {
+			if (ready_to_signinout()) $("#taskbar_signinout_form").submit();
 		}
-		else
-		{
-			$("#taskbar_signin_form_panel").show("slide",{direction: 'right'},200);
+	});
+	$("#taskbar_user_pass").button().bind ('keyup', function(e) {
+		if (e.keyCode == 13) {
+			if (ready_to_signinout()) $("#taskbar_signinout_form").submit();
 		}
 	});
 
-	$("#taskbar_signin_ok_button").button();*/
+	$("#taskbar_signinout_button").button().click (function() {
+		if (ready_to_signinout()) $("#taskbar_signinout_form").submit();
+	});
 
-	$("#taskbar_project_to_find").autocomplete({
-		source: "search.php",
-		minLength: 2,
+	$("#taskbar_project_to_find").button().autocomplete({
+		minLength: 1, // is this too small?
+		source: function (request, response) {
+			$.ajax({
+				url: "<?php print site_url(); ?>/project/search_json/" + request.term,
+				dataType: "json",
+				success: function(data) { response(data); },
+			});
+		},
 		select: function( event, ui ) {
-			/* TODO: move to the project page */
-			/*log( ui.item ?
-				"Selected: " + ui.item.value + " aka " + ui.item.id :
-				"Nothing selected, input was " + this.value );*/
+			$(location).attr ('href', "<?php print site_url(); ?>/project/home/" + ui.item.id);
+			//ui.item.value , ui.item.id ,  this.value );
 		}
 	});
 });

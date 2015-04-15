@@ -47,6 +47,8 @@ $(function () {
 				"option", "label", "<?php print $this->lang->line('Hide details')?>");
 		}
 	});
+
+	prettyPrint ();
 });
 </script>
 
@@ -58,7 +60,7 @@ $(function () {
 ?></title>
 </head>
 
-<body onload="prettyPrint()">
+<body>
 
 <div class="content" id="code_blame_content">
 

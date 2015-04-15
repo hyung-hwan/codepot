@@ -141,8 +141,26 @@ function show_loc_graph (response)
 	//$("#code_folder_mainarea_result_info_loc_progress" ).progressbar().hide();
 }
 
-<?php if ($file_count > 0): ?>
+function render_readme()
+{
+	<?php
+	// if the readme file name ends with '.wiki', perform pretty printing
+	if (strlen($readme_text) > 0 && substr_compare($readme_file, '.wiki', -5) === 0):
+	?>
+	creole_render_wiki (
+		"code_folder_mainarea_result_readme_text",
+		"code_folder_mainarea_result_readme",
+		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
+		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
+	);
+	prettyPrint();
+	<?php endif; ?>
+}
+
+
 $(function () {
+
+<?php if ($file_count > 0): ?>
 	<?php
 	if ($login['settings'] != NULL && $login['settings']->code_hide_details == 'Y')
 		print '$("#code_folder_mainarea_result_info").hide();';
@@ -152,7 +170,7 @@ $(function () {
 		btn_label = "<?php print $this->lang->line('Hide details')?>";
 	else
 		btn_label = "<?php print $this->lang->line('Show details')?>";
-	
+
 	btn = $("#code_folder_mainarea_details_button").button({"label": btn_label}).click (function () {
 		
 		if ($("#code_folder_mainarea_result_info").is(":visible"))
@@ -189,33 +207,22 @@ $(function () {
 	});
 
 	//$("#code_folder_mainarea_result_info_loc_progress" ).progressbar().hide();
-});
 <?php endif; ?>
 
-function renderReadme()
-{
-	<?php
-	// if the readme file name ends with '.wiki', perform pretty printing
-	if (strlen($readme_text) > 0 && substr_compare($readme_file, '.wiki', -5) === 0):
-	?>
-	creole_render_wiki (
-		"code_folder_mainarea_result_readme_text",
-		"code_folder_mainarea_result_readme",
-		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
-	);
-	prettyPrint();
-	<?php endif; ?>
-}
-
-function hookSearchSubmit()
-{
+	$('#code_folder_search_submit').button().click (function (e) {
+		if ($.trim($("#code_folder_search_string").val()) != "")
+		{
+			$('#code_folder_search_form').submit ();
+		}
+	});
+	/* 
 	$('#code_folder_search_form').submit (function(e) {
 		if ($.trim($("#code_folder_search_string").val()) === "")
 		{
+			// prevent submission when the search string is empty.
 			e.preventDefault();
 		}
-	});
+	});*/
 
 	$('#code_search_invertedly').button();
 	$('#code_search_case_insensitively').button();
@@ -223,7 +230,9 @@ function hookSearchSubmit()
 	$('#code_search_in_name').button();
 	$('#code_search_is_regex').button();
 	$('.code_search_option').tooltip();
-}
+
+	render_readme ();
+});
 
 </script>
 
@@ -235,7 +244,7 @@ function hookSearchSubmit()
 ?></title>
 </head>
 
-<body onload="hookSearchSubmit(); renderReadme();">
+<body>
 
 <div class="content" id="code_folder_content">
 
@@ -375,7 +384,8 @@ $this->load->view (
 		);
 
 		print ' ';
-		print form_submit('search_submit', $this->lang->line('Search'), 'id="code_folder_search_submit"');
+		//print form_submit('search_submit', $this->lang->line('Search'), 'id="code_folder_search_submit"');
+		printf ('<a id="code_folder_search_submit" href="#">%s</a>', $this->lang->line('Search'));
 		print ' | ';
 	} 
 
@@ -469,7 +479,7 @@ $this->load->view (
 			{
 				// directory 
 				$hexpath = $this->converter->AsciiToHex($fullpath);
-       		         	print "<tr class='{$rowclass}'>";
+				print "<tr class='{$rowclass}'>";
 				print '<td>';
 				print anchor (
 					"code/file/{$project->id}/{$hexpath}{$revreq}",

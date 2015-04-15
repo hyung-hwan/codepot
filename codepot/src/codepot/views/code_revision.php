@@ -172,10 +172,6 @@ $(function() {
 });
 <?php endif; ?>
 
-</script>
-
-
-<script type="text/javascript">
 function render_wiki()
 {
 	creole_render_wiki (
@@ -207,6 +203,12 @@ function hide_unneeded_divs()
 	var nrows = $('#code_revision_mainarea_result_properties_table tr').length;
 	if (nrows <= 0) $('#code_revision_mainarea_result_properties').hide();
 }
+
+$(function() {
+	hide_unnddeded_divs ();
+	render_wiki ();
+});
+
 </script>
 
 <title><?php 
@@ -217,7 +219,7 @@ function hide_unneeded_divs()
 ?></title>
 </head>
 
-<body onload="hide_unneeded_divs(); render_wiki();">
+<body>
 
 <div class="content" id="code_revision_content">
 

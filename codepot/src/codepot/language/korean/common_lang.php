@@ -69,6 +69,7 @@ $lang['Path'] = '경로';
 $lang['Preview'] = '미리보기';
 $lang['Priority'] = '중요도';
 $lang['Project'] = '프로젝트';
+$lang['Project ID'] = '프로젝트 아이디';
 $lang['Projects'] = '프로젝트';
 $lang['Public'] = '공개';
 $lang['Purge'] = '정화하기';

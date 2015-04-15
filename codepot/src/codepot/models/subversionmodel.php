@@ -287,7 +287,6 @@ class SubversionModel extends Model
 	function _get_diff ($diff, $src1, $src2, $all, $ent)
 	{
 		/* copied from websvn */
-
 		if ($all) 
 		{
 			//$ofile = fopen ($oldtname, "r");
@@ -315,7 +314,8 @@ class SubversionModel extends Model
 		$curoline = 1;
 		$curnline = 1;
 
-		while (!feof($diff)) 
+		$abort = FALSE;
+		while (!feof($diff) && !$abort) 
 		{
 			// Get the first line of this range
 			sscanf($line, "@@ -%d", $oline);
@@ -378,13 +378,43 @@ class SubversionModel extends Model
 				$index++;
 			}
 
-			$fin = false;
+			$fin = FALSE;
 			while (!feof($diff) && !$fin) 
 			{
 				$line = fgets($diff);
-				if ($line === false || strncmp($line, "@@", 2) == 0) 
+				if ($line === FALSE || $line == "\n")
 				{
-					$fin = true;
+					// fgets() returned failure or an empty line has been read.
+					// An empty line can be read if property changes exist.
+					// The line before 'Property changes on: ..' is an  empty line.
+					//
+					// Index: test1.txt
+					// ===================================================================
+					// --- test1.txt	(revision 14)
+					// +++ test1.txt	(working copy)
+					// @@ -1 +1,6 @@
+					// hello world
+					// +
+					// +
+					// +hello world 2
+					// +
+					// +hello world 3
+					//
+					// Property changes on: test1.txt
+					// ___________________________________________________________________
+					// Added: test
+					//    + xxx
+					// Added: abcprop
+					//    + on
+					// Deleted: svn:executable
+					//    - *
+					//
+					$fin = TRUE;
+					$abort = TRUE;
+				}
+				else if (strncmp($line, "@@", 2) == 0)
+				{
+					$fin = TRUE;
 				} 
 				else 
 				{
@@ -453,7 +483,6 @@ class SubversionModel extends Model
 									fgets($nfile);
 									$curnline++;
 								}
-
 
 								// Don't increment the current index count
 								$index--;
@@ -526,7 +555,6 @@ class SubversionModel extends Model
 					//$listing[$index]["rev1line"] = "&nbsp;";
 					$listing[$index]["rev1line"] = ''; 
 				}
-			
 
 				if (!feof($nfile))
 				{
@@ -645,7 +673,7 @@ class SubversionModel extends Model
 				[last_changed_rev] => 27
 				[last_changed_date] => 2010-02-18T01:53:13.076062Z
 				[last_changed_author] => hyunghwan
-       			 )
+			)
 		*/
 
 		$fileinfo['fullpath'] = substr (

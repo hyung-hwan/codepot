@@ -29,30 +29,6 @@ $hexname = $this->converter->AsciiToHex ($wiki->name);
 ?>
 
 <script type="text/javascript">
-$(function () {
-	if ($("#wiki_show_mainarea_result_info").is(":visible"))
-		btn_label = "<?php print $this->lang->line('Hide details')?>";
-	else
-		btn_label = "<?php print $this->lang->line('Show details')?>";
-	
-
-	btn = $("#wiki_show_mainarea_details_button").button({"label": btn_label}).click (function () {
-		
-		if ($("#wiki_show_mainarea_result_info").is(":visible"))
-		{
-			$("#wiki_show_mainarea_result_info").hide("blind",{},200);
-			$("#wiki_show_mainarea_details_button").button(
-				"option", "label", "<?php print $this->lang->line('Show details')?>");
-		}
-		else
-		{
-			$("#wiki_show_mainarea_result_info").show("blind",{},200);
-			$("#wiki_show_mainarea_details_button").button(
-				"option", "label", "<?php print $this->lang->line('Hide details')?>");
-		}
-	});
-});
-
 function render_wiki()
 {
 	var column_count = '<?php print  $wiki->columns ?>';
@@ -77,9 +53,34 @@ function render_wiki()
 
 	prettyPrint ();
 }
+
+$(function () {
+	if ($("#wiki_show_mainarea_result_info").is(":visible"))
+		btn_label = "<?php print $this->lang->line('Hide details')?>";
+	else
+		btn_label = "<?php print $this->lang->line('Show details')?>";
+
+	btn = $("#wiki_show_mainarea_details_button").button({"label": btn_label}).click (function () {
+		
+		if ($("#wiki_show_mainarea_result_info").is(":visible"))
+		{
+			$("#wiki_show_mainarea_result_info").hide("blind",{},200);
+			$("#wiki_show_mainarea_details_button").button(
+				"option", "label", "<?php print $this->lang->line('Show details')?>");
+		}
+		else
+		{
+			$("#wiki_show_mainarea_result_info").show("blind",{},200);
+			$("#wiki_show_mainarea_details_button").button(
+				"option", "label", "<?php print $this->lang->line('Hide details')?>");
+		}
+	});
+
+	render_wiki ();
+});
 </script>
 
-<body onload="render_wiki()">
+<body>
 
 <div class="content" id="wiki_show_content">
 

@@ -264,6 +264,7 @@ www_DATA = \
 	ui-icons_ef8c08_256x240.png \
 	ui-icons_228ef1_256x240.png \
 	ui-icons_222222_256x240.png \
+	ui-anim_basic_16x16.gif \
 	up.png \
 	username.png
 

@@ -92,6 +92,18 @@ class ProjectModel extends Model
 		return $query->result ();
 	}
 
+	function findIDsAndNames ($userid, $needle)
+	{
+		$this->db->trans_start ();
+		$this->db->select(array('id', 'name as value')); // jquery ui autocomplete seems to require 'value'.
+		$this->db->order_by ('id', 'asc');
+		$this->db->like ('id', $needle);
+		$this->db->or_like ('name', $needle);
+		$query = $this->db->get ('project');
+		$this->db->trans_complete ();
+		if ($this->db->trans_status() === FALSE) return FALSE;
+		return $query->result ();
+	}
 
 	function create ($userid, $project, $api_base_url)
 	{

@@ -52,7 +52,6 @@ class Project extends Controller
 
 		$this->load->library ('pagination');
 
-
 		if ($filter == '' && $offset == '')
 		{
 			$offset = 0;
@@ -462,6 +461,36 @@ class Project extends Controller
 
 			$this->load->view ($this->VIEW_LOG, $data);
 		}
+	}
+
+	function search_json ($needle = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+	
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+		{
+			$projects = array ();
+		}
+		else if (empty($needle))
+		{
+			// return no result if $needle is empty
+			$projects = array ();
+		}
+		else
+		{
+			$projects = $this->projects->findIDsAndNames ($login['id'], $needle);
+			if ($projects === FALSE)
+			{
+				$projects = array ();
+			}
+		}
+
+		foreach ($projects as &$p)
+		{
+			$p->value = $p->id . ' - ' . $p->value;
+		}
+		print codepot_json_encode ($projects);
 	}
 }
 

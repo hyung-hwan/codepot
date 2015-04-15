@@ -19,15 +19,23 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
-<script>
-function hookSearchSubmit()
-{
+<script type="text/javascript">
+$(function() {
+	$('#code_search_search_submit').button().click (function (e) {
+		if ($.trim($("#code_search_search_string").val()) != "")
+		{
+			$('#code_search_search_form').submit ();
+		}
+	});
+
+	/*
 	$('#code_search_search_form').submit (function(e) {
 		if ($.trim($("#code_search_search_string").val()) === "")
 		{
+			// prevent submission when the search string is empty.
 			e.preventDefault();
 		}
-	});
+	});*/
 	
 	$('#code_search_invertedly').button();
 	$('#code_search_case_insensitively').button();
@@ -35,8 +43,11 @@ function hookSearchSubmit()
 	$('#code_search_in_name').button();
 	$('#code_search_is_regex').button();
 	$('.code_search_option').tooltip();
-}
+
+	prettyPrint();
+});
 </script>
+
 <?php
 	$file_count = count($file['content']);
 ?>
@@ -49,7 +60,7 @@ function hookSearchSubmit()
 ?></title>
 </head>
 
-<body onload="hookSearchSubmit(); prettyPrint()">
+<body>
 
 <div class="content" id="code_search_content">
 
@@ -194,7 +205,8 @@ $this->load->view (
 	);
 
 	print ' ';
-	print form_submit ('search_submit', $this->lang->line('Search'), 'id="code_search_search_submit"');
+	printf ('<a id="code_search_search_submit" href="#">%s</a>', $this->lang->line('Search'));
+	//print form_submit ('search_submit', $this->lang->line('Search'), 'id="code_search_search_submit"');
 	print ' | ';
 	printf ('%s: %s', $this->lang->line('Revision'), $file['created_rev']);
 	print form_close();
@@ -270,7 +282,6 @@ function search_and_show ($controller, $project, $path, $revision, $pattern, $in
 							htmlspecialchars($fullpath));
 						print '</div>';
 
-					
 						print '<pre class="prettyprint">';
 						if ($in_name)
 						{
