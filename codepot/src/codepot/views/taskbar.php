@@ -120,6 +120,9 @@ function show_taskbar ($con, $login)
 	print '<li>';
 	print anchor ('project/catalog', $con->lang->line('Projects'));
 	print '</li>';
+	print '<li>';
+	print " <input id='taskbar_project_to_find' placeholder='Project ID'>";
+	print '</li>';
 	if ($login['sysadmin?'])
 	{
 		print '<li>';
@@ -134,8 +137,9 @@ function show_taskbar ($con, $login)
 ?>
 
 <script type="text/javascript">
-/*
+
 $(function () {
+	/*
 	$("#taskbar_signin_form_panel").hide();
 
 	btn_label = "<?php print $this->lang->line('Sign in')?>";
@@ -150,8 +154,20 @@ $(function () {
 		}
 	});
 
-	$("#taskbar_signin_ok_button").button();
-}); */
+	$("#taskbar_signin_ok_button").button();*/
+
+	$("#taskbar_project_to_find").autocomplete({
+		source: "search.php",
+		minLength: 2,
+		select: function( event, ui ) {
+			/* TODO: move to the project page */
+			/*log( ui.item ?
+				"Selected: " + ui.item.value + " aka " + ui.item.id :
+				"Nothing selected, input was " + this.value );*/
+		}
+	});
+});
+
 </script> 
 
 <?php

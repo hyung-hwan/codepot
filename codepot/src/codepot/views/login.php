@@ -3,6 +3,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
+
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
+
 </head>
 
 <body>

@@ -124,7 +124,6 @@ function show_loc_graph (response)
 			{
 				if (code_folder_mainarea_result_info_loc_graph_previous_point != item.datapoint) 
 				{
-					
 					code_folder_mainarea_result_info_loc_graph_previous_point = item.datapoint;
 					$("#code_folder_mainarea_result_info_loc_graph_tooltip").remove();
 					show_tooltip("code_folder_mainarea_result_info_loc_graph_tooltip", item.pageX, item.pageY - 20, item.datapoint[1]);
@@ -204,11 +203,28 @@ function renderReadme()
 		"code_folder_mainarea_result_readme",
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
 		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
-        );
+	);
 	prettyPrint();
 	<?php endif; ?>
-
 }
+
+function hookSearchSubmit()
+{
+	$('#code_folder_search_form').submit (function(e) {
+		if ($.trim($("#code_folder_search_string").val()) === "")
+		{
+			e.preventDefault();
+		}
+	});
+
+	$('#code_search_invertedly').button();
+	$('#code_search_case_insensitively').button();
+	$('#code_search_recursively').button();
+	$('#code_search_in_name').button();
+	$('#code_search_is_regex').button();
+	$('.code_search_option').tooltip();
+}
+
 </script>
 
 <title><?php 
@@ -219,7 +235,7 @@ function renderReadme()
 ?></title>
 </head>
 
-<body onload="renderReadme()">
+<body onload="hookSearchSubmit(); renderReadme();">
 
 <div class="content" id="code_folder_content">
 
@@ -282,31 +298,102 @@ $this->load->view (
 
 <div class="infostrip" id="code_folder_mainarea_infostrip">
 
-	<?php if (CODEPOT_SIGNIN_FOR_CODE_SEARCH === FALSE || (isset($login['id']) && $login['id'] != '')): ?>
-	<?php print form_open("code/search/{$project->id}/", 'id="code_folder_search_form"')?>
-	<?php print form_hidden('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_folder_search_folder"')?>
-	<?php print form_hidden('search_revision', set_value('search_revision', $revision), 'id="code_folder_search_revision"')?>
-	<?php print form_input('search_pattern', set_value('search_pattern', ''), 'id="code_folder_search_pattern"')?>
-	<?php print form_submit('search_submit', $this->lang->line('Search'), 'id="code_folder_search_submit"')?>
-	| 
-	<?php endif; ?>
-
 	<?php 
-		printf ('%s: %s', $this->lang->line('Revision'), $file['created_rev']);
-		if (!empty($file['created_tag']))
-		{
-			print ' ';
-			print ('<span class="left_arrow_indicator">');
-			print htmlspecialchars($file['created_tag']);
-			print ('</span>');
-		}
-	?> 
-	<?php if ($file_count > 0): ?>
-	| 
-	<a id="code_folder_mainarea_details_button" href='#'><?php print $this->lang->line('Details')?></a>
-	<?php endif; ?>
+	print form_open("code/search/{$project->id}/", 'id="code_folder_search_form"');
 
-	<?php print form_close()?>
+	if (CODEPOT_SIGNIN_FOR_CODE_SEARCH === FALSE || (isset($login['id']) && $login['id'] != ''))
+	{
+		print form_hidden('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_folder_search_folder"');
+		print form_hidden('search_revision', set_value('search_revision', $revision), 'id="code_folder_search_revision"');
+		print form_input(array(
+			'name' => 'search_string', 
+			'value' => set_value('search_string', ''), 
+			'id' =>'code_folder_search_string',
+			'placeholder' => $this->lang->line('CODE_SEARCH_STRING')
+		));
+
+		print ' ';
+
+		print form_checkbox(array(
+			'name'    => 'search_invertedly', 
+			'id'      => 'code_search_invertedly',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => FALSE,
+			'title'   => $this->lang->line('CODE_SEARCH_INVERTEDLY')
+		));
+		print form_label('v', 'code_search_invertedly', 
+			array('class'=>'code_search_option', 'id'=>'code_search_invertedly_label')
+		);
+
+		print form_checkbox(array(
+			'name'    => 'search_case_insensitively', 
+			'id'      => 'code_search_case_insensitively',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => FALSE,
+			'title'   => $this->lang->line('CODE_SEARCH_CASE_INSENSITIVELY')
+		));
+		print form_label('i', 'code_search_case_insensitively', 
+			array('class'=>'code_search_option', 'id'=>'code_search_case_insensitively_label')
+		);
+
+		print form_checkbox(array(
+			'name'    => 'search_recursively', 
+			'id'      => 'code_search_recursively',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => TRUE,
+			'title'   => $this->lang->line('CODE_SEARCH_RECURSIVELY')
+		));
+		print form_label('r', 'code_search_recursively', 
+			array('class'=>'code_search_option', 'id'=>'code_search_recursively_label')
+		);
+
+		print form_checkbox(array(
+			'name'    => 'search_in_name', 
+			'id'      => 'code_search_in_name',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => FALSE,
+			'title'   => $this->lang->line('CODE_SEARCH_IN_NAME')
+		));
+		print form_label('n', 'code_search_in_name',
+			array('class'=>'code_search_option', 'id'=>'code_search_in_name_label')
+		);
+
+		print form_checkbox(array(
+			'name'    => 'search_is_regex', 
+			'id'      => 'code_search_is_regex',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => FALSE,
+			'title'   => $this->lang->line('CODE_SEARCH_IS_REGEX')
+		));
+		print form_label('x', 'code_search_is_regex',
+			array('class'=>'code_search_option', 'id'=>'code_search_is_regex_label')
+		);
+
+		print ' ';
+		print form_submit('search_submit', $this->lang->line('Search'), 'id="code_folder_search_submit"');
+		print ' | ';
+	} 
+
+	printf ('%s: %s', $this->lang->line('Revision'), $file['created_rev']);
+	if (!empty($file['created_tag']))
+	{
+		print ' ';
+		printf ('<span class="left_arrow_indicator">%s</span>', htmlspecialchars($file['created_tag']));
+	}
+
+	if ($file_count > 0)
+	{
+		print ' | ';
+		printf ('<a id="code_folder_mainarea_details_button" href="#">%s</a>', $this->lang->line('Details'));
+	}
+
+	print form_close();
+	?>
 </div>
 
 <div class="result" id="code_folder_mainarea_result">
@@ -321,7 +408,7 @@ $this->load->view (
 		if ($a['type'] == $b['type'])
 		{
 			return strcasecmp ($a['name'], $b['name']);
-		}	
+		}
 
 		return ($a['type'] == 'dir')? -1: 1;
 	}
@@ -452,7 +539,7 @@ $this->load->view (
 			print '<div id="code_folder_mainarea_result_readme">';
 			print '<pre id="code_folder_mainarea_result_readme_text">';
 			print "\n";
-			print htmlspecialchars($readme_text);	
+			print htmlspecialchars($readme_text);
 			print "\n";
 			print '</pre>';
 			print '</div>';
@@ -507,7 +594,6 @@ $this->load->view (
 </div> <!-- code_folder_mainarea_result -->
 
 </div> <!-- code_folder_mainarea -->
-
 
 <!-- ================================================================== -->
 

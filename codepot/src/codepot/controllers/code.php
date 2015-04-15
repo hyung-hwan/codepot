@@ -750,17 +750,23 @@ class Code extends Controller
 		$data['login'] = $login;
 		$data['message'] = '';
 
-		$this->form_validation->set_rules ('search_pattern', 'pattern', 'required');
+		$this->form_validation->set_rules ('search_string', 'pattern', 'required');
 		$this->form_validation->set_rules ('search_folder', 'folder', '');
 		$this->form_validation->set_rules ('search_revision', 'revision', 'numeric');
+		// no rule for search_invertedly, search_case_insensitively, search_recursively, search_is_regex, search_in_name
 		$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
 
-		if ($this->input->post('search_pattern'))
+		if ($this->input->post('search_string') !== FALSE)
 		{
-			$pattern =  $this->input->post('search_pattern');
+			$pattern =  $this->input->post('search_string');
 			$path = $this->input->post('search_folder');
 			$path = $this->_normalize_path ($path);
 			$rev = $this->input->post('search_revision');
+			$invertedly = $this->input->post('search_invertedly');
+			$case_insensitively = $this->input->post('search_case_insensitively');
+			$recursively = $this->input->post('search_recursively');
+			$in_name = $this->input->post('search_in_name');
+			$is_regex = $this->input->post('search_is_regex');
 
 			$file = $this->subversion->getFile ($project->id, $path, $rev);
 			if ($file === FALSE)
@@ -768,13 +774,18 @@ class Code extends Controller
 				$data['project'] = $project;
 				$data['message'] = "Failed to get file - $path";
 				$this->load->view ($this->VIEW_ERROR, $data);
+				return;
 			}
-
-			if ($this->form_validation->run())
+			else if ($this->form_validation->run())
 			{
 				$data['project'] = $project;
 				$data['headpath'] = $path;
 				$data['pattern'] = $pattern;
+				$data['invertedly'] = $invertedly;
+				$data['case_insensitively'] = $case_insensitively;
+				$data['recursively'] = $recursively;
+				$data['in_name'] = $in_name;
+				$data['is_regex'] = $is_regex;
 				$data['file'] = $file;
 
 				$data['revision'] = $rev;
@@ -784,45 +795,11 @@ class Code extends Controller
 					$this->subversion->getNextRev ($project->id, $path, $rev);
 
 				$this->load->view ($this->VIEW_SEARCH, $data);
-			}
-			else
-			{
-				// TODO: arrange to display an error message...
-				$data['project'] = $project;
-				$data['headpath'] = $path;
-				$data['file'] = $file;
-
-				$data['revision'] = $rev;
-				$data['prev_revision'] =
-					$this->subversion->getPrevRev ($project->id, $path, $rev);
-				$data['next_revision'] =
-					$this->subversion->getNextRev ($project->id, $path, $rev);
-
-				$data['readme_text'] = '';
-				$data['readme_file'] = '';
-				foreach (explode(',', CODEPOT_CODE_FOLDER_README) as $rf)
-				{
-					$rf = trim($rf);
-					if (strlen($rf) > 0)
-					{
-						$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
-						if ($readme !== FALSE)
-						{
-							$data['readme_text'] = $readme['content'];
-							$data['readme_file'] = $rf;
-							break;
-						}
-					}
-				}
-				$this->load->view ($this->VIEW_FOLDER, $data);
+				return;
 			}
 		}
-		else
-		{
-			$data['project'] = $project;
-			$data['message'] = 'Failed to search';
-			$this->load->view ($this->VIEW_ERROR, $data);
-		}
+
+		redirect ("code/file/" . $project->id);
 	}
 
 	function search ($projectid = '', $rev = SVN_REVISION_HEAD)
