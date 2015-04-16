@@ -7,6 +7,7 @@
 <meta name="keywords" content="<?php print $project->id?>" />
 <meta name="description" content="<?php print htmlspecialchars($project->summary)?>" />
 
+<script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/project.css')?>" />
 

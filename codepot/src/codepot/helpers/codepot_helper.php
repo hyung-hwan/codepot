@@ -29,7 +29,6 @@ if ( ! function_exists('codepot_merge_path'))
 }
 
 
-
 if ( !function_exists ('codepot_json_encode'))
 {
 	function codepot_json_encode( $data ) 

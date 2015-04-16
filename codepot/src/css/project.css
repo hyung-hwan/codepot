@@ -57,25 +57,15 @@
 	overflow: auto;
 }
 
-#project_catalog_mainarea_result_table {
-	width: 100%;
-}
-
-#project_catalog_mainarea_result_table td {
+#project_catalog_mainarea_result_list {
+	margin: 1em;
+	padding: 1em;
 	white-space: nowrap;
-	vertical-align: top;
+	line-height: 1.5em;
 }
 
-#project_catalog_mainarea_result_table td.id {
-	width: 1px;
-}
-
-#project_catalog_mainarea_result_table td.name {
-	width: 1px;
-}
-
-#project_catalog_mainarea_result_table td.summary {
-	white-space: pre-wrap;
+#project_catalog_mainarea_result_pages {
+	margin: 1em;
 }
 
 /*----------------------------------------------- 
