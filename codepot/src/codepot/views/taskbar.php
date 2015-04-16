@@ -158,15 +158,18 @@ $(function () {
 	$("#taskbar_project_to_find").button().autocomplete({
 		minLength: 1, // is this too small?
 		source: function (request, response) {
+
+			var term = codepot_string_to_hex(request.term);
+
 			$.ajax({
-				url: "<?php print site_url(); ?>/project/search_json/" + request.term,
+				url: "<?php print site_url(); ?>/project/quickfind_json/" + term,
 				dataType: "json",
 				success: function(data) { response(data); },
 			});
 		},
 		select: function( event, ui ) {
 			$(location).attr ('href', "<?php print site_url(); ?>/project/home/" + ui.item.id);
-			//ui.item.value , ui.item.id ,  this.value );
+			//ui.item.value , ui.item.id ,  this.value
 		}
 	});
 });

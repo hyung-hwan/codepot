@@ -299,22 +299,44 @@ class SubversionModel extends Model
 			rewind($nfile);
 		}
 
-		// Ignore the 4 header lines
-		$line = fgets($diff);
-		$line = fgets($diff);
-		$line = fgets($diff);
-		$line = fgets($diff);
-
-		// Get the first real line
-		$line = fgets($diff);
-
+		$abort = FALSE;
 		$index = 0;
 		$listing = array();
 
 		$curoline = 1;
 		$curnline = 1;
 
-		$abort = FALSE;
+		// Ignore the 4 header lines. AFter that, it get the first real line
+		// which is the 5th line. The header lines look like this:
+		//
+		// Index: test1.txt
+		// ===================================================================
+		// --- test1.txt	(revision 20)
+		// +++ test1.txt	(revision 22)
+		//
+		// The fifth line should look like this:
+		// @@ -2,5 +2,7 @@
+		//
+		for ($i = 0; $i < 5 && !feof($diff); $i++)
+		{
+			$line = fgets($diff);
+			if ($line === FALSE || $line == "\n") 
+			{
+				// the first line can be empty if there is no contents changes.
+				// property changes may be following but this function is
+				// not interested in it.
+				$abort = TRUE;
+				break;
+			}
+		}
+
+		if (!feof($diff) && !$abort)
+		{
+			// santy check on the fifth line. something bad must have
+			// happened if it doesn't begin with @@.
+			if (strncmp($line, "@@", 2) != 0) $abort = TRUE;
+		}
+
 		while (!feof($diff) && !$abort) 
 		{
 			// Get the first line of this range
@@ -437,9 +459,10 @@ class SubversionModel extends Model
 					{
 						case "\\":
 							// ignore it .
-							// subversion seems to procude a like like this:
+							// subversion seems to procude a line like this:
 							//  \ No newline at the end of file
 							//
+							unset ($listing[$index]); // unset the data filled partially above.
 							$index--;
 							break;
 
@@ -447,7 +470,8 @@ class SubversionModel extends Model
 							$listing[$index]["rev1diffclass"] = "diffdeleted";
 							$listing[$index]["rev2diffclass"] = "diff";
 
-							if ($all) {
+							if ($all) 
+							{
 								fgets($ofile);
 								$curoline++;
 							}
@@ -493,7 +517,6 @@ class SubversionModel extends Model
 								$listing[$index]["rev1diffclass"] = "diff";
 								$listing[$index]["rev2diffclass"] = "diffadded";
 
-
 								//$listing[$index]["rev1line"] = "&nbsp;";
 								$listing[$index]["rev1line"] = '';
 								$listing[$index]["rev2line"] = $text;
@@ -525,9 +548,7 @@ class SubversionModel extends Model
 					}
 				}
 
-				if (!$fin) {
-					$index++;
-				}
+				if (!$fin) $index++;
 			}
 		}
 
@@ -537,7 +558,6 @@ class SubversionModel extends Model
 			while (1)
 			{
 				if (feof($ofile) && feof($nfile)) break;
-
 				$listing[$index]["rev1diffclass"] = "diff";
 				$listing[$index]["rev2diffclass"] = "diff";
 
@@ -545,13 +565,12 @@ class SubversionModel extends Model
 				{
 					$line = rtrim(fgets($ofile), "\r\n");
 					if ($ent) $line = replaceEntities($line, $rep);
-				}
 
-				if (!feof($ofile)) {
 					//$listing[$index]["rev1line"] = hardspace($line);
 					$listing[$index]["rev1line"] = $line;
 				}
-				else {
+				else 
+				{
 					//$listing[$index]["rev1line"] = "&nbsp;";
 					$listing[$index]["rev1line"] = ''; 
 				}
@@ -560,13 +579,12 @@ class SubversionModel extends Model
 				{
 					$line = rtrim(fgets($nfile), "\r\n");
 					if ($ent) $line = replaceEntities(rtrim(fgets($nfile), "\r\n"), $rep);
-				}
 
-				if (!feof($nfile)) {
 					//$listing[$index]["rev2line"] = hardspace($line);
 					$listing[$index]["rev2line"] = $line;
 				}
-				else {
+				else 
+				{
 					//$listing[$index]["rev2line"] = "&nbsp;";
 					$listing[$index]["rev2line"] = '';
 				}

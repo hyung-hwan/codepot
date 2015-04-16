@@ -195,6 +195,8 @@ var asciiToHex = function (x,dir) {
 
 	if (dir == "A2H") 
 	{
+		/* codepot_ascii_to_hex provides the same functionality.
+		 * but let me duplicate the code here for no dependency */
 		var i;
 		/*
 		for(i=0; i<x.length; i++)
