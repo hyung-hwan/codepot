@@ -3,6 +3,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/project.css')?>" />
 
@@ -11,18 +13,120 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <script type="text/javascript">
-function AsciiToHex (x) {
-	var r="";
-	for(i=0; i<x.length; i++)
+
+var site_url = "<?php print site_url(); ?>";
+var total_num_avail = <?php print $total_num_projects; ?>; 
+var total_num_shown = <?php print count($projects); ?>; 
+var req_page_offset = <?php print $req_page_offset; ?>;
+var req_page_size = <?php print $req_page_size; ?>;
+
+function prepare_page_button (i, req_size)
+{
+	var id = "#project_catalog_mainarea_result_list_page_" + i;
+	var b = $(id).button();
+
+	b.click (
+		function () 
+		{
+			var filter = codepot_ascii_to_hex($('#project_search_form').serialize());
+			var offset = parseInt($(this).text());
+			$.ajax({
+				url: "<?php print site_url(); ?>/project/catalog_json/" + filter + "/" + ((offset  - 1) * req_size),
+				dataType: "json",
+				success: function(data) { render_project_list (data); }
+			});
+		}
+	);
+
+	return b;
+	
+}
+function render_project_pages (total, shown, req_offset, req_size)
+{
+	var pages = "";
+
+	if (req_size <= 0) req_size = 1;
+	var num_pages = parseInt((total + req_size - 1) / req_size);
+	var page_no = parseInt(req_offset / req_size) + 1;
+
+	var max_page_buttons = 10;
+	var page_no_start = page_no, page_no_stop = page_no;
+	var button_count = 1;
+	while (button_count < max_page_buttons)
 	{
-		var tmp = x.charCodeAt(i).toString(16);
-		if (tmp.length == 1) r += "0";
-		r += tmp;
+		var j = button_count;
+		if (page_no_start > 1 && button_count < max_page_buttons) 
+		{
+			page_no_start--;
+			button_count++;
+		}
+		if (page_no_stop < num_pages && button_count < max_page_buttons) 
+		{
+			page_no_stop++;
+			button_count++;
+		}
+
+		if (j == button_count) break; // no change
 	}
-	return r;
+
+	if (page_no_start > 1) 
+	{
+		pages = pages + "<a href='#' id='project_catalog_mainarea_result_list_page_1'>1</a>";
+		if (page_no_start > 2) pages = pages + " ... ";
+	}
+
+	for (i = page_no_start; i <= page_no_stop; i++)
+	{
+		pages = pages + " <a href='#' id='project_catalog_mainarea_result_list_page_" + i + "'>" + i + "</a>";
+	}
+
+	if (page_no_stop < num_pages) 
+	{
+		if (page_no_stop + 1 < num_pages) pages = pages +  " ... ";
+		pages = pages + " <a href='#' id='project_catalog_mainarea_result_list_page_" + num_pages + "'>" + num_pages + "</a>";
+	}
+
+	$("#project_catalog_mainarea_result_pages").empty();
+	$("#project_catalog_mainarea_result_pages").append(pages);
+
+	if (page_no_start > 1) prepare_page_button (1, req_size);
+	for (i = page_no_start; i <= page_no_stop; i++)
+	{
+		var b = prepare_page_button (i, req_size);
+		if (i == page_no) b.addClass ("ui-state-active");
+	}
+	if (page_no_stop < num_pages) prepare_page_button (num_pages);
 }
 
+function render_project_list (json)
+{
+	if (json.status == 'ok')
+	{
+		var status = json.status;
+		var list = $("#project_catalog_mainarea_result_list");
+		list.empty (); // empty the list first.
+		for (i = 0; i < json.projects.length; i++)
+		{
+			var p = json.projects[i];
+
+			var cap = p.name + " (" + p.id + ")";
+			var li = codepot_sprintf ("<li><a href='%s/project/home/%s'>%s</a> - %s</li>", site_url, p.id, cap, p.summary);
+			list.append (li); // TODO: html escaping of p.id and p.name
+		}
+
+		render_project_pages (parseInt(json.total_num_projects), parseInt(json.projects.length), parseInt(json.req_page_offset), parseInt(json.req_page_size));
+	}
+	else
+	{
+		/* TODO:  show error */
+	}
+}
+
+
+
+
 $(function () { 
+/*
 	$("#project_catalog_mainarea_search_form").dialog ({
 		title: '<?php print $this->lang->line('Search')?>',
 		autoOpen: false,
@@ -31,8 +135,8 @@ $(function () {
 		buttons: { 
 			'<?php print $this->lang->line('OK')?>': function () { 
 				$(this).dialog('close'); 
-				var filter = AsciiToHex($('#project_search_form').serialize());
-				var url='<?php print site_url()?>/project/catalog/' + filter;	
+				var filter = codepot_ascii_to_hex($('#project_search_form').serialize());
+				var url='<?php print site_url()?>/project/catalog/' + filter;
 
 				$('body').append('<form id="magic_form" method="get" action="'+url+'"></form>');
 				$('#magic_form').submit();
@@ -44,13 +148,31 @@ $(function () {
 		close: function() {}
 	}); 
 
-
 	$("#project_catalog_mainarea_search_button").button().click (
 		function () { 
 			$('#project_catalog_mainarea_search_form').dialog('open'); 
 			return false;
 		}
 	);
+*/
+
+	// Empty the page indicators generated by the server side.
+	// as i want the next page or the previous page to be loaded dynamically
+	// without killing the original pagination available.
+	$("#project_catalog_mainarea_result_pages").empty(); 
+
+	$("#project_catalog_mainarea_search_button").button().click (
+		function () { 
+			var filter = codepot_ascii_to_hex($('#project_search_form').serialize());
+			$.ajax({
+				url: "<?php print site_url(); ?>/project/catalog_json/" + filter,
+				dataType: "json",
+				success: function(data) { render_project_list (data); }
+			});
+		}
+	);
+
+	render_project_pages (total_num_avail, total_num_shown, req_page_offset, req_page_size);
 });
 </script>
 
@@ -92,36 +214,36 @@ $this->load->view (
 <div class="mainarea" id="project_catalog_mainarea">
 
 <div class="infostrip">
-<?php printf ($this->lang->line('PROJECT_MSG_TOTAL_NUM_PROJECTS'), $total_num_projects); ?> | 
-<a id="project_catalog_mainarea_search_button" href='#'><?php print $this->lang->line('Search')?></a>
+<?php 
+	printf ($this->lang->line('PROJECT_MSG_TOTAL_NUM_PROJECTS'), $total_num_projects); 
+	print ' | ';
+	printf ('<a id="project_catalog_mainarea_search_button" href="#">%s</a>', $this->lang->line('Search'));
+?>
 </div>
 
 <div id="project_catalog_mainarea_search_form">
 	<form id="project_search_form">
-		<div>
-			<?php print form_label ($this->lang->line('ID'), 'id')
-			?>
-			<?php print form_input('id',
-				set_value('owner', $search->id),
-				'id="project_search_id"')
-			?>
-		</div>
-
-		<div>
-			<?php print form_label ($this->lang->line('Name'), 'name')
-			?>
-			<?php print form_input('name',
-				set_value('owner', $search->name),
-				'id="project_search_name"')
+		<div id="project_search_form_id">
+			<?php
+			print form_label($this->lang->line('ID'), 'id');
+			print ' ';
+			print form_input('id', set_value('owner', $search->id), 'id="project_search_id"');
 			?>
 		</div>
 
-		<div>
-			<?php print form_label ($this->lang->line('Summary'), 'summary')
+		<div id="project_search_form_name">
+			<?php
+			print form_label($this->lang->line('Name'), 'name');
+			print ' ';
+			print form_input('name', set_value('owner', $search->name), 'id="project_search_name"');
 			?>
-			<?php print form_input('summary',
-				set_value('summary', $search->summary),
-				'id="project_search_summary" size="50"')
+		</div>
+
+		<div id="project_search_form_summary">
+			<?php 
+			print form_label($this->lang->line('Summary'), 'summary');
+			print ' ';
+			print form_input('summary', set_value('summary', $search->summary), 'id="project_search_summary" size="50"');
 			?>
 		</div>
 
@@ -137,44 +259,7 @@ if (empty($projects))
 }
 else
 {
-/*
-	print '<table id="project_catalog_mainarea_result_table">';
-	print '<tr class="heading">';
-	print '<th class="id">' . $this->lang->line('ID') . '</th>';
-	print '<th class="name">' . $this->lang->line('Name') . '</th>';
-	print '<th class="summary">' . $this->lang->line('Summary') . '</th>';
-	print '</tr>';
-
-	$rowclasses = array ("even", "odd");
-	$rownum = 0;
-	foreach ($projects as $project)
-	{
-		$rowclass = $rowclasses[++$rownum % 2];
-		print "<tr class='{$rowclass}'>";
-
-		print '<td class="id">';
-		print anchor ("project/home/{$project->id}", 
-			htmlspecialchars($project->id));
-		print '</td>';
-
-		print '<td class="name">';
-		print htmlspecialchars($project->name);
-		print '</td>';
-
-		print '<td class="summary">';
-		print htmlspecialchars($project->summary);
-		print '</td>';
-
-		print '</tr>';
-	}
-
-	print '<tr class="foot">';
-	print "<td colspan='3' class='pages'>{$page_links}</td>";
-	print '</tr>';
-
-	print '</table>';
-*/
-	print '<ul>';
+	print '<ul id="project_catalog_mainarea_result_list">';
 	foreach ($projects as $project)
 	{
 		$cap = "{$project->name} ({$project->id})";
@@ -183,7 +268,8 @@ else
 		print "<li>{$anc} - {$sum}</li>";
 	}
 	print '</ul>';
-	print "<span class='pages'>{$page_links}</span>";
+
+	print "<div class='pages' id='project_catalog_mainarea_result_pages'>{$page_links}</div>";
 }
 ?>
 </div> <!-- project_catalog_mainarea_result -->

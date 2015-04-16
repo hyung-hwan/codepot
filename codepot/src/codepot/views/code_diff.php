@@ -3,8 +3,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
+
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lisp.js')?>"></script>
@@ -152,7 +154,7 @@ function format_diff2 ($a, $b, $css_class)
 	$ms = codepot_find_matching_sequences ($a, $b);
 	$ms_count = count($ms);
 
-        $k = 0;
+	$k = 0;
 	$cc = ''; 
 
 	if ($css_class == 'diffchangedold')
@@ -188,7 +190,7 @@ function format_diff2 ($a, $b, $css_class)
 				$cc .= '</span>';
 			}
 			$cc .= htmlspecialchars(substr($b, $mp2, $ml));
-			$k = $mp2 + $ml;	
+			$k = $mp2 + $ml;
 		}
 		if ($k < strlen($b)) 
 		{
@@ -383,126 +385,125 @@ else
 	$http_user_agent = $_SERVER['HTTP_USER_AGENT']; 
 	$is_msie = (stristr($http_user_agent, 'MSIE') !== FALSE && 
 	            stristr($http_user_agent, 'Opera') === FALSE);
-	if (!$is_msie)
-	{
-		$is_msie = (preg_match ("/^Mozilla.+\(Windows.+\) like Gecko$/", $http_user_agent) !== FALSE);
-	}
+	if (!$is_msie) $is_msie = (preg_match ("/^Mozilla.+\(Windows.+\) like Gecko$/", $http_user_agent) !== FALSE);
+
+	$diff_view = $fullview? 'fulldiff': 'diff';
 
 	print '<div style="width: 100%; overflow: hidden;" id="code_diff_mainarea_result_fullview">';
 
-	if (empty($file['content']))
+	//
+	// SHOW THE OLD FILE
+	//
+	print ("<div style='float:left; width: 49%;'>");
+
+	print "<div class='navigator'>";
+	$currev = $file['created_rev'];
+	$prevrev = $file['against']['prev_rev'];
+	$prevanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$currev}/{$prevrev}";
+
+	print anchor ($prevanc, '<<');
+	print '&nbsp;&nbsp;&nbsp;';
+
+	// show the history details of the previous revision at the root directory
+	$revanc = "code/revision/{$project->id}/!/{$prevrev}";
+	print anchor ($revanc, ($this->lang->line('Revision') . ' ' . $file['against']['created_rev']));
+
+	$currev = $file['created_rev'];
+	$nextrev = $file['against']['next_rev'];
+	$nextanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$currev}/{$nextrev}";
+	print '&nbsp;&nbsp;&nbsp;';
+	print anchor ($nextanc, '>>');
+	print "</div>";
+
+	print "<pre class='prettyprint lang-{$fileext}' style='width: 100%' id='code_diff_mainarea_result_fulldiffold'>";
+
+	foreach ($file['content'] as $x)
 	{
-		print htmlspecialchars ($this->lang->line('MSG_NO_DIFF'));
+		if (array_key_exists('rev2line', $x)) 
+		{
+			$diffclass = array_key_exists('rev1diffclass', $x)? $x['rev1diffclass']: 'diff';
+			print "<span class='{$diffclass}'>";
+
+			if ($diffclass == 'diffchanged')
+			{
+				//$xline = format_diff ($x['rev1line'], $x['rev2line'], 'diffchangedold');
+				$xline = format_diff2 ($x['rev1line'], $x['rev2line'], 'diffchangedold');
+			}
+			else 
+			{
+				$xline = htmlspecialchars($x['rev1line']);
+			}
+
+			if ($is_msie && $xline == '') $xline = '&nbsp;';
+			print $xline;
+			print "</span>\n";
+		}
+		else
+		{
+			print "<span class='diffrow'> ";
+			print $x['rev1lineno'];
+			print " </span>\n";
+		}
 	}
-	else
+	printf ("</div>");
+	print '</pre>';
+
+	//
+	// SHOW THE NEW FILE
+	//
+	print ("<div style='float:left; width: 49%;'>");
+
+	print "<div class='navigator'>";
+	$currev = $file['against']['created_rev'];
+	$prevrev = $file['prev_rev'];
+	$prevanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$prevrev}/{$currev}";
+	print anchor ($prevanc, '<<');
+	print '&nbsp;&nbsp;&nbsp;';
+
+	// show the history details of the current revision at the root directory
+	$revanc = "code/revision/{$project->id}/!/{$currev}";
+	print anchor ($revanc, ($this->lang->line('Revision') . ' ' . $file['created_rev']));
+
+	$currev = $file['against']['created_rev'];
+	$nextrev = $file['next_rev'];
+	$nextanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$nextrev}/{$currev}";
+	print '&nbsp;&nbsp;&nbsp;';
+	print anchor ($nextanc, '>>');
+	print "</div>";
+
+	print "<pre class='prettyprint lang-{$fileext}' style='width: 100%' id='code_diff_mainarea_result_fulldiffnew'>";
+	foreach ($file['content'] as $x)
 	{
-		print ("<div style='float:left; width: 49%;'>");
-
-		print "<div class='navigator'>";
-		$currev = $file['created_rev'];
-		$prevrev = $file['against']['prev_rev'];
-		$prevanc = "code/fulldiff/{$project->id}/{$xpar}/{$currev}/{$prevrev}";
-		print anchor ($prevanc, '<<');
-		print '&nbsp;&nbsp;&nbsp;';
-
-		print $this->lang->line('Revision');
-		print ' ';
-		print $file['against']['created_rev'];
-
-		$currev = $file['created_rev'];
-		$nextrev = $file['against']['next_rev'];
-		$nextanc = "code/fulldiff/{$project->id}/{$xpar}/{$currev}/{$nextrev}";
-		print '&nbsp;&nbsp;&nbsp;';
-		print anchor ($nextanc, '>>');
-		print "</div>";
-
-		print "<pre class='prettyprint lang-{$fileext}' style='width: 100%' id='code_diff_mainarea_result_fulldiffold'>";
-
-		foreach ($file['content'] as $x)
+		if (array_key_exists('rev2line', $x)) 
 		{
-			if (array_key_exists('rev2line', $x)) 
-			{
-				$diffclass = array_key_exists('rev1diffclass', $x)? $x['rev1diffclass']: 'diff';
-				print "<span class='{$diffclass}'>";
+			$diffclass = array_key_exists('rev2diffclass', $x)? $x['rev2diffclass']: 'diff';
 
-				if ($diffclass == 'diffchanged')
-				{
-					//$xline = format_diff ($x['rev1line'], $x['rev2line'], 'diffchangedold');
-					$xline = format_diff2 ($x['rev1line'], $x['rev2line'], 'diffchangedold');
-				}
-				else 
-				{
-					$xline = htmlspecialchars($x['rev1line']);
-				}
+			print "<span class='{$diffclass}'>";
 
-				if ($is_msie && $xline == '') $xline = '&nbsp;';
-				print $xline;
-				print "</span>\n";
-			}
-			else
+			if ($diffclass == 'diffchanged')
 			{
-				print "<span class='diffrow'> ";
-				print $x['rev1lineno'];
-				print " </span>\n";
+				//$xline = format_diff ($x['rev2line'], $x['rev1line'], 'diffchangednew');
+				$xline = format_diff2 ($x['rev1line'], $x['rev2line'], 'diffchangednew');
 			}
+			else 
+			{
+				$xline = htmlspecialchars($x['rev2line']);
+			}
+
+			if ($is_msie && $xline == '') $xline = '&nbsp;';
+			print $xline;
+			print "</span>\n";
 		}
-		printf ("</div>");
-		print '</pre>';
-
-		print ("<div style='float:left; width: 49%;'>");
-
-		print "<div class='navigator'>";
-		$currev = $file['against']['created_rev'];
-		$prevrev = $file['prev_rev'];
-		$prevanc = "code/fulldiff/{$project->id}/{$xpar}/{$prevrev}/{$currev}";
-		print anchor ($prevanc, '<<');
-		print '&nbsp;&nbsp;&nbsp;';
-
-		print $this->lang->line('Revision');
-		print ' ';
-		print $file['created_rev'];
-
-		$currev = $file['against']['created_rev'];
-		$nextrev = $file['next_rev'];
-		$nextanc = "code/fulldiff/{$project->id}/{$xpar}/{$nextrev}/{$currev}";
-		print '&nbsp;&nbsp;&nbsp;';
-		print anchor ($nextanc, '>>');
-		print "</div>";
-
-		print "<pre class='prettyprint lang-{$fileext}' style='width: 100%' id='code_diff_mainarea_result_fulldiffnew'>";
-		foreach ($file['content'] as $x)
+		else
 		{
-			if (array_key_exists('rev2line', $x)) 
-			{
-				$diffclass = array_key_exists('rev2diffclass', $x)? $x['rev2diffclass']: 'diff';
-
-				print "<span class='{$diffclass}'>";
-
-				if ($diffclass == 'diffchanged')
-				{
-					//$xline = format_diff ($x['rev2line'], $x['rev1line'], 'diffchangednew');
-					$xline = format_diff2 ($x['rev1line'], $x['rev2line'], 'diffchangednew');
-				}
-				else 
-				{
-					$xline = htmlspecialchars($x['rev2line']);
-				}
-
-				if ($is_msie && $xline == '') $xline = '&nbsp;';
-				print $xline;
-				print "</span>\n";
-			}
-			else
-			{
-				print "<span class='diffrow'> ";
-				print $x['rev2lineno'];
-				print " </span>\n";
-			}
+			print "<span class='diffrow'> ";
+			print $x['rev2lineno'];
+			print " </span>\n";
 		}
-
-		print '</pre>';
-		printf ("</div>");
 	}
+
+	print '</pre>';
+	printf ("</div>");
 	print '</div>';
 }
 ?>

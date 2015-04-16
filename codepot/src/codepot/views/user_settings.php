@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/user.css')?>" />
      
@@ -59,7 +60,7 @@ $this->load->view (
 		print "<div id='user_settings_mainarea_message' class='form_message'>$message</div>";
 ?>
 
-<div id="user_settings_mainarea_result">
+<div id="user_settings_mainarea_result" class="result">
 
 <div class="form_container">
 <?php print form_open_multipart('user/settings/')?>

@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/log.css')?>" />
      
@@ -144,7 +145,7 @@ $this->load->view (
 
 <?php endif; ?>
 
-<div id="log_mainarea_result">
+<div id="log_mainarea_result" class="result">
 
 <table id="log_mainarea_result_table">
 <?php 

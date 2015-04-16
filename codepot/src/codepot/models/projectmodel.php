@@ -58,9 +58,9 @@ class ProjectModel extends Model
 
 		$this->db->select ('count(id) as count');
 		$this->db->order_by ('name', 'asc');
-		if ($search->id != '') $this->db->like ('id', $search->id);
-		if ($search->name != '') $this->db->like ('name', $search->name);
-		if ($search->summary != '') $this->db->like ('summary', $search->summary);
+		if (!empty($search->id)) $this->db->like ('id', $search->id);
+		if (!empty($search->name)) $this->db->like ('name', $search->name);
+		if (!empty($search->summary)) $this->db->like ('summary', $search->summary);
 
 		$query = $this->db->get ('project');
 		if ($this->db->trans_status() === FALSE)
@@ -83,16 +83,16 @@ class ProjectModel extends Model
 	{
 		$this->db->trans_start ();
 		$this->db->order_by ('name', 'asc');
-		if ($search->id != '') $this->db->like ('id', $search->id);
-		if ($search->name != '') $this->db->like ('name', $search->name);
-		if ($search->summary != '') $this->db->like ('summary', $search->summary);
+		if (!empty($search->id)) $this->db->like ('id', $search->id);
+		if (!empty($search->name)) $this->db->like ('name', $search->name);
+		if (!empty($search->summary)) $this->db->like ('summary', $search->summary);
 		$query = $this->db->get ('project', $limit, $offset);
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() === FALSE) return FALSE;
 		return $query->result ();
 	}
 
-	function findIDsAndNames ($userid, $needle)
+	function quickfindEntries ($userid, $needle)
 	{
 		$this->db->trans_start ();
 		$this->db->select(array('id', 'name as value')); // jquery ui autocomplete seems to require 'value'.
@@ -105,9 +105,10 @@ class ProjectModel extends Model
 		return $query->result ();
 	}
 
-	function create ($userid, $project, $api_base_url)
+	function create ($userid, $project, $api_base_url, &$repo_error)
 	{
 		// TODO: check if userid can do this..
+		$repo_error = FALSE;
 
 		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
@@ -169,6 +170,7 @@ class ProjectModel extends Model
 			if (@svn_repos_create ("{$repodir}/{$project->id}") === FALSE)
 			{
 				$this->db->trans_rollback ();
+				$repo_error = TRUE;
 				return FALSE;
 			}
 
@@ -190,6 +192,7 @@ class ProjectModel extends Model
 				{
 					$this->deleteDirectory ("{$repodir}/{$project->id}");
 					$this->db->trans_rollback ();
+					$repo_error = TRUE;
 					return FALSE;
 				}
 
@@ -199,6 +202,7 @@ class ProjectModel extends Model
 				{
 					$this->deleteDirectory ("{$repodir}/{$project->id}");
 					$this->db->trans_rollback ();
+					$repo_error = TRUE;
 					return FALSE;
 				}
 
@@ -208,6 +212,7 @@ class ProjectModel extends Model
 				{
 					$this->deleteDirectory ("{$repodir}/{$project->id}");
 					$this->db->trans_rollback ();
+					$repo_error = TRUE;
 					return FALSE;
 				}
 			}
