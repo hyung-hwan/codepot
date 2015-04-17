@@ -43,7 +43,7 @@
 .ui-resizable-sw { cursor: sw-resize; width: 9px; height: 9px; left: -5px; bottom: -5px; }
 .ui-resizable-nw { cursor: nw-resize; width: 9px; height: 9px; left: -5px; top: -5px; }
 .ui-resizable-ne { cursor: ne-resize; width: 9px; height: 9px; right: -5px; top: -5px;}.ui-selectable-helper { position: absolute; z-index: 100; border:1px dotted black; }
-.ui-accordion .ui-accordion-header { display: block; cursor: pointer; position: relative; margin-top: 2px; padding: .5em .5em .5em .7em; zoom: 1; }
+.ui-accordion .ui-accordion-header { display: block; cursor: pointer; position: relative; margin-top: 2px; padding: .5em .5em .5em .7em; zoom: 1; overflow: auto; }
 .ui-accordion .ui-accordion-icons { padding-left: 2.2em; }
 .ui-accordion .ui-accordion-noicons { padding-left: .7em; }
 .ui-accordion .ui-accordion-icons .ui-accordion-icons { padding-left: 2.2em; }

@@ -38,6 +38,18 @@ function render_wiki()
 $(function () {
 	render_wiki ();
 
+<?php if ($issues && count($issues) > 0): ?>
+	$("#site_home_mainarea_result_open_issues").accordion ({
+		collapsible: true 
+	}); 
+<?php endif; ?>
+
+<?php if ($recently_resolved_issues && count($recently_resolved_issues) > 0): ?>
+	$("#site_home_mainarea_result_resolved_issues").accordion ({
+		collapsible: true 
+	});
+<?php endif; ?>
+
 	$("#site_home_sidebar_latest_projects_box").accordion ({
 		collapsible: true 
 	});
@@ -261,7 +273,7 @@ foreach ($latest_projects as $project)
 
 <?php if ($issues && count($issues) > 0): ?>
 	<div id="site_home_mainarea_result_open_issues">
-	<div><?php print $this->lang->line('Open issues')?></div>
+	<div id="site_home_mainarea_result_open_issues_header"><?php print $this->lang->line('Open issues')?></div>
 	<ul id="site_home_mainarea_result_open_issues_list">
 		<?php 
 		foreach ($issues as $issue) 
@@ -290,7 +302,7 @@ foreach ($latest_projects as $project)
 
 <?php if ($recently_resolved_issues && count($recently_resolved_issues) > 0): ?>
 	<div id="site_home_mainarea_result_resolved_issues">
-	<div><?php print $this->lang->line('Recently resolved issues')?></div>
+	<div id="site_home_mainarea_result_resolved_issues_header"><?php print $this->lang->line('Recently resolved issues')?></div>
 	<ul id="site_home_mainarea_result_resolved_issues_list">
 		<?php 
 		foreach ($recently_resolved_issues as $issue) 
