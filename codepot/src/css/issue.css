@@ -138,13 +138,14 @@
 }
 
 #issue_show_mainarea_changes_table td.date {
-	width: 1px;
 	/*white-space: nowrap;*/
 	text-align: right;
 	vertical-align: top;
 	padding-top: 0.2em;
 	padding-bottom: 0.2em;
 	border-bottom: 1px solid lightgray;
+	min-width: 5em;
+	width: 1px;
 }
 
 #issue_show_mainarea_changes_table td.updater {
