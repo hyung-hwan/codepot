@@ -201,12 +201,14 @@ $this->load->view (
 
 <div id="project_catalog_mainarea_search_form">
 	<div>
-	<span><?php print $this->lang->line('Filter'); ?></span>
-	<span id="project_catalog_mainarea_total_projects_holder"><?php printf ('%s: <span id="project_catalog_mainarea_total_projects">%d</span>', $this->lang->line('PROJECT_MSG_TOTAL_PROJECTS'), $total_num_projects); ?></span>
+	<span><?php print $this->lang->line('Filters'); ?></span>
+	<span id="project_catalog_mainarea_total_projects_holder"><?php printf ('%s: <span id="project_catalog_mainarea_total_projects">%d</span>', $this->lang->line('PROJECT_LABEL_TOTAL_PROJECTS'), $total_num_projects); ?></span>
 	</div>
 	<form id="project_search_form">
+
 		<div id="project_search_form_id_and_name">
 			<?php
+			// TODO: enhance filter condition operators. contains, equals, not equal, regex, etc
 			print form_label($this->lang->line('ID'), 'id');
 			print ' ';
 			print form_input('id', set_value('owner', $search->id), 'id="project_search_id"');
@@ -219,17 +221,19 @@ $this->load->view (
 			?>
 		</div>
 
-		<div id="project_search_form_summary_and_or">
+		<div id="project_search_form_summary">
 			<?php 
 			print form_label($this->lang->line('Summary'), 'summary');
 			print ' ';
 			print form_input('summary', set_value('summary', $search->summary), 'id="project_search_summary" size="50"');
 			?>
+		</div>
 
+		<div id="project_search_form_or">
 			<?php 
-			print form_label('OR', 'or');
 			print ' ';
 			print form_checkbox('or', 'Y', set_checkbox('or', $search->or), 'id="project_search_or"');
+			print form_label($this->lang->line('PROJECT_LABEL_MATCH_ANY_FILTERS', 'or'));
 			?>
 		</div>
 		<?php

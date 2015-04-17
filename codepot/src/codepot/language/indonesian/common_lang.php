@@ -33,6 +33,7 @@ $lang['Error'] = 'Error';
 $lang['File'] = 'File';
 $lang['Files'] = 'File';
 $lang['Filter'] = 'Filter';
+$lang['Filters'] = 'Filters';
 $lang['First'] = 'Pertama';
 $lang['Folder'] = 'Folder';
 $lang['Full Difference'] = 'FullDiff';

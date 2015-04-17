@@ -35,10 +35,29 @@ function render_wiki()
 	);
 
 	prettyPrint ();
+
+	$("#project_home_sidebar_info_box").accordion ({
+		collapsible: true 
+	});
+
+	$("#project_home_sidebar_member_box").accordion ({
+		collapsible: true 
+	});
+
+	$("#project_home_sidebar_repo_box").accordion ({
+		collapsible: true 
+	});
+
+	$("#project_home_sidebar_log_box").accordion ({
+		collapsible: true 
+	});
+
 }
 
 $(function() {
 	render_wiki ();
+
+	
 });
 </script>
 
@@ -78,8 +97,10 @@ $this->load->view (
 <!-- /////////////////////////////////////////////////////////////////////// -->
 <div class="sidebar" id="project_home_sidebar">
 
-<div class="box">
-<ul>
+
+<div id="project_home_sidebar_info_box" class="collapsible-box">
+<div id="project_home_sidebar_info_header" class="collapsible-box-header"><?php print $this->lang->line('Summary')?></div>
+<ul id="project_home_sidebar_info_list" class="collapsible-box-list">
 <li><?php print $this->lang->line('Created on')?> <?php print $project->createdon?></li>
 <li><?php print $this->lang->line('Created by')?> <?php print $project->createdby?></li>
 <li><?php print $this->lang->line('Last updated on')?> <?php print $project->updatedon?></li>
@@ -87,9 +108,9 @@ $this->load->view (
 </ul>
 </div>
 
-<div class="box">
-<div class="boxtitle"><?php print $this->lang->line('Members')?></div>
-<ul>
+<div id="project_home_sidebar_member_box" class="collapsible-box">
+<div id="project_home_sidebar_member_header" class="collapsible-box-header"><?php print $this->lang->line('Members')?></div>
+<ul id="project_home_sidebar_member_list" class="collapsible-box-list">
 <?php
 	$members = $project->members;
 	$member_count = count($members);
@@ -132,9 +153,9 @@ $this->load->view (
 </ul>
 </div>
 
-<div class="box">
-<div class="boxtitle"><?php print $this->lang->line('Repository')?></div>
-<ul>
+<div id="project_home_sidebar_repo_box" class="collapsible-box">
+<div id="project_home_sidebar_repo_header" class="collapsible-box-header"><?php print $this->lang->line('Repository')?></div>
+<ul id="project_home_sidebar_repo_list" class="collapsible-box-list">
 <?php
 $urls = explode (',', CODEPOT_SVN_BASE_URL);
 foreach ($urls as $url)
@@ -147,28 +168,24 @@ foreach ($urls as $url)
 }
 ?>
 </ul>
-<pre>
-<?php //print_r ($urls); ?>
-<?php //print_r ($_SERVER); ?>
-</pre>
 </div>
 
-<div class="box">
-<div class="boxtitle">
+<div id="project_home_sidebar_log_box" class="collapsible-box">
+<div id="project_home_sidebar_log_header" class="collapsible-box-header">
 <?php print anchor ("/project/log/{$project->id}", $this->lang->line('Change log')) ?>
 </div>
 <?php 
+	print '<table id="project_home_sidebar_log_table" class="collapsible-box-table">';
+
 	if (count($log_entries) > 0)
 	{
-		print '<table id="project_home_sidebar_log_table">';
-
 		$xdot = $this->converter->AsciiToHex ('.');
 		foreach ($log_entries as $log)
 		{
 			if ($log['type'] == 'code')
 			{
 				$x = $log['message'];
-	
+
 				print '<tr class="odd">';
 				print '<td class="date">';
 				//print substr($x['time'], 5, 5);
@@ -179,11 +196,11 @@ foreach ($urls as $url)
 					"code/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
 					"r{$x['rev']}");
 				print '</td>';
-	
+
 				print '</tr>';
-	
+
 				print '<tr class="even">';
-	
+
 				print '<td></td>';
 				print '<td colspan="1" class="details">';
 				print '<span class="description">';
@@ -199,7 +216,7 @@ foreach ($urls as $url)
 					print htmlspecialchars (sprintf($fmt, $x['author']));
 				}
 				print '</span>';
-	
+
 				if ($log['action'] != 'revpropchange')
 				{
 					print '<pre class="message">';
@@ -216,7 +233,7 @@ foreach ($urls as $url)
 				print '<td class="date">';
 				print date ('m-d', strtotime($log['createdon']));
 				print '</td>';
-	
+
 				print '<td class="object">';
 				$uri = '';
 				if ($log['type'] == 'project')
@@ -242,15 +259,15 @@ foreach ($urls as $url)
 					$uri = "/issue/show/{$log['projectid']}/{$hex}";
 					$trimmed =  $this->lang->line('Issue') . " {$log['message']}";
 				}
-	
+
 				if ($uri != '')
 					print anchor ($uri, htmlspecialchars($trimmed));
 				else
 					print htmlspecialchars($trimmed);
 				print '</td>';
-	
+
 				print '</tr>';
-	
+
 				print '<tr class="even">';
 				print '<td></td>';
 				print '<td colspan="1" class="details">';
@@ -264,9 +281,13 @@ foreach ($urls as $url)
 				print '</tr>';
 			}
 		}
-
-		print "</table>";
 	}
+	else
+	{
+		printf ('<tr><td>%s</td></tr>', $this->lang->line('PROJECT_MSG_NO_CHANGE_LOG'));
+	}
+
+	print "</table>";
 ?>
 </div>
 
