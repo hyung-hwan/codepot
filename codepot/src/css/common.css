@@ -5,8 +5,26 @@ body {
 	min-width: 600px;
 }
 
-.content
-{
+pre {
+	font-family: consolas, "Andale Mono", monospace;
+	overflow: auto;
+	width: inherit;
+	border: none;
+
+	tab-size: 5;
+	-moz-tab-size: 5;
+	-o-tab-size: 5;
+}
+
+textarea {
+	font-family: consolas, "Andale Mono", monospace;
+
+	tab-size: 5;
+	-moz-tab-size: 5;
+	-o-tab-size: 5;
+}
+
+.content {
 	font-size: 0.9em;
 	font-family: Ubuntu, "Trebuchet MS", sans-serif;
 }
@@ -40,16 +58,15 @@ body {
 	white-space: normal;
 }
 
-.content a
-{
+.content a {
 	text-decoration: none;
 	color: #4665A2;
 }
 
-.content a:visited
-{
+.content a:visited {
 	color: #4665A2;
 }
+
 
 .content .taskbar {
 	font-size: 1em;
@@ -338,7 +355,6 @@ body {
 
 	font-size: inherit;
 	border: 0 none;
-	font-family: consolas, "Andale Mono", monospace;
 	padding: 0.2em 0.2em 0.2em 0.2em;
 }
 
@@ -375,16 +391,19 @@ body {
 
 .content .mainarea pre {
 	border: none;
+	/*
 	background-color: #F8F8FA;
+	*/
+	/*
 	overflow: auto;
 	width: inherit;
+	*/
 }
 
 .content .mainarea pre.wiki {
 	white-space: pre-wrap;
 	padding: 0.3em;
 	line-height: 1.2em;
-	font-family: consolas, "Andale Mono", monospace;
 
 	tab-size: 5;
 	-moz-tab-size: 5;
@@ -493,7 +512,6 @@ body {
 	/*border: 1px solid #ccc;*/
 	background-color: #F8F8FA;
 	border: none;
-	font-family: consolas, "Andale Mono", monospace;
 	line-height: 1.2em;
 	padding: 0.3em;
 
