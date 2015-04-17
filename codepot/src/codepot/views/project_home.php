@@ -52,6 +52,9 @@ function render_wiki()
 		collapsible: true 
 	});
 
+	$("#project_home_sidebar_log_all_button").button ().click (function () {
+		$(location).attr ('href', "<?php print site_url(); ?>/project/log/" + "<?php print $project->id; ?>");
+	});
 }
 
 $(function() {
@@ -172,8 +175,10 @@ foreach ($urls as $url)
 
 <div id="project_home_sidebar_log_box" class="collapsible-box">
 <div id="project_home_sidebar_log_header" class="collapsible-box-header">
-<?php print anchor ("/project/log/{$project->id}", $this->lang->line('Change log')) ?>
+<span><?php print $this->lang->line('Change log'); ?></span>
+<span id="project_home_sidebar_log_all_span"><a href='#' id="project_home_sidebar_log_all_button"><?php print $this->lang->line('All'); ?></a></span>
 </div>
+
 <?php 
 	print '<table id="project_home_sidebar_log_table" class="collapsible-box-table">';
 
