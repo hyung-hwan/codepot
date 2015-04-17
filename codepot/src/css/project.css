@@ -12,6 +12,8 @@
 
 #project_home_sidebar_log_table td {
 	padding-left: 0.5em;
+	padding-top: 0.25em;
+	padding-bottom: 0.25em;
 }
 
 #project_home_sidebar_log_table tr.odd {
