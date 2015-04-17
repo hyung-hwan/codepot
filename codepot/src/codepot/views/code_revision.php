@@ -9,6 +9,13 @@
 
 <script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-vb.js')?>"></script>
+
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
@@ -196,6 +203,8 @@ function render_wiki()
 	<?php
 	print "}\n";
 	?>
+
+	prettyPrint ();
 }
 
 function hide_unneeded_divs()
@@ -504,7 +513,7 @@ $history = $file['history'];
 		print "<div id='code_revision_mainarea_review_comment_{$i}' class='review_comment_text'>\n";
 		print "<pre id='code_revision_mainarea_review_comment_text_{$i}' style='visibility: hidden'>\n";
 
-		print $rc->comment;
+		print htmlspecialchars($rc->comment);
 
 		print "</pre>\n";
 		print "</div>\n";
