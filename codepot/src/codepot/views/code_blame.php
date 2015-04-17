@@ -30,23 +30,23 @@ $(function () {
 	?>
 
 	if ($("#code_blame_mainarea_result_info").is(":visible"))
-		btn_label = "<?php print $this->lang->line('Hide details')?>";
+		btn_label = "<?php print $this->lang->line('Hide metadata')?>";
 	else
-		btn_label = "<?php print $this->lang->line('Show details')?>";
+		btn_label = "<?php print $this->lang->line('Show metadata')?>";
 	
-	btn = $("#code_blame_mainarea_details_button").button({"label": btn_label}).click (function () {
+	btn = $("#code_blame_mainarea_metadata_button").button({"label": btn_label}).click (function () {
 		
 		if ($("#code_blame_mainarea_result_info").is(":visible"))
 		{
 			$("#code_blame_mainarea_result_info").hide("blind",{},200);
-			$("#code_blame_mainarea_details_button").button(
-				"option", "label", "<?php print $this->lang->line('Show details')?>");
+			$("#code_blame_mainarea_metadata_button").button(
+				"option", "label", "<?php print $this->lang->line('Show metadata')?>");
 		}
 		else
 		{
 			$("#code_blame_mainarea_result_info").show("blind",{},200);
-			$("#code_blame_mainarea_details_button").button(
-				"option", "label", "<?php print $this->lang->line('Hide details')?>");
+			$("#code_blame_mainarea_metadata_button").button(
+				"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
 		}
 	});
 
@@ -189,7 +189,7 @@ print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $this->lang->line('D
 		print ' | ';
 		printf ('%s: %s', $this->lang->line('Size'), $file['size']);
 	?>
-	<a id="code_blame_mainarea_details_button" href='#'><?php print $this->lang->line('Details')?></a>
+	<a id="code_blame_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
 </div>
 
 <div class="result" id="code_blame_mainarea_result">

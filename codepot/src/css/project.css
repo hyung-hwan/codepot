@@ -58,16 +58,41 @@
 }
 
 #project_catalog_mainarea_result_list {
-	margin: 1em;
+	margin-left: 1em;
+	margin-right: 1em;
+	margin-top: 0;
+	margin-bottom: 0;
 	padding: 1em;
 	white-space: nowrap;
 	line-height: 1.5em;
 }
 
 #project_catalog_mainarea_result_pages {
-	margin: 1em;
+	margin-left: 1em;
+	margin-right: 1em;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
 }
 
+#project_catalog_mainarea_search_form {
+	margin-top: 1em;
+}
+
+#project_catalog_mainarea_search_form .ui-accordion-header {
+	/* trying to emulate infostrip with the header of a jquery-ui's accordion widget */
+	background: #E5ECF9 none repeat scroll 0 0;
+	border: #D4DBE8 1px solid;
+}
+
+#project_catalog_mainarea_search_form form {
+	line-height: 2.5em;
+}
+
+#project_catalog_mainarea_total_projects_holder  {
+	position: absolute;
+	right: 1em;
+	font-weight: normal;
+}
 /*----------------------------------------------- 
  * project source folder view 
  *-----------------------------------------------*/
@@ -159,7 +184,7 @@
 	border: 0;
 	margin: 0;
 	font-size: 0.8em;
-	text-align: right;	
+	text-align: right;
 }
 
 #project_code_blame_mainarea_result_info .title a {

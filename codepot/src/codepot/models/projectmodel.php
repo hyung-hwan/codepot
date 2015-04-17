@@ -58,9 +58,19 @@ class ProjectModel extends Model
 
 		$this->db->select ('count(id) as count');
 		$this->db->order_by ('name', 'asc');
-		if (!empty($search->id)) $this->db->like ('id', $search->id);
-		if (!empty($search->name)) $this->db->like ('name', $search->name);
-		if (!empty($search->summary)) $this->db->like ('summary', $search->summary);
+
+		if ($search->or == 'Y') 
+		{
+			if (!empty($search->id)) $this->db->or_like ('id', $search->id);
+			if (!empty($search->name)) $this->db->or_like ('name', $search->name);
+			if (!empty($search->summary)) $this->db->or_like ('summary', $search->summary);
+		}
+		else
+		{
+			if (!empty($search->id)) $this->db->like ('id', $search->id);
+			if (!empty($search->name)) $this->db->like ('name', $search->name);
+			if (!empty($search->summary)) $this->db->like ('summary', $search->summary);
+		}
 
 		$query = $this->db->get ('project');
 		if ($this->db->trans_status() === FALSE)
@@ -83,9 +93,19 @@ class ProjectModel extends Model
 	{
 		$this->db->trans_start ();
 		$this->db->order_by ('name', 'asc');
-		if (!empty($search->id)) $this->db->like ('id', $search->id);
-		if (!empty($search->name)) $this->db->like ('name', $search->name);
-		if (!empty($search->summary)) $this->db->like ('summary', $search->summary);
+
+		if ($search->or == 'Y') 
+		{
+			if (!empty($search->id)) $this->db->or_like ('id', $search->id);
+			if (!empty($search->name)) $this->db->or_like ('name', $search->name);
+			if (!empty($search->summary)) $this->db->or_like ('summary', $search->summary);
+		}
+		else
+		{
+			if (!empty($search->id)) $this->db->like ('id', $search->id);
+			if (!empty($search->name)) $this->db->like ('name', $search->name);
+			if (!empty($search->summary)) $this->db->like ('summary', $search->summary);
+		}
 		$query = $this->db->get ('project', $limit, $offset);
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() === FALSE) return FALSE;
@@ -332,8 +352,8 @@ class ProjectModel extends Model
 		$this->db->set ('type',      'project');
 		$this->db->set ('action',    'delete');
 		$this->db->set ('projectid', $project->id);
-                $this->db->set ('userid',    $userid);
-                $this->db->set ('message',   $project->name);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $project->name);
 		$this->db->insert ('log');
 
 		if ($this->db->trans_status() === FALSE)

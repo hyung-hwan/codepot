@@ -157,6 +157,7 @@ $(function () {
 
 	$("#taskbar_project_to_find").button().autocomplete({
 		minLength: 1, // is this too small?
+		delay: 1000,
 		source: function (request, response) {
 
 			var term = codepot_string_to_hex(request.term);

@@ -35,24 +35,24 @@ function render_wiki()
 
 $(function () {
 	if ($("#file_show_mainarea_result_info").is(":visible"))
-		btn_label = "<?php print $this->lang->line('Hide details')?>";
+		btn_label = "<?php print $this->lang->line('Hide metadata')?>";
 	else
-		btn_label = "<?php print $this->lang->line('Show details')?>";
+		btn_label = "<?php print $this->lang->line('Show metadata')?>";
 
 
-	btn = $("#file_show_mainarea_details_button").button({"label": btn_label}).click (function () {
+	btn = $("#file_show_mainarea_metadata_button").button({"label": btn_label}).click (function () {
 		
 		if ($("#file_show_mainarea_result_info").is(":visible"))
 		{
 			$("#file_show_mainarea_result_info").hide("blind",{},200);
-			$("#file_show_mainarea_details_button").button(
-				"option", "label", "<?php print $this->lang->line('Show details')?>");
+			$("#file_show_mainarea_metadata_button").button(
+				"option", "label", "<?php print $this->lang->line('Show metadata')?>");
 		}
 		else
 		{
 			$("#file_show_mainarea_result_info").show("blind",{},200);
-			$("#file_show_mainarea_details_button").button(
-				"option", "label", "<?php print $this->lang->line('Hide details')?>");
+			$("#file_show_mainarea_metadata_button").button(
+				"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
 		}
 	});
 
@@ -104,7 +104,7 @@ $this->load->view (
 
 <div class="infostrip" id="wiki_show_mainarea_infostrip">
 	<?php print  anchor ("file/get/{$project->id}/". $this->converter->AsciiToHex($file->name), $this->lang->line('Download')) ?>
-	| <a id="file_show_mainarea_details_button" href='#'><?php print $this->lang->line('Details')?></a>
+	| <a id="file_show_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
 </div>
 
 <div id="file_show_mainarea_result">

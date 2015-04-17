@@ -168,23 +168,23 @@ $(function () {
 	?>
 
 	if ($("#code_folder_mainarea_result_info").is(":visible"))
-		btn_label = "<?php print $this->lang->line('Hide details')?>";
+		btn_label = "<?php print $this->lang->line('Hide metadata')?>";
 	else
-		btn_label = "<?php print $this->lang->line('Show details')?>";
+		btn_label = "<?php print $this->lang->line('Show metadata')?>";
 
-	btn = $("#code_folder_mainarea_details_button").button({"label": btn_label}).click (function () {
+	btn = $("#code_folder_mainarea_metadata_button").button({"label": btn_label}).click (function () {
 		
 		if ($("#code_folder_mainarea_result_info").is(":visible"))
 		{
 			$("#code_folder_mainarea_result_info").hide("blind",{},200);
-			$("#code_folder_mainarea_details_button").button(
-				"option", "label", "<?php print $this->lang->line('Show details')?>");
+			$("#code_folder_mainarea_metadata_button").button(
+				"option", "label", "<?php print $this->lang->line('Show metadata')?>");
 		}
 		else
 		{
 			$("#code_folder_mainarea_result_info").show("blind",{},200);
-			$("#code_folder_mainarea_details_button").button(
-				"option", "label", "<?php print $this->lang->line('Hide details')?>");
+			$("#code_folder_mainarea_metadata_button").button(
+				"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
 		}
 	});
 
@@ -400,7 +400,7 @@ $this->load->view (
 	if ($file_count > 0)
 	{
 		print ' | ';
-		printf ('<a id="code_folder_mainarea_details_button" href="#">%s</a>', $this->lang->line('Details'));
+		printf ('<a id="code_folder_mainarea_metadata_button" href="#">%s</a>', $this->lang->line('Metadata'));
 	}
 
 	print form_close();
