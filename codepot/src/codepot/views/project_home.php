@@ -155,7 +155,7 @@ foreach ($urls as $url)
 
 <div class="box">
 <div class="boxtitle">
-<?php print  anchor ("/project/log/{$project->id}", $this->lang->line('Change log')) ?>
+<?php print anchor ("/project/log/{$project->id}", $this->lang->line('Change log')) ?>
 </div>
 <?php 
 	if (count($log_entries) > 0)
@@ -260,7 +260,7 @@ foreach ($urls as $url)
 				print htmlspecialchars (sprintf($fmt, $log['userid']));
 				print '</span>';
 				print '</td>';
-	
+
 				print '</tr>';
 			}
 		}

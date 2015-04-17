@@ -7,6 +7,15 @@ CODEPOT
  multiple subversion repositories independent of each other. Going beyond it,
  you can track issues, write documents, and upload release files.
 
+UPGRADING FROM 0.2.0
+
+ The code_hide_details column in the user_settings table has been renamed
+ to code_hide_metadata. You must rename your existing database manually.
+
+  mysql> ALTER TABLE  user_settings CHANGE code_hide_details code_hide_metadata char(1) NOT NULL;
+  oracle> ALTER TABLE user_settings RENAME COLUMN code_hide_details TO code_hide_metadata;
+
+
 INSTALLATION ON CENTOS
 
  A RPM package is provided for RedHat/CentOS Linux. The RPM package specifies

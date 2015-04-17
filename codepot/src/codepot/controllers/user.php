@@ -200,7 +200,7 @@ class User extends Controller
 			}
 
 			$settings->code_hide_line_num = $this->input->post('code_hide_line_num');
-			$settings->code_hide_details = $this->input->post('code_hide_details');
+			$settings->code_hide_metadata = $this->input->post('code_hide_metadata');
 			$settings->icon_name = $icon_fname;
 			$settings->uploaded_icon_name = $uploaded_fname;
 
@@ -227,7 +227,7 @@ class User extends Controller
 			{
 				if ($settings === FALSE) $data['message'] = 'DATABASE ERROR';
 				$settings->code_hide_line_num = ' ';
-				$settings->code_hide_details = ' ';
+				$settings->code_hide_metadata = ' ';
 				$settings->icon_name = '';
 			}
 
