@@ -33,7 +33,7 @@ function prepare_page_button (i, req_size)
 			var filter = codepot_ascii_to_hex(last_successful_filter);
 			var offset = parseInt($(this).text());
 			$.ajax({
-				url: "<?php print site_url(); ?>/project/catalog_json/" + filter + "/" + ((offset  - 1) * req_size),
+				url: codepot_merge_path("<?php print site_url(); ?>", "/project/catalog_json/" + filter + "/" + ((offset  - 1) * req_size)),
 				dataType: "json",
 				success: function(data) { render_project_list (data); }
 			});
@@ -146,7 +146,7 @@ $(function () {
 			var filter = codepot_ascii_to_hex(last_attempted_filter);
 
 			$.ajax({
-				url: "<?php print site_url(); ?>/project/catalog_json/" + filter,
+				url: codepot_merge_path("<?php print site_url(); ?>", "/project/catalog_json/" + filter),
 				dataType: "json",
 				success: function(data) { render_project_list (data); }
 			});
