@@ -31,11 +31,17 @@
 	overflow: auto;
 	border: 0;
 	margin: 0;
-	padding: 0;
+
 	background-color: inherit;
 	white-space: -moz-pre-wrap;
 	white-space: -o-pre-wrap;
 	white-space: pre-wrap;
+
+	padding-left: 0.5em;
+	font-size: 0.9em;
+	line-height: 1.2em;
+
+	color: #333333;
 }
 
 #code_folder_mainarea_result_info .title {
@@ -56,11 +62,6 @@
 	white-space: pre-wrap;
 	padding: 0.3em;
 	line-height: 1.2em;
-	font-family: consolas, "Andale Mono", monospace;
-
-	tab-size: 5;
-	-moz-tab-size: 5;
-	-o-tab-size: 5;
 }
 
 /*----------------------------------------------- 
@@ -90,11 +91,17 @@
 	overflow: auto;
 	border: 0;
 	margin: 0;
-	padding: 0;
+
 	background-color: inherit;
 	white-space: -moz-pre-wrap;
 	white-space: -o-pre-wrap;
 	white-space: pre-wrap;
+
+	padding-left: 0.5em;
+	font-size: 0.9em;
+	line-height: 1.2em;
+
+	color: #333333;
 }
 
 #code_file_mainarea_result_info .title {
@@ -139,11 +146,17 @@
 	overflow: auto;
 	border: 0;
 	margin: 0;
-	padding: 0;
+
 	background-color: inherit;
 	white-space: -moz-pre-wrap;
 	white-space: -o-pre-wrap;
 	white-space: pre-wrap;
+
+	padding-left: 0.5em;
+	font-size: 0.9em;
+	line-height: 1.2em;
+
+	color: #333333;
 }
 
 #code_blame_mainarea_result_info .title {

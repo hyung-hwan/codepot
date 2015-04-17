@@ -112,8 +112,6 @@
 	border-radius: 3px;
 
 	border: 0 none;
-	font-family: consolas, "Andale Mono", monospace;
-
 	width: 100%;
 	font-size: 0.9em;
 }
@@ -199,13 +197,8 @@
 
 	background-color: #F8F8FA;
 	border: none;
-	font-family: consolas, "Andale Mono", monospace;
 	line-height: 1.2em;
 	padding: 0.3em;
-
-	tab-size: 5;
-	-moz-tab-size: 5;
-	-o-tab-size: 5;
 
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
@@ -227,7 +220,6 @@
 	display: block;
 	padding: 1px;
 	font-size: inherit;
-	font-family: consolas, "Andale Mono", monospace;
 	width: 100%;
 }
 
