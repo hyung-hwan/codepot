@@ -1,41 +1,62 @@
 /*----------------------------------------------- 
  * site home view 
  *-----------------------------------------------*/
-#site_home_mainarea_sidebar {
+#site_home_sidebar {
 	width: 24em;
+	padding-left: 0.5em;
 }
 
-#site_home_mainarea_sidebar_log_table {
+#site_home_sidebar .collapsible-box {
+	margin-bottom: 1em;
+}
+
+#site_home_sidebar .collapsible-box-header {
+	background: #E5ECF9 none repeat scroll 0 0;
+	border: #D4DBE8 1px solid;
+}
+
+#site_home_sidebar .collapsible-box-list {
+	padding-left: 1.8em;
+	margin-left: 0;
+	line-height: 1.5em;
+}
+
+#site_home_sidebar .collapsible-box-table {
+	line-height: 1.5em;
 	border-collapse: collapse;
 }
 
-#site_home_mainarea_sidebar_log_table tr.odd {
+#site_home_sidebar_log_table td {
+	padding-left: 0.5em;
+}
+
+#site_home_sidebar_log_table tr.odd {
 	background-color: #bbccef;
 }
 
-#site_home_mainarea_sidebar_log_table tr.odd td.date {
+#site_home_sidebar_log_table tr.odd td.date {
 	width: 1%;
 	white-space: nowrap;
 }
 
-#site_home_mainarea_sidebar_log_table tr.odd td.project {
+#site_home_sidebar_log_table tr.odd td.project {
 	width: 1%;
 	white-space: nowrap;
 }
 
-#site_home_mainarea_sidebar_log_table tr.odd td.object {
+#site_home_sidebar_log_table tr.odd td.object {
 	white-space: nowrap;
 }
 
-#site_home_mainarea_sidebar_log_table tr.even {
+#site_home_sidebar_log_table tr.even {
 	background-color: inherit;
 }
 
-#site_home_mainarea_sidebar_log_table tr.even td.details .description {
+#site_home_sidebar_log_table tr.even td.details .description {
 	font-style: italic;
 }
 
-#site_home_mainarea_sidebar_log_table tr.even td.details pre.message {
+#site_home_sidebar_log_table tr.even td.details pre.message {
 	border: 0;
 	margin: 1px;
 	background-color: inherit; 

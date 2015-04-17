@@ -5,8 +5,29 @@
 /*----------------------------------------------- 
  * project home view 
  *-----------------------------------------------*/
-#project_home_sidebar_log_table {
+
+#project_home_sidebar .collapsible-box {
+	margin-bottom: 1em;
+}
+
+#project_home_sidebar .collapsible-box-header {
+	background: #E5ECF9 none repeat scroll 0 0;
+	border: #D4DBE8 1px solid;
+}
+
+#project_home_sidebar .collapsible-box-list {
+	padding-left: 1.8em;
+	margin-left: 0;
+	line-height: 1.5em;
+}
+
+#project_home_sidebar .collapsible-box-table {
+	line-height: 1.5em;
 	border-collapse: collapse;
+}
+
+#project_home_sidebar_log_table td {
+	padding-left: 0.5em;
 }
 
 #project_home_sidebar_log_table tr.odd {

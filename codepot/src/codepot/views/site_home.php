@@ -34,6 +34,18 @@ function render_wiki()
 
 	prettyPrint ();
 }
+
+$(function () {
+	render_wiki ();
+
+	$("#site_home_sidebar_latest_projects_box").accordion ({
+		collapsible: true 
+	});
+
+	$("#site_home_sidebar_log_box").accordion ({
+		collapsible: true 
+	});
+});
 </script>
 
 <title><?php
@@ -44,7 +56,7 @@ function render_wiki()
 ?></title>
 </head>
 
-<body onload="render_wiki()">
+<body>
 
 <div class="content" id="site_home_content">
 
@@ -57,30 +69,30 @@ function render_wiki()
 <?php
 
 $this->load->view (
-        'projectbar',
-        array (
+	'projectbar',
+	array (
 		'banner' => $site->name,
 
 		'page' => array (
 			'type' => ($login['sysadmin?']? 'site': ''),
 			'id' => '',
 			'site' => ($login['sysadmin?']? $site: NULL)
-                ),
+		),
 
-                'ctxmenuitems' => NULL
-        )
+		'ctxmenuitems' => NULL
+	)
 );
 ?>
 
 <!-- ////////////////////////////////////////////////////////////////////// -->
 
-<div class="mainarea" id="site_home_mainarea">
 
-<div class="sidebar" id="site_home_mainarea_sidebar">
 
-<div class="box">
-<div class="boxtitle"><?php print $this->lang->line('Latest projects')?></div>
-<ul>
+<div class="sidebar" id="site_home_sidebar">
+
+<div id="site_home_sidebar_latest_projects_box" class="collapsible-box">
+<div id="site_home_sidebar_latest_projects_header" class="collapsible-box-header"><?php print $this->lang->line('Latest projects'); ?></div>
+<ul id="site_home_sidebar_latest_projects_list" class="collapsible-box-list">
 <?php
 foreach ($latest_projects as $project)
 {
@@ -100,11 +112,9 @@ foreach ($latest_projects as $project)
 </ul>
 </div>
 
-<div class="box">
-<div class="boxtitle">
-<?php print  anchor ("/site/log", $this->lang->line('Change log')) ?>
-</div>
-<table id="site_home_mainarea_sidebar_log_table">
+<div id="site_home_sidebar_log_box" class="collapsible-box">
+<div id="site_home_sidebar_log_header" class="collapsible-box-header"><?php print  anchor ("/site/log", $this->lang->line('Change log')); ?></div>
+<table id="site_home_sidebar_log_table" class="collapsible-box-table">
 <?php 
 	$xdot = $this->converter->AsciiToHex ('.');
 	foreach ($log_entries as $log)
@@ -235,7 +245,9 @@ foreach ($latest_projects as $project)
 </table>
 </div> <!-- box -->
 
-</div> <!-- site_home_mainarea_sidebar -->
+</div> <!-- site_home_sidebar -->
+
+<div class="mainarea" id="site_home_mainarea">
 
 <div class="result" id="site_home_mainarea_result">
 
