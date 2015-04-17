@@ -618,19 +618,6 @@ pre.prettyprint li.L9 { background: #eee }
 	box-shadow: 0 8px 6px -6px #777;*/
 }
 
-.content .sidebar .user_icon_img {
-	height: 2em;
-	width: 2em;
-	vertical-align: middle;
-	padding-top: 1px;
-	padding-bottom: 1px;
-	padding-right: 1px;
-
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-}
-
 .content .sidebar .boxtitle {
 	/* title of an infobox */
 	font-weight:bold;
@@ -654,6 +641,41 @@ pre.prettyprint li.L9 { background: #eee }
 .content .sidebar .boxtitle a:hover {
 	/*background-color: #BBBBFF;*/
 	color: #8899CC;
+}
+
+.content .sidebar .collapsible-box {
+	margin-bottom: 1em;
+	padding-left: 0.5em;
+}
+
+.content .sidebar .collapsible-box-header {
+	background: #E5ECF9 none repeat scroll 0 0;
+	border: #D4DBE8 1px solid;
+	color: #1C94C4;
+}
+
+.content .sidebar .collapsible-box-list {
+	padding-left: 1.8em;
+	margin-left: 0;
+	line-height: 1.5em;
+}
+
+.content .sidebar .collapsible-box-table {
+	line-height: 1.5em;
+	border-collapse: collapse;
+}
+
+.content .sidebar .user_icon_img {
+	height: 2em;
+	width: 2em;
+	vertical-align: middle;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	padding-right: 1px;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 }
 
 .content .sidebar ul {
