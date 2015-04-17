@@ -45,6 +45,10 @@ $(function () {
 	$("#site_home_sidebar_log_box").accordion ({
 		collapsible: true 
 	});
+
+	$("#site_home_sidebar_log_all_button").button ().click (function () {
+		$(location).attr ('href', "<?php print site_url(); ?>/site/log");
+	});
 });
 </script>
 
@@ -113,7 +117,11 @@ foreach ($latest_projects as $project)
 </div>
 
 <div id="site_home_sidebar_log_box" class="collapsible-box">
-<div id="site_home_sidebar_log_header" class="collapsible-box-header"><?php print  anchor ("/site/log", $this->lang->line('Change log')); ?></div>
+<div id="site_home_sidebar_log_header" class="collapsible-box-header">
+<span><?php print $this->lang->line('Change log'); ?></span>
+<span id="site_home_sidebar_log_all_span"><a href='#' id="site_home_sidebar_log_all_button"><?php print $this->lang->line('All'); ?></a></span>
+</div>
+
 <table id="site_home_sidebar_log_table" class="collapsible-box-table">
 <?php 
 	$xdot = $this->converter->AsciiToHex ('.');
