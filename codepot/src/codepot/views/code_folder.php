@@ -163,7 +163,7 @@ $(function () {
 
 <?php if ($file_count > 0): ?>
 	<?php
-	if ($login['settings'] != NULL && $login['settings']->code_hide_details == 'Y')
+	if ($login['settings'] != NULL && $login['settings']->code_hide_metadata == 'Y')
 		print '$("#code_folder_mainarea_result_info").hide();';
 	?>
 
