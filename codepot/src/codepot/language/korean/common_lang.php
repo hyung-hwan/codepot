@@ -33,6 +33,7 @@ $lang['Error'] = '오류';
 $lang['File'] = '파일';
 $lang['Files'] = '파일';
 $lang['Filter'] = '필터';
+$lang['Filters'] = '필터';
 $lang['First'] = '처음';
 $lang['Folder'] = '폴더';
 $lang['Full Difference'] = '전체차이';
