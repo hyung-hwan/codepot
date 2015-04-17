@@ -11,6 +11,13 @@
 
 <script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lisp.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-lua.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-sql.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-vb.js')?>"></script>
+
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
@@ -19,11 +26,13 @@
 function render_wiki()
 {
 	creole_render_wiki (
-		"site_home_mainarea_wiki_text",
-		"site_home_mainarea_wiki",
+		"site_home_mainarea_result_wiki_text",
+		"site_home_mainarea_result_wiki",
 		"<?php print site_url()?>/site/wiki/",
 		"<?php print site_url()?>/site/image/"
 	);
+
+	prettyPrint ();
 }
 </script>
 
@@ -228,10 +237,12 @@ foreach ($latest_projects as $project)
 
 </div> <!-- site_home_mainarea_sidebar -->
 
+<div class="result" id="site_home_mainarea_result">
+
 <?php if ($issues && count($issues) > 0): ?>
-	<div id="site_home_mainarea_issues">
+	<div id="site_home_mainarea_result_open_issues">
 	<div><?php print $this->lang->line('Open issues')?></div>
-	<ul>
+	<ul id="site_home_mainarea_result_open_issues_list">
 		<?php 
 		foreach ($issues as $issue) 
 		{
@@ -258,9 +269,9 @@ foreach ($latest_projects as $project)
 <?php endif; ?>
 
 <?php if ($recently_resolved_issues && count($recently_resolved_issues) > 0): ?>
-	<div id="site_home_mainarea_issues">
+	<div id="site_home_mainarea_result_resolved_issues">
 	<div><?php print $this->lang->line('Recently resolved issues')?></div>
-	<ul>
+	<ul id="site_home_mainarea_result_resolved_issues_list">
 		<?php 
 		foreach ($recently_resolved_issues as $issue) 
 		{
@@ -287,13 +298,13 @@ foreach ($latest_projects as $project)
 <?php endif; ?>
 
 
-
-<div class="result" id="site_home_mainarea_wiki">
-<pre id="site_home_mainarea_wiki_text" style="visibility: hidden">
+<div id="site_home_mainarea_result_wiki">
+<pre id="site_home_mainarea_result_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($site->text); ?>
 </pre>
 </div> <!-- site_home_mainarea_text -->
 
+</div> <! -- site_home_mainarea_result -->
 <!-- ////////////////////////////////////////////////////////////////////// -->
 
 </div> <!-- site_home_mainarea -->

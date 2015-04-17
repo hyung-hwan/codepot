@@ -37,6 +37,7 @@ class Project extends Controller
 			$search->id = '';
 			$search->name = '';
 			$search->summary = '';
+			$search->or = '';
 		}
 		else
 		{
@@ -44,6 +45,7 @@ class Project extends Controller
 			if (!array_key_exists ('id', $search)) $search['id'] = '';
 			if (!array_key_exists ('name', $search)) $search['name'] = '';
 			if (!array_key_exists ('summary', $search)) $search['summary'] = '';
+			if (!array_key_exists ('or', $search)) $search['or'] = '';
 
 			$search = (object) $search;
 		}
@@ -486,6 +488,7 @@ class Project extends Controller
 				$search->id = '';
 				$search->name = '';
 				$search->summary = '';
+				$search->or = '';
 			}
 			else
 			{
@@ -493,6 +496,7 @@ class Project extends Controller
 				if (!array_key_exists ('id', $search)) $search['id'] = '';
 				if (!array_key_exists ('name', $search)) $search['name'] = '';
 				if (!array_key_exists ('summary', $search)) $search['summary'] = '';
+				if (!array_key_exists ('or', $search)) $search['or'] = '';
 
 				$search = (object) $search;
 			}
@@ -581,7 +585,8 @@ class Project extends Controller
 
 		foreach ($projects as &$p)
 		{
-			if ($p->id != $p->value) $p->value = $p->id . ' - ' . $p->value;
+			$p->label = ($p->id != $p->value)? ($p->id . ' - ' . $p->value): $p->value;
+			//$p->value = $p->id;
 		}
 
 		print codepot_json_encode ($projects);

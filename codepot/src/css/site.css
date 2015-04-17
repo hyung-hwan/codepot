@@ -44,6 +44,23 @@
 	white-space: pre-wrap;
 }
 
+#site_home_mainarea_result_open_issues_list {
+	margin-left: 1em;
+	margin-right: 1em;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding: 1em;
+	line-height: 1.5em;
+}
+
+#site_home_mainarea_result_resolved_issues_list {
+	margin-left: 1em;
+	margin-right: 1em;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding: 1em;
+	line-height: 1.5em;
+}
 /*----------------------------------------------- 
  * site show view 
  *-----------------------------------------------*/

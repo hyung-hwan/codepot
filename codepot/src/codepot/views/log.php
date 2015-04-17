@@ -6,12 +6,12 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/log.css')?>" />
-     
-<?php if ($login['sysadmin?'] && isset($site)): ?>
 
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
+
+<?php if ($login['sysadmin?'] && isset($site)): ?>
 
 <script type="text/javascript">
 $(function () {
@@ -34,7 +34,7 @@ $(function () {
 	});
         $("#log_mainarea_purge").button().click(
 		function () {
-			$('#purge_confirm').dialog('open');	
+			$('#purge_confirm').dialog('open');
 		}
 	);
 });
@@ -46,8 +46,6 @@ $(function () {
 	$caption = $this->lang->line('Home');
 	if ($login['id'] != '') $caption .= "({$login['id']})";
 ?>
-
-
 
 <title><?php print htmlspecialchars($caption)?></title>
 </head>

@@ -53,7 +53,7 @@ class UserModel extends Model
 		{
 			$this->db->set ('userid', $userid);
 			$this->db->set ('code_hide_line_num', (string)$settings->code_hide_line_num);
-			$this->db->set ('code_hide_details', (string)$settings->code_hide_details);
+			$this->db->set ('code_hide_metadata', (string)$settings->code_hide_metadata);
 			if ($icon_name_set) $this->db->set ('icon_name', (string)$settings->icon_name);
 			$this->db->insert ('user_settings');
 		}
@@ -61,7 +61,7 @@ class UserModel extends Model
 		{
 			$this->db->where ('userid', $userid);
 			$this->db->set ('code_hide_line_num', (string)$settings->code_hide_line_num);
-			$this->db->set ('code_hide_details', (string)$settings->code_hide_details);
+			$this->db->set ('code_hide_metadata', (string)$settings->code_hide_metadata);
 			if ($icon_name_set) $this->db->set ('icon_name', (string)$settings->icon_name);
 			$this->db->update ('user_settings');
 		}
@@ -90,7 +90,7 @@ class UserModel extends Model
 
 		$this->db->where ('userid', $userid);
 		$this->db->set ('code_hide_line_num', (string)$settings->code_hide_line_num);
-		$this->db->set ('code_hide_details', (string)$settings->code_hide_details);
+		$this->db->set ('code_hide_metadata', (string)$settings->code_hide_metadata);
 		if (strlen($icon_name_set) $this->db->set ('icon_name', (string)$settings->icon_name);
 		$this->db->update ('user_settings');
 
@@ -104,7 +104,7 @@ class UserModel extends Model
 		{
 			$this->db->set ('userid', $userid);
 			$this->db->set ('code_hide_line_num', (string)$settings->code_hide_line_num);
-			$this->db->set ('code_hide_details', (string)$settings->code_hide_details);
+			$this->db->set ('code_hide_metadata', (string)$settings->code_hide_metadata);
 			$this->db->insert ('user_settings');
 
 			if ($this->db->trans_status() === FALSE)

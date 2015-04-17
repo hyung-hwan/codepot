@@ -7,17 +7,9 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/user.css')?>" />
      
-<!--
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
--->
-
-<script type="text/javascript">
-$(function () {
-	$('#user_settings_mainarea_result').accordion();
-});
-</script>
 
 <title><?php print htmlspecialchars($login['id'])?></title>
 </head>
@@ -70,10 +62,10 @@ $this->load->view (
 	?>
 	<?php print  $this->lang->line('USER_MSG_HIDE_LINE_NUMBER')?>
 
-	<?php print form_checkbox('code_hide_details',
-		'Y', $settings->code_hide_details == 'Y')
+	<?php print form_checkbox('code_hide_metadata',
+		'Y', $settings->code_hide_metadata == 'Y')
 	?>
-	<?php print  $this->lang->line('USER_MSG_HIDE_DETAILS')?>
+	<?php print  $this->lang->line('USER_MSG_HIDE_METADATA')?>
 
 	<div class='form_input_field'>
 		<?php print form_label($this->lang->line('Icon').': ', 'icon_img_file_name')?>

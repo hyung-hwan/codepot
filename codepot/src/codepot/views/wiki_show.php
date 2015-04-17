@@ -57,23 +57,23 @@ function render_wiki()
 
 $(function () {
 	if ($("#wiki_show_mainarea_result_info").is(":visible"))
-		btn_label = "<?php print $this->lang->line('Hide details')?>";
+		btn_label = "<?php print $this->lang->line('Hide metadata')?>";
 	else
-		btn_label = "<?php print $this->lang->line('Show details')?>";
+		btn_label = "<?php print $this->lang->line('Show metadata')?>";
 
-	btn = $("#wiki_show_mainarea_details_button").button({"label": btn_label}).click (function () {
+	btn = $("#wiki_show_mainarea_metadata_button").button({"label": btn_label}).click (function () {
 		
 		if ($("#wiki_show_mainarea_result_info").is(":visible"))
 		{
 			$("#wiki_show_mainarea_result_info").hide("blind",{},200);
-			$("#wiki_show_mainarea_details_button").button(
-				"option", "label", "<?php print $this->lang->line('Show details')?>");
+			$("#wiki_show_mainarea_metadata_button").button(
+				"option", "label", "<?php print $this->lang->line('Show metadata')?>");
 		}
 		else
 		{
 			$("#wiki_show_mainarea_result_info").show("blind",{},200);
-			$("#wiki_show_mainarea_details_button").button(
-				"option", "label", "<?php print $this->lang->line('Hide details')?>");
+			$("#wiki_show_mainarea_metadata_button").button(
+				"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
 		}
 	});
 
@@ -120,7 +120,7 @@ $this->load->view (
 <div class="title"><?php print htmlspecialchars($wiki->name)?></div>
 
 <div class="infostrip" id="wiki_show_mainarea_infostrip">
-	<a id="wiki_show_mainarea_details_button" href='#'><?php print $this->lang->line('Details')?></a>
+	<a id="wiki_show_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
 </div>
 
 <div id="wiki_show_mainarea_result" class="result">
