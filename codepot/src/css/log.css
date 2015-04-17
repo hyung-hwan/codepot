@@ -62,6 +62,7 @@
 	white-space: -moz-pre-wrap;
 	white-space: -o-pre-wrap;
 	white-space: pre-wrap;
+	color: #333333;
 }
 
 #log_mainarea_result_table td.pages {

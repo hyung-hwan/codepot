@@ -442,3 +442,19 @@ function codepot_string_to_hex (x)
 	var utf8 = codepot_utf8_encode(x);
 	return codepot_ascii_to_hex(utf8);
 }
+
+function codepot_merge_path (base, path)
+{
+	//
+	// if 'base' ends with '/', remove all leading slashes off 'path'
+	// before adding 'base' and 'path'.
+	//
+	if (base.charAt(base.length - 1) == "/")
+	{
+		var i;
+		for (i = 0; path.charAt(i) == '/'; i++);
+		return base + path.substr(i);
+	}
+	else return base + path;
+}
+
