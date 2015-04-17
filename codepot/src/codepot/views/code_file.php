@@ -24,7 +24,7 @@
 <script type="text/javascript">
 $(function () {
 	<?php
-	if ($login['settings'] != NULL && $login['settings']->code_hide_details == 'Y')
+	if ($login['settings'] != NULL && $login['settings']->code_hide_metadata == 'Y')
 		print '$("#code_file_mainarea_result_info").hide();';
 	?>
 
