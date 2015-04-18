@@ -51,7 +51,7 @@ function render_project_pages (total, shown, req_offset, req_size)
 	var num_pages = parseInt((total + req_size - 1) / req_size);
 	var page_no = parseInt(req_offset / req_size) + 1;
 
-	var max_page_buttons = 10;
+	var max_page_buttons = 9;
 	var page_no_start = page_no, page_no_stop = page_no;
 	var button_count = 1;
 	while (button_count < max_page_buttons)
@@ -97,7 +97,7 @@ function render_project_pages (total, shown, req_offset, req_size)
 		var b = prepare_page_button (i, req_size);
 		if (i == page_no) b.addClass ("ui-state-active");
 	}
-	if (page_no_stop < num_pages) prepare_page_button (num_pages);
+	if (page_no_stop < num_pages) prepare_page_button (num_pages, req_size);
 }
 
 function render_project_list (json)
@@ -199,12 +199,13 @@ $this->load->view (
 
 <div class="mainarea" id="project_catalog_mainarea">
 
-<div id="project_catalog_mainarea_search_form">
-	<div id="project_catalog_mainarea_search_form_header">
+<div id="project_catalog_mainarea_search_form" class="collapsible-box">
+	<div id="project_catalog_mainarea_search_form_header" class="collapsible-box-header">
 	<span><?php print $this->lang->line('Filters'); ?></span>
 	<span id="project_catalog_mainarea_total_projects_holder"><?php printf ('%s: <span id="project_catalog_mainarea_total_projects">%d</span>', $this->lang->line('PROJECT_LABEL_TOTAL_PROJECTS'), $total_num_projects); ?></span>
 	</div>
-	<form id="project_search_form">
+
+	<form id="project_search_form" class="collapsible-box-form">
 
 		<div id="project_search_form_id_and_name">
 			<?php

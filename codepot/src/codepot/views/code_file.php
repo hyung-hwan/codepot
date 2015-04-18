@@ -213,7 +213,14 @@ $this->load->view (
 
 	<?php 
 		print anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<');
-		printf ('%s: %s', $this->lang->line('Revision'), $file['created_rev']);
+		print ' ';
+
+		// anchor to the revision history at the root directory
+		print anchor (
+			"code/revision/{$project->id}/!/{$file['created_rev']}",
+			sprintf("%s %s", $this->lang->line('Revision'), $file['created_rev'])
+		);
+
 		if (!empty($file['created_tag']))
 		{
 			print ' ';
@@ -221,12 +228,19 @@ $this->load->view (
 			print htmlspecialchars($file['created_tag']);
 			print ('</span>');
 		}
+
+		print ' ';
 		print anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>');
 
 		print ' | ';
 		printf ('%s: %s', $this->lang->line('Size'), $file['size']);
 	?>
 	<a id="code_file_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
+</div>
+
+<div style="display:none">
+<pre id="code_file_mainarea_result_raw">
+</pre>
 </div>
 
 <div class="result" id="code_file_mainarea_result">
@@ -278,7 +292,9 @@ if ($login['settings'] != NULL &&
 
 <div id="code_file_mainarea_result_info" class="infobox">
 <div class="title"><?php print  $this->lang->line('CODE_COMMIT') ?></div>
-<?php printf ($this->lang->line('CODE_MSG_COMMITTED_BY_ON'), $file['last_author'], $file['time']); ?>
+<ul>
+<li><?php printf ($this->lang->line('CODE_MSG_COMMITTED_BY_ON'), $file['last_author'], $file['time']); ?></li>
+</ul>
 
 <div class="title"><?php print  $this->lang->line('Message') ?></div>
 <pre id="code_file_mainarea_result_info_logmsg">
@@ -318,11 +334,6 @@ if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 
 </div> <!-- code_file_mainarea_result_info -->
 
-
-<div style="display:none">
-<pre id="code_file_mainarea_result_raw">
-</pre>
-</div>
 
 </div> <!-- code_file_mainarea_result -->
 

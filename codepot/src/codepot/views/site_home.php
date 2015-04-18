@@ -107,7 +107,10 @@ $this->load->view (
 <div class="sidebar" id="site_home_sidebar">
 
 <div id="site_home_sidebar_latest_projects_box" class="collapsible-box">
-<div id="site_home_sidebar_latest_projects_header" class="collapsible-box-header"><?php print $this->lang->line('Latest projects'); ?></div>
+<div id="site_home_sidebar_latest_projects_header" class="collapsible-box-header">
+	<?php print $this->lang->line('Latest projects'); ?>
+</div>
+
 <ul id="site_home_sidebar_latest_projects_list" class="collapsible-box-list">
 <?php
 foreach ($latest_projects as $project)
@@ -126,6 +129,7 @@ foreach ($latest_projects as $project)
 }
 ?>
 </ul>
+
 </div>
 
 <div id="site_home_sidebar_log_box" class="collapsible-box">
@@ -272,9 +276,11 @@ foreach ($latest_projects as $project)
 <div class="result" id="site_home_mainarea_result">
 
 <?php if ($issues && count($issues) > 0): ?>
-	<div id="site_home_mainarea_result_open_issues">
-	<div id="site_home_mainarea_result_open_issues_header"><?php print $this->lang->line('Open issues')?></div>
-	<ul id="site_home_mainarea_result_open_issues_list">
+	<div id="site_home_mainarea_result_open_issues" class="collapsible-box">
+	<div id="site_home_mainarea_result_open_issues_header" class="collapsible-box-header">
+		<?php print $this->lang->line('Open issues')?>
+	</div>
+	<ul id="site_home_mainarea_result_open_issues_list" class="collapsible-box-list">
 		<?php 
 		foreach ($issues as $issue) 
 		{
@@ -301,9 +307,11 @@ foreach ($latest_projects as $project)
 <?php endif; ?>
 
 <?php if ($recently_resolved_issues && count($recently_resolved_issues) > 0): ?>
-	<div id="site_home_mainarea_result_resolved_issues">
-	<div id="site_home_mainarea_result_resolved_issues_header"><?php print $this->lang->line('Recently resolved issues')?></div>
-	<ul id="site_home_mainarea_result_resolved_issues_list">
+	<div id="site_home_mainarea_result_resolved_issues" class="collapsible-box">
+	<div id="site_home_mainarea_result_resolved_issues_header" class="collapsible-box-header">
+		<?php print $this->lang->line('Recently resolved issues')?>
+	</div>
+	<ul id="site_home_mainarea_result_resolved_issues_list" class="collapsible-box-list">
 		<?php 
 		foreach ($recently_resolved_issues as $issue) 
 		{

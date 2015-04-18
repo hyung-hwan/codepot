@@ -30,7 +30,6 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
 
 
-
 <?php
 	$file_count = count($file['content']);
 
@@ -151,8 +150,8 @@ function render_readme()
 	creole_render_wiki (
 		"code_folder_mainarea_result_readme_text",
 		"code_folder_mainarea_result_readme",
-		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
+		codepot_merge_path("<?php print site_url(); ?>", "/wiki/show/<?php print $project->id?>/"),
+		codepot_merge_path("<?php print site_url(); ?>", "/wiki/attachment0/<?php print $project->id?>/")
 	);
 	prettyPrint();
 	<?php endif; ?>
@@ -201,7 +200,9 @@ $(function () {
 		//setTimeout (show_progress, 1000);
 
 		var ajax_req = $.ajax ({
-			url: '<?php print site_url()?>/graph/folder_loc_json/<?php print $project->id?>/<?php print $this->converter->AsciiToHex($headpath)?><?php print $revreq?>',
+			url: codepot_merge_path (
+				"<?php print site_url(); ?>", 
+				"/graph/folder_loc_json/<?php print $project->id; ?>/<?php print $this->converter->AsciiToHex($headpath)?><?php print $revreq?>"),
 			context: document.body,
 			success: show_loc_graph
 		});
@@ -390,12 +391,24 @@ $this->load->view (
 		print ' | ';
 	} 
 
-	printf ('%s: %s', $this->lang->line('Revision'), $file['created_rev']);
+	$xpar = $this->converter->AsciiTohex ($headpath);
+	print anchor ("code/file/{$project->id}/${xpar}/{$prev_revision}", '<<');
+	print ' ';
+
+	// anchor to the revision history at the root directory
+	print anchor (
+		"code/revision/{$project->id}/!/{$file['created_rev']}", 
+		sprintf("%s %s", $this->lang->line('Revision'), $file['created_rev'])
+	);
+
 	if (!empty($file['created_tag']))
 	{
 		print ' ';
 		printf ('<span class="left_arrow_indicator">%s</span>', htmlspecialchars($file['created_tag']));
 	}
+
+	print ' ';
+	print anchor ("code/file/{$project->id}/${xpar}/{$next_revision}", '>>');
 
 	if ($file_count > 0)
 	{
@@ -561,7 +574,11 @@ $this->load->view (
 		print '<div class="title">';
 		print $this->lang->line('CODE_COMMIT');
 		print '</div>';
+		print '<ul>';
+		print '<li>';
 		printf ($this->lang->line('CODE_MSG_COMMITTED_BY'), $file['last_author']);
+		print '</li>';
+		print '</ul>';
 
 		print '<div class="title">';
 		print $this->lang->line('Message');
