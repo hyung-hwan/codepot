@@ -199,12 +199,18 @@ class User extends Controller
 				}
 			}
 
+			//
+			// make sure that these field also exist in the database
+			// also change the sanity check in LoginModel/getUser()
+			// if you add/delete fields to the settings object.
+			//
 			$settings->code_hide_line_num = $this->input->post('code_hide_line_num');
 			$settings->code_hide_metadata = $this->input->post('code_hide_metadata');
-			$settings->icon_name = $icon_fname;
-			$settings->uploaded_icon_name = $uploaded_fname;
 
-			if ($this->users->storeSettings ($login['id'], $settings) === FALSE)
+			/* $uploaded_fname will be renamed to this name in users->storeSettings() */
+			$settings->icon_name = $icon_fname; 
+
+			if ($this->users->storeSettings ($login['id'], $settings, $uploaded_fname) === FALSE)
 			{
 				@unlink (CODEPOT_USERICON_DIR . '/' . $uploaded_fname);
 				$data['message'] = 'DATABASE ERROR';
@@ -249,6 +255,25 @@ class User extends Controller
 		if ($userid_len > 0)
 		{
 			$icon_path = CODEPOT_USERICON_DIR . '/' . $userid . '.png';
+
+			$stat = @stat($icon_path);
+			if ($stat !== FALSE)
+			{
+				$etag = sprintf ('%x-%x-%x-%x', $stat['dev'], $stat['ino'], $stat['size'], $stat['mtime']);
+				$lastmod = gmdate ('D, d M Y H:i:s', $stat['mtime']);
+
+				header ('Last-Modified: ' . $lastmod . ' GMT');
+				header ('Etag: ' . $etag);
+
+				if ((isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) ||
+				    (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $stat['mtime']))
+				{
+					header('Not Modified', true, 304);
+					flush ();
+					return;
+				}
+			}
+
 			$icon_size = @filesize ($icon_path);
 			if (@file_exists($icon_path) === TRUE && 
 			    ($icon_size = @filesize($icon_path)) !== FALSE &&

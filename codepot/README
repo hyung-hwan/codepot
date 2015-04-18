@@ -223,8 +223,8 @@ LICENSE
    CodeIgniter 1.7.2                            See src/system/license.txt
    Google code prettify                         Apache License 2.0
    JavaScript Creole 1.0 Wiki Markup Parser     See src/js/creole.js
-   jQuery JavaScript Library v1.4.2             See http://jquery.org/license
-   jQuery UI 1.8                                MIT or GPL
+   jQuery JavaScript Library v1.11.2            MIT See http://jquery.org/license
+   jQuery UI 1.9.2                              MIT See http://jquery.org/license
    PHPGraphLib                                  MIT
    CLOC 1.62                                    GPL
    Flot                                         https://github.com/flot/flot/blob/master/LICENSE.txt
