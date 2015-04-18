@@ -182,13 +182,6 @@ $(function() {
 
 function render_wiki()
 {
-	creole_render_wiki (
-		"code_revision_mainarea_result_msg_text", 
-		"code_revision_mainarea_result_msg", 
-		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		""
-	);
-
 	<?php 
 	print "for (i = 0; i < $review_count; i++) {\n";
 	?>
@@ -330,7 +323,9 @@ $history = $file['history'];
 <div class="infostrip" id="code_revision_mainarea_infostrip">
 	<?php
 		print anchor ("code/revision/{$project->id}/${xpar}/{$prev_revision}", '<<');
-		printf ('%s: %s',  $this->lang->line('Revision'), $history['rev']);
+		print ' ';
+
+		printf ('%s %s',  $this->lang->line('Revision'), $history['rev']);
 		if (!empty($history['tag']))
 		{
 			print ' ';
@@ -338,6 +333,8 @@ $history = $file['history'];
 			print htmlspecialchars($history['tag']);
 			print ('</span>');
 		}
+
+		print ' ';
 		print anchor ("code/revision/{$project->id}/${xpar}/{$next_revision}", '>>');
 
 		if ($can_edit)
@@ -369,7 +366,7 @@ $history = $file['history'];
 </div>
 
 <div id="code_revision_mainarea_result_msg">
-<pre id="code_revision_mainarea_result_msg_text" style="visibility: hidden;">
+<pre id="code_revision_mainarea_result_msg_text">
 <?php print htmlspecialchars($history['msg']); ?>
 </pre>
 </div>

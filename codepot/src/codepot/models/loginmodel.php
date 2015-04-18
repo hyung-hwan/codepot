@@ -43,6 +43,12 @@ class LoginModel extends Model
 			{
 				$settings = @unserialize ($settings);
 				if ($settings === FALSE) $settings = NULL;
+
+				// Sanity check on the session/cookie data
+				// See Controller/User->settings() for required fields.
+				if (!isset($settings->code_hide_line_num)) $settings->code_hide_line_num = '';
+				if (!isset($settings->code_hide_metadata)) $settings->code_hide_metadata = '';
+				if (!isset($settings->icon_name)) $settings->icon_name = '';
 			}
 		}
 

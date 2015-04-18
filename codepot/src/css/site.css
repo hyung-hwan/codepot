@@ -50,40 +50,6 @@
 	white-space: pre-wrap;
 }
 
-#site_home_mainarea_result_open_issues {
-	margin-bottom: 1em;
-}
-
-#site_home_mainarea_result_open_issues_header {
-	background: none repeat scroll 0 0 #E5ECF9;
-	border: 1px solid #D4DBE8;
-	color: #1C94C4;
-	font-size: 0.9em;
-}
-
-#site_home_mainarea_result_open_issues_list {
-	margin: 0;
-	padding-left: 1.8em;
-	line-height: 1.5em;
-
-}
-
-#site_home_mainarea_result_resolved_issues {
-	margin-bottom: 1em;
-}
-
-#site_home_mainarea_result_resolved_issues_header {
-	background: none repeat scroll 0 0 #E5ECF9;
-	border: 1px solid #D4DBE8;
-	color: #1C94C4;
-	font-size: 0.9em;
-}
-
-#site_home_mainarea_result_resolved_issues_list {
-	margin: 0;
-	padding-left: 1.8em;
-	line-height: 1.5em;
-}
 /*----------------------------------------------- 
  * site show view 
  *-----------------------------------------------*/

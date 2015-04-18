@@ -33,7 +33,7 @@ class UserModel extends Model
 		return $result[0];
 	}
 
-	function storeSettings ($userid, $settings)
+	function storeSettings ($userid, $settings, $uploaded_icon_name)
 	{
 		$icon_name_set = strlen($settings->icon_name) > 0;
 
@@ -74,7 +74,7 @@ class UserModel extends Model
 
 		if ($icon_name_set)
 		{
-			if (@rename (CODEPOT_USERICON_DIR . '/' . $settings->uploaded_icon_name,
+			if (@rename (CODEPOT_USERICON_DIR . '/' . $uploaded_icon_name,
 			             CODEPOT_USERICON_DIR . '/' . $settings->icon_name) === FALSE)
 			{
 				$this->db->trans_rollback ();

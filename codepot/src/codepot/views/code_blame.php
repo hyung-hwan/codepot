@@ -176,7 +176,14 @@ print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $this->lang->line('D
 <div class="infostrip" id="code_blame_mainarea_infostrip">
 	<?php 
 		print anchor ("code/blame/{$project->id}/${xpar}/{$file['prev_rev']}", '<<');
-		printf ('%s: %s', $this->lang->line('Revision'), $file['created_rev']);
+		print ' ';
+
+		// anchor to the revision history at the root directory
+		print anchor (
+			"code/revision/{$project->id}/!/{$file['created_rev']}",
+			sprintf("%s %s", $this->lang->line('Revision'), $file['created_rev'])
+		);
+
                 if (!empty($file['created_tag']))
                 {
 			print ' ';
@@ -184,6 +191,7 @@ print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $this->lang->line('D
 			print htmlspecialchars($file['created_tag']);
 			print ('</span>');
                 }
+		print ' ';
 		print anchor ("code/blame/{$project->id}/${xpar}/{$file['next_rev']}", '>>');
 
 		print ' | ';
@@ -254,7 +262,10 @@ if ($login['settings'] != NULL &&
 
 <div id="code_blame_mainarea_result_info" class="infobox">
 <div class="title"><?php print  $this->lang->line('CODE_COMMIT') ?></div>
-<?php printf ($this->lang->line('CODE_MSG_COMMITTED_BY_ON'), $file['last_author'], $file['time']); ?>
+<ul>
+<li><?php printf ($this->lang->line('CODE_MSG_COMMITTED_BY_ON'), $file['last_author'], $file['time']); ?></li>
+</ul>
+
 
 <div class="title"><?php print  $this->lang->line('Message') ?></div>
 <pre id="code_blame_mainarea_result_info_logmsg">

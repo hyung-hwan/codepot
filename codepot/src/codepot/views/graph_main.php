@@ -460,8 +460,10 @@ $this->load->view (
 
 <!--
 <div class="sidebar" id="graph_main_sidebar">
-<div class="box">
-<ul>
+<div class="collapsible-box">
+<div class="collapsible-box-header">
+</div>
+<ul class="collapsible-box-list">
 <li><?php print $this->lang->line('Created on')?> <?php print $project->createdon?></li>
 <li><?php print $this->lang->line('Created by')?> <?php print $project->createdby?></li>
 <li><?php print $this->lang->line('Last updated on')?> <?php print $project->updatedon?></li>

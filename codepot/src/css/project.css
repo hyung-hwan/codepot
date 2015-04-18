@@ -85,14 +85,6 @@
 	margin-top: 1em;
 }
 
-/*#project_catalog_mainarea_search_form .ui-accordion-header {*/
-#project_catalog_mainarea_search_form_header {
-	/* trying to emulate infostrip with the header of a jquery-ui's accordion widget */
-	background: #E5ECF9 none repeat scroll 0 0;
-	border: #D4DBE8 1px solid;
-	color: #1C94C4;
-}
-
 #project_catalog_mainarea_search_form form {
 	line-height: 2.5em;
 }
