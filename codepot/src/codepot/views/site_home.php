@@ -60,6 +60,7 @@ $(function () {
 
 	$("#site_home_sidebar_log_all_button").button ().click (function () {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", "/site/log"));
+		return false;
 	});
 });
 </script>
