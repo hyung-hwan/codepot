@@ -208,8 +208,27 @@ function hide_unneeded_divs()
 }
 
 $(function() {
+	$("#code_revision_mainarea_result_msg_container").accordion ({
+		collapsible: true
+	});
+
+	$("#code_revision_mainarea_result_files").accordion ({
+		collapsible: true
+	});
+
+	$("#code_revision_mainarea_result_properties").accordion ({
+		collapsible: true
+	});
+
+	$("#code_revision_mainarea_result_comments").accordion ({
+		collapsible: true
+	});
+
 	hide_unneeded_divs ();
 	render_wiki ();
+
+
+	
 });
 
 </script>
@@ -355,7 +374,8 @@ $history = $file['history'];
 
 <div class="result" id="code_revision_mainarea_result">
 
-<div class="title"><?php print $this->lang->line('Message')?>&nbsp;
+<div id="code_revision_mainarea_result_msg_container" class="collapsible-box">
+<div class="collapsible-box-header" ><?php print $this->lang->line('Message')?>&nbsp;
 <?php if ($can_edit): ?>
 	<span class='anchor'>
 		<?php print anchor ("#", $this->lang->line('Edit'),
@@ -365,14 +385,16 @@ $history = $file['history'];
 <?php endif; ?>
 </div>
 
-<div id="code_revision_mainarea_result_msg">
+<div id="code_revision_mainarea_result_msg" class="collapsible-box-panel">
 <pre id="code_revision_mainarea_result_msg_text" class="pre-wrapped">
 <?php print htmlspecialchars($history['msg']); ?>
 </pre>
 </div>
+</div>
 
-<div id="code_revision_mainarea_result_files">
-<div class="title"><?php print $this->lang->line('Files')?></div>
+<div id="code_revision_mainarea_result_files" class="collapsible-box">
+<div class="collapsible-box-header"><?php print $this->lang->line('Files')?></div>
+<div id="code_revision_mainarea_result_files_table_container" class="collapsible-box-panel">
 <table id="code_revision_mainarea_result_files_table">
 <?php 
 	/*
@@ -410,9 +432,11 @@ $history = $file['history'];
 ?>
 </table>
 </div>
+</div>
 
-<div id="code_revision_mainarea_result_properties">
-<div class="title"><?php print $this->lang->line('CODE_PROPERTIES');?></div>
+<div id="code_revision_mainarea_result_properties" class="collapsible-box">
+<div class="collapsible-box-header"><?php print $this->lang->line('CODE_PROPERTIES');?></div>
+<div id="code_revision_mainarea_result_properties_table_container" class="collapsible-box-panel">
 <table id="code_revision_mainarea_result_properties_table">
 <?php
 	$rowclasses = array ('odd', 'even');
@@ -422,8 +446,8 @@ $history = $file['history'];
 		if (array_key_exists('props', $p) && array_key_exists('prev_props', $p))
 		{
 			$common_props = array_intersect_assoc ($p['props'], $p['prev_props']);
-			$added_props = array_diff_assoc ($p['props'], $common_props);	
-			$deleted_props = array_diff_assoc ($p['prev_props'], $common_props);	
+			$added_props = array_diff_assoc ($p['props'], $common_props);
+			$deleted_props = array_diff_assoc ($p['prev_props'], $common_props);
 
 			if (count($added_props) > 0 || count($deleted_props) > 0)
 			{
@@ -474,9 +498,10 @@ $history = $file['history'];
 ?>
 </table>
 </div>
+</div>
 
-<div id="code_revision_mainarea_result_comments">
-<div class="title"><?php print $this->lang->line('Comment')?>&nbsp;
+<div id="code_revision_mainarea_result_comments" class="collapsible-box">
+<div class="collapsible-box-header"><?php print $this->lang->line('Comment')?>&nbsp;
 <?php if ($is_loggedin): ?>
 <span class='anchor'>
 	<?php print anchor ("#", $this->lang->line('New'),
@@ -486,7 +511,7 @@ $history = $file['history'];
 <?php endif; ?>
 </div>
 
-<div id="code_revision_mainarea_review_comment">
+<div id="code_revision_mainarea_review_comment" class="collapsible-box-panel">
 <?php
 	for ($i = $review_count; $i > 0; $i--)
 	{
@@ -519,7 +544,6 @@ $history = $file['history'];
 ?>
 </div> <!-- code_revision_mainarea_review_comment -->
 </div> <!-- code_revision_mainarea_result_comments -->
-
 
 </div> <!-- code_revision_mainarea_result -->
 
