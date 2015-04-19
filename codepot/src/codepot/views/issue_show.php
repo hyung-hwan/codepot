@@ -283,10 +283,10 @@ $this->load->view (
 		print '<td class="details">';
 		if ($new->comment != "")
 		{
-			print "<div id='issue_show_mainarea_changes_comment_{$commentno}' class='issue_show_mainarea_changes_comment'>";
+			print "<div id='issue_show_mainarea_changes_comment_{$commentno}' class='issue_changes_comment'>";
 			print "<pre id='issue_show_mainarea_changes_comment_pre_{$commentno}'>";
 			print htmlspecialchars($new->comment);
-			print '</pre>';	
+			print '</pre>';
 			print '</div>';
 			$commentno++;
 		}

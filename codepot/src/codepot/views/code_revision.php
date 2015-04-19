@@ -366,7 +366,7 @@ $history = $file['history'];
 </div>
 
 <div id="code_revision_mainarea_result_msg">
-<pre id="code_revision_mainarea_result_msg_text">
+<pre id="code_revision_mainarea_result_msg_text" class="pre-wrapped">
 <?php print htmlspecialchars($history['msg']); ?>
 </pre>
 </div>
