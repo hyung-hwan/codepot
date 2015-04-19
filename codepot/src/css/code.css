@@ -33,7 +33,7 @@
 	position: relative;
 }
 
-#code_file_mainarea_result_pre {
+#code_file_mainarea_result_code {
 	line-height: 1.4em;
 }
 
@@ -45,12 +45,25 @@
 /*----------------------------------------------- 
  * project source blame view 
  *-----------------------------------------------*/
+
 #code_blame_mainarea_result {
-	position: relative;
+	position: relative; /* required for infobox positioning */
 }
 
-#code_blame_mainarea_result_pre {
+#code_blame_mainarea_result_code_container {
+	border: none;
 	line-height: 1.4em;
+}
+
+#code_blame_mainarea_result_code_author {
+	background: #FEF8F8;
+}
+
+#code_blame_mainarea_result_code ol {
+	/* pre-wrap can't be used for the actual line number in the blame view.
+	 * because the revision span and the author span floating on the left
+	 * doesn't wrap lines when the code part wraps. so reset it to 'pre' */
+	white-space: pre;
 }
 
 /*----------------------------------------------- 
@@ -78,9 +91,7 @@
 	background-color: inherit;
 	padding: 0;
 	margin: 0;
-	white-space: -moz-pre-wrap;
-	white-space: -o-pre-wrap;
-	white-space: pre-wrap;
+	color: #333333;
 }
 
 #code_history_mainarea_result_table .title {
@@ -109,7 +120,6 @@
 #code_revision_mainarea_result_msg_text {
 	padding: 0.5em 0.5em 0.5em 0.5em;
 
-	white-space: pre-wrap;
 	line-height: 1.2em;
 	background-color: #F8F8FA;
 

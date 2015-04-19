@@ -111,7 +111,7 @@ $this->load->view (
 <?php 
 	$rowclasses = array ('even', 'odd');
 	$history = $file['history'];
-	$history_count = count($history);	
+	$history_count = count($history);
 	$curfullpath = $fullpath;
 	for ($i = $history_count; $i > 0; )
 	{
@@ -147,7 +147,7 @@ $this->load->view (
 		print '</code></td>';
 
 		print '<td>';
-		print '<pre>';
+		print '<pre class="pre-wrapped">';
 		print htmlspecialchars($h['msg']);
 		print '</pre>';
 		print '</td>';

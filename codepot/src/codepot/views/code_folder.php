@@ -144,7 +144,7 @@ function show_loc_graph (response)
 function render_readme()
 {
 	<?php
-	// if the readme file name ends with '.wiki', perform pretty printing
+	// if the readme file name ends with '.wiki', perform wiki formatting and pretty printing
 	if (strlen($readme_text) > 0 && substr_compare($readme_file, '.wiki', -5) === 0):
 	?>
 	creole_render_wiki (
@@ -561,7 +561,10 @@ $this->load->view (
 		if (strlen($readme_text) > 0)
 		{
 			print '<div id="code_folder_mainarea_result_readme">';
-			print '<pre id="code_folder_mainarea_result_readme_text">';
+			// the pre division is gone when rendered as a wiki text.
+			// so is the pre-wrapped class. so let me put the class 
+			// regardless of the text type.
+			print '<pre id="code_folder_mainarea_result_readme_text" class="pre-wrapped">';
 			print "\n";
 			print htmlspecialchars($readme_text);
 			print "\n";
@@ -583,7 +586,7 @@ $this->load->view (
 		print '<div class="title">';
 		print $this->lang->line('Message');
 		print '</div>';
-		print '<pre id="code_folder_mainarea_result_info_logmsg">';
+		print '<pre id="code_folder_mainarea_result_info_logmsg" class="pre-wrapped">';
 		print htmlspecialchars ($file['logmsg']);
 		print '</pre>';
 

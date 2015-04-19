@@ -174,10 +174,19 @@
 	padding-bottom: 0.3em;
 }
 
+#issue_show_mainarea_changes_table .issue_changes_comment .prettyprint {
+	/* special pre-wrap rule to make the pretty-printed text to wrap 
+	 * in the issue comment listing. i didn't manage to get oveflow: auto 
+	 * or overflow: scroll to make make a scroll bar show up. */
+
+	white-space: -moz-pre-wrap;
+	white-space: -o-pre-wrap;
+	white-space: pre-wrap;
+}
+
 #issue_change_form {
 	font-size: 1em;
 }
-
 
 /* all these elements inside the form requires a lot of refinement.
  * many of these are duplicates of elemenents in common.css */
