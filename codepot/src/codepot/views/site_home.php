@@ -196,7 +196,7 @@ foreach ($latest_projects as $project)
 
 			if ($log['action'] != 'revpropchange')
 			{
-				print '<pre class="message">';
+				print '<pre class="pre-wrapped message">';
 				$sm = strtok (trim ($x['message']), "\r\n");
 				print htmlspecialchars ($sm);
 				print '</pre>';

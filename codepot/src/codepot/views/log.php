@@ -226,7 +226,7 @@ $this->load->view (
 
 			if ($log['action'] != 'revpropchange')
 			{
-				print '<pre class="message">';
+				print '<pre class="pre-wrapped message">';
 				print htmlspecialchars ($code['message']);
 				print '</pre>';
 			}

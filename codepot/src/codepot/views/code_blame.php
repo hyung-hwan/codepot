@@ -215,48 +215,84 @@ if ($login['settings'] != NULL &&
     $login['settings']->code_hide_line_num == 'Y') $prettyprint_linenums = '';
 ?>
 
-<pre class="prettyprint <?php print $prettyprint_linenums?> <?php print $prettyprint_lang?>" id="code_blame_mainarea_result_pre">
+<pre id="code_blame_mainarea_result_code_container" class="line-numbered">
 <?php
-
-	$content = $file['content'];
+// when producing line-numbered code, make sure to produce proper
+// line terminators.
+//
+// the <code> </code> block requires \n after every line.
+// while the <span></span> block to contain revision numbers and authors
+// doesn't require \n. It is because the css file sets the line-number span
+// to display: block.
+//
+// If you have new lines between <span></span> and <code></code>, there will
+// be some positioning problems as thouse new lines are rendered at the top
+// of the actual code.
+//
+	$content = &$file['content'];
 	$len = count($content);
-	$rev = '';
-	$author = '';
 
+	print '<span class="line-number-block" id="code_blame_mainarea_result_code_revision">';
+	$rev = '';
 	for ($i = 0; $i < $len; $i++)
 	{
-		$line = $content[$i];
-	
-		if ($line['author'] != $author || $line['rev'] != $rev) 
-		{
-			$author = $line['author'];
-			$author_padded = str_pad ($author, 9, ' ', STR_PAD_RIGHT);
-			$author_padded = substr($author_padded, 0, 9);
-		}
-		else
-		{
-			$author_padded = str_pad (' ', 9, ' ', STR_PAD_RIGHT);
-		}
+		$line = &$content[$i];
 
 		if ($line['rev'] != $rev) 
 		{
 			$rev = $line['rev'];
-			$rev_padded = str_pad ($rev, 6, ' ', STR_PAD_LEFT);
-	
+			//$rev_to_show = str_pad ($rev, 6, ' ', STR_PAD_LEFT);
+			$rev_to_show = $rev;
+
 			$xpar = $this->converter->AsciiTohex ($headpath);
-			$rev_padded = anchor ("code/blame/{$project->id}/{$xpar}/{$rev}", $rev_padded);
+			$rev_to_show = anchor ("code/blame/{$project->id}/{$xpar}/{$rev}", $rev_to_show);
 		}
 		else
 		{
-			$rev_padded = str_pad (' ', 6, ' ', STR_PAD_LEFT);
+			//$rev_to_show = str_pad (' ', 6, ' ', STR_PAD_LEFT);
+			$rev_to_show = ' ';
 		}
-	
-		print "<span class='nocode'>{$rev_padded}</span> ";
-		print "<span class='nocode' title='{$author}'>{$author_padded}</span> ";
+
+		print "<span>{$rev_to_show}</span>";
+	}
+	print '</span>';
+
+	print '<span class="line-number-block" id="code_blame_mainarea_result_code_author">';
+	$rev = '';
+	$author = '';
+	for ($i = 0; $i < $len; $i++)
+	{
+		$line = &$content[$i];
+
+		if ($line['author'] != $author || $line['rev'] != $rev) 
+		{
+			$author = $line['author'];
+			//$author_to_show = str_pad ($author, 9, ' ', STR_PAD_RIGHT);
+			//$author_to_show = substr($author_to_show, 0, 9);
+			$author_to_show = $author;
+		}
+		else
+		{
+			//$author_to_show = str_pad (' ', 9, ' ', STR_PAD_RIGHT);
+			$author_to_show = ' ';
+		}
+
+		$rev = $line['rev'];
+		print "<span>{$author_to_show}</span>";
+	}
+	print '</span>';
+
+	printf ('<code class="line-numbered-code prettyprint %s %s" id="code_blame_mainarea_result_code">', $prettyprint_linenums, $prettyprint_lang);
+
+	for ($i = 0; $i < $len; $i++)
+	{
+		$line = &$content[$i];
 
 		print htmlspecialchars ($line['line']);
 		print "\n";
 	}
+
+	print '</code>';
 ?>
 </pre>
 
@@ -268,7 +304,7 @@ if ($login['settings'] != NULL &&
 
 
 <div class="title"><?php print  $this->lang->line('Message') ?></div>
-<pre id="code_blame_mainarea_result_info_logmsg">
+<pre id="code_blame_mainarea_result_info_logmsg" class="pre-wrapped">
 <?php print  $file['logmsg'] ?>
 </pre>
 
@@ -293,6 +329,8 @@ if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 ?>
 </pre>
 </div> <!-- code_blame_mainarea_result_info -->
+
+
 
 </div> <!-- code_blame_mainarea_result -->
 

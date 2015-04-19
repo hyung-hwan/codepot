@@ -339,7 +339,7 @@ if (FALSE) // don't want to delete code for the original diff view.
 		foreach ($file['content'] as $x)
 		{
 			print '<tr class="diff">';
-	
+
 			if (array_key_exists('rev1line', $x)) 
 			{
 				$diffclass = array_key_exists('rev1diffclass', $x)? $x['rev1diffclass']: 'diff';
@@ -394,7 +394,7 @@ else
 	//
 	// SHOW THE OLD FILE
 	//
-	print ("<div style='float:left; width: 49%;'>");
+	print ("<div style='float:left; width: 50%; margin: 0; padding: 0;'>");
 
 	print "<div class='navigator'>";
 	$currev = $file['created_rev'];
@@ -405,7 +405,7 @@ else
 	print '&nbsp;&nbsp;&nbsp;';
 
 	// show the history details of the previous revision at the root directory
-	$revanc = "code/revision/{$project->id}/!/{$prevrev}";
+	$revanc = "code/revision/{$project->id}/!/{$file['against']['created_rev']}";
 	print anchor ($revanc, ($this->lang->line('Revision') . ' ' . $file['against']['created_rev']));
 
 	$currev = $file['created_rev'];
@@ -413,10 +413,44 @@ else
 	$nextanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$currev}/{$nextrev}";
 	print '&nbsp;&nbsp;&nbsp;';
 	print anchor ($nextanc, '>>');
-	print "</div>";
+	print "</div>"; // navigator
 
-	print "<pre class='prettyprint lang-{$fileext}' style='width: 100%' id='code_diff_mainarea_result_fulldiffold'>";
+	//print "<pre class='prettyprint lang-{$fileext}' style='width: 100%;' id='code_diff_mainarea_result_fulldiffold'>";
+	print '<pre style="width: 100%;" id="code_diff_mainarea_result_fulldiffold" class="line-numbered">';
 
+	print '<span class="line-number-block">';
+	$actual_line_no = 1;
+	foreach ($file['content'] as $x)
+	{
+		if (array_key_exists('rev2line', $x)) 
+		{
+			// on the old file, there can be unchanged, changed, and deleted lines.
+			// however, it should consider added lines on the new file side.
+			if (array_key_exists('rev2diffclass', $x) && $x['rev2diffclass'] == 'diffadded')
+			{
+				// the line number is not display on the old file side
+				// as it doesn't have anthing meaningful to show.
+				// this line is added because the new file side has something
+				// to show as that both the old file view and the new file
+				// view can go side by side.
+				print "<span> </span>";
+			}
+			else
+			{
+				print "<span>$actual_line_no</span>";
+				$actual_line_no++;
+			}
+		}
+		else
+		{
+			if ($actual_line_no > 1) print "<span class='line-number-empty'>&nbsp;</span>";
+			$actual_line_no = $x['rev1lineno'];
+		}
+	}
+	print '</span>';
+
+	print '<code class="line-numbered-code prettyprint lang-{$fileext}" id="old-code">';
+	$actual_line_no = 1;
 	foreach ($file['content'] as $x)
 	{
 		if (array_key_exists('rev2line', $x)) 
@@ -437,21 +471,31 @@ else
 			if ($is_msie && $xline == '') $xline = '&nbsp;';
 			print $xline;
 			print "</span>\n";
+
+			// on the old file, there can be unchanged, changed, and deleted lines.
+			$actual_line_no++;
 		}
 		else
 		{
-			print "<span class='diffrow'> ";
-			print $x['rev1lineno'];
-			print " </span>\n";
+			// this is the line number that tells which line the upcoming 
+			// block of difference begins. set $actual_line_no to this line number.
+			//print "<span class='diffrow'> ";
+			//print $x['rev1lineno'];
+			//print " </span>\n";
+			if ($actual_line_no > 1) print "<span class='line-numbered-code-line-empty'>&nbsp;</span>\n"; // \n is required here unlike in the line-number-block
+			$actual_line_no = $x['rev1lineno'];
 		}
 	}
-	printf ("</div>");
+	print '</code>';
+	print '<span class="line-number-clear"></span>';
 	print '</pre>';
+
+	print '</div>';
 
 	//
 	// SHOW THE NEW FILE
 	//
-	print ("<div style='float:left; width: 49%;'>");
+	print ("<div style='float:left; width: 50%; margin: 0; padding: 0;'>");
 
 	print "<div class='navigator'>";
 	$currev = $file['against']['created_rev'];
@@ -461,7 +505,7 @@ else
 	print '&nbsp;&nbsp;&nbsp;';
 
 	// show the history details of the current revision at the root directory
-	$revanc = "code/revision/{$project->id}/!/{$currev}";
+	$revanc = "code/revision/{$project->id}/!/{$file['created_rev']}";
 	print anchor ($revanc, ($this->lang->line('Revision') . ' ' . $file['created_rev']));
 
 	$currev = $file['against']['created_rev'];
@@ -469,9 +513,40 @@ else
 	$nextanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$nextrev}/{$currev}";
 	print '&nbsp;&nbsp;&nbsp;';
 	print anchor ($nextanc, '>>');
-	print "</div>";
+	print "</div>"; // navigator
 
-	print "<pre class='prettyprint lang-{$fileext}' style='width: 100%' id='code_diff_mainarea_result_fulldiffnew'>";
+	//print "<pre class='prettyprint lang-{$fileext}' style='width: 100%;' id='code_diff_mainarea_result_fulldiffnew'>";
+	print '<pre style="width: 100%;" id="code_diff_mainarea_result_fulldiffnew" class="line-numbered">';
+
+	print '<span class="line-number-block">';
+	$actual_line_no = 1;
+	foreach ($file['content'] as $x)
+	{
+		// on the old file, there can be unchanged, changed, and added lines.
+		// however, the new file side must consider deleted lines on the old file side.
+		if (array_key_exists('rev2line', $x)) 
+		{
+			if (array_key_exists('rev1diffclass', $x) && $x['rev1diffclass'] == 'diffdeleted')
+			{
+				/* corresponding line on the old file has been deleted */
+				print "<span> </span>";
+			}
+			else
+			{
+				print "<span>$actual_line_no</span>";
+				$actual_line_no++;
+			}
+		}
+		else
+		{
+			if ($actual_line_no > 1) print "<span class='line-number-empty'>&nbsp;</span>";
+			$actual_line_no = $x['rev2lineno'];
+		}
+	}
+	print '</span>';
+	
+	print '<code class="line-numbered-code prettyprint lang-{$fileext}" id="new-code" class="line-numbered-code">';
+	$actual_line_no = 1;
 	foreach ($file['content'] as $x)
 	{
 		if (array_key_exists('rev2line', $x)) 
@@ -493,17 +568,34 @@ else
 			if ($is_msie && $xline == '') $xline = '&nbsp;';
 			print $xline;
 			print "</span>\n";
+
+			if (array_key_exists('rev1diffclass', $x) && $x['rev1diffclass'] == 'diffdeleted')
+			{
+				/* corresponding line on the old file has been deleted */
+			}
+			else
+			{
+				$actual_line_no++;
+			}
 		}
 		else
 		{
-			print "<span class='diffrow'> ";
-			print $x['rev2lineno'];
-			print " </span>\n";
+			//print "<span class='diffrow'> ";
+			//print $x['rev2lineno'];
+			//print " </span>\n";
+			if ($actual_line_no > 1) print "<span class='line-numbered-code-line-empty'>&nbsp;</span>\n"; // \n is required here unlike in the line number block
+			$actual_line_no = $x['rev2lineno'];
 		}
 	}
 
+
+	print '</code>';
+	print '<span class="line-number-clear"></span>';
 	print '</pre>';
-	printf ("</div>");
+
+	print '</div>';
+
+
 	print '</div>';
 }
 ?>

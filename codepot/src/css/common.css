@@ -52,15 +52,23 @@ body {
 	color: #4665A2;
 }
 
-.content pre {
+.content pre, 
+.content code {
 	font-family: consolas, "Andale Mono", monospace;
 	overflow: auto;
-	width: inherit;
 	border: none;
+	white-space: pre;
 
 	tab-size: 5;
 	-moz-tab-size: 5;
 	-o-tab-size: 5;
+}
+
+.content pre.pre-wrapped, 
+.content code.pre-wrapped {
+	white-space: -moz-pre-wrap !important;
+	white-space: -o-pre-wrap !important; 
+	white-space: pre-wrap !important;
 }
 
 .content textarea {
@@ -202,7 +210,7 @@ body {
 .content .projectbar .fixedmenu a:hover {
 	padding: 6px;
 	background-color: #6482A9;
-	color: #FFFFFFF;
+	color: #FFFFFF;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
@@ -231,7 +239,7 @@ body {
 .content .projectbar .ctxmenu a:hover {
 	padding: 6px;
 	background-color: #6482A9;
-	color: #FFFFFFF;
+	color: #FFFFFF;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
@@ -254,10 +262,6 @@ body {
 
 .content .mainarea {
 	padding: 0.3em 0.5em 0.3em 0.5em;
-}
-
-.content .sidebar .collapsible-box {
-	margin-bottom: 1em;
 }
 
 .content .mainarea .title {
@@ -424,17 +428,13 @@ body {
 
 .content .mainarea pre {
 	border: none;
-	/*
-	background-color: #F8F8FA;
-	*/
-	/*
-	overflow: auto;
-	width: inherit;
-	*/
 }
 
 .content .mainarea pre.wiki {
+	white-space: -moz-pre-wrap;
+	white-space: -o-pre-wrap; 
 	white-space: pre-wrap;
+
 	padding: 0.3em;
 	line-height: 1.2em;
 
@@ -533,13 +533,59 @@ body {
 	margin-top: 0;
 }
 
-/* this is used for line numbering. */
-.content .mainarea pre.prettyprint ol {
+.content .mainarea pre.line-numbered span.line-number-block {
+	color:black;
+	display:block;
+
+	float:left;
+	border-right:1px solid;
+	text-align:right;
+
+	/* the following properties must match .content .mainarea pre.line-numbered code.line-numbered-code */
+	overflow: auto;
+	margin: 0;
+	padding: 0.2em;
+	line-height: 1.4em;
+}
+
+.content .mainarea pre.line-numbered span.line-number-block span {
+	display: block;
+	padding: 0 0.2em 0 0.5em;
+}
+
+.content .mainarea pre.line-numbered span.line-number-block span.line-number-empty {
+
+}
+
+.content .mainarea pre.line-numbered code.line-numbered-code {
+	/* this should override some properties of .content .mainarea .prettyprint */
+	color:black;
+	display:block;
+
+	/* the following properties must match .content .mainarea pre.line-numbered span.line-number-block */
+	overflow: auto;
+	margin: 0;
+	padding: 0.2em;
+	line-height: 1.4em;
+}
+
+.content .mainarea pre.line-numbered code.line-numbered-code span.line-numbered-code-line-empty {
+	display: inline-block;
+	width: 100%;
+	background: linear-gradient(0deg, transparent 48%, #CCCCCC 52%, transparent 54%);
+}
+
+.content .mainarea pre.line-numbered span.line-number-clear {
+	display:block;
+	clear:both;
+}
+
+.content .mainarea .prettyprint ol {
+	/* this is used for line numbering when numbering is sequential. */
 	white-space: pre-wrap;
-	
 } 
 
-.content .mainarea pre.prettyprint {
+.content .mainarea .prettyprint {
 	/* anything that make prettyprint area different from other pres? */
 	/*background-color: #FFFFFF;*/
 	/*border: 1px solid #ccc;*/
@@ -558,24 +604,24 @@ body {
 
 }
 
-pre.prettyprint .pln { color: #222222; } 
-pre.prettyprint .str { color: #AA1111; }
-pre.prettyprint .kwd { color: #2222ff; }
-pre.prettyprint .com { color: #888a88; font-style: italic; }
-pre.prettyprint .typ { color: #4271ae; }
-pre.prettyprint .lit { color: #f5871f; }
-pre.prettyprint .pun { color: #4d4d4c; }
-pre.prettyprint .opn { color: #4d4d4c; }
-pre.prettyprint .clo { color: #4d4d4c; }
-pre.prettyprint .tag { color: #c82829; }
-pre.prettyprint .atn { color: #f5871f; }
-pre.prettyprint .atv { color: #3e999f; }
-pre.prettyprint .dec { color: #f5871f; }
-pre.prettyprint .var { color: #c82829; }
-pre.prettyprint .fun { color: #4271ae; }
+.content .prettyprint .pln { color: #222222; } 
+.content .prettyprint .str { color: #AA1111; }
+.content .prettyprint .kwd { color: #2222ff; }
+.content .prettyprint .com { color: #888a88; font-style: italic; }
+.content .prettyprint .typ { color: #4271ae; }
+.content .prettyprint .lit { color: #f5871f; }
+.content .prettyprint .pun { color: #4d4d4c; }
+.content .prettyprint .opn { color: #4d4d4c; }
+.content .prettyprint .clo { color: #4d4d4c; }
+.content .prettyprint .tag { color: #c82829; }
+.content .prettyprint .atn { color: #f5871f; }
+.content .prettyprint .atv { color: #3e999f; }
+.content .prettyprint .dec { color: #f5871f; }
+.content .prettyprint .var { color: #c82829; }
+.content .prettyprint .fun { color: #4271ae; }
 
 /* Specify class=linenums on a pre to get line numbering */
-pre.prettyprint ol.linenums { 
+.content .prettyprint ol.linenums { 
 	margin-top: 0;
 	margin-bottom: 0;
 	margin-left: 1em;
@@ -584,40 +630,40 @@ pre.prettyprint ol.linenums {
 } /* IE indents via margin-left */
 
 /*
-pre.prettyprint li.L0,
-pre.prettyprint li.L1,
-pre.prettyprint li.L2,
-pre.prettyprint li.L3,
-pre.prettyprint li.L5,
-pre.prettyprint li.L6,
-pre.prettyprint li.L7,
-pre.prettyprint li.L8 { list-style-type: none }
+.content .prettyprint li.L0,
+.content .prettyprint li.L1,
+.content .prettyprint li.L2,
+.content .prettyprint li.L3,
+.content .prettyprint li.L5,
+.content .prettyprint li.L6,
+.content .prettyprint li.L7,
+.content .prettyprint li.L8 { list-style-type: none }
 */
 /* Alternate shading for lines */
 /*
-pre.prettyprint li.L1,
-pre.prettyprint li.L3,
-pre.prettyprint li.L5,
-pre.prettyprint li.L7,
-pre.prettyprint li.L9 { background: #eee }
+.content .prettyprint li.L1,
+.content .prettyprint li.L3,
+.content .prettyprint li.L5,
+.content .prettyprint li.L7,
+.content .prettyprint li.L9 { background: #eee }
 */
 
 @media print {
-	pre.prettyprint .pln { color: #222222; } 
-	pre.prettyprint .str { color: #AA1111; }
-	pre.prettyprint .kwd { color: #2222ff; font-weight: bold; }
-	pre.prettyprint .com { color: #888a88; font-style: italic; }
-	pre.prettyprint .typ { color: #4271ae; font-weight: bold; }
-	pre.prettyprint .lit { color: #f5871f; }
-	pre.prettyprint .pun { color: #4d4d4c; }
-	pre.prettyprint .opn { color: #4d4d4c; }
-	pre.prettyprint .clo { color: #4d4d4c; }
-	pre.prettyprint .tag { color: #c82829; font-weight: bold; }
-	pre.prettyprint .atn { color: #f5871f; }
-	pre.prettyprint .atv { color: #3e999f; }
-	pre.prettyprint .dec { color: #f5871f; }
-	pre.prettyprint .var { color: #c82829; }
-	pre.prettyprint .fun { color: #4271ae; }
+	.content .prettyprint .pln { color: #222222; } 
+	.content .prettyprint .str { color: #AA1111; }
+	.content .prettyprint .kwd { color: #2222ff; font-weight: bold; }
+	.content .prettyprint .com { color: #888a88; font-style: italic; }
+	.content .prettyprint .typ { color: #4271ae; font-weight: bold; }
+	.content .prettyprint .lit { color: #f5871f; }
+	.content .prettyprint .pun { color: #4d4d4c; }
+	.content .prettyprint .opn { color: #4d4d4c; }
+	.content .prettyprint .clo { color: #4d4d4c; }
+	.content .prettyprint .tag { color: #c82829; font-weight: bold; }
+	.content .prettyprint .atn { color: #f5871f; }
+	.content .prettyprint .atv { color: #3e999f; }
+	.content .prettyprint .dec { color: #f5871f; }
+	.content .prettyprint .var { color: #c82829; }
+	.content .prettyprint .fun { color: #4271ae; }
 }
 
 .content .infostrip {
@@ -648,9 +694,9 @@ pre.prettyprint li.L9 { background: #eee }
 }
 
 .content .sidebar .collapsible-box {
+	/* extra margin-bottom for collapsible located on the sidebar */
 	margin-bottom: 0.5em;
 }
-
 
 .content .sidebar .user_icon_img {
 	height: 2em;
@@ -727,7 +773,6 @@ pre.prettyprint li.L9 { background: #eee }
 }
 
 .content .infobox pre {
-	white-space: pre-wrap;
 	margin: 0;
 	padding: 0.5em 0.2em 0.5em 0.2em;
 }

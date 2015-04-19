@@ -49,7 +49,7 @@ $(function () {
 	});
 
 	// for code rendering
-	$("#code_file_mainarea_result_raw").html ($("#code_file_mainarea_result_pre").html())
+	$("#code_file_mainarea_result_raw").html ($("#code_file_mainarea_result_code").html())
 	prettyPrint ();
 });
 
@@ -61,13 +61,13 @@ function showRawCode()
 	{
 		
 		$("#code_file_style_anchor").text("<?php print $this->lang->line('Destyle')?>");
-		$("#code_file_mainarea_result_pre").removeClass("prettyprinted");
+		$("#code_file_mainarea_result_code").removeClass("prettyprinted");
 		prettyPrint();
 	}
 	else
 	{
 		$("#code_file_style_anchor").text("<?php print $this->lang->line('Enstyle')?>");
-		$("#code_file_mainarea_result_pre").html($("#code_file_mainarea_result_raw").html());
+		$("#code_file_mainarea_result_code").html($("#code_file_mainarea_result_raw").html());
 	}
 
 	showing_raw_code = !showing_raw_code;
@@ -258,7 +258,7 @@ if ($login['settings'] != NULL &&
     $login['settings']->code_hide_line_num == 'Y') $prettyprint_linenums = '';
 ?>
 
-<pre class="prettyprint <?php print $prettyprint_linenums?> <?php print $prettyprint_lang?>" id="code_file_mainarea_result_pre">
+<pre class="prettyprint <?php print $prettyprint_linenums?> <?php print $prettyprint_lang?>" id="code_file_mainarea_result_code">
 <?php 
 	$is_octet_stream = FALSE;
 	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
@@ -297,7 +297,7 @@ if ($login['settings'] != NULL &&
 </ul>
 
 <div class="title"><?php print  $this->lang->line('Message') ?></div>
-<pre id="code_file_mainarea_result_info_logmsg">
+<pre id="code_file_mainarea_result_info_logmsg" class="pre-wrapped">
 <?php print  htmlspecialchars ($file['logmsg']) ?>
 </pre>
 
