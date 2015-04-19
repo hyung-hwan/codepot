@@ -139,6 +139,7 @@ foreach ($latest_projects as $project)
 <span id="site_home_sidebar_log_all_span"><a href='#' id="site_home_sidebar_log_all_button"><?php print $this->lang->line('All'); ?></a></span>
 </div>
 
+<div id="site_home_sidebar_log_table_container" class="collapsible-box-panel">
 <table id="site_home_sidebar_log_table" class="collapsible-box-table">
 <?php 
 	$xdot = $this->converter->AsciiToHex ('.');
@@ -268,6 +269,7 @@ foreach ($latest_projects as $project)
 	}
 ?>
 </table>
+</div>
 </div> <!-- box -->
 
 </div> <!-- site_home_sidebar -->

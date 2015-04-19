@@ -181,6 +181,7 @@ foreach ($urls as $url)
 </div>
 
 <?php 
+	print '<div id="project_home_sidebar_log_table_container" class="collapsible-box-panel">';
 	print '<table id="project_home_sidebar_log_table" class="collapsible-box-table">';
 
 	if (count($log_entries) > 0)
@@ -293,7 +294,8 @@ foreach ($urls as $url)
 		printf ('<tr><td>%s</td></tr>', $this->lang->line('PROJECT_MSG_NO_CHANGE_LOG'));
 	}
 
-	print "</table>";
+	print '</table>';
+	print '</div>';
 ?>
 </div>
 
