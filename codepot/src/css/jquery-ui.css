@@ -231,7 +231,7 @@ body .ui-tooltip { border-width: 2px; }
 .ui-widget { font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif; font-size: 0.9em; }
 .ui-widget .ui-widget { font-size: 0.9em; }
 .ui-widget input, .ui-widget select, .ui-widget button { font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif; font-size: 0.9em; }
-.ui-widget textarea { font-family: consolas, "Andale Mono", monospace; font-size: 0.9em; padding: 0.2em 0.2em 0.2em 0.2em}
+.ui-widget textarea { font-family: consolas, monaco, "Andale Mono", monospace; font-size: 0.9em; padding: 0.2em 0.2em 0.2em 0.2em}
 
 /*.ui-widget-content { border: 1px solid #dddddd; background: #eeeeee url("images/ui-bg_highlight-soft_100_eeeeee_1x100.png") 50% top repeat-x; color: #333333; }*/
 .ui-widget-content { border: 1px solid #dddddd; background: #eeeeee; color: #333333; }
