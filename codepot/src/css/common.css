@@ -54,7 +54,7 @@ body {
 
 .content pre, 
 .content code {
-	font-family: consolas, "Andale Mono", monospace;
+	font-family: consolas, monaco, "Andale Mono", monospace;
 	overflow: auto;
 	border: none;
 	white-space: pre;
@@ -72,7 +72,7 @@ body {
 }
 
 .content textarea {
-	font-family: consolas, "Andale Mono", monospace;
+	font-family: consolas, monaco, "Andale Mono", monospace;
 
 	tab-size: 5;
 	-moz-tab-size: 5;
