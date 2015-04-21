@@ -18,7 +18,7 @@ class SubversionModel extends Model
 		return $canonical;
 	}
 
-	function getFile ($projectid, $path, $rev = SVN_REVISION_HEAD, $no_file_content = FALSE)
+	function getFile ($projectid, $path, $rev = SVN_REVISION_HEAD, $type_and_name_only = FALSE)
 	{
 		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
@@ -55,34 +55,32 @@ class SubversionModel extends Model
 			if (array_key_exists ($info0['path'], $lsinfo) === FALSE) return FALSE;
 			$fileinfo = $lsinfo[$info0['path']];
 
-			if ($no_file_content)
+			if ($type_and_name_only)
 			{
 				$str = '';
+				$fileinfo['properties'] = NULL;
+				$fileinfo['logmsg'] = '';
 			}
 			else
 			{
 				$str = @svn_cat ($workurl, $rev);
 				if ($str === FALSE) return FALSE;
+
+				$log = @svn_log ($workurl, 
+					$fileinfo['created_rev'], 
+					$fileinfo['created_rev'],
+					1, SVN_DISCOVER_CHANGED_PATHS);
+				if ($log === FALSE) return FALSE;
+
+				$prop = @svn_proplist ($workurl, FALSE, $rev);
+				if ($prop === FALSE) return FALSE;
+
+				$fileinfo['properties'] = array_key_exists($orgurl, $prop)?  $prop[$orgurl]: NULL;
+				$fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
 			}
-
-			$log = @svn_log ($workurl, 
-				$fileinfo['created_rev'], 
-				$fileinfo['created_rev'],
-				1, SVN_DISCOVER_CHANGED_PATHS);
-			if ($log === FALSE) return FALSE;
-
-			$prop = @svn_proplist ($workurl, FALSE, $rev);
-			if ($prop === FALSE) return FALSE;
-
-			if (array_key_exists ($orgurl, $prop))
-			{
-				$fileinfo['properties'] = $prop[$orgurl];
-			}
-			else $fileinfo['properties'] = NULL;
 
 			$fileinfo['fullpath'] = substr ($info0['url'], strlen($info0['repos']));
 			$fileinfo['content'] = $str;
-			$fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
  
 			return $fileinfo;
 		}
@@ -93,25 +91,33 @@ class SubversionModel extends Model
 
 			$rev_key = 'last_changed_rev';
 			if (array_key_exists($rev_key, $info0) === FALSE) $rev_key = 'revision';
+			// assume either 'last_changed_rev' or 'revision' exists
 
-			if (array_key_exists($rev_key, $info0) === FALSE || $info0[$rev_key] <= 0) 
+			if ($type_and_name_only)
 			{
-				$log = array();
+				$fileinfo['properties'] = NULL;
+				$fileinfo['logmsg'] = '';
 			}
 			else
 			{
-				$log = @svn_log ($workurl, 
-					$info0[$rev_key], $info0[$rev_key],
-					1, SVN_DISCOVER_CHANGED_PATHS);
-				if ($log === FALSE) return FALSE;
+				if ($info0[$rev_key] <= 0) 
+				{
+					$log = array();
+				}
+				else
+				{
+					$log = @svn_log ($workurl, 
+						$info0[$rev_key], $info0[$rev_key],
+						1, SVN_DISCOVER_CHANGED_PATHS);
+					if ($log === FALSE) return FALSE;
+				}
+
+				$prop = @svn_proplist ($workurl, FALSE, $rev);
+				if ($prop === FALSE) return FALSE;
+
+				$fileinfo['properties'] = array_key_exists($orgurl, $prop)?  $prop[$orgurl]: NULL;
+				$fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
 			}
-
-			$prop = @svn_proplist ($workurl, FALSE, $rev);
-			if ($prop === FALSE) return FALSE;
-
-			if (array_key_exists ($orgurl, $prop))
-				$fileinfo['properties'] = $prop[$orgurl];
-			else $fileinfo['properties'] = NULL;
 
 			$fileinfo['fullpath'] = substr ($info0['url'], strlen($info0['repos']));
 			$fileinfo['name'] =  $info0['path'];
@@ -123,7 +129,6 @@ class SubversionModel extends Model
 			else
 				$fileinfo['last_author'] = $info0['last_changed_author'];
 			$fileinfo['content'] = $list;
-			$fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
 			return $fileinfo;
 		}
 
