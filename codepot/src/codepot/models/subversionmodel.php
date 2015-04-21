@@ -18,7 +18,7 @@ class SubversionModel extends Model
 		return $canonical;
 	}
 
-	function getFile ($projectid, $path, $rev = SVN_REVISION_HEAD)
+	function getFile ($projectid, $path, $rev = SVN_REVISION_HEAD, $no_file_content = FALSE)
 	{
 		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
@@ -55,8 +55,15 @@ class SubversionModel extends Model
 			if (array_key_exists ($info0['path'], $lsinfo) === FALSE) return FALSE;
 			$fileinfo = $lsinfo[$info0['path']];
 
-			$str = @svn_cat ($workurl, $rev);
-			if ($str === FALSE) return FALSE;
+			if ($no_file_content)
+			{
+				$str = '';
+			}
+			else
+			{
+				$str = @svn_cat ($workurl, $rev);
+				if ($str === FALSE) return FALSE;
+			}
 
 			$log = @svn_log ($workurl, 
 				$fileinfo['created_rev'], 
@@ -73,8 +80,7 @@ class SubversionModel extends Model
 			}
 			else $fileinfo['properties'] = NULL;
 
-			$fileinfo['fullpath'] = substr (
-				$info0['url'], strlen($info0['repos']));
+			$fileinfo['fullpath'] = substr ($info0['url'], strlen($info0['repos']));
 			$fileinfo['content'] = $str;
 			$fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
  
