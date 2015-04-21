@@ -350,36 +350,16 @@
  * project source search view (including folder view)
  *-----------------------------------------------*/
  
-
-#code_search_invertedly_label .ui-button-text {
-	padding-left: 0.5em;
-	padding-right: 0.5em;
-	width: 1em;
-	margin: 0;
+#code_search_string.search-in-progress {
+	background: white url("images/ui-anim_basic_16x16.gif") right center no-repeat; 
 }
 
-#code_search_case_insensitively_label .ui-button-text {
-	padding-left: 0.5em;
-	padding-right: 0.5em;
-	width: 1em;
-	margin: 0;
-}
-
-#code_search_recursively_label .ui-button-text {
-	padding-left: 0.5em;
-	padding-right: 0.5em;
-	width: 1em;
-	margin: 0;
-}
-
-#code_search_in_name_label .ui-button-text {
-	padding-left: 0.5em;
-	padding-right: 0.5em;
-	width: 1em;
-	margin: 0;
-}
-
+#code_search_invertedly_label .ui-button-text,
+#code_search_case_insensitively_label .ui-button-text,
+#code_search_recursively_label .ui-button-text,
+#code_search_in_name_label .ui-button-text,
 #code_search_is_regex_label .ui-button-text {
+
 	padding-left: 0.5em;
 	padding-right: 0.5em;
 	width: 1em;

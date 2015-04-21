@@ -22,16 +22,18 @@
 
 <script type="text/javascript">
 $(function() {
-	$('#code_search_search_submit').button().click (function (e) {
-		if ($.trim($("#code_search_search_string").val()) != "")
+	$('#code_search_submit').button().click (function (e) {
+		if ($.trim($("#code_search_string").val()) != "")
 		{
-			$('#code_search_search_form').submit ();
+			$('#code_search_submit').button ('disable');
+			$('#code_search_string').addClass ('search-in-progress');
+			$('#code_search_form').submit ();
 		}
 	});
 
 	/*
-	$('#code_search_search_form').submit (function(e) {
-		if ($.trim($("#code_search_search_string").val()) === "")
+	$('#code_search_form').submit (function(e) {
+		if ($.trim($("#code_search_string").val()) === "")
 		{
 			// prevent submission when the search string is empty.
 			e.preventDefault();
@@ -135,13 +137,13 @@ $this->load->view (
 
 <div class="infostrip" id="code_search_mainarea_infostrip">
 	<?php
-	print form_open("code/search/{$project->id}/", 'id="code_search_search_form"');
+	print form_open("code/search/{$project->id}/", 'id="code_search_form"');
 	print form_hidden ('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_search_search_folder"');
 	print form_hidden ('search_revision', set_value('search_revision', $revision), 'id="code_search_search_revision"');
 	print form_input(array(
 		'name' => 'search_string', 
 		'value' => set_value('search_string', ''), 
-		'id' =>'code_search_search_string',
+		'id' =>'code_search_string',
 		'placeholder' => $this->lang->line('CODE_SEARCH_STRING')
 	));
 
@@ -206,10 +208,14 @@ $this->load->view (
 	);
 
 	print ' ';
-	printf ('<a id="code_search_search_submit" href="#">%s</a>', $this->lang->line('Search'));
-	//print form_submit ('search_submit', $this->lang->line('Search'), 'id="code_search_search_submit"');
+	printf ('<a id="code_search_submit" href="#">%s</a>', $this->lang->line('Search'));
+	//print form_submit ('search_submit', $this->lang->line('Search'), 'id="code_search_submit"');
 	print ' | ';
-	printf ('%s: %s', $this->lang->line('Revision'), $file['created_rev']);
+	print anchor (
+		"code/revision/{$project->id}/!/{$file['created_rev']}",
+		sprintf("%s %s", $this->lang->line('Revision'), $file['created_rev'])
+	);
+
 	print form_close();
 	?>
 </div>
@@ -236,7 +242,7 @@ function search_and_show ($controller, $project, $path, $revision, $pattern, $in
 		foreach ($file_list as $f)
 		{
 			$fullpath = $file['fullpath'] . '/' . $f['name'];
-			$file2 = $controller->subversion->getFile ($project->id, $fullpath, $revision);
+			$file2 = $controller->subversion->getFile ($project->id, $fullpath, $revision, $in_name);
 			if ($file2 !== FALSE)
 			{
 				if ($file2['type'] == 'file')
@@ -283,21 +289,34 @@ function search_and_show ($controller, $project, $path, $revision, $pattern, $in
 							htmlspecialchars($fullpath));
 						print '</div>';
 
-						print '<pre class="prettyprint">';
 						if ($in_name)
 						{
+							print '<pre class="prettyprint">';
 							print htmlspecialchars($file2['name']);
+							print '</pre>';
 						}
 						else
 						{
+							$fileext = substr(strrchr($file2['name'], '.'), 1);
+							if ($fileext == "") $fileext = "html";
+
+							print '<pre class="line-numbered">';
+							print '<span class="line-number-block">';
 							foreach ($matchlines as $linenum => $line)
 							{
-								printf ('% 6d: ', $linenum);
+								print "<span>{$linenum}</span>";
+							}
+							print '</span>';
+							print "<code class='line-numbered-code prettyprint lang-{$fileext}'>";
+							foreach ($matchlines as $linenum => $line)
+							{
 								print htmlspecialchars($line);
 								print "\n";
 							}
+							print '</code>';
+							print '<span class="line-number-clear"></span>';
+							print '</pre>';
 						}
-						print '</pre>';
 
 						print '</div>';
 					}

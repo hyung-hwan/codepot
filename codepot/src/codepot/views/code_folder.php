@@ -211,15 +211,17 @@ $(function () {
 	//$("#code_folder_mainarea_result_info_loc_progress" ).progressbar().hide();
 <?php endif; ?>
 
-	$('#code_folder_search_submit').button().click (function (e) {
-		if ($.trim($("#code_folder_search_string").val()) != "")
+	$('#code_search_submit').button().click (function () {
+		if ($.trim($("#code_search_string").val()) != "")
 		{
-			$('#code_folder_search_form').submit ();
+			$('#code_search_submit').button ('disable');
+			$('#code_search_string').addClass("search-in-progress");
+			$('#code_search_form').submit ();
 		}
 	});
 	/* 
-	$('#code_folder_search_form').submit (function(e) {
-		if ($.trim($("#code_folder_search_string").val()) === "")
+	$('#code_search_form').submit (function(e) {
+		if ($.trim($("#code_search_string").val()) === "")
 		{
 			// prevent submission when the search string is empty.
 			e.preventDefault();
@@ -310,7 +312,7 @@ $this->load->view (
 <div class="infostrip" id="code_folder_mainarea_infostrip">
 
 	<?php 
-	print form_open("code/search/{$project->id}/", 'id="code_folder_search_form"');
+	print form_open("code/search/{$project->id}/", 'id="code_search_form"');
 
 	if (CODEPOT_SIGNIN_FOR_CODE_SEARCH === FALSE || (isset($login['id']) && $login['id'] != ''))
 	{
@@ -319,7 +321,7 @@ $this->load->view (
 		print form_input(array(
 			'name' => 'search_string', 
 			'value' => set_value('search_string', ''), 
-			'id' =>'code_folder_search_string',
+			'id' =>'code_search_string',
 			'placeholder' => $this->lang->line('CODE_SEARCH_STRING')
 		));
 
@@ -386,8 +388,8 @@ $this->load->view (
 		);
 
 		print ' ';
-		//print form_submit('search_submit', $this->lang->line('Search'), 'id="code_folder_search_submit"');
-		printf ('<a id="code_folder_search_submit" href="#">%s</a>', $this->lang->line('Search'));
+		//print form_submit('search_submit', $this->lang->line('Search'), 'id="code_search_submit"');
+		printf ('<a id="code_search_submit" href="#">%s</a>', $this->lang->line('Search'));
 		print ' | ';
 	} 
 
