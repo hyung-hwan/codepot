@@ -144,6 +144,10 @@ $this->load->view (
 
 <div class="menu" id="code_blame_mainarea_menu">
 <?php
+
+$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
+$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+
 $xpar = $this->converter->AsciiToHex ($headpath);
 
 if ($file['created_rev'] != $file['head_rev'])
@@ -161,15 +165,15 @@ if ($revision > 0)
 {
 	if ($xpar == '') $revtrailer = $revreqroot;
 	else $revtrailer = "/{$xpar}{$revreq}";
-	print anchor ("code/history/{$project->id}{$revtrailer}", $this->lang->line('History'));
+	print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
 }
 else
 {
-	print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
+	print anchor ("code/history/{$project->id}/{$xpar}", $history_anchor_text);
 }
 
 print ' | ';
-print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $this->lang->line('Download'));
+print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $download_anchor_text);
 
 ?>
 </div> <!-- code_blame_mainarea_menu -->

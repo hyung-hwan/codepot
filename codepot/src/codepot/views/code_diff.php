@@ -106,7 +106,7 @@ $this->load->view (
 	print ' | ';
 	print anchor (
 		"code/blame/{$project->id}/{$xpar}{$revreq}",
-		$this->lang->line('Blame'));
+		'<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'));
 	print ' | ';
 
 	if (!$fullview)
@@ -125,19 +125,16 @@ $this->load->view (
 	print ' | ';
 
 
+	$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
 	if ($revision1 > 0)
 	{
 		if ($xpar == '') $revtrailer = $revreqroot;
 		else $revtrailer = "/{$xpar}{$revreq}";
-		print anchor (
-			"code/history/{$project->id}{$revtrailer}",
-			$this->lang->line('History'));
+		print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
 	}
 	else
 	{
-		print anchor (
-			"code/history/{$project->id}/{$xpar}",
-			$this->lang->line('History'));
+		print anchor ("code/history/{$project->id}/{$xpar}", $history_anchor_text);
 	}
 ?>
 </div> <!-- code_diff_mainarea_menu -->

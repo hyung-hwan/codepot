@@ -370,10 +370,12 @@ if (!function_exists ('codepot_get_fa_file_type'))
 				'png'    => 'image',
 
 				'pdf'    => 'pdf',
+
+				'htm'    => 'text',
+				'html'   => 'text',
 				'txt'    => 'text',
 				'wiki'   => 'text',
-				'htm'    => 'html',
-				'html'   => 'html',
+				'xml'    => 'text',
 
 				'doc'    => 'word',
 				'docx'   => 'word',

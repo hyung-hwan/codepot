@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
@@ -309,6 +310,15 @@ $history = $file['history'];
 
 	if ($headpath != $file['fullpath'])
 	{
+		// this comparsion doesn't work well for a file.
+		// $file['fullpath'] for a file doesn't include the directory.
+		// is this a bug of peclsvn? never mind. it's ok to show the file name again.
+		//
+		// [created_rev] => 322
+    		// [name] => subversionmodel.php
+    		// [type] => file
+    		// [fullpath] => subversionmodel.php
+
 		print ' - ';
 		print htmlspecialchars($file['fullpath']);
 	}
@@ -317,6 +327,8 @@ $history = $file['history'];
 
 <div class="menu" id="code_revision_mainarea_menu">
 <?php
+	$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
+
 	$xpar = $this->converter->AsciiToHex(($headpath == '')? '.': $headpath);
 	if ($revision > 0 && $revision < $next_revision)
 	{
@@ -328,20 +340,18 @@ $history = $file['history'];
 	{
 		if ($xpar == '') $revtrailer = $revreqroot;
 		else $revtrailer = "/{$xpar}{$revreq}";
-		print anchor (
-			"code/history/{$project->id}{$revtrailer}",
-			$this->lang->line('History'));
+		print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
 	}
 	else
 	{
-		print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
+		print anchor ("code/history/{$project->id}/{$xpar}", $history_anchor_text);
 	}
 ?>
 </div> <!-- code_revision_mainarea_menu -->
 
 <div class="infostrip" id="code_revision_mainarea_infostrip">
 	<?php
-		print anchor ("code/revision/{$project->id}/${xpar}/{$prev_revision}", '<<');
+		print anchor ("code/revision/{$project->id}/${xpar}/{$prev_revision}", '<i class="fa fa-arrow-circle-left"></i>');
 		print ' ';
 
 		printf ('%s %s',  $this->lang->line('Revision'), $history['rev']);
@@ -354,10 +364,11 @@ $history = $file['history'];
 		}
 
 		print ' ';
-		print anchor ("code/revision/{$project->id}/${xpar}/{$next_revision}", '>>');
+		print anchor ("code/revision/{$project->id}/${xpar}/{$next_revision}", '<i class="fa fa-arrow-circle-right"></i>');
 
 		if ($can_edit)
 		{
+			print ' ';
 			print '<span class="anchor">';
 			print anchor ("#", $this->lang->line('Tag'), array ('id' => 'code_revision_tag_button'));
 			print '</span>';

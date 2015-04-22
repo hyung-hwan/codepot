@@ -158,6 +158,10 @@ $this->load->view (
 <?php
 	$xpar = $this->converter->AsciiToHex ($headpath);
 
+	$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame');
+	$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
+	$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+
 	if ($file['created_rev'] != $file['head_rev']) 
 	{
 		print anchor (
@@ -166,39 +170,26 @@ $this->load->view (
 		print ' | ';
 	}
 
-	print anchor (
-		"code/blame/{$project->id}/${xpar}{$revreq}",
-		$this->lang->line('Blame'));
+	print anchor ("code/blame/{$project->id}/${xpar}{$revreq}", $blame_anchor_text);
 	print ' | ';
-	print anchor (
-		"code/diff/{$project->id}/{$xpar}{$revreq}",
-		$this->lang->line('Difference'));
+	print anchor ("code/diff/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Difference'));
 	print ' | ';
-	print anchor (
-		"code/fulldiff/{$project->id}/{$xpar}{$revreq}",
-		$this->lang->line('Full Difference'));
+	print anchor ("code/fulldiff/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Full Difference'));
 	print ' | ';
-
 
 	if ($revision > 0)
 	{
 		if ($xpar == '') $revtrailer = $revreqroot;
 		else $revtrailer = "/{$xpar}{$revreq}";
-		print anchor (	
-			"code/history/{$project->id}{$revtrailer}", 
-			$this->lang->line('History'));
+		print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
 	}
 	else
 	{
-		print anchor (
-			"code/history/{$project->id}/{$xpar}", 
-			$this->lang->line('History'));
+		print anchor ("code/history/{$project->id}/{$xpar}", $history_anchor_text);
 	}
 
 	print ' | ';
-	print anchor (
-		"code/fetch/{$project->id}/${xpar}{$revreq}",
-		$this->lang->line('Download'));
+	print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $download_anchor_text);
 
 	print ' | ';
 	print anchor (

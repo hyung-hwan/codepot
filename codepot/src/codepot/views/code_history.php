@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
@@ -152,23 +153,19 @@ $this->load->view (
 		print '</pre>';
 		print '</td>';
 
+		print '<td>';
+		print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", 
+			$this->lang->line('Details'));
 		if ($file['type'] == 'file')
 		{
-			print '<td>';
+			print ' | ';
 			print anchor ("code/blame/{$project->id}/{$xfullpath}/{$h['rev']}", 
-				$this->lang->line('Blame'));
-			print ' ';
+				'<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'));
+			print ' | ';
 			print anchor ("code/diff/{$project->id}/{$xfullpath}/{$h['rev']}", 
 				$this->lang->line('Difference'));
-			print '</td>';
 		}
-		else if ($file['type'] == 'dir')
-		{
-			print '<td>';
-			print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", 
-				$this->lang->line('Details'));
-			print '</td>';
-		}
+		print '</td>';
 
 		print '</tr>';
 
