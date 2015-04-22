@@ -8,6 +8,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
@@ -26,7 +27,7 @@ $(function() {
 		if ($.trim($("#code_search_string").val()) != "")
 		{
 			$('#code_search_submit').button ('disable');
-			$('#code_search_string').addClass ('search-in-progress');
+			$('#code_search_string_icon').addClass ('fa-cog fa-spin');
 			$('#code_search_form').submit ();
 		}
 	});
@@ -140,12 +141,15 @@ $this->load->view (
 	print form_open("code/search/{$project->id}/", 'id="code_search_form"');
 	print form_hidden ('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_search_search_folder"');
 	print form_hidden ('search_revision', set_value('search_revision', $revision), 'id="code_search_search_revision"');
+	
+	print '<i id="code_search_string_icon" class="fa"></i> ';
 	print form_input(array(
 		'name' => 'search_string', 
 		'value' => set_value('search_string', ''), 
 		'id' =>'code_search_string',
 		'placeholder' => $this->lang->line('CODE_SEARCH_STRING')
 	));
+	print ' ';
 
 	print form_checkbox(array(
 		'name'    => 'search_invertedly', 

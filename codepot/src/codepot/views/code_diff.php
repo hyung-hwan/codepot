@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
@@ -266,12 +267,13 @@ if (FALSE) // don't want to delete code for the original diff view.
 
 	print '<tr class="heading">';
 	print '<th>';
+	print ' ';
 
 	$currev = $file['created_rev'];
 	$prevrev = $file['against']['prev_rev'];
 	$prevanc = "code/diff/{$project->id}/{$xpar}/{$currev}/{$prevrev}";
-	print anchor ($prevanc, '<<');
-	print '&nbsp;&nbsp;&nbsp;';
+	print anchor ($prevanc, '<i class="fa fa-arrow-circle-left"></i>');
+	print ' ';
 
 	print $this->lang->line('Revision');
 	print ' ';
@@ -280,18 +282,19 @@ if (FALSE) // don't want to delete code for the original diff view.
 	$currev = $file['created_rev'];
 	$nextrev = $file['against']['next_rev'];
 	$nextanc = "code/diff/{$project->id}/{$xpar}/{$currev}/{$nextrev}";
-	print '&nbsp;&nbsp;&nbsp;';
-	print anchor ($nextanc, '>>');
+	print ' ';
+	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
 
 	print '</th>';
 
 	print '<th>';
+	print ' ';
 
 	$currev = $file['against']['created_rev'];
 	$prevrev = $file['prev_rev'];
 	$prevanc = "code/diff/{$project->id}/{$xpar}/{$prevrev}/{$currev}";
-	print anchor ($prevanc, '<<');
-	print '&nbsp;&nbsp;&nbsp;';
+	print anchor ($prevanc, '<i class="fa fa-arrow-circle-left"></i>');
+	print ' ';
 
 	print $this->lang->line('Revision');
 	print ' ';
@@ -300,8 +303,8 @@ if (FALSE) // don't want to delete code for the original diff view.
 	$currev = $file['against']['created_rev'];
 	$nextrev = $file['next_rev'];
 	$nextanc = "code/diff/{$project->id}/{$xpar}/{$nextrev}/{$currev}";
-	print '&nbsp;&nbsp;&nbsp;';
-	print anchor ($nextanc, '>>');
+	print ' ';
+	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
 
 	print '</th>';
 	print '</tr>';
@@ -396,13 +399,14 @@ else
 	//
 	print ("<div style='float:left; width: 50%; margin: 0; padding: 0;'>");
 
-	print "<div class='navigator'>";
+	print '<div class="navigator">';
+
 	$currev = $file['created_rev'];
 	$prevrev = $file['against']['prev_rev'];
 	$prevanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$currev}/{$prevrev}";
 
-	print anchor ($prevanc, '<<');
-	print '&nbsp;&nbsp;&nbsp;';
+	print anchor ($prevanc, '<i class="fa fa-arrow-circle-left"></i>');
+	print ' ';
 
 	// show the history details of the previous revision at the root directory
 	$revanc = "code/revision/{$project->id}/!/{$file['against']['created_rev']}";
@@ -411,8 +415,8 @@ else
 	$currev = $file['created_rev'];
 	$nextrev = $file['against']['next_rev'];
 	$nextanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$currev}/{$nextrev}";
-	print '&nbsp;&nbsp;&nbsp;';
-	print anchor ($nextanc, '>>');
+	print ' ';
+	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
 	print "</div>"; // navigator
 
 	//print "<pre class='prettyprint lang-{$fileext}' style='width: 100%;' id='code_diff_mainarea_result_fulldiffold'>";
@@ -497,12 +501,13 @@ else
 	//
 	print ("<div style='float:left; width: 50%; margin: 0; padding: 0;'>");
 
-	print "<div class='navigator'>";
+	print '<div class="navigator">';
+
 	$currev = $file['against']['created_rev'];
 	$prevrev = $file['prev_rev'];
 	$prevanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$prevrev}/{$currev}";
-	print anchor ($prevanc, '<<');
-	print '&nbsp;&nbsp;&nbsp;';
+	print anchor ($prevanc, '<i class="fa fa-arrow-circle-left"></i>');
+	print ' ';
 
 	// show the history details of the current revision at the root directory
 	$revanc = "code/revision/{$project->id}/!/{$file['created_rev']}";
@@ -511,8 +516,8 @@ else
 	$currev = $file['against']['created_rev'];
 	$nextrev = $file['next_rev'];
 	$nextanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$nextrev}/{$currev}";
-	print '&nbsp;&nbsp;&nbsp;';
-	print anchor ($nextanc, '>>');
+	print ' ';
+	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
 	print "</div>"; // navigator
 
 	//print "<pre class='prettyprint lang-{$fileext}' style='width: 100%;' id='code_diff_mainarea_result_fulldiffnew'>";

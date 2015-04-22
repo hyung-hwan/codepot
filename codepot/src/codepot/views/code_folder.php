@@ -8,6 +8,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
@@ -215,7 +216,7 @@ $(function () {
 		if ($.trim($("#code_search_string").val()) != "")
 		{
 			$('#code_search_submit').button ('disable');
-			$('#code_search_string').addClass("search-in-progress");
+			$('#code_search_string_icon').addClass("fa-cog fa-spin");
 			$('#code_search_form').submit ();
 		}
 	});
@@ -318,13 +319,14 @@ $this->load->view (
 	{
 		print form_hidden('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_folder_search_folder"');
 		print form_hidden('search_revision', set_value('search_revision', $revision), 'id="code_folder_search_revision"');
+		
+		print '<i id="code_search_string_icon" class="fa"></i> ';
 		print form_input(array(
 			'name' => 'search_string', 
 			'value' => set_value('search_string', ''), 
 			'id' =>'code_search_string',
 			'placeholder' => $this->lang->line('CODE_SEARCH_STRING')
 		));
-
 		print ' ';
 
 		print form_checkbox(array(
@@ -394,7 +396,7 @@ $this->load->view (
 	} 
 
 	$xpar = $this->converter->AsciiTohex ($headpath);
-	print anchor ("code/file/{$project->id}/${xpar}/{$prev_revision}", '<<');
+	print anchor ("code/file/{$project->id}/${xpar}/{$prev_revision}", '<i class="fa fa-arrow-circle-left"></i>');
 	print ' ';
 
 	// anchor to the revision history at the root directory
@@ -410,7 +412,7 @@ $this->load->view (
 	}
 
 	print ' ';
-	print anchor ("code/file/{$project->id}/${xpar}/{$next_revision}", '>>');
+	print anchor ("code/file/{$project->id}/${xpar}/{$next_revision}", '<i class="fa fa-arrow-circle-right"></i>');
 
 	if ($file_count > 0)
 	{
@@ -497,6 +499,7 @@ $this->load->view (
 				$hexpath = $this->converter->AsciiToHex($fullpath);
 				print "<tr class='{$rowclass}'>";
 				print '<td>';
+				print '<i class="fa fa-folder-o"></i> ';
 				print anchor (
 					"code/file/{$project->id}/{$hexpath}{$revreq}",
 					htmlspecialchars($f['name']));
@@ -522,6 +525,8 @@ $this->load->view (
 				$hexpath = $this->converter->AsciiToHex($fullpath);
 				print "<tr class='{$rowclass}'>";
 				print '<td>';
+				$fa_type = codepot_get_fa_file_type ($f['name']);
+				print "<i class='fa fa-{$fa_type}-o'></i> ";
 				print anchor (
 					"code/file/{$project->id}/{$hexpath}{$revreq}",
 					htmlspecialchars($f['name']));

@@ -132,6 +132,7 @@ AC_CONFIG_FILES([
 	src/codepot/models/Makefile
 	src/codepot/views/Makefile
 	src/codepot/Makefile
+	src/css/fonts/Makefile
 	src/css/images/Makefile
 	src/css/Makefile
 	src/js/prettify/Makefile
