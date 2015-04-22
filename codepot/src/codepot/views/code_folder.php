@@ -455,23 +455,28 @@ $this->load->view (
 			print ' | ';
 		}
 
+		$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
+		$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+
 		if ($revision > 0)
 		{
 			if ($xpar == '') $revtrailer = $revreqroot;
 			else $revtrailer = "/{$xpar}{$revreq}";
-			print anchor ("code/history/{$project->id}{$revtrailer}", $this->lang->line('History'));
+			print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
 		}
 		else
-			print anchor ("code/history/{$project->id}/{$xpar}", $this->lang->line('History'));
+		{
+			print anchor ("code/history/{$project->id}/{$xpar}", $history_anchor_text);
+		}
 
 		print ' | ';
-		print anchor (
-			"code/fetch/{$project->id}/${xpar}{$revreq}",
-			$this->lang->line('Download'));
+		print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $download_anchor_text);
 		
 		print '</div>';
 
 		usort ($file['content'], 'comp_files');
+
+		$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'); 
 
 		print '<table id="code_folder_mainarea_result_table">';
 		print '<tr class="heading">';
@@ -517,6 +522,7 @@ $this->load->view (
 				print '</code></td>';
 				print '<td></td>';
 				print '<td></td>';
+				print '<td></td>';
 				print '</tr>';
 			}
 			else
@@ -546,9 +552,7 @@ $this->load->view (
 				print '</code></td>';
 
 				print '<td>';
-				print anchor (
-					"code/blame/{$project->id}/{$hexpath}{$revreq}",
-					$this->lang->line('Blame'));
+				print anchor ("code/blame/{$project->id}/{$hexpath}{$revreq}", $blame_anchor_text);
 				print '</td>';
 				print '<td>';
 				print anchor (

@@ -192,6 +192,7 @@ class SubversionModel extends Model
 
 			//
 			// Try to get the history from the head revision down.
+			// regardless of the given revision.
 			//
 			$info = @svn_info ($url, FALSE, $rev);
 			if ($info === FALSE || count($info) != 1) 
@@ -233,8 +234,11 @@ class SubversionModel extends Model
 			$fileinfo['name'] =  $info[0]['path'];
 			$fileinfo['type'] = 'dir';
 			$fileinfo['size'] = 0;
-			$fileinfo['created_rev'] = $info[0]['revision'];
-			$fileinfo['last_author'] = $info[0]['last_changed_rev'];
+			if (array_key_exists('last_changed_rev', $info[0]))
+				$fileinfo['created_rev'] = $info[0]['last_changed_rev'];
+			else
+				$fileinfo['created_rev'] = $info[0]['revision'];
+			$fileinfo['last_author'] = $info[0]['last_changed_author'];
 		}
 		else return FALSE;
 
@@ -259,11 +263,9 @@ class SubversionModel extends Model
 		$info = @svn_info ($url, FALSE, $rev);
 		if ($info === FALSE || count($info) != 1) return FALSE;
 
+		$actual_rev = $rev;
 		if ($info[0]['kind'] == SVN_NODE_FILE) 
 		{
-			// do not revision history this for a file.
-			return FALSE;
-		/*
 			$lsinfo = @svn_ls ($url, $rev, FALSE, TRUE);
 			if ($lsinfo === FALSE) return FALSE;
 
@@ -271,7 +273,8 @@ class SubversionModel extends Model
 			$fileinfo = $lsinfo[$info[0]['path']];
 			if (!array_key_exists ('fullpath', $fileinfo))
 				$fileinfo['fullpath'] = $info[0]['path'];
-		*/
+
+			$actual_rev = $fileinfo['created_rev'];
 
 		}
 		else if ($info[0]['kind'] == SVN_NODE_DIR)
@@ -281,12 +284,17 @@ class SubversionModel extends Model
 			$fileinfo['name'] =  $info[0]['path'];
 			$fileinfo['type'] = 'dir';
 			$fileinfo['size'] = 0;
-			$fileinfo['created_rev'] = $info[0]['revision'];
-			$fileinfo['last_author'] = $info[0]['last_changed_rev'];
+			if (array_key_exists('last_changed_rev', $info[0]))
+				$fileinfo['created_rev'] = $info[0]['last_changed_rev'];
+			else
+				$fileinfo['created_rev'] = $info[0]['revision'];
+			$fileinfo['last_author'] = $info[0]['last_changed_author'];
+
+			$actual_rev = $fileinfo['created_rev'];
 		}
 		else return FALSE;
 
-		$log = @svn_log ($url, $rev, $rev, 1, SVN_DISCOVER_CHANGED_PATHS);
+		$log = @svn_log ($url, $actual_rev, $actual_rev, 1, SVN_DISCOVER_CHANGED_PATHS);
 		if ($log === FALSE) return FALSE;
 
 		if (count($log) != 1) return FALSE;
