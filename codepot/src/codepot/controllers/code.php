@@ -962,7 +962,7 @@ class Code extends Controller
 			$average_commits = 0;
 			$total_months = 0;
 
-			$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
+			$file = $this->subversion->getHistory ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
 				//header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
@@ -971,7 +971,7 @@ class Code extends Controller
 			}
 			else 
 			{
-	
+
 				$history = $file['history'];
 				$history_count = count($history);
 	
@@ -1006,7 +1006,7 @@ class Code extends Controller
 						$max_month = substr($k, 5, 2);
 					}
 
-					$idx++;	
+					$idx++;
 					$total_commits += $v;
 				}
 
@@ -1055,26 +1055,26 @@ class Code extends Controller
 			$this->graph->setXValuesHorizontal(TRUE);
 			if ($stats_count <= 1)
 			{
-					$this->graph->setBarSpace(TRUE);
-					//$this->graph->setDataPoints(TRUE);
-					//$this->graph->setDataPointColor("red");
+				$this->graph->setBarSpace(TRUE);
+				//$this->graph->setDataPoints(TRUE);
+				//$this->graph->setDataPointColor("red");
 			}
 			else
 			{
-					$this->graph->setBarSpace(FALSE);
+				$this->graph->setBarSpace(FALSE);
 
-					if ($stats_count <= 8)
-					{
-						$this->graph->setXValuesInterval(1);
-					}
-					else if ($stats_count <= 16)
-					{
-						$this->graph->setXValuesInterval(2);
-					}
-					else
-					{
-						$this->graph->setXValuesInterval(11);
-					}
+				if ($stats_count <= 8)
+				{
+					$this->graph->setXValuesInterval(1);
+				}
+				else if ($stats_count <= 16)
+				{
+					$this->graph->setXValuesInterval(2);
+				}
+				else
+				{
+					$this->graph->setXValuesInterval(11);
+				}
 			}
 			//$this->graph->setGrid(FALSE);
 			$this->graph->setGridVertical(FALSE);
@@ -1085,7 +1085,7 @@ class Code extends Controller
 		else if ($type == 'commit-share-by-users')
 		{
 			// revision is ignored
-			$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
+			$file = $this->subversion->getHistory ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
 				header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
@@ -1117,7 +1117,7 @@ class Code extends Controller
 		else /* if ($type == 'commits-by-users') */
 		{
 			// revision is ignored
-			$file = $this->subversion->getHistory ($projectid, $path, SVN_REVISION_HEAD);
+			$file = $this->subversion->getHistory ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
 				header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error'); 
