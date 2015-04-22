@@ -278,6 +278,7 @@
 	background-color: #7777FF;
 	color: #FFFFFF;
 	font-weight: bold;
+	padding-left: 1em;
 }
 
 #code_diff_mainarea_result_fullview .navigator a {
@@ -350,10 +351,6 @@
  * project source search view (including folder view)
  *-----------------------------------------------*/
  
-#code_search_string.search-in-progress {
-	background: white url("images/ui-anim_basic_16x16.gif") right center no-repeat; 
-}
-
 #code_search_invertedly_label .ui-button-text,
 #code_search_case_insensitively_label .ui-button-text,
 #code_search_recursively_label .ui-button-text,

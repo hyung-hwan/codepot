@@ -93,10 +93,10 @@ $this->load->view (
 <?php
 	$xfullpath = $this->converter->AsciiToHex (($fullpath == '')? '.': $fullpath);
 
-	$graph_url = codepot_merge_path (site_url(), "/code/graph/commits-by-users/{$project->id}/{$xfullpath}");
+	$graph_url = codepot_merge_path (site_url(), "/code/graph/commits-by-users/{$project->id}/{$xfullpath}{$revreq}");
 	print "<img src='{$graph_url}' />";
 
-	$graph_url = codepot_merge_path (site_url(), "/code/graph/commit-share-by-users/{$project->id}/{$xfullpath}");
+	$graph_url = codepot_merge_path (site_url(), "/code/graph/commit-share-by-users/{$project->id}/{$xfullpath}{$revreq}");
 	print "<img src='{$graph_url}' />";
 ?>
 

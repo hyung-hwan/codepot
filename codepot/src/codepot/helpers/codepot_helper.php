@@ -332,3 +332,92 @@ if ( !function_exists ('codepot_find_matching_sequences'))
 		return $result;
 	}
 }
+
+if (!function_exists ('codepot_get_fa_file_type'))
+{
+	function codepot_get_fa_file_type ($path)
+	{
+		// return font awesome file types.
+		$ext = substr(strrchr($path, '.'), 1);
+		if (!empty($ext))
+		{
+			$ext = strtolower($ext);
+			$types = array (
+				'aiff'   => 'audio', 
+				'aac'    => 'audio',
+				'au'     => 'audio',
+				'flac'   => 'audio',
+				'm4a'    => 'audio',
+				'm4p'    => 'audio', 
+				'mp3'    => 'audio', 
+				'ogg'    => 'audio',
+				'ra'     => 'audio',
+				'vox'    => 'audio',
+				'wav'    => 'audio',
+				'wma'    => 'audio',
+
+				'3gp'    => 'video',
+				'asf'    => 'video',
+				'avi'    => 'video',
+				'flv'    => 'video',
+				'm4v'    => 'video',
+				'mp4'    => 'video',
+				'mkv'    => 'video',
+				'rm'     => 'video',
+
+				'gif'    => 'image',
+				'jpg'    => 'image',
+				'png'    => 'image',
+
+				'pdf'    => 'pdf',
+				'txt'    => 'text',
+				'wiki'   => 'text',
+				'htm'    => 'html',
+				'html'   => 'html',
+
+				'doc'    => 'word',
+				'docx'   => 'word',
+				'xls'    => 'excel',
+				'xlsx'   => 'excel',
+				'ppt'    => 'powerpoint',
+				'pptx'   => 'powerpoint',
+
+				'ada'    => 'code',
+				'adb'    => 'code',
+				'ads'    => 'code',
+				'bas'    => 'code',
+				'c'      => 'code',
+				'cc'     => 'code',
+				'cpp'    => 'code',
+				'cxx'    => 'code',
+				'h'      => 'code',
+				'hh'     => 'code',
+				'hpp'    => 'code',
+				'hxx'    => 'code',
+				'java'   => 'code',
+				'js'     => 'code',
+				'pas'    => 'code',
+				'php'    => 'code',
+				'pl'     => 'code',
+				'py'     => 'code',
+				'rb'     => 'code',
+				'st'     => 'code',
+				'vb'     => 'code',
+
+				'alz'    => 'archive',
+				'arj'    => 'archive',
+				'bz2'    => 'archive',
+				'gz'     => 'archive',
+				'jar'    => 'archive',
+				'rar'    => 'archive',
+				'tar'    => 'archive',
+				'7z'     => 'archive',
+				'zip'    => 'archive'
+			);
+
+			if (array_key_exists($ext, $types)) return 'file-' . $types[$ext];
+		}
+
+		return 'file';
+	}
+}

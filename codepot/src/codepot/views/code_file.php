@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-ada.js')?>"></script>
@@ -212,7 +213,7 @@ $this->load->view (
 <div class="infostrip" id="code_file_mainarea_infostrip">
 
 	<?php 
-		print anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<<');
+		print anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<i class="fa fa-arrow-circle-left"></i>');
 		print ' ';
 
 		// anchor to the revision history at the root directory
@@ -230,7 +231,7 @@ $this->load->view (
 		}
 
 		print ' ';
-		print anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '>>');
+		print anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '<i class="fa fa-arrow-circle-right"></i>');
 
 		print ' | ';
 		printf ('%s: %s', $this->lang->line('Size'), $file['size']);
