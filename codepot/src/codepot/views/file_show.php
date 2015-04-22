@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/file.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
@@ -103,7 +104,10 @@ $this->load->view (
 <div class="title"><?php print htmlspecialchars($file->name)?></div>
 
 <div class="infostrip" id="wiki_show_mainarea_infostrip">
-	<?php print  anchor ("file/get/{$project->id}/". $this->converter->AsciiToHex($file->name), $this->lang->line('Download')) ?>
+	<?php 
+		$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+		print  anchor ("file/get/{$project->id}/". $this->converter->AsciiToHex($file->name), $download_anchor_text);
+	?>
 	| <a id="file_show_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
 </div>
 

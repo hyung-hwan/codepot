@@ -8,6 +8,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/file.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
@@ -98,6 +99,8 @@ else
 
 	usort ($files, 'comp_files');
 
+	$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+
 	print '<table id="file_home_mainarea_result_table">';
 	print '<tr class="heading">';
 	print '<th>' . $this->lang->line('Tag') . '</th>';
@@ -132,7 +135,7 @@ else
 		print $file->md5sum;
 		print '</tt></td>';
 		print '<td>';
-		print anchor ("file/get/{$project->id}/{$hexname}", $this->lang->line('Download'));
+		print anchor ("file/get/{$project->id}/{$hexname}", $download_anchor_text);
 		print '</td>';
 		print '</tr>';
 	}
