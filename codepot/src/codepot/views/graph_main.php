@@ -413,7 +413,7 @@ function show_all_graphs (response)
 function render_graphs() 
 {
 	var ajax_req = $.ajax ({
-		url: '<?php print site_url()?>/graph/history_json/<?php print $project->id?>/',
+		url: '<?php print site_url()?>/graph/enjson_code_history/<?php print $project->id?>/',
 		context: document.body,
 		success: show_all_graphs
 	});

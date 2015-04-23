@@ -22,7 +22,9 @@ www_DATA = \
 	jquery.flot.threshold.min.js \
 	jquery.flot.time.min.js \
 	excanvas.min.js \
-	jquery.flot.tickrotor.js
+	jquery.flot.tickrotor.js \
+	d3.min.js \
+	CodeFlower.js
 
 EXTRA_DIST = $(www_DATA)
 
