@@ -70,7 +70,7 @@ class Graph extends Controller
 		}
 	}
 
-	function history_json ($projectid = '', $path = '')
+	function enjson_code_history ($projectid = '', $path = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
@@ -113,7 +113,7 @@ class Graph extends Controller
 		print codepot_json_encode ($history);
 	}
 
-	function folder_loc_json ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
+	function enjson_loc_by_lang ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
@@ -137,7 +137,36 @@ class Graph extends Controller
 		if ($path == '.') $path = ''; /* treat a period specially */
 		$path = $this->_normalize_path ($path);
 
-		$cloc = $this->subversion->clocRev ($projectid, $path, $rev);
+		$cloc = $this->subversion->clocRevByLang ($projectid, $path, $rev);
+		print codepot_json_encode ($cloc);
+	}
+
+
+	function enjson_loc_by_file ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+		{
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
+			return;
+		}
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE || ($project->public !== 'Y' && $login['id'] == ''))
+		{
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
+			return;
+		}
+
+		$this->load->model ('SubversionModel', 'subversion');
+
+		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
+		$path = $this->_normalize_path ($path);
+
+		$cloc = $cloc = $this->subversion->clocRevByFile ($projectid, $path, $rev);
 		print codepot_json_encode ($cloc);
 	}
 }

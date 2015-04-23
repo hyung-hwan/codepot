@@ -30,6 +30,8 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
 
+<script type="text/javascript" src="<?php print base_url_make('/js/d3.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/CodeFlower.js')?>"></script>
 
 <?php
 	$file_count = count($file['content']);
@@ -62,7 +64,7 @@ function show_tooltip(id, x, y, contents) {
 	}).appendTo("body").fadeIn(200);
 }
 
-function show_loc_graph (response)
+function show_loc_by_lang_graph (response)
 {
 	var loc = $.parseJSON(response);
 	if (loc == null)
@@ -114,32 +116,48 @@ function show_loc_graph (response)
 			yaxes: { }
 		};
 
-		$("#code_folder_mainarea_result_info_loc_graph").width(550).height(400);
-		$.plot($("#code_folder_mainarea_result_info_loc_graph"), dataset, options);
+		$("#code_folder_mainarea_result_info_loc_by_lang_graph").width(550).height(400);
+		$.plot($("#code_folder_mainarea_result_info_loc_by_lang_graph"), dataset, options);
 
+		var code_folder_mainarea_result_info_loc_by_lang_graph_previous_point = null;
 
-		var code_folder_mainarea_result_info_loc_graph_previous_point = null;
-
-		$("#code_folder_mainarea_result_info_loc_graph").bind("plothover", function (event, pos, item) {
+		$("#code_folder_mainarea_result_info_loc_by_lang_graph").bind("plothover", function (event, pos, item) {
 			if (item) 
 			{
-				if (code_folder_mainarea_result_info_loc_graph_previous_point != item.datapoint) 
+				if (code_folder_mainarea_result_info_loc_by_lang_graph_previous_point != item.datapoint) 
 				{
-					code_folder_mainarea_result_info_loc_graph_previous_point = item.datapoint;
-					$("#code_folder_mainarea_result_info_loc_graph_tooltip").remove();
-					show_tooltip("code_folder_mainarea_result_info_loc_graph_tooltip", item.pageX, item.pageY - 20, item.datapoint[1]);
+					code_folder_mainarea_result_info_loc_by_lang_graph_previous_point = item.datapoint;
+					$("#code_folder_mainarea_result_info_loc_by_lang_graph_tooltip").remove();
+					show_tooltip("code_folder_mainarea_result_info_loc_by_lang_graph_tooltip", item.pageX, item.pageY - 20, item.datapoint[1]);
 				}
 			} 
 			else 
 			{
-				$("#code_folder_mainarea_result_info_loc_graph_tooltip").remove();
-				code_folder_mainarea_result_info_loc_graph_previous_point = null;
+				$("#code_folder_mainarea_result_info_loc_by_lang_graph_tooltip").remove();
+				code_folder_mainarea_result_info_loc_by_lang_graph_previous_point = null;
 			}
 		});
 	}
 
-	$("#code_folder_mainarea_result_info_loc_button").button("enable");
-	//$("#code_folder_mainarea_result_info_loc_progress" ).progressbar().hide();
+	$("#code_folder_mainarea_result_info_loc_by_lang_button").button("enable");
+	$("#code_folder_mainarea_result_info_loc_by_lang_spin" ).removeClass ("fa-cog fa-spin");
+}
+
+function show_loc_by_file_graph (response)
+{
+	var loc = $.parseJSON(response);
+	if (loc == null)
+	{
+		alert ('Invalid data received');
+	}
+	else
+	{
+		var f = new CodeFlower("#code_folder_mainarea_result_info_loc_by_file_graph", 550, 400);
+		f.update (loc);
+	}
+
+	$("#code_folder_mainarea_result_info_loc_by_file_button").button("enable");
+	$("#code_folder_mainarea_result_info_loc_by_file_spin" ).removeClass ("fa-cog fa-spin");
 }
 
 function render_readme()
@@ -188,28 +206,30 @@ $(function () {
 		}
 	});
 
-	btn = $("#code_folder_mainarea_result_info_loc_button").button().click (function () {
-		$("#code_folder_mainarea_result_info_loc_button").button("disable");
-		//$("#code_folder_mainarea_result_info_loc_progress" ).progressbar("value", 0).show();
-
-		//function show_progress ()
-		//{
-		//	var progress = $("#code_folder_mainarea_result_info_loc_progress");
-		//	progress.progressbar ("value", progress.progressbar("value") + 1);
-		//	setTimeout (show_progress, 1000);
-		//}
-		//setTimeout (show_progress, 1000);
+	btn = $("#code_folder_mainarea_result_info_loc_by_lang_button").button().click (function () {
+		$("#code_folder_mainarea_result_info_loc_by_lang_button").button("disable");
+		$("#code_folder_mainarea_result_info_loc_by_lang_spin").addClass ("fa-cog fa-spin");
 
 		var ajax_req = $.ajax ({
 			url: codepot_merge_path (
 				"<?php print site_url(); ?>", 
-				"/graph/folder_loc_json/<?php print $project->id; ?>/<?php print $this->converter->AsciiToHex($headpath)?><?php print $revreq?>"),
+				"/graph/enjson_loc_by_lang/<?php print $project->id; ?>/<?php print $this->converter->AsciiToHex($headpath)?><?php print $revreq?>"),
 			context: document.body,
-			success: show_loc_graph
+			success: show_loc_by_lang_graph
 		});
 	});
 
-	//$("#code_folder_mainarea_result_info_loc_progress" ).progressbar().hide();
+	btn = $("#code_folder_mainarea_result_info_loc_by_file_button").button().click (function () {
+		$("#code_folder_mainarea_result_info_loc_by_file_button").button("disable");
+		$("#code_folder_mainarea_result_info_loc_by_file_spin").addClass ("fa-cog fa-spin");
+		var ajax_req = $.ajax ({
+			url: codepot_merge_path (
+				"<?php print site_url(); ?>", 
+				"/graph/enjson_loc_by_file/<?php print $project->id; ?>/<?php print $this->converter->AsciiToHex($headpath)?><?php print $revreq?>"),
+			context: document.body,
+			success: show_loc_by_file_graph
+		});
+	});
 <?php endif; ?>
 
 	$('#code_search_submit').button().click (function () {
@@ -426,9 +446,8 @@ $this->load->view (
 
 <div class="result" id="code_folder_mainarea_result">
 
-<div id="code_folder_mainarea_result_info_loc_progress"></div> 
-<div id="code_folder_mainarea_result_info_loc_graph">
-</div>
+<div id="code_folder_mainarea_result_info_loc_by_lang_graph"></div>
+<div id="code_folder_mainarea_result_info_loc_by_file_graph"></div>
 
 <?php
 	function comp_files ($a, $b)
@@ -624,8 +643,16 @@ $this->load->view (
 
 
 		print '<div class="title">LOC</div>';
-		print '<a id="code_folder_mainarea_result_info_loc_button" href="#">';
-		print $this->lang->line('Graph');
+		print '<a id="code_folder_mainarea_result_info_loc_by_lang_button" href="#">';
+		print '<i id="code_folder_mainarea_result_info_loc_by_lang_spin" class="fa"></i>';
+		print $this->lang->line('Language');
+		print '</a>';
+
+		print ' ';
+
+		print '<a id="code_folder_mainarea_result_info_loc_by_file_button" href="#">';
+		print '<i id="code_folder_mainarea_result_info_loc_by_file_spin" class="fa"></i>';
+		print $this->lang->line('File'); 
 		print '</a>';
 
 		print '</div>';
