@@ -944,8 +944,7 @@ class SubversionModel extends Model
 		return @svn_proplist ($workurl, 0, $rev);
 	}
 
-
-	function _cloc_revision ($projectid, $path, $rev)
+	function _cloc_revision_by_lang ($projectid, $path, $rev)
 	{
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
@@ -982,7 +981,7 @@ class SubversionModel extends Model
 		$actual_tfname = $tfname . '.d';
 		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
 
-		if (svn_checkout ($workurl, $actual_tfname, $rev, 0) === FALSE)
+		if (@svn_checkout ($workurl, $actual_tfname, $rev, 0) === FALSE)
 		{
 			codepot_delete_files ($actual_tfname, TRUE);
 			@unlink ($tfname);
@@ -1021,55 +1020,99 @@ class SubversionModel extends Model
 		return $cloc_data;
 	}
 
-	function clocRev ($projectid, $path, $rev)
+	function clocRevByLang ($projectid, $path, $rev)
 	{
-		return $this->_cloc_revision ($projectid, $path, $rev);
+		return $this->_cloc_revision_by_lang ($projectid, $path, $rev);
 	}
 
-	function clocRevBySubdir ($projectid, $path, $rev)
+	function clocRevByFile ($projectid, $path, $rev)
 	{
-		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+		// this function composes the data as CodeFlower requires
 
-		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
-		$info = @svn_info ($workurl, FALSE, $rev);
-		if ($info === FALSE || count($info) != 1) 
+		$stack = array();
+		$cloc = new stdClass();
+
+		$cloc->name = basename($path);
+		if ($cloc->name == '') $cloc->name = '/';
+		$cloc->children = array();
+
+		array_push ($stack, $path);
+		array_push ($stack, $cloc);
+
+		while (!empty($stack))
 		{
-			// If a URL is at the root of repository and the url type is file://
-			// (e.g. file:///svnrepo/codepot/ where /svnrepo/codepot is a project root),
-			// some versions of libsvn end up with an assertion failure like
-			//  ... libvvn_subr/path.c:114: svn_path_join: Assertion `svn_path_is_canonical(base, pool)' failed. 
-			// 
-			// Since the root directory is guaranteed to exist at the head revision,
-			// the information can be acquired without using a peg revision.
-			// In this case, a normal operational revision is used to work around
-			// the assertion failure. Other functions that has to deal with 
-			// the root directory should implement this check to work around it.
-			//
-			if ($rev == SVN_REVISION_HEAD || $path == '') return FALSE;
+			$current_cloc = array_pop($stack);
+			$current_path = array_pop($stack);
 
-			// rebuild the URL with a peg revision and retry it.
-			$workurl = "{$orgurl}@{$rev}";
+			$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$current_path}");
+			$trailer = ($current_path == '')? '': '@'; // trailing @ for collision prevention
+			$workurl = $orgurl . $trailer;
 			$info = @svn_info ($workurl, FALSE, $rev);
-			if ($info === FALSE || count($info) != 1)  return FALSE;
-		}
-
-		if ($info[0]['kind'] == SVN_NODE_FILE) return FALSE;
-
-		$lsinfo = @svn_ls ($workurl, $rev, FALSE, TRUE);
-
-		$cloc_data = array ();
-		foreach ($lsinfo as $key => $value) 
-		{
-			if ($value['type'] == 'dir')
+			if ($info === FALSE || count($info) != 1) 
 			{
-				$cloc = $this->_cloc_revision ($projectid, "{$path}/{$key}", $rev);
-				if ($cloc === FALSE) return FALSE;
+				// If a URL is at the root of repository and the url type is file://
+				// (e.g. file:///svnrepo/codepot/ where /svnrepo/codepot is a project root),
+				// some versions of libsvn end up with an assertion failure like
+				//  ... libvvn_subr/path.c:114: svn_path_join: Assertion `svn_path_is_canonical(base, pool)' failed. 
+				// 
+				// Since the root directory is guaranteed to exist at the head revision,
+				// the information can be acquired without using a peg revision.
+				// In this case, a normal operational revision is used to work around
+				// the assertion failure. Other functions that has to deal with 
+				// the root directory should implement this check to work around it.
+				//
+				if ($rev == SVN_REVISION_HEAD || $path == '') continue;
 
-				$cloc_data[$key] = $cloc;
+				// rebuild the URL with a peg revision and retry it.
+				$trailer = "@{$rev}";
+				$workurl = $orgurl . $trailer;
+				$info = @svn_info ($workurl, FALSE, $rev);
+				if ($info === FALSE || count($info) != 1)  continue;
+			}
+
+			if ($info[0]['kind'] == SVN_NODE_FILE) return FALSE;
+			$info0 = &$info[0];
+
+			$list = @svn_ls ($workurl, $rev, FALSE, TRUE);
+			if ($list === FALSE) return FALSE;
+
+			foreach ($list as $key => $value)
+			{
+				$full_path = $current_path . '/' . $key;
+				if ($value['type'] == 'file')
+				{
+					$obj = new stdClass();
+					$obj->name = $key;
+
+					$text = @svn_cat ("{$orgurl}/{$key}{$trailer}", $rev);
+					if ($text === FALSE) $obj->size = 0;
+					else
+					{
+						$text_len = strlen($text);
+						$obj->size = substr_count($text, "\n");
+						if ($text_len > 0 && $text[$text_len - 1] != "\n") $obj->size++;
+					}
+
+					$obj->language = substr(strrchr($key, '.'), 1); // file extension
+					if ($obj->language === FALSE) $obj->language = '';
+
+
+					array_push ($current_cloc->children, $obj);
+				}
+				else
+				{
+					$obj = new stdClass();
+					$obj->name = $key;
+					$obj->children = array();
+					array_push ($current_cloc->children, $obj);
+
+					array_push ($stack, $full_path);
+					array_push ($stack, $obj);
+				}
 			}
 		}
 
-		return $cloc_data;
+		return $cloc;
 	}
 
 	function zipSubdir ($projectid, $path, $rev, $topdir)
