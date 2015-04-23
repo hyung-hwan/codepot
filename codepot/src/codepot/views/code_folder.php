@@ -116,25 +116,25 @@ function show_loc_by_lang_graph (response)
 			yaxes: { }
 		};
 
-		$("#code_folder_mainarea_result_info_loc_by_lang_graph").width(550).height(400);
-		$.plot($("#code_folder_mainarea_result_info_loc_by_lang_graph"), dataset, options);
+		$("#code_folder_mainarea_result_loc_by_lang_graph").width(550).height(400);
+		$.plot($("#code_folder_mainarea_result_loc_by_lang_graph"), dataset, options);
 
-		var code_folder_mainarea_result_info_loc_by_lang_graph_previous_point = null;
+		var code_folder_mainarea_result_loc_by_lang_graph_previous_point = null;
 
-		$("#code_folder_mainarea_result_info_loc_by_lang_graph").bind("plothover", function (event, pos, item) {
+		$("#code_folder_mainarea_result_loc_by_lang_graph").bind("plothover", function (event, pos, item) {
 			if (item) 
 			{
-				if (code_folder_mainarea_result_info_loc_by_lang_graph_previous_point != item.datapoint) 
+				if (code_folder_mainarea_result_loc_by_lang_graph_previous_point != item.datapoint) 
 				{
-					code_folder_mainarea_result_info_loc_by_lang_graph_previous_point = item.datapoint;
-					$("#code_folder_mainarea_result_info_loc_by_lang_graph_tooltip").remove();
-					show_tooltip("code_folder_mainarea_result_info_loc_by_lang_graph_tooltip", item.pageX, item.pageY - 20, item.datapoint[1]);
+					code_folder_mainarea_result_loc_by_lang_graph_previous_point = item.datapoint;
+					$("#code_folder_mainarea_result_loc_by_lang_graph_tooltip").remove();
+					show_tooltip("code_folder_mainarea_result_loc_by_lang_graph_tooltip", item.pageX, item.pageY - 20, item.datapoint[1]);
 				}
 			} 
 			else 
 			{
-				$("#code_folder_mainarea_result_info_loc_by_lang_graph_tooltip").remove();
-				code_folder_mainarea_result_info_loc_by_lang_graph_previous_point = null;
+				$("#code_folder_mainarea_result_loc_by_lang_graph_tooltip").remove();
+				code_folder_mainarea_result_loc_by_lang_graph_previous_point = null;
 			}
 		});
 	}
@@ -152,7 +152,7 @@ function show_loc_by_file_graph (response)
 	}
 	else
 	{
-		var f = new CodeFlower("#code_folder_mainarea_result_info_loc_by_file_graph", 550, 400);
+		var f = new CodeFlower("#code_folder_mainarea_result_loc_by_file_graph", 550, 400);
 		f.update (loc);
 	}
 
@@ -446,8 +446,8 @@ $this->load->view (
 
 <div class="result" id="code_folder_mainarea_result">
 
-<div id="code_folder_mainarea_result_info_loc_by_lang_graph"></div>
-<div id="code_folder_mainarea_result_info_loc_by_file_graph"></div>
+<div id="code_folder_mainarea_result_loc_by_lang_graph"></div>
+<div id="code_folder_mainarea_result_loc_by_file_graph"></div>
 
 <?php
 	function comp_files ($a, $b)
