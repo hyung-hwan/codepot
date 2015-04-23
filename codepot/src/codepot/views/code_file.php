@@ -22,6 +22,11 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
+<?php
+$enstyle_anchor_text = '<i class="fa fa-magic"></i> ' . $this->lang->line('Enstyle');
+$destyle_anchor_text = '<i class="fa fa-times"></i> ' . $this->lang->line('Destyle');
+?>
+
 <script type="text/javascript">
 $(function () {
 	<?php
@@ -61,13 +66,13 @@ function showRawCode()
 	if (showing_raw_code)
 	{
 		
-		$("#code_file_style_anchor").text("<?php print $this->lang->line('Destyle')?>");
+		$("#code_file_style_anchor").html('<?php print $destyle_anchor_text; ?>');
 		$("#code_file_mainarea_result_code").removeClass("prettyprinted");
 		prettyPrint();
 	}
 	else
 	{
-		$("#code_file_style_anchor").text("<?php print $this->lang->line('Enstyle')?>");
+		$("#code_file_style_anchor").html('<?php print $enstyle_anchor_text ?>');
 		$("#code_file_mainarea_result_code").html($("#code_file_mainarea_result_raw").html());
 	}
 
@@ -194,7 +199,7 @@ $this->load->view (
 	print ' | ';
 	print anchor (
 		"code/file/{$project->id}/${xpar}{$revreq}",
-		$this->lang->line('Destyle'), 
+		$destyle_anchor_text,
 		array('id'      => 'code_file_style_anchor', 
 		      'onClick' => 'showRawCode(); return false;')
 	);
