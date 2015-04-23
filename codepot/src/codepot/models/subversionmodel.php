@@ -1032,7 +1032,7 @@ class SubversionModel extends Model
 		$stack = array();
 		$cloc = new stdClass();
 
-		$cloc->name = basename($path);
+		$cloc->name = $path;
 		if ($cloc->name == '') $cloc->name = '/';
 		$cloc->children = array();
 
@@ -1082,7 +1082,8 @@ class SubversionModel extends Model
 				if ($value['type'] == 'file')
 				{
 					$obj = new stdClass();
-					$obj->name = $key;
+					//$obj->name = $key;
+					$obj->name = $full_path;
 
 					$text = @svn_cat ("{$orgurl}/{$key}{$trailer}", $rev);
 					if ($text === FALSE) $obj->size = 0;
@@ -1102,7 +1103,13 @@ class SubversionModel extends Model
 				else
 				{
 					$obj = new stdClass();
-					$obj->name = $key;
+					// using the base name only caused some wrong linkages
+					// in the graph when the base name coflicted with
+					// other same base name in a different directory.
+					// let's use a full path. it's anyway clearer.
+					//$obj->name = $key;
+					$obj->name = $full_path;
+
 					$obj->children = array();
 					array_push ($current_cloc->children, $obj);
 
