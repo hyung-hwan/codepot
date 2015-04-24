@@ -101,9 +101,9 @@ $this->load->view (
 	print "<img src='{$graph_url}' />";
 ?>
 
-<table id="code_history_mainarea_result_table">
-<tr class='heading'>
-	<th><?php print $this->lang->line('Revision')?></th>
+<table id="code_history_mainarea_result_table" class="full-width-result-table">
+<tr class='full-width-result-table-header'>
+	<th colspan=2><?php print $this->lang->line('Revision')?></th>
 	<th><?php print $this->lang->line('Committer')?></th>
 	<th><?php print $this->lang->line('Date')?></th>
 	<th><?php print $this->lang->line('Message')?></th>
@@ -137,6 +137,11 @@ $this->load->view (
 		print '</td>';
 
 		print '<td>';
+		print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", 
+			'<i class="fa fa-newspaper-o"></i>');
+		print '</td>';
+
+		print '<td>';
 		// Repository migration from googlecode reveales that it did not put 
 		// 'author' for initial project creation. So I've added the following check.
 		if (array_key_exists('author', $h)) print htmlspecialchars($h['author']);
@@ -154,11 +159,8 @@ $this->load->view (
 		print '</td>';
 
 		print '<td>';
-		print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", 
-			$this->lang->line('Details'));
 		if ($file['type'] == 'file')
 		{
-			print ' | ';
 			print anchor ("code/blame/{$project->id}/{$xfullpath}/{$h['rev']}", 
 				'<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'));
 			print ' | ';
