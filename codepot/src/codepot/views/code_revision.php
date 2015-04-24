@@ -406,7 +406,7 @@ $history = $file['history'];
 <div id="code_revision_mainarea_result_files" class="collapsible-box">
 <div class="collapsible-box-header"><?php print $this->lang->line('Files')?></div>
 <div id="code_revision_mainarea_result_files_table_container" class="collapsible-box-panel">
-<table id="code_revision_mainarea_result_files_table">
+<table id="code_revision_mainarea_result_files_table" class="fit-width-result-table">
 <?php 
 	/*
 	print '<tr class="heading">';
@@ -448,7 +448,7 @@ $history = $file['history'];
 <div id="code_revision_mainarea_result_properties" class="collapsible-box">
 <div class="collapsible-box-header"><?php print $this->lang->line('CODE_PROPERTIES');?></div>
 <div id="code_revision_mainarea_result_properties_table_container" class="collapsible-box-panel">
-<table id="code_revision_mainarea_result_properties_table">
+<table id="code_revision_mainarea_result_properties_table" class="fit-width-result-table">
 <?php
 	$rowclasses = array ('odd', 'even');
 	$rowcount = 0;

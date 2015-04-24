@@ -145,7 +145,7 @@ $this->load->view (
 
 <div id="log_mainarea_result" class="result">
 
-<table id="log_mainarea_result_table">
+<table id="log_mainarea_result_table" class="full-width-result-table">
 <?php 
 	$curdate = '';
 	$xdot = $this->converter->AsciiToHex ('.');
@@ -176,7 +176,7 @@ $this->load->view (
 		if ($curdate != $date)
 		{
 			print "<tr class='break'><td colspan='{$numcols}' class='break'>&nbsp;</td></tr>";
-			print "<tr class='head'><td colspan='{$numcols}' class='date'>$date</td></tr>";
+			print "<tr class='header'><td colspan='{$numcols}' class='header'>$date</td></tr>";
 			$curdate = $date;
 			$rowcount = 0;
 		}
@@ -286,10 +286,11 @@ $this->load->view (
 		print '</tr>';
 	}
 ?>
-<tr class='foot'>
-<td colspan='<?php print $numcols?>' class='pages'><?php print  $page_links ?></td>
-</tr>
 </table>
+
+<div id="log_mainarea_result_pages">
+<?php print $page_links; ?>
+</div>
 
 </div> <!-- log_mainarea_result -->
 
