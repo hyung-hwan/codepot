@@ -4,3 +4,8 @@
 #user_home_mainarea_result {
 	overflow: auto;
 }
+
+#user_home_mainarea_result_issues,
+#user_home_mainarea_result_projects {
+	padding: 0;
+}

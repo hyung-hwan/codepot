@@ -163,7 +163,7 @@ if (empty($issues))
 }
 else
 {
-	print '<table id="issue_home_mainarea_result_table">';
+	print '<table id="issue_home_mainarea_result_table" class="full-width-result-table">';
 	print '<tr class="heading">';
 	print '<th class="id">' . $this->lang->line('ID') . '</th>';
 	print '<th class="type">' . $this->lang->line('Type') . '</th>';
@@ -212,11 +212,11 @@ else
 		print '</tr>';
 	}
 
-	print '<tr class="foot">';
-	print "<td colspan='6' class='pages'>{$page_links}</td>";
-	print '</tr>';
-
 	print '</table>';
+
+	print '<div id="issue_home_mainarea_result_pages">';
+	print $page_links;
+	print '</div>';
 }
 ?>
 </div> <!-- issue_home_mainarea_result -->

@@ -5,14 +5,12 @@
 	overflow: auto;
 }
 
-#file_home_mainarea_result_table tr {
-	vertical-align: middle;
-	white-space: nowrap;
+#file_home_mainarea_result_table {
+	margin-top: 1em;
 }
 
-#file_home_mainarea_result_table tr th,
-#file_home_mainarea_result_table tr td {
-	padding: 0.2em 0.2em 0.2em 0.2em;
+#file_home_mainarea_result_table tr {
+	vertical-align: middle;
 }
 
 /*-----------------------------------------------

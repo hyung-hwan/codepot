@@ -8,12 +8,6 @@
 
 #code_folder_mainarea_result_table tr {
 	vertical-align: middle;
-	white-space: nowrap;
-}
-
-#code_folder_mainarea_result_table tr th,
-#code_folder_mainarea_result_table tr td {
-	padding: 0.2em 0.2em 0.2em 0.2em;
 }
 
 #code_folder_mainarea_result_readme {
@@ -110,9 +104,8 @@
 	overflow: auto;
 }
 
-#code_history_mainarea_result_table tr {
-	vertical-align: top;
-	white-space: nowrap;
+#code_history_mainarea_result_table {
+	margin-top: 1em;
 }
 
 #code_history_mainarea_result_table_path_list {

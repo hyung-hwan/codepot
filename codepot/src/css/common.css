@@ -53,7 +53,8 @@ body {
 }
 
 .content pre, 
-.content code {
+.content code,
+.content tt {
 	font-family: consolas, monaco, "Andale Mono", monospace;
 	overflow: auto;
 	border: none;
@@ -111,6 +112,51 @@ body {
 	line-height: 2em;
 	margin: 1px 0 0 0;
 	padding: 0.2em 0.2em 0.2em 0.2em !important; /* !important so that jquery-ui.css doesn't override this */
+}
+
+.content .fit-width-result-table,
+.content .full-width-result-table  {
+	border-collapse: collapse;
+	font-size: inherit;
+	background: inherit;
+}
+
+.content .full-width-result-table  {
+	width: 100%;
+}
+
+.content .fit-width-result-table tr,
+.content .full-width-result-table tr {
+	vertical-align: top;
+	text-align: left;
+	white-space: nowrap;
+
+	border-bottom: 1px solid #CCCCCC;
+	color: #333333;
+}
+
+.content .fit-width-result-table td,
+.content .full-width-result-table td {
+	padding: 0.4em 0.8em 0.4em 0.8em;
+	white-space: nowrap;
+}
+
+.content .fit-width-result-table tr th,
+.content .full-width-result-table tr th,
+.content .fit-width-result-table tr td.header,
+.content .full-width-result-table tr td.header {
+	padding: 0.5em 0.8em 0.5em 0.8em;
+	font-weight: bold;
+	text-align: left;
+	color: #1C94C4;
+	background-color: #E5ECF9;
+	white-space: nowrap;
+}
+
+.content .fit-width-result-table tr td img,
+.content .full-width-result-table tr td img {
+	vertical-align: middle;
+	display:inline-block;
 }
 
 .content .taskbar {
@@ -452,72 +498,37 @@ body {
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 
+	background-color: #F8F8FA;
 }
 
-.content .mainarea tt {
-	/*
-	padding: .1em .1em .1em .1em;
-	background-color: #F1F1FF;
-	*/
+.content .mainarea table.wiki {
+	border-collapse: collapse;
 	font-size: inherit;
+	background: inherit;
 }
 
-.content .mainarea table {
-	font-size: inherit;
-	background-color: inherit;
-}
-
-.content .mainarea table tr.heading {
-	color: #FFFFFF;
-	background-color: #7777FF;
-}
-
-.content .mainarea table tr.heading a {
-	color: inherit;
-	background-color: inherit;
-	text-decoration: none;
-}
-
-.content .mainarea table tr.odd {
-	background-color: inherit;
-}
-
-.content .mainarea table tr.even {
-	background-color: #EEEEFF;
-}
-
-.content .mainarea table tr th {
+.content .mainarea table.wiki tr {
+	vertical-align: top;
+	text-align: left;
 	white-space: nowrap;
-}
 
-.content .mainarea table tr td {
-	padding-left: 0.2em;
-	padding-right: 0.2em;
-}
-
-.content .mainarea table tr td img {
-	vertical-align: middle;
-	display:inline-block;
-}
-
-.content .mainarea table tr td.code {
-	white-space: nowrap;
-}
-
-.content .mainarea table tr td.code pre {
-	padding: 0;
-	margin: 0;
-	border: 0 none;	
-	background-color: inherit;
+	border-bottom: 1px solid #CCCCCC;
+	color: #333333;
 }
 
 .content .mainarea table.wiki th {
-	background-color: #bbccdd;
+	padding: 0.5em 0.8em 0.5em 0.8em;
+	font-weight: bold;
+	text-align: left;
+	color: #1C94C4;
+	background-color: #E5ECF9;
+	white-space: nowrap;
 }
 
 .content .mainarea table.wiki td {
-	vertical-align: top;
-	border-bottom: 1px dashed #bbccdd;
+	padding: 0.5em 0.8em 0.5em 0.8em;
+	text-align: left;
+	white-space: normal;
 }
 
 .content .mainarea p.wiki {

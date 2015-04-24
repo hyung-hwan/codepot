@@ -7,83 +7,65 @@
 }
 
 #issue_home_mainarea_result_table {
-	padding-top: 1em;
-	/*border-collapse: separate;
-	border-spacing: 0px 1px;*/
-	width: 100%;
-	font-size: inherit;
+	margin-top: 1em;
 }
 
-#issue_home_mainarea_result_table th {
-	padding-top: 3px;
-	padding-bottom: 3px;
+#issue_home_mainarea_result_table tr {
+	vertical-align: middle;
 }
 
-#issue_home_mainarea_result_table td {
-	padding-top: 3px;
-	padding-bottom: 3px;
-}
-
-#issue_home_mainarea_result_table tr.new {
+#issue_home_mainarea_result_table tr.new td.status,
+#issue_home_mainarea_result_table tr.new td.summary {
 	background-color: #ffccbb;
+	background-color: rgba(255, 204, 187, 0.5);
 }
 
-#issue_home_mainarea_result_table tr.accepted {
+#issue_home_mainarea_result_table tr.accepted td.status,
+#issue_home_mainarea_result_table tr.accepted td.summary {
 }
 
-#issue_home_mainarea_result_table tr.rejected {
+#issue_home_mainarea_result_table tr.rejected td.status,
+#issue_home_mainarea_result_table tr.rejected td.summary {
 	background-color: #ffeedd;
+	background-color: rgba(255, 238, 221, 0.5);
 }
 
-#issue_home_mainarea_result_table tr.started {
+#issue_home_mainarea_result_table tr.started td.status,
+#issue_home_mainarea_result_table tr.started td.summary {
 	background-color: #ddeeff;
+	background-color: rgba(221, 238, 255, 0.5);
 }
 
-#issue_home_mainarea_result_table tr.stalled {
+#issue_home_mainarea_result_table tr.stalled td.status,
+#issue_home_mainarea_result_table tr.stalled td.summary {
 	background-color: #bbccff;
+	background-color: rgba(187, 204, 255, 0.5);
 }
 
-#issue_home_mainarea_result_table tr.resolved {
+#issue_home_mainarea_result_table tr.resolved td.status,
+#issue_home_mainarea_result_table tr.resolved td.summary {
 	background-color: #ddffdd;
+	background-color: rgba(221, 255, 221, 0.5);
 }
 
-#issue_home_mainarea_result_table tr.other {
+#issue_home_mainarea_result_table tr.other td.status,
+#issue_home_mainarea_result_table tr.other td.summary {
 	background-color: #ddeeff;
+	background-color: rgba(221, 238, 255, 0.5);
 }
 
-#issue_home_mainarea_result_table td.pages {
-        padding-top: 1em;
-        text-align: center;
-        font-weight: bold;
-}
-
-#issue_home_mainarea_result_table td.id {
-	white-space: nowrap;
-	width: 1px;
-}
-
-#issue_home_mainarea_result_table td.type {
-	white-space: nowrap;
-	width: 1px;
-}
-
-#issue_home_mainarea_result_table td.status {
-	white-space: nowrap;
-	width: 1px;
-}
-
-#issue_home_mainarea_result_table td.priority {
-	white-space: nowrap;
-	width: 1px;
-}
-
+#issue_home_mainarea_result_table td.id,
+#issue_home_mainarea_result_table td.type,
+#issue_home_mainarea_result_table td.status,
+#issue_home_mainarea_result_table td.priority,
 #issue_home_mainarea_result_table td.owner {
-	white-space: nowrap;
 	width: 1px;
 }
 
-#issue_home_mainarea_result_table td.summary {
-	white-space: nowrap;
+#issue_home_mainarea_result_pages {
+	margin-top: 1em;
+	text-align: center;
+	width: 100%;
 }
 
 #issue_home_mainarea_search_form {
@@ -131,38 +113,16 @@
 	float: left;
 }
 
-#issue_show_mainarea_changes_table {
-	border-collapse: collapse;
-	width: 100%;
-	font-size: inherit;
-}
-
 #issue_show_mainarea_changes_table td.date {
-	/*white-space: nowrap;*/
-	text-align: right;
-	vertical-align: top;
-	padding-top: 0.2em;
-	padding-bottom: 0.2em;
-	border-bottom: 1px solid lightgray;
 	min-width: 5em;
 	width: 1px;
 }
 
 #issue_show_mainarea_changes_table td.updater {
 	width: 1px;
-	white-space: nowrap;
-	vertical-align: top;
-	padding-top: 0.2em;
-	padding-bottom: 0.2em;
-	border-bottom: 1px solid lightgray;
 }
 
 #issue_show_mainarea_changes_table td.details {
-	/*white-space: nowrap;*/
-	vertical-align: top;
-	padding-top: 0.2em;
-	padding-bottom: 0.2em;
-	border-bottom: 1px solid lightgray;
 	overflow: auto;
 }
 

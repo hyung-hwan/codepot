@@ -264,7 +264,7 @@ $this->load->view (
 	print '</a>';
 	print '</div>';
 
-	print '<table id="issue_show_mainarea_changes_table">';
+	print '<table id="issue_show_mainarea_changes_table" class="full-width-result-table">';
 	while ($count > 1)
 	{
 		$new = $issue->changes[--$count];

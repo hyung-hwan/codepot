@@ -497,7 +497,7 @@ $this->load->view (
 
 		$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'); 
 
-		print '<table id="code_folder_mainarea_result_table">';
+		print '<table id="code_folder_mainarea_result_table" class="fit-width-result-table">';
 		print '<tr class="heading">';
 		print '<th>' . $this->lang->line('Name') . '</th>';
 		print '<th>' . $this->lang->line('Revision') . '</th>';

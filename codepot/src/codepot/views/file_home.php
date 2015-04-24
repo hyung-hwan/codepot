@@ -99,15 +99,16 @@ else
 
 	usort ($files, 'comp_files');
 
-	$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+	//$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+	$download_anchor_text = '<i class="fa fa-download"></i>';
 
-	print '<table id="file_home_mainarea_result_table">';
+	print '<table id="file_home_mainarea_result_table" class="fit-width-result-table">';
 	print '<tr class="heading">';
 	print '<th>' . $this->lang->line('Tag') . '</th>';
-	print '<th>' . $this->lang->line('Name') . '</th>';
+	print '<th colspan=2>' . $this->lang->line('Name') . '</th>';
 	print '<th>' . $this->lang->line('Summary') . '</th>';
 	print '<th>' . $this->lang->line('MD5') . '</th>';
-	print '<th>' . $this->lang->line('Download') . '</th>';
+	//print '<th>' . $this->lang->line('Download') . '</th>';
 	print '</tr>';
 	
 	$oldtag = '';
@@ -129,14 +130,14 @@ else
 		print anchor ("file/show/{$project->id}/{$hexname}", htmlspecialchars($file->name));
 		print '</td>';
 		print '<td>';
+		print anchor ("file/get/{$project->id}/{$hexname}", $download_anchor_text);
+		print '</td>';
+		print '<td>';
 		print htmlspecialchars($file->summary);
 		print '</td>';
 		print '<td><tt>';
 		print $file->md5sum;
 		print '</tt></td>';
-		print '<td>';
-		print anchor ("file/get/{$project->id}/{$hexname}", $download_anchor_text);
-		print '</td>';
 		print '</tr>';
 	}
 	print '</table>';
