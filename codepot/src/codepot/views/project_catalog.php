@@ -7,6 +7,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/project.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
@@ -33,7 +34,7 @@ function prepare_page_button (i, req_size)
 			var filter = codepot_ascii_to_hex(last_successful_filter);
 			var offset = parseInt($(this).text());
 			$.ajax({
-				url: codepot_merge_path("<?php print site_url(); ?>", "/project/catalog_json/" + filter + "/" + ((offset  - 1) * req_size)),
+				url: codepot_merge_path("<?php print site_url(); ?>", "/project/enjson_catalog/" + filter + "/" + ((offset  - 1) * req_size)),
 				dataType: "json",
 				success: function(data) { render_project_list (data); }
 			});
@@ -146,7 +147,7 @@ $(function () {
 			var filter = codepot_ascii_to_hex(last_attempted_filter);
 
 			$.ajax({
-				url: codepot_merge_path("<?php print site_url(); ?>", "/project/catalog_json/" + filter),
+				url: codepot_merge_path("<?php print site_url(); ?>", "/project/enjson_catalog/" + filter),
 				dataType: "json",
 				success: function(data) { render_project_list (data); }
 			});
@@ -187,9 +188,7 @@ $this->load->view (
 		),
 
 		'ctxmenuitems' => array (
-			array ("project/create", 
-			       $this->lang->line('New'),
-			       'project_catalog_new')
+			array ("project/create", '<i class="fa fa-plus"></i> ' . $this->lang->line('New'), 'project_catalog_new')
 		)
 	)
 ); 
@@ -271,6 +270,10 @@ else
 
 </div> <!-- project_catalog_mainarea -->
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div> <!-- project_catalog_content -->
+
 <!---------------------------------------------------------------------------->
 
 <?php $this->load->view ('footer'); ?>
@@ -278,7 +281,6 @@ else
 <!---------------------------------------------------------------------------->
 
 
-</div> <!-- project_catalog_content -->
 
 </body>
 </html>

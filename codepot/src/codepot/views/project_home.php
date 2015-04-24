@@ -10,6 +10,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/project.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
@@ -91,8 +92,9 @@ $this->load->view (
 		),
 
 		'ctxmenuitems' => array (
-			array ("project/update/{$project->id}", $this->lang->line('Edit')),
-			array ("project/delete/{$project->id}", $this->lang->line('Delete'))
+			array ("project/create", '<i class="fa fa-plus"></i> ' . $this->lang->line('New')),
+			array ("project/update/{$project->id}", '<i class="fa fa-edit"></i> ' . $this->lang->line('Edit')),
+			array ("project/delete/{$project->id}", '<i class="fa fa-trash"></i> ' . $this->lang->line('Delete'))
 		)
 	)
 ); 
@@ -317,6 +319,9 @@ foreach ($urls as $url)
 
 </div> <!-- project_home_mainarea -->
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div> <!--  project_home_content -->
 
 <!-- /////////////////////////////////////////////////////////////////////// -->
 
@@ -324,7 +329,6 @@ foreach ($urls as $url)
 
 <!-- /////////////////////////////////////////////////////////////////////// -->
  
-</div> <!--  project_home_content -->
 
 </body>
 

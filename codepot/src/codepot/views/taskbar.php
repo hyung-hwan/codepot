@@ -3,6 +3,7 @@
 function show_taskbar ($con, $login)
 { 
 	print '<div class="taskbar">';
+	print "\n";
 
 	print '<div class="boxb">';
 
@@ -163,7 +164,7 @@ $(function () {
 			var term = codepot_string_to_hex(request.term);
 
 			$.ajax({
-				url: codepot_merge_path("<?php print site_url(); ?>", "/project/quickfind_json/" + term),
+				url: codepot_merge_path("<?php print site_url(); ?>", "/project/enjson_quickfind/" + term),
 				dataType: "json",
 				success: function(data) { response(data); },
 			});

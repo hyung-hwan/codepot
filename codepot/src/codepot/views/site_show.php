@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/site.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
@@ -54,26 +55,26 @@ function render_wiki()
 if ($login['sysadmin?'])
 {
 	$ctxmenuitems = array (
-		//array ("site/create", $this->lang->line('New')),
-		array ("site/update/{$site->id}", $this->lang->line('Edit')),
-		array ("site/delete/{$site->id}", $this->lang->line('Delete'))
+		//array ("site/create", '<i class="fa fa-plus"></i> ' . $this->lang->line('New')),
+		array ("site/update/{$site->id}", '<i class="fa fa-edit"></i> ' . $this->lang->line('Edit')),
+		array ("site/delete/{$site->id}", '<i class="fa fa-trash"></i> ' . $this->lang->line('Delete'))
 	);
 }
 else $ctxmenuitems = array ();
 
 $this->load->view (
-        'projectbar',
-        array (
+	'projectbar',
+	array (
 		'banner' => $this->lang->line('Administration'),
 
 		'page' => array (
 			'type' => 'site',
 			'id' => 'catalog',
 			'site' => $site,
-                ),
+		),
 
-                'ctxmenuitems' => $ctxmenuitems
-        )
+		'ctxmenuitems' => $ctxmenuitems
+	)
 );
 ?>
 
@@ -95,9 +96,12 @@ $this->load->view (
 
 </div> <!-- site_show_mainarea -->
 
-<?php $this->load->view ('footer'); ?>
+<div class='footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- site_show_content -->
+
+<?php $this->load->view ('footer'); ?>
+
 
 </body>
 </html>

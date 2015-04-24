@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/file.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
@@ -72,6 +73,9 @@ $this->load->view (
 
 </div>
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div>  <!-- file_delete_content -->
 
 <!---------------------------------------------------------------------------->
 
@@ -79,7 +83,6 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-</div>  <!-- file_delete_content -->
 
 </body>
 

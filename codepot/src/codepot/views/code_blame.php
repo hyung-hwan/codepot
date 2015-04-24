@@ -341,14 +341,15 @@ if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 
 </div> <!-- code_blame_mainarea -->
 
-<!---------------------------------------------------------------------------->
+<div class='footer-pusher'></div> <!-- for sticky footer -->
 
+</div> <!--  code_blame_content -->
+
+<!---------------------------------------------------------------------------->
 
 <?php $this->load->view ('footer'); ?>
 
 <!---------------------------------------------------------------------------->
-
-</div> <!--  code_blame_content -->
 
 </body>
 

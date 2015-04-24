@@ -206,15 +206,15 @@ $this->load->view (
 
 </div> <!-- code_history_mainarea -->
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div> <!--  code_history_content -->
 
 <!---------------------------------------------------------------------------->
-
 
 <?php $this->load->view ('footer'); ?>
 
 <!---------------------------------------------------------------------------->
-
-</div> <!--  code_history_content -->
 
 </body>
 
