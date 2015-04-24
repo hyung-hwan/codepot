@@ -470,7 +470,7 @@ class Project extends Controller
 		}
 	}
 
-	function catalog_json ($filter = '', $offset = '')
+	function enjson_catalog ($filter = '', $offset = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 	
@@ -557,7 +557,7 @@ class Project extends Controller
 		print codepot_json_encode ($result);
 	}
 
-	function quickfind_json ($needle = '')
+	function enjson_quickfind ($needle = '')
 	{
 		// this function is to serve the intermediate search
 		// by the quick project finder in the task bar.

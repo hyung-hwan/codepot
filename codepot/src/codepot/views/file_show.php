@@ -89,9 +89,9 @@ $this->load->view (
 		),
 
 		'ctxmenuitems' => array (
-			array ("file/create/{$project->id}", $this->lang->line('New')),
-			array ("file/update/{$project->id}/{$hexname}", $this->lang->line('Edit')),
-			array ("file/delete/{$project->id}/{$hexname}", $this->lang->line('Delete'))
+			array ("file/create/{$project->id}", '<i class="fa fa-plus"></i> ' . $this->lang->line('New')),
+			array ("file/update/{$project->id}/{$hexname}", '<i class="fa fa-edit"></i> ' . $this->lang->line('Edit')),
+			array ("file/delete/{$project->id}/{$hexname}", '<i class="fa fa-trash"></i> ' . $this->lang->line('Delete'))
 		)
 	)
 );
@@ -144,6 +144,9 @@ $this->load->view (
 
 </div> <!-- file_show_mainarea -->
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div> <!--  file_show_content -->
 
 <!---------------------------------------------------------------------------->
 
@@ -151,7 +154,6 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  file_show_content -->
 
 </body>
 

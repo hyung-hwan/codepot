@@ -336,6 +336,9 @@ if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 
 </div> <!-- code_file_mainarea -->
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div> <!--  code_file_content -->
 
 <!---------------------------------------------------------------------------->
 
@@ -343,7 +346,6 @@ if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  code_file_content -->
 
 </body>
 

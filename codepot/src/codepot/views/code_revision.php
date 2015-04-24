@@ -560,15 +560,16 @@ $history = $file['history'];
 
 </div> <!-- code_revision_mainarea -->
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div> <!-- code_revision_content -->
 
 <!---------------------------------------------------------------------------->
-
 
 <?php $this->load->view ('footer'); ?>
 
 <!---------------------------------------------------------------------------->
 
-</div> <!-- code_revision_content -->
 
 <?php if ($can_edit): ?>
 <div id="code_revision_tag_div">
@@ -642,7 +643,6 @@ $history = $file['history'];
 <?php print $popup_error_message?>
 </div>
 <?php endif; ?>
-
 
 </body>
 

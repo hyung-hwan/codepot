@@ -606,15 +606,16 @@ else
 
 </div> <!-- code_diff_mainarea -->
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div> <!-- code_diff_content -->
 
 <!---------------------------------------------------------------------------->
-
 
 <?php $this->load->view ('footer'); ?>
 
 <!---------------------------------------------------------------------------->
 
-</div> <!-- code_diff_content -->
 
 </body>
 

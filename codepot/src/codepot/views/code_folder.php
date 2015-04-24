@@ -664,13 +664,15 @@ $this->load->view (
 
 </div> <!-- code_folder_mainarea -->
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div> <!--  code_folder_content -->
+
 <!-- ================================================================== -->
 
 <?php $this->load->view ('footer'); ?>
 
 <!-- ================================================================== -->
-
-</div> <!--  code_folder_content -->
 
 </body>
 

@@ -1,17 +1,25 @@
+
 html {
+	height: 100%; /* for sticky footer */
 }
 
 body {
 	padding: 0;
-	margin: 4px 4px 4px 4px;
-	/*margin: 0;*/
-	/* color: #333333; */
+	/*margin: 4px 4px 4px 4px;*/
+	margin: 0;
 	min-width: 600px;
+
+	height: 100%; /* for sticky footer */
 }
 
 .content {
 	font-size: 0.9em;
-	font-family: Ubuntu, "Trebuchet MS", Tahoma, Verdana, sans-serif;
+	font-family: /*Ubuntu,*/ "Trebuchet MS", Tahoma, Verdana, sans-serif;
+
+	min-height: 100%; /* for stick footer */
+	height: auto !important; /* for stick footer */
+	height: 100%; /* for stick footer */
+	margin: 0 auto -40px; /* for stick footer */
 }
 
 .content h1 {
@@ -161,24 +169,14 @@ body {
 
 .content .taskbar {
 	font-size: 1em;
-	/*font-weight: bold;*/
 	text-transform: uppercase;
 	padding: 0.5em 0.2em 0.5em 0.2em;
 	color: #ffffff;
-	background-color: #203150;
+	background-color: #2F2F2F;
+	background-color: rgba(47,47,47,0.95);
 
 	line-height: 2em;
 	vertical-align: middle;
-
-	/*
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	*/
-
-	/*-webkit-box-shadow: 0 8px 6px -6px #777;
-	-moz-box-shadow: 0 8px 6px -6px #777;
-	box-shadow: 0 8px 6px -6px #777;*/
 }
 
 .content .taskbar .boxa {
@@ -222,70 +220,85 @@ body {
 }
 
 .content .projectbar {
-	/*margin: 0.1em 0em 0em 0em;*/
+	position: relative;  /* required for absolute position of .ctxmenu and .fixedmenu */
+
+	color: #333333;
+	/*overflow: auto;*/
+	overflow: inherit;
+	vertical-align: middle;
+
+	height: 4.5em;
+
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	width: 100%;
+
+	background-color: #F5F5F5;
+	border-bottom: 1px solid #CCCCCC;
+	margin-bottom: 0.5em;
 	padding: 0.5em 0.5em 0.5em 0.5em;
-	color: #FFFFFF;
-	background-color: #4665A2;
-	background-image: url("images/three-d.png");
-	background-repeat: repeat;
 }
 
 .content .projectbar .title {
-	font-size: 2em;
-	font-weight: bold;
+	font-size: 2.2em;
 	text-transform: uppercase;
 	white-space: nowrap;
-
-	/*text-shadow: 2px 8px 6px rgba(0,0,0,0.2),
-	            0px -5px 35px rgba(255,255,255,0.3); */
-	text-shadow: 1px 1px 0 #7A7A7A;
-	letter-spacing: 0.1em;
 }
 
 .content .projectbar .ctxmenu {
-	float: right;
+	position: absolute;
+	bottom: 0;
+	right: 3px;
+
 	padding: 0.1em 0em 0.1em 0em;
 	line-height: 2em;
 }
 
 .content .projectbar .fixedmenu {
-	float: none;
 	padding: 0.1em 0em 0.1em 0em;
-	line-height: 2em;
+	position: absolute;
+	top: 3px;
+	right: 2px;
+	padding: 0;
 }
 
-.content .projectbar .fixedmenu a {
-	padding: 6px;
-	color: #FFFFFF;
+/*
+.content .projectbar .fixedmenu a,
+.content .projectbar .fixedmenu a:visited {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	color: #AAAAAA;
 }
+
 
 .content .projectbar .fixedmenu a:hover {
-	padding: 6px;
-	background-color: #6482A9;
-	color: #FFFFFF;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-}
+	color: #333333;
+}*/
+
 
 .content .projectbar .fixedmenu a.selected {
-	padding: 6px;
-	color: #333333;
-	background-color: #FFFFFF;
-	-moz-border-radius: 3px;
+	/*padding: 6px;*/
+	color: #EB8F00;
+	border-color: #EB8F00;
+	/*background-color: #FFFFFF;*/
+/*	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
-	border-radius: 3px;
-}
+	border-radius: 3px;*/
+
+	/*border-bottom: 3px solid red;*/
+} 
+
 
 .content .projectbar .fixedmenu a.selected:hover {
-	padding: 6px;
-	background-color: #6482A9;
-	color: #FFFFFF;
+	/*padding: 6px;*/
+	/*background-color: #6482A9;
+	color: #FFFFFF;*/
 }
 
 .content .projectbar .ctxmenu a {
 	padding: 6px;
-	color: #FFFFFF;
+	/*color: #FFFFFF;*/
 }
 
 .content .projectbar .ctxmenu a:hover {
@@ -361,7 +374,7 @@ body {
 	padding-bottom: 0.3em;
 	vertical-align: middle;
 	font-size: 1em;
-	border: 1px solid #CCDDEE;
+	/*border: 1px solid #CCDDEE;*/
 }
 
 .content .mainarea form {
@@ -708,6 +721,7 @@ body {
 	width: 22em;
 	margin-top: 0.3em;
 	margin-left: 0.5em;
+	margin-right: 0.5em;
 }
 
 .content .sidebar .collapsible-box {
@@ -794,33 +808,6 @@ body {
 	padding: 0.5em 0.2em 0.5em 0.2em;
 }
 
-.content .footer {
-	clear: both;
-	padding: 0.3em 0.5em 0.3em 0.5em;
-	font-size: 1em;
-	/*font-weight: bold;*/
-	/*font-style: italic;*/
-	text-align: right;
-	color: #FFFFFF;
-	background-color: #4665A2;
-	background-color: #203150;
-	line-height: 2em;
-
-	/*
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	*/
-
-	/*-webkit-box-shadow: 0 8px 6px -6px #777;
-	-moz-box-shadow: 0 8px 6px -6px #777;
-	box-shadow: 0 8px 6px -6px #777;*/
-}
-
-.content .footer a {
-	color: #FFFFFF;
-}
-
 .content .form_message {
 	color: red;
 }
@@ -858,6 +845,36 @@ body {
 	border-right-color: #FA5240;
 	border-width: 5px;
 	margin-top: -5px; 
+}
+
+/* === footer === */
+
+.content .footer-pusher {
+	clear: both;
+	height: 40px; /* for sticky footer */
+}
+
+.footer {
+	clear: both;
+	text-align: right;
+	vertical-align: middle;
+	padding-right: 0.5em;
+	padding-right: 0.5em;
+
+	color: #CCCCCC;
+	background-color: #2F2F2F;
+	background-color: rgba(47,47,47,0.95);
+	font-weight: bold;
+
+	font-size: 0.9em;
+	font-family: /*Ubuntu,*/ "Trebuchet MS", Tahoma, Verdana, sans-serif;
+	height: 40px;      /* for sticky footer */
+	line-height: 40px;
+}
+
+
+.footer a {
+	color: #FFFFFF;
 }
 
 /* === signin panel === */

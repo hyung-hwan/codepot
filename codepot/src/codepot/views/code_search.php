@@ -350,6 +350,9 @@ search_and_show ($this, $project, $file['fullpath'], $revision, $pattern, $inver
 
 </div> <!-- code_search_mainarea -->
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div> <!--  code_search_content -->
 
 <!-- ================================================================== -->
 
@@ -357,7 +360,6 @@ search_and_show ($this, $project, $file['fullpath'], $revision, $pattern, $inver
 
 <!-- ================================================================== -->
 
-</div> <!--  code_search_content -->
 
 </body>
 

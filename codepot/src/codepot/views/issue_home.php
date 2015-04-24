@@ -8,6 +8,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/issue.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
@@ -84,7 +85,7 @@ $this->load->view (
 		),
 
 		'ctxmenuitems' => array (
-			array ("issue/create/{$project->id}", $this->lang->line('New'), 'issue_home_new')
+			array ("issue/create/{$project->id}", '<i class="fa fa-plus"></i> ' . $this->lang->line('New'), 'issue_home_new')
 		)
 	)
 ); 
@@ -223,6 +224,10 @@ else
 
 </div> <!-- issue_home_mainarea -->
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div> <!-- issue_home_content -->
+
 <!-- ============================================================ -->
 
 <?php $this->load->view ('footer'); ?>
@@ -230,7 +235,6 @@ else
 <!-- ============================================================ -->
 
 
-</div> <!-- issue_home_content -->
 
 </body>
 </html>

@@ -37,7 +37,6 @@ www_DATA =  \
 	submitbg.png \
 	t-node.png \
 	textbg.png \
-	three-d.png \
 	toggledown.png \
 	toggleup.png \
 	ui-bg_flat_0_aaaaaa_40x100.png \
