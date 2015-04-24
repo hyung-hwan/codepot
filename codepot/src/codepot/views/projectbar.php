@@ -1,4 +1,10 @@
-<div class="projectbar">
+<div id="codepot-projectbar" class="projectbar">
+
+<script type="text/javascript">
+$(function() {
+	$("#codepot-projectbar .button").button();
+});
+</script>
 
 <?php
 function show_projectbar ($con, $banner, $page, $ctxmenuitems)
@@ -55,6 +61,7 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 	{
 		$menuitems = array (
 			array ("project/home/{$project->id}", $con->lang->line('Overview')),
+			//array ("project/home/{$project->id}", '<i class="fa fa-code fa-2x"></i>'),
 			array ("wiki/home/{$project->id}", $con->lang->line('Wiki')),
 			array ("issue/home/{$project->id}", $con->lang->line('Issues')),
 			array ("code/home/{$project->id}", $con->lang->line('Code')),
@@ -65,7 +72,7 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 		foreach ($menuitems as $item)
 		{
 			$menuid = substr ($item[0], 0, strpos($item[0], '/'));
-			$extra = ($menuid == $id)? 'class="selected"': '';
+			$extra = ($menuid == $id)? 'class="selected button"': 'class="button"';
 			$menulink = $item[0];
 
 			print anchor ($menulink, $item[1], $extra);
@@ -81,7 +88,7 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 		foreach ($menuitems as $item)
 		{
 			$menuid = substr ($item[0], strpos($item[0], '/') + 1);
-			$extra = ($menuid == $id)? 'class="selected"': '';
+			$extra = ($menuid == $id)? 'class="selected button"': 'class="button"';
 			$menulink = $item[0];
 
 			print anchor ($menulink, $item[1], $extra);
@@ -98,7 +105,7 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 		foreach ($menuitems as $item)
 		{
 			$menuid = substr ($item[0], strpos($item[0], '/') + 1);
-			$extra = ($menuid == $id)? 'class="selected"': '';
+			$extra = ($menuid == $id)? 'class="selected button"': 'class="button"';
 			$menulink = $item[0];
 
 			print anchor ($menulink, $item[1], $extra);

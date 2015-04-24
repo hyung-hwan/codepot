@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/issue.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
@@ -188,9 +189,9 @@ $this->load->view (
 		),
 
 		'ctxmenuitems' => array (
-			array ("issue/create/{$project->id}", $this->lang->line('New')),
-			array ("issue/update/{$project->id}/{$hexid}", $this->lang->line('Edit')),
-			array ("issue/delete/{$project->id}/{$hexid}", $this->lang->line('Delete'))
+			array ("issue/create/{$project->id}", '<i class="fa fa-plus"></i> ' . $this->lang->line('New')),
+			array ("issue/update/{$project->id}/{$hexid}", '<i class="fa fa-edit"></i> ' . $this->lang->line('Edit')),
+			array ("issue/delete/{$project->id}/{$hexid}", '<i class="fa fa-trash"></i> ' . $this->lang->line('Delete'))
 		)
 	)
 );
@@ -457,13 +458,16 @@ $this->load->view (
 
 </div> <!-- issue_show_mainarea -->
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div> <!--  issue_show_content -->
+
 <!---------------------------------------------------------------------------->
 
 <?php $this->load->view ('footer'); ?>
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  issue_show_content -->
 
 <?php 
 	$creole_base = site_url() . "/wiki/show/{$project->id}/"; 

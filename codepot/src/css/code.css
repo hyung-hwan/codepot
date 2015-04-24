@@ -305,16 +305,12 @@
 }
 
 #code_diff_mainarea_result_fullview .navigator {
-	background-color: #7777FF;
-	color: #FFFFFF;
+	padding: 0.5em 0.8em 0.5em 0.8em;
 	font-weight: bold;
-	padding-left: 1em;
-}
-
-#code_diff_mainarea_result_fullview .navigator a {
-	color: #FFFFFF;
-	font-weight: bold;
-	font-decoration: none;
+	text-align: left;
+	color: #1C94C4;
+	background-color: #E5ECF9;
+	white-space: nowrap;
 }
 
 #code_diff_mainarea_result_fullview .diff {

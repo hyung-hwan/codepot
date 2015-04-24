@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/codepot.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/wiki.css')?>" />
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
 
@@ -104,9 +105,9 @@ $this->load->view (
 		),
 
 		'ctxmenuitems' => array (
-			array ("wiki/create/{$project->id}", $this->lang->line('New')),
-			array ("wiki/update/{$project->id}/{$hexname}", $this->lang->line('Edit')),
-			array ("wiki/delete/{$project->id}/{$hexname}", $this->lang->line('Delete'))
+			array ("wiki/create/{$project->id}", '<i class="fa fa-plus"></i> ' . $this->lang->line('New')),
+			array ("wiki/update/{$project->id}/{$hexname}", '<i class="fa fa-edit"></i> ' .$this->lang->line('Edit')),
+			array ("wiki/delete/{$project->id}/{$hexname}", '<i class="fa fa-trash"></i> ' .$this->lang->line('Delete'))
 		)
 	)
 );
@@ -166,13 +167,16 @@ $this->load->view (
 
 </div> <!-- wiki_show_mainarea -->
 
+<div class='footer-pusher'></div> <!-- for sticky footer -->
+
+</div> <!--  wiki_show_content -->
+
 <!---------------------------------------------------------------------------->
 
 <?php $this->load->view ('footer'); ?>
 
 <!---------------------------------------------------------------------------->
 
-</div> <!--  wiki_show_content -->
 
 </body>
 

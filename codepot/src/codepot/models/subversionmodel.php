@@ -288,7 +288,11 @@ class SubversionModel extends Model
 				$fileinfo['created_rev'] = $info[0]['last_changed_rev'];
 			else
 				$fileinfo['created_rev'] = $info[0]['revision'];
-			$fileinfo['last_author'] = $info[0]['last_changed_author'];
+
+			if (array_key_exists('last_changed_author', $info[0]))
+				$fileinfo['last_author'] = $info[0]['last_changed_author'];
+			else
+				$fileinfo['last_author'] = '';
 
 			$actual_rev = $fileinfo['created_rev'];
 		}
