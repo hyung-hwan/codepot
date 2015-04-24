@@ -81,18 +81,12 @@ rm -rf $RPM_BUILD_ROOT
 /etc/codepot/perl/Codepot/AccessHandler.pm
 /etc/codepot/perl/Codepot/AuthenHandler.pm
 
-%attr(-,apache,apache) /var/lib/codepot/svnrepo
-%attr(-,apache,apache) /var/lib/codepot/files
-%attr(-,apache,apache) /var/lib/codepot/attachments
-%attr(-,apache,apache) /var/lib/codepot/usericons
-%attr(-,apache,apache) /var/log/codepot
-%attr(-,apache,apache) /var/cache/codepot
-%dir /var/lib/codepot/svnrepo
-%dir /var/lib/codepot/files
-%dir /var/lib/codepot/attachments
-%dir /var/lib/codepot/usericons
-%dir /var/log/codepot
-%dir /var/cache/codepot
+%dir %attr(-,apache,apache) /var/lib/codepot/svnrepo
+%dir %attr(-,apache,apache) /var/lib/codepot/files
+%dir %attr(-,apache,apache) /var/lib/codepot/attachments
+%dir %attr(-,apache,apache) /var/lib/codepot/usericons
+%dir %attr(-,apache,apache) /var/log/codepot
+%dir %attr(-,apache,apache) /var/cache/codepot
 
 %files peclsvn
 %{_libdir}/php/modules/svn.so
