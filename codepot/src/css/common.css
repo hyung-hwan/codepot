@@ -241,9 +241,16 @@ body {
 }
 
 .content .projectbar .title {
-	font-size: 2.2em;
+	font-size: 2em;
 	text-transform: uppercase;
 	white-space: nowrap;
+}
+
+.content .projectbar .subtitle {
+	font-size: 1em;
+	white-space: nowrap;
+	padding-left: 0.1em;
+	color: #1C94C4;
 }
 
 .content .projectbar .ctxmenu {
