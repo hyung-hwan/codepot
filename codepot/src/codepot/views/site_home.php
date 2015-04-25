@@ -90,7 +90,7 @@ $(function () {
 $this->load->view (
 	'projectbar',
 	array (
-		'banner' => $site->name,
+		'banner' => array($site->name, $site->summary),
 
 		'page' => array (
 			'type' => ($login['sysadmin?']? 'site': ''),

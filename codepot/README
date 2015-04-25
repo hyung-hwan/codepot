@@ -12,9 +12,8 @@ UPGRADING FROM 0.2.0
  The code_hide_details column in the user_settings table has been renamed
  to code_hide_metadata. You must rename your existing database manually.
 
-  mysql> ALTER TABLE  user_settings CHANGE code_hide_details code_hide_metadata char(1) NOT NULL;
-  oracle> ALTER TABLE user_settings RENAME COLUMN code_hide_details TO code_hide_metadata;
-
+  mysql> ALTER TABLE user_settings CHANGE code_hide_details code_hide_metadata CHAR(1) NOT NULL;
+  mysql> ALTER TABLE site ADD COLUMN(summary VARCHAR(255) NOT NULL);
 
 INSTALLATION ON CENTOS
 

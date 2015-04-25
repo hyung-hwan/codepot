@@ -12,6 +12,7 @@ class SiteModel extends Model
 	{
 		$site->id = CODEPOT_DEFAULT_SITE_LANGUAGE;
 		$site->name = CODEPOT_DEFAULT_SITE_NAME;
+		$site->summary = '';
 		$site->text = '';
 		$site->updatedby = '';
 		$site->createdby = '';
@@ -63,6 +64,7 @@ class SiteModel extends Model
 
 		$this->db->set ('id', $site->id);
 		$this->db->set ('name', $site->name);
+		$this->db->set ('summary', $site->summary);
 		$this->db->set ('text', $site->text);
 		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('createdby', $userid);
@@ -88,6 +90,7 @@ class SiteModel extends Model
 
 		$this->db->where ('id', $site->id);
 		$this->db->set ('name', $site->name);
+		$this->db->set ('summary', $site->summary);
 		$this->db->set ('text', $site->text);
 		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
 		$this->db->set ('updatedby', $userid);

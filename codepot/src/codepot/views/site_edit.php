@@ -94,9 +94,7 @@ $this->load->view (
 			$extra .= 'maxlength="32" size="16" class="id"';
 		?>
 
-		<?php print form_input('site_id', 
-			set_value('site_id', $site->id), 
-			$extra)
+		<?php print form_input('site_id', set_value('site_id', $site->id),  $extra)
 		?>
 		<?php print form_error('site_id')?>
 	</div>
@@ -108,6 +106,15 @@ $this->load->view (
 			'maxlength="80" size="40" class="name"');
 		?>
 		<?php print form_error('site_name')?>
+	</div>
+
+	<div class='form_input_field'>
+		<?php print form_label($this->lang->line('Summary').': ', 'site_summary')?>
+		<?php print form_input('site_summary', 
+			set_value('site_summary', $site->summary), 
+			'maxlength="100" size="50" class="summary"');
+		?>
+		<?php print form_error('site_summary')?>
 	</div>
 
 	<div class='form_input_label'>
