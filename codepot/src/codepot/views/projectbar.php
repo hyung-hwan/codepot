@@ -44,9 +44,25 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 	print "</div>";
 
 	print "<div class='subtitle'>";
-	if ($type == 'project')
+	if (isset($banner))
+	{
+		// anything?
+	}
+	else if ($type == 'project')
 	{
 		print htmlspecialchars($project->summary);
+	}
+	else if ($type == 'site')
+	{
+		// anything?
+	}
+	else if ($type == 'user')
+	{
+		// anything?
+	}
+	else 
+	{
+		// anything?
 	}
 	print "</div>";
 
