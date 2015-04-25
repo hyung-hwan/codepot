@@ -148,7 +148,7 @@ class Site extends Controller
 
 		$data['login'] = $login;
 
-                $site = $this->sites->get ($siteid);
+		$site = $this->sites->get ($siteid);
 		if ($site === FALSE)
 		{
 			$data['login'] = $login;
@@ -174,11 +174,13 @@ class Site extends Controller
 
 		$data['login'] = $login;
 
-                // SET VALIDATION RULES
+		// SET VALIDATION RULES
 		$this->form_validation->set_rules (
 			'site_id', 'ID', 'required|alpha_dash|max_length[32]');
 		$this->form_validation->set_rules (
 			'site_name', 'name', 'required|max_length[128]');
+		$this->form_validation->set_rules (
+			'site_summary', 'summary', 'max_length[255]');
 		$this->form_validation->set_rules (
 			'site_text', 'text', 'required');
 		$this->form_validation->set_error_delimiters(
@@ -195,7 +197,9 @@ class Site extends Controller
 			// recompose the site information from POST data.
 			unset ($site);
 			$site->id = $tmpid;
+			
 			$site->name = $this->input->post('site_name');
+			$site->summary = $this->input->post('site_summary');
 			$site->text = $this->input->post('site_text');
 
 			// validate the form
@@ -257,6 +261,7 @@ class Site extends Controller
 		{
 			$site->id = $siteid;
 			$site->name = '';
+			$site->summary = '';
 			$site->text = '';
 
 			$this->_edit_site ($site, 'create', $login);
