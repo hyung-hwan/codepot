@@ -24,10 +24,10 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 
 		if ($project->name == '')
 			print $project->id;
-		else if (strcasecmp ($project->name, $project->id) == 0)
+		//else if (strcasecmp ($project->name, $project->id) == 0)
 			print htmlspecialchars($project->name);
-		else
-			print htmlspecialchars($project->name) . " ({$project->id})";
+		//else
+		//	print htmlspecialchars($project->name) . " ({$project->id})";
 	}
 	else if ($type == 'site')
 	{
@@ -41,6 +41,13 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 	}
 	else print htmlspecialchars(CODEPOT_DEFAULT_SITE_NAME);
 
+	print "</div>";
+
+	print "<div class='subtitle'>";
+	if ($type == 'project')
+	{
+		print htmlspecialchars($project->summary);
+	}
 	print "</div>";
 
 	print '<div class="ctxmenu">';
