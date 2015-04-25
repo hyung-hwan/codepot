@@ -16,7 +16,10 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 
 	if (isset($banner))
 	{
-		print htmlspecialchars($banner);
+		if (is_array($banner))
+			print htmlspecialchars($banner[0]);
+		else
+			print htmlspecialchars($banner);
 	}
 	else if ($type == 'project')
 	{
@@ -46,15 +49,16 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 	print "<div class='subtitle'>";
 	if (isset($banner))
 	{
-		// anything?
+		if (is_array($banner) && count($banner) > 1)
+			print htmlspecialchars($banner[1]);
 	}
 	else if ($type == 'project')
 	{
-		print htmlspecialchars($project->summary);
+		if (isset($project)) print htmlspecialchars($project->summary);
 	}
 	else if ($type == 'site')
 	{
-		// anything?
+		if (isset($site)) print htmlspecialchars($site->summary);
 	}
 	else if ($type == 'user')
 	{
@@ -84,7 +88,6 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 	{
 		$menuitems = array (
 			array ("project/home/{$project->id}", $con->lang->line('Overview')),
-			//array ("project/home/{$project->id}", '<i class="fa fa-code fa-2x"></i>'),
 			array ("wiki/home/{$project->id}", $con->lang->line('Wiki')),
 			array ("issue/home/{$project->id}", $con->lang->line('Issues')),
 			array ("code/home/{$project->id}", $con->lang->line('Code')),

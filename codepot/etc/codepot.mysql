@@ -6,6 +6,7 @@
 CREATE TABLE site (
 	id          VARCHAR(32)  PRIMARY KEY,
 	name        VARCHAR(128) NOT NULL,
+	summary     VARCHAR(255) NOT NULL,
 	text        TEXT         NOT NULL,
 
 	createdon   DATETIME     NOT NULL,
