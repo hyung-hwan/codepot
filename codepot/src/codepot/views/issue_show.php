@@ -230,16 +230,14 @@ $this->load->view (
 			array_key_exists($issue->priority, $issue_priority_array)? 
 				$issue_priority_array[$issue->priority]: $issue->priority
 		);
-		print ' | ';
 		if ($issue->owner != '')
 		{
+			print ' | ';
 			print $this->lang->line('Owner');
 			print ': '; 
 			print htmlspecialchars($issue->owner);
-			print ' | ';
 		}
 	?>
-	<a id="issue_show_mainarea_change_form_open" href="#"><?php print $this->lang->line('Change')?></a>
 </div>
 
 <div id="issue_show_mainarea_description">
@@ -260,6 +258,14 @@ $this->load->view (
 	print '<span class="title">';
 	print $this->lang->line('Change log');
 	print '</span>';
+
+
+	print '<a id="issue_show_mainarea_change_form_open" href="#">';
+	print $this->lang->line('Change');
+	print '</a>';
+
+	print ' ';
+
 	print '<a id="issue_show_mainarea_undo_change" href="#">';
 	print $this->lang->line('Undo');
 	print '</a>';

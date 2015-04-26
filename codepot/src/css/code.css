@@ -388,3 +388,16 @@
 	width: 1em;
 	margin: 0;
 }
+
+#code_search_wildcard {
+	line-height: 1.4;
+	padding: 0.4em;
+	border: 1px solid #EB8F00;
+	color: #EB8F00;
+	background-color: #F6F6F6;
+	font-weight: bold;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
