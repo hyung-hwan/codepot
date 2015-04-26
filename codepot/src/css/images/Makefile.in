@@ -265,7 +265,9 @@ www_DATA = \
 	ui-icons_222222_256x240.png \
 	ui-anim_basic_16x16.gif \
 	up.png \
-	username.png
+	username.png \
+	jqueryui-editable-loading.gif \
+	jqueryui-editable-clear.png
 
 EXTRA_DIST = $(www_DATA)
 all: all-am

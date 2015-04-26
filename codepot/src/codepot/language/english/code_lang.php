@@ -13,4 +13,5 @@ $lang['CODE_SEARCH_CASE_INSENSITIVELY'] = 'Search case-insensitively';
 $lang['CODE_SEARCH_RECURSIVELY'] = 'Search recursively to sub-directories';
 $lang['CODE_SEARCH_IN_NAME'] = 'Search in file names';
 $lang['CODE_SEARCH_IS_REGEX'] = 'Search string is a regular expression';
+$lang['CODE_SEARCH_WILDCARD'] = 'Enter a wildcard pattern';
 ?>

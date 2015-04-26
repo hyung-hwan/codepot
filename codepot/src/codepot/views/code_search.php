@@ -21,6 +21,9 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
+<script type="text/javascript" src="<?php print base_url_make('/js/jqueryui-editable.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jqueryui-editable.css')?>" />
+
 <script type="text/javascript">
 $(function() {
 	$('#code_search_submit').button().click (function (e) {
@@ -47,6 +50,19 @@ $(function() {
 	$('#code_search_in_name').button();
 	$('#code_search_is_regex').button();
 	$('.code_search_option').tooltip();
+
+	//$('#code_search_wildcard').text($('#code_search_wildcard_pattern').text());
+	$('#code_search_wildcard').text($('input[name=search_wildcard_pattern]').val());
+
+	$('#code_search_wildcard').editable({
+		type: 'text',
+		title: '<?php print $this->lang->line('CODE_SEARCH_WILDCARD') ?>',
+		placement: 'bottom',
+		success: function(response, newValue) {
+			//$('#code_search_wildcard_pattern').val(newValue);
+			$('input[name=search_wildcard_pattern]').val(newValue);
+		}
+	});
 
 	prettyPrint();
 });
@@ -211,6 +227,9 @@ $this->load->view (
 		array('class'=>'code_search_option', 'id'=>'code_search_is_regex_label')
 	);
 
+	printf ('<a id="code_search_wildcard" href="#"></a>');
+	print form_hidden('search_wildcard_pattern', set_value('search_wildcard_pattern', $wildcard_pattern), 'id="code_search_wildcard_pattern"');
+
 	print ' ';
 	printf ('<a id="code_search_submit" href="#">%s</a>', $this->lang->line('Search'));
 	//print form_submit ('search_submit', $this->lang->line('Search'), 'id="code_search_submit"');
@@ -228,7 +247,7 @@ $this->load->view (
 
 <?php
 // this searching part should have been placed in SubversionModel.
-function search_and_show ($controller, $project, $path, $revision, $pattern, $invertedly, $case_insensitively, $is_regex, $recurse, $in_name)
+function search_and_show ($controller, $project, $path, $revision, $pattern, $invertedly, $case_insensitively, $is_regex, $recurse, $in_name, $wildcard)
 {
 	//$file = $controller->subversion->getFile ($project->id, $path, $revision);
 	//if ($file['type'] == 'file') return;
@@ -251,6 +270,9 @@ function search_and_show ($controller, $project, $path, $revision, $pattern, $in
 			{
 				if ($file2['type'] == 'file')
 				{
+					if (!empty($wildcard) &&
+					    fnmatch($wildcard, $file2['name'], FNM_PATHNAME | FNM_PERIOD) === FALSE) continue;
+
 					if ($in_name)
 					{
 						$lines = array ($file2['name']);
@@ -343,7 +365,7 @@ function search_and_show ($controller, $project, $path, $revision, $pattern, $in
 if (CODEPOT_ALLOW_SET_TIME_LIMIT) set_time_limit (0);
 
 // TODO: prevent recursion to subdirectories depending on input
-search_and_show ($this, $project, $file['fullpath'], $revision, $pattern, $invertedly, $case_insensitively, $is_regex, $recursively, $in_name);
+search_and_show ($this, $project, $file['fullpath'], $revision, $pattern, $invertedly, $case_insensitively, $is_regex, $recursively, $in_name, $wildcard_pattern);
 ?>
 
 </div> <!-- code_search_mainarea_result -->
