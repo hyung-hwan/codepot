@@ -261,6 +261,7 @@ www_DATA = \
 	jquery.flot.time.min.js \
 	excanvas.min.js \
 	jquery.flot.tickrotor.js \
+	jqueryui-editable.min.js \
 	d3.min.js \
 	CodeFlower.js
 

@@ -135,6 +135,8 @@ class Code extends Controller
 						}
 					}
 				}
+
+				$data['wildcard_pattern'] = '*';
 				$this->load->view ($this->VIEW_FOLDER, $data);
 			}
 		}
@@ -767,6 +769,7 @@ class Code extends Controller
 			$recursively = $this->input->post('search_recursively');
 			$in_name = $this->input->post('search_in_name');
 			$is_regex = $this->input->post('search_is_regex');
+			$wildcard_pattern = $this->input->post('search_wildcard_pattern');
 
 			$file = $this->subversion->getFile ($project->id, $path, $rev);
 			if ($file === FALSE)
@@ -786,6 +789,7 @@ class Code extends Controller
 				$data['recursively'] = $recursively;
 				$data['in_name'] = $in_name;
 				$data['is_regex'] = $is_regex;
+				$data['wildcard_pattern'] = $wildcard_pattern;
 				$data['file'] = $file;
 
 				$data['revision'] = $rev;

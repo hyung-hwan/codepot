@@ -23,6 +23,9 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
+<script type="text/javascript" src="<?php print base_url_make('/js/jqueryui-editable.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jqueryui-editable.css')?>" />
+
 <!--[if lte IE 8]><script type="text/javascript" src="<?php print base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.time.min.js')?>"></script>
@@ -256,6 +259,19 @@ $(function () {
 	$('#code_search_is_regex').button();
 	$('.code_search_option').tooltip();
 
+	//$('#code_search_wildcard').text($('#code_search_wildcard_pattern').val());
+	$('#code_search_wildcard').text($('input[name=search_wildcard_pattern]').val());
+
+	$('#code_search_wildcard').editable({
+		type: 'text', 
+		title: '<?php print $this->lang->line('CODE_SEARCH_WILDCARD') ?>',
+		placement: 'bottom',
+		success: function(response, newValue) {
+			//$('#code_search_wildcard_pattern').val(newValue);	
+			$('input[name=search_wildcard_pattern]').val(newValue);
+		}
+	});
+
 	render_readme ();
 });
 
@@ -408,6 +424,9 @@ $this->load->view (
 		print form_label('x', 'code_search_is_regex',
 			array('class'=>'code_search_option', 'id'=>'code_search_is_regex_label')
 		);
+
+		printf ('<a id="code_search_wildcard" href="#"></a>');
+		print form_hidden('search_wildcard_pattern', set_value('search_wildcard_pattern', $wildcard_pattern), 'id="code_search_wildcard_pattern"');
 
 		print ' ';
 		//print form_submit('search_submit', $this->lang->line('Search'), 'id="code_search_submit"');

@@ -8,6 +8,7 @@ www_DATA =  \
 	font-awesome.min.css \
 	issue.css \
 	jquery-ui.css \
+	jqueryui-editable.css \
 	log.css \
 	project.css \
 	site.css \
