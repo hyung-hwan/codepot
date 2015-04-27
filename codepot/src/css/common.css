@@ -135,7 +135,7 @@ body {
 
 .content .fit-width-result-table tr,
 .content .full-width-result-table tr {
-	vertical-align: top;
+	vertical-align: text-top;
 	text-align: left;
 	white-space: nowrap;
 
@@ -527,7 +527,7 @@ body {
 }
 
 .content .mainarea table.wiki tr {
-	vertical-align: top;
+	vertical-align: text-top;
 	text-align: left;
 	white-space: nowrap;
 
