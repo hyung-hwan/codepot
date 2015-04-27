@@ -259,7 +259,6 @@ $(function () {
 	$('#code_search_is_regex').button();
 	$('.code_search_option').tooltip();
 
-	//$('#code_search_wildcard').text($('#code_search_wildcard_pattern').val());
 	$('#code_search_wildcard').text($('input[name=search_wildcard_pattern]').val());
 
 	$('#code_search_wildcard').editable({
@@ -267,7 +266,6 @@ $(function () {
 		title: '<?php print $this->lang->line('CODE_SEARCH_WILDCARD') ?>',
 		placement: 'bottom',
 		success: function(response, newValue) {
-			//$('#code_search_wildcard_pattern').val(newValue);	
 			$('input[name=search_wildcard_pattern]').val(newValue);
 		}
 	});
@@ -353,8 +351,8 @@ $this->load->view (
 
 	if (CODEPOT_SIGNIN_FOR_CODE_SEARCH === FALSE || (isset($login['id']) && $login['id'] != ''))
 	{
-		print form_hidden('search_folder', set_value('search_folder', $file['fullpath']), 'id="code_folder_search_folder"');
-		print form_hidden('search_revision', set_value('search_revision', $revision), 'id="code_folder_search_revision"');
+		print form_hidden('search_folder', set_value('search_folder', $file['fullpath']));
+		print form_hidden('search_revision', set_value('search_revision', $revision));
 		
 		print '<i id="code_search_string_icon" class="fa"></i> ';
 		print form_input(array(
@@ -425,8 +423,8 @@ $this->load->view (
 			array('class'=>'code_search_option', 'id'=>'code_search_is_regex_label')
 		);
 
-		printf ('<a id="code_search_wildcard" href="#"></a>');
-		print form_hidden('search_wildcard_pattern', set_value('search_wildcard_pattern', $wildcard_pattern), 'id="code_search_wildcard_pattern"');
+		print '<a id="code_search_wildcard" href="#"></a>';
+		print form_hidden('search_wildcard_pattern', set_value('search_wildcard_pattern', $wildcard_pattern));
 
 		print ' ';
 		//print form_submit('search_submit', $this->lang->line('Search'), 'id="code_search_submit"');
