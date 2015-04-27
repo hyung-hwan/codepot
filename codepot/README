@@ -196,6 +196,41 @@ INSTALLATION ON DEBIAN
  
    Note that make-ssl-cert is provided by the ssl-cert package.
 
+INSTALLATION WITH SOURCE CODE
+
+ Codepot uses the standard autoconf & automake build system. You can execute
+ 'configure' followed by 'make' and 'make install' in principle. However, there
+ are some key options you should be aware of. See this sample run below.
+ 
+   $ ./configure --prefix=/usr \
+                 --libdir=/usr/lib64 \
+                 --sysconfdir=/etc \
+                 --with-wwwdir=/var/www/html/codepot \
+                 --with-cfgdir=/etc/codepot \
+                 --with-depotdir=/var/lib/codepot \
+                 --with-logdir=/var/log/codepot \
+                 --with-cachedir=/var/cache/codepot \
+                 --with-phpextdir=/usr/lib64/php/modules \
+                 --with-phpextinidir=/etc/php.d
+   $ make
+   $ make install 
+
+ You should take note of the following key directory options:
+
+ - wwwdir:       The directory where most of the codepot program files are 
+                 installed.
+ - cfgdir:       The directory where the codepot configuration file(codepot.ini)
+                 and other supporting files are stored.
+ - depotdir:     Subversion repostiories and various files uploaded are stored
+                 under this directory.
+ - cachedir:     Cache directory.
+ - phpextdir:    PHP extension directory. The peclsvn extension(svn.so) goes
+                 here.
+ - phpextinidir: The configuration file(svn.ini) to enable the extension goes
+                 here.
+ 
+ You should customize the value of these directories according to your system
+ configuration.
 
 LICENSE
 
