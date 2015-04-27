@@ -11,7 +11,7 @@
 }
 
 #issue_home_mainarea_result_table tr {
-	vertical-align: middle;
+	vertical-align: text-top;
 }
 
 #issue_home_mainarea_result_table tr.new td.status,
@@ -60,6 +60,10 @@
 #issue_home_mainarea_result_table td.priority,
 #issue_home_mainarea_result_table td.owner {
 	width: 1px;
+}
+
+#issue_home_mainarea_result_table td.summary {
+	white-space: normal;
 }
 
 #issue_home_mainarea_result_pages {
