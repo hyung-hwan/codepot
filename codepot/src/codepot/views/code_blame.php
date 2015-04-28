@@ -147,6 +147,7 @@ $this->load->view (
 
 $history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
 $download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
 
 $xpar = $this->converter->AsciiToHex ($headpath);
 
@@ -158,7 +159,7 @@ if ($file['created_rev'] != $file['head_rev'])
 
 print anchor ("code/file/{$project->id}/${xpar}{$revreq}", $this->lang->line('Details'));
 print ' | ';
-print anchor ("code/diff/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Difference'));
+print anchor ("code/diff/{$project->id}/{$xpar}{$revreq}", $diff_anchor_text);
 print ' | ';
 
 if ($revision > 0)

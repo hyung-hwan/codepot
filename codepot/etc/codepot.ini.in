@@ -10,8 +10,11 @@ default_site_name = "@PACKAGE@"
 
 ;------------------------------------------------------------------------------
 ; database settings
+;
+; database_driver: mysql for MySQL, postgre for PostgreSQL
 ;------------------------------------------------------------------------------
 database_hostname = "localhost"
+database_port = ""
 database_username = ""
 database_password = ""
 database_name = ""
