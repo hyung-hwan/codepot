@@ -57,7 +57,14 @@ class ProjectModel extends Model
 		$this->db->trans_start ();
 
 		$this->db->select ('count(id) as count');
-		$this->db->order_by ('name', 'asc');
+		// having this line to make it same as getEntries()
+		// causes postgresql to emit this error:
+		//   column "project.name" must appear in the GROUP BY clause or 
+		//   be used in an aggregate function.
+		//
+		// let's just comment it out as counting without sorting
+		// is ok.
+		//$this->db->order_by ('name', 'asc'); 
 
 		if ($search->or == 'Y') 
 		{

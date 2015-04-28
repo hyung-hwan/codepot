@@ -45,6 +45,7 @@ function load_ini ($file)
 		array ('max_logs_in_project_home',     'integer',    5),
 
 		array ('database_hostname',            'string',     'localhost'),
+		array ('database_port',                'string',     ''),
 		array ('database_username',            'string',     ''),
 		array ('database_password',            'string',     ''),
 		array ('database_name',                'string',     ''),
@@ -52,6 +53,7 @@ function load_ini ($file)
 		array ('database_prefix',              'string',     ''),
 
 		array ('auth_mysql_hostname',          'string',     'localhost'),
+		array ('auth_mysql_port',              'string',     ''),
 		array ('auth_mysql_username',          'string',     ''),
 		array ('auth_mysql_password',          'string',     ''),
 		array ('auth_mysql_name',              'string',     ''),

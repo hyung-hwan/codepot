@@ -17,6 +17,7 @@ Source0: %{name}-%{version}.tar.gz
 
 Requires: httpd %{php_package_name} %{php_package_name}-ldap %{php_package_name}-mysql %{php_package_name}-gd subversion subversion-perl mod_dav_svn mod_perl perl perl-LDAP perl-Config-Simple perl-URI perl-DBI perl-Digest-SHA1
 # %{php_package_name}-pecl-svn > 1.2.0
+# %{php_package_name}-pgsql perl-DBD-Pg
 
 BuildRequires: subversion-devel neon-devel %{php_package_name}-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
@@ -70,6 +71,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %config(noreplace) /etc/codepot/codepot.ini
 /etc/codepot/codepot.mysql 
+/etc/codepot/codepot.pgsql 
 /etc/codepot/codepot.a2ldap
 /etc/codepot/codepot.httpd
 /etc/codepot/start-commit

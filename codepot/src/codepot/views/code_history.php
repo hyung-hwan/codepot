@@ -164,8 +164,8 @@ $this->load->view (
 			print anchor ("code/blame/{$project->id}/{$xfullpath}/{$h['rev']}", 
 				'<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'));
 			print ' | ';
-			print anchor ("code/diff/{$project->id}/{$xfullpath}/{$h['rev']}", 
-				$this->lang->line('Difference'));
+			print anchor ("code/diff/{$project->id}/{$xfullpath}/{$h['rev']}",
+				'<i class="fa fa-server"></i> ' . $this->lang->line('Difference')); 
 		}
 		print '</td>';
 
@@ -175,7 +175,7 @@ $this->load->view (
 		// let's track the copy path.
 		//
 		$paths = $h['paths'];
-		$colspan = ($file['type'] == 'file' || $file['type'] == 'dir')? 5: 4;
+		$colspan = 6;
 		foreach ($paths as $p)
 		{
 			if (array_key_exists ('copyfrom', $p) && 

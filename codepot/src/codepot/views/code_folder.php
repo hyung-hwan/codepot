@@ -493,6 +493,9 @@ $this->load->view (
 
 		$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
 		$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+		$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
+		$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
+		$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'); 
 
 		if ($revision > 0)
 		{
@@ -511,8 +514,6 @@ $this->load->view (
 		print '</div>';
 
 		usort ($file['content'], 'comp_files');
-
-		$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'); 
 
 		print '<table id="code_folder_mainarea_result_table" class="fit-width-result-table">';
 		print '<tr class="heading">';
@@ -591,14 +592,10 @@ $this->load->view (
 				print anchor ("code/blame/{$project->id}/{$hexpath}{$revreq}", $blame_anchor_text);
 				print '</td>';
 				print '<td>';
-				print anchor (
-					"code/diff/{$project->id}/{$hexpath}{$revreq}",
-					$this->lang->line('Difference'));
+				print anchor ("code/diff/{$project->id}/{$hexpath}{$revreq}", $diff_anchor_text);
 				print '</td>';
 				print '<td>';
-				print anchor (
-					"code/fulldiff/{$project->id}/{$hexpath}{$revreq}",
-					$this->lang->line('Full Difference'));
+				print anchor ("code/fulldiff/{$project->id}/{$hexpath}{$revreq}", $fulldiff_anchor_text);
 				print '</td>';
 				print '</tr>';
 			}

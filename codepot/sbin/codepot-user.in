@@ -12,28 +12,30 @@ use Digest::SHA1 qw (sha1_hex);
 
 
 my $CFG_FILE = '@CFGDIR@/codepot.ini';
+my $USER_TABLE_NAME = 'user';
 
 sub get_config
 {
-        my $cfg = new Config::Simple();
+	my $cfg = new Config::Simple();
 
-        if (!$cfg->read ($CFG_FILE))
-        {
-                return undef;
-        }
+	if (!$cfg->read ($CFG_FILE))
+	{
+		return undef;
+	}
 
-        my $config = {
-                database_hostname => $cfg->param ("database_hostname"),
-                database_username => $cfg->param ("database_username"),
-                database_password => $cfg->param ("database_password"),
-                database_name => $cfg->param ("database_name"),
-                database_driver => $cfg->param ("database_driver"),
-                database_prefix => $cfg->param ("database_prefix"),
+	my $config = {
+		database_hostname => $cfg->param ("database_hostname"),
+		database_port => $cfg->param ("database_port"),
+		database_username => $cfg->param ("database_username"),
+		database_password => $cfg->param ("database_password"),
+		database_name => $cfg->param ("database_name"),
+		database_driver => $cfg->param ("database_driver"),
+		database_prefix => $cfg->param ("database_prefix"),
 
 		codepot_user_executor => $cfg->param("codepot_user_executor")
-        };
+	};
 
-        return $config;
+	return $config;
 }
 
 sub open_database
@@ -43,9 +45,24 @@ sub open_database
 	my $dbtype = $cfg->{database_driver};
 	my $dbname = $cfg->{database_name};
 	my $dbhost = $cfg->{database_hostname};
+	my $dbport = $cfg->{database_port};
+	my $dbprefix = $cfg->{database_prefix};
+
+	if ($dbtype eq 'postgre') 
+	{ 
+		$dbtype = 'Pg'; 
+
+		# in postgresql, 'user' is a reserved word.
+		# it requires quotes for the word to be used as a normal word
+		if (length($dbprefix) <= 0) { $USER_TABLE_NAME = '"user"'; }
+	}
+
+	my $dbstr = "DBI:$dbtype:database=$dbname;";
+	if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
+	if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
 
 	my $dbh = DBI->connect(
-		"DBI:$dbtype:$dbname:$dbhost",
+		$dbstr,
 		$cfg->{database_username},
 		$cfg->{database_password},
 		{ RaiseError => 0, PrintError => 0, AutoCommit => 0 }
@@ -87,7 +104,7 @@ sub authenticate_database
 {
 	my ($dbh, $prefix, $userid, $password) = @_;
 	
-	my $query = $dbh->prepare ("SELECT userid,passwd FROM ${prefix}user WHERE userid=? and enabled='N'");
+	my $query = $dbh->prepare ("SELECT userid,passwd FROM ${prefix}${USER_TABLE_NAME}} WHERE userid=? and enabled='N'");
 	if (!$query || !$query->execute ($userid))
 	{
 		return (-1, $dbh->errstr());
@@ -119,7 +136,7 @@ sub add_user
 	
 	$dbh->begin_work ();
 
-	my $query = $dbh->prepare ("INSERT INTO ${prefix}user (userid,passwd,email,enabled) VALUES (?, ?, ?, ?)");
+	my $query = $dbh->prepare ("INSERT INTO ${prefix}${USER_TABLE_NAME} (userid,passwd,email,enabled) VALUES (?, ?, ?, ?)");
 	if (!$query || !$query->execute ($userid, $fmt_pw, $email, 'N'))
 	{
 		my $errstr = $dbh->errstr();
@@ -139,7 +156,7 @@ sub delete_user
 
 	$dbh->begin_work ();
 
-	my $query = $dbh->prepare ("DELETE FROM ${prefix}user WHERE userid=?");
+	my $query = $dbh->prepare ("DELETE FROM ${prefix}${USER_TABLE_NAME} WHERE userid=?");
 	if (!$query || !$query->execute ($userid) || $query->rows() <= 0)
 	{
 		my $errstr = $dbh->errstr();
@@ -159,7 +176,7 @@ sub toggle_user
 
 	$dbh->begin_work ();
 
-	my $query = $dbh->prepare ("UPDATE ${prefix}user SET enabled=? WHERE userid=?");
+	my $query = $dbh->prepare ("UPDATE ${prefix}${USER_TABLE_NAME} SET enabled=? WHERE userid=?");
 	if (!$query || !$query->execute ($enabled, $userid) || $query->rows() <= 0)
 	{
 		my $errstr = $dbh->errstr();
@@ -249,7 +266,7 @@ if (scalar(@executors) > 0)
 {
 	for my $executor (@executors) 
 	{
-		my $uid = getpwnam ($executor);	
+		my $uid = getpwnam ($executor);
 		if (defined($uid) && $> == $uid) 
 		{
 			$allowed_to_execute = 1;
@@ -271,7 +288,7 @@ if ($allowed_to_execute == 0)
 my $dbh = open_database ($cfg);
 if (!defined($dbh))
 {
-	print (STDERR "Cannot open database\n");
+	printf (STDERR "Cannot open database - %s\n", $DBI::errstr);
 	exit (1);
 }
 

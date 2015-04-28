@@ -414,7 +414,9 @@ $history = $file['history'];
 	print '<th></th>';
 	print '</tr>';
 	*/
-	
+	$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
+	$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
+
 	$rowclasses = array ('odd', 'even');
 	$rowcount = 0;
 	foreach ($history['paths'] as &$p)
@@ -431,11 +433,11 @@ $history = $file['history'];
 		print '<td>';
 		//print anchor ("code/blame/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Blame'));
 		//print ' ';
-		print anchor ("code/diff/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Difference'));
+		print anchor ("code/diff/{$project->id}/{$xpar}/{$history['rev']}", $diff_anchor_text);
 		print '</td>';
 
 		print '<td>';
-		print anchor ("code/fulldiff/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Full Difference'));
+		print anchor ("code/fulldiff/{$project->id}/{$xpar}/{$history['rev']}", $fulldiff_anchor_text);
 		print '</td>';
 
 		print '</tr>';

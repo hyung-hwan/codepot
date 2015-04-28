@@ -166,6 +166,8 @@ $this->load->view (
 	$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame');
 	$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
 	$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+	$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
+	$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
 
 	if ($file['created_rev'] != $file['head_rev']) 
 	{
@@ -177,9 +179,9 @@ $this->load->view (
 
 	print anchor ("code/blame/{$project->id}/${xpar}{$revreq}", $blame_anchor_text);
 	print ' | ';
-	print anchor ("code/diff/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Difference'));
+	print anchor ("code/diff/{$project->id}/{$xpar}{$revreq}", $diff_anchor_text);
 	print ' | ';
-	print anchor ("code/fulldiff/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Full Difference'));
+	print anchor ("code/fulldiff/{$project->id}/{$xpar}{$revreq}", $fulldiff_anchor_text);
 	print ' | ';
 
 	if ($revision > 0)

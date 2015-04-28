@@ -38,6 +38,7 @@ $active_group = "default";
 $active_record = TRUE;
 
 $db['default']['hostname'] = CODEPOT_DATABASE_HOSTNAME;
+$db['default']['port']     = CODEPOT_DATABASE_PORT;
 $db['default']['username'] = CODEPOT_DATABASE_USERNAME;
 $db['default']['password'] = CODEPOT_DATABASE_PASSWORD;
 $db['default']['database'] = CODEPOT_DATABASE_NAME;
@@ -51,6 +52,7 @@ $db['default']['char_set'] = "utf8";
 $db['default']['dbcollat'] = "utf8_general_ci";
 
 $db['auth-mysql']['hostname'] = CODEPOT_AUTH_MYSQL_HOSTNAME;
+$db['auth-mysql']['port']     = CODEPOT_AUTH_MYSQL_PORT;
 $db['auth-mysql']['username'] = CODEPOT_AUTH_MYSQL_USERNAME;
 $db['auth-mysql']['password'] = CODEPOT_AUTH_MYSQL_PASSWORD;
 $db['auth-mysql']['database'] = CODEPOT_AUTH_MYSQL_NAME;

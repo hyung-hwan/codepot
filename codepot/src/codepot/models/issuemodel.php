@@ -111,7 +111,11 @@ class IssueModel extends Model
 
 		if ($hour_limit > 0)
 		{
-			$this->db->where ("updatedon >= SYSDATE() - INTERVAL {$hour_limit} HOUR");
+			//$this->db->where ("updatedon >= SYSDATE() - INTERVAL {$hour_limit} HOUR");
+			if (CODEPOT_DATABASE_DRIVER == 'mysql')
+				$this->db->where ("updatedon >= CURRENT_TIMESTAMP - INTERVAL {$hour_limit} HOUR");
+			else
+				$this->db->where ("updatedon >= CURRENT_TIMESTAMP - INTERVAL '{$hour_limit} HOUR'");
 		}
 
 		if (strlen($userid) > 0) 
