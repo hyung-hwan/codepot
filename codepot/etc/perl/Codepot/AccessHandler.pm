@@ -67,6 +67,7 @@ sub get_config
 		ldap_userid_search_filter => $cfg->param ('ldap_userid_search_filter'),
 
 		database_hostname => $cfg->param ('database_hostname'),
+		database_port => $cfg->param ("database_port"),
 		database_username => $cfg->param ('database_username'),
 		database_password => $cfg->param ('database_password'),
 		database_name => $cfg->param ('database_name'),
@@ -161,14 +162,20 @@ sub authenticate_ldap
 
 sub authenticate_database
 {
-	my ($dbh, $prefix, $userid, $password) = @_;
+	my ($dbh, $prefix, $userid, $password, $driver) = @_;
 	
-	my $query = $dbh->prepare ("SELECT userid,passwd FROM ${prefix}user WHERE userid=? and enabled='Y'");
+	my $user_table_name = "${prefix}user";
+	if ($driver eq 'postgre' && length($prefix) <= 0) 
+	{
+		$user_table_name = '"user"';
+	}
+
+	my $query = $dbh->prepare ("SELECT userid,passwd FROM ${user_table_name} WHERE userid=? and enabled='Y'");
 	if (!$query || !$query->execute ($userid))
 	{
 		return (-1, $dbh->errstr());
 	}
-	
+
 	my @row = $query->fetchrow_array;
 	$query->finish ();
 
@@ -191,9 +198,16 @@ sub open_database
 	my $dbtype = $cfg->{database_driver};
 	my $dbname = $cfg->{database_name};
 	my $dbhost = $cfg->{database_hostname};
+	my $dbport = $cfg->{database_port};
+
+	if ($dbtype eq 'postgre') { $dbtype = 'Pg'; }
+
+	my $dbstr = "DBI:$dbtype:database=$dbname;";
+	if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
+	if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
 
 	my $dbh = DBI->connect(
-		"DBI:$dbtype:$dbname:$dbhost",
+		$dbstr,
 		$cfg->{database_username},
 		$cfg->{database_password},
 		{ RaiseError => 0, PrintError => 0, AutoCommit => 0 }
@@ -312,7 +326,11 @@ sub __handler
 	elsif ($cfg->{login_model} eq 'DbLoginModel')
 	{
 		($auth, $errmsg) = authenticate_database (
-			$dbh, $cfg->{database_prefix}, $userid, $password);
+			$dbh, $cfg->{database_prefix}, $userid, $password, $cfg->{database_driver});
+		if ($auth <= -1)
+		{
+			$r->log_error ("Database error - $errmsg");
+		}
 	}
 	if ($auth <= -1)
 	{
@@ -361,14 +379,14 @@ sub handler: method
 	$cfg = get_config (); 
 	if (!defined($cfg))
 	{
-		$r->log_error ("Cannot load configuration");
+		$r->log_error ('Cannot load configuration');
 		return Apache2::Const::HTTP_INTERNAL_SERVER_ERROR;
 	}
 
 	my $dbh = open_database ($cfg);
 	if (!defined($dbh))
 	{
-		$r->log_error ("Cannot open database");
+		$r->log_error ('Cannot open database - ' . $DBI::errstr);
 		return Apache2::Const::HTTP_INTERNAL_SERVER_ERROR;
 	}
 

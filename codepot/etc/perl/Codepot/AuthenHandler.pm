@@ -7,6 +7,6 @@ use Apache2::Const -compile => qw(OK DECLINED FORBIDDEN HTTP_UNAUTHORIZED  HTTP_
 
 sub handler: method
 {
-        return Apache2::Const::OK;
+	return Apache2::Const::OK;
 }
 1;
