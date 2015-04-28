@@ -1,7 +1,23 @@
--- ---------------------------------------------------------
--- This file is the Codepot database schema file for MySQL.
+-- ------------------------------------------------------------
+-- This file is the Codepot database schema file for PostreSQL.
 -- Note this file doesn't mandate which database to use.
--- ---------------------------------------------------------
+--
+-- Assumining "local all all password" in /var/lib/pgsql/data/pg_hba.conf
+--
+-- $ sudo -u postgres psql
+-- postgres=# CREATE USER codepot WITH PASSWORD 'codepot';
+-- postgres=# \du
+-- postgres=# CREATE DATABASE codepot;
+-- postgres=# \l
+-- postgres=# ALTER DATABASE "codepot" OWNER TO codepot;
+-- postgres=# \l
+-- postgres=# \q
+--
+-- $ psql -U codepot -W codepot
+-- postgres=# \i codepot.pgsql
+-- postgres=# \dt
+-- postgres=# \q
+-- ------------------------------------------------------------
 
 CREATE TABLE site (
 	id          VARCHAR(32)  PRIMARY KEY,
@@ -9,11 +25,11 @@ CREATE TABLE site (
 	summary     VARCHAR(255) NOT NULL,
 	text        TEXT         NOT NULL,
 
-	createdon   DATETIME     NOT NULL,
-	updatedon   DATETIME     NOT NULL,
+	createdon   TIMESTAMP    NOT NULL,
+	updatedon   TIMESTAMP    NOT NULL,
 	createdby   VARCHAR(32)  NOT NULL,
 	updatedby   VARCHAR(32)  NOT NULL
-) charset=utf8 engine=InnoDB;
+);
 
 CREATE TABLE project (
 	id          VARCHAR(32)  PRIMARY KEY,
@@ -23,21 +39,21 @@ CREATE TABLE project (
 	commitable  CHAR(1)      NOT NULL DEFAULT 'Y',
 	public      CHAR(1)      NOT NULL DEFAULT 'Y',
 
-	createdon   DATETIME     NOT NULL,
-	updatedon   DATETIME     NOT NULL,
+	createdon   TIMESTAMP    NOT NULL,
+	updatedon   TIMESTAMP    NOT NULL,
 	createdby   VARCHAR(32)  NOT NULL,
 	updatedby   VARCHAR(32)  NOT NULL
 
-) charset=utf8 engine=InnoDB;
+);
 
 CREATE TABLE project_membership (
 	projectid VARCHAR(32) NOT NULL,
 	userid    VARCHAR(32) NOT NULL,
 	priority  INTEGER     NOT NULL,
-	UNIQUE KEY membership (projectid, userid),
+	UNIQUE (projectid, userid),
 	CONSTRAINT membership_projectid FOREIGN KEY (projectid) REFERENCES project(id) 
 		ON DELETE CASCADE ON UPDATE CASCADE
-) charset=utf8 engine=InnoDB;
+);
 
 CREATE TABLE wiki (
 	projectid  VARCHAR(32)   NOT NULL,
@@ -45,16 +61,16 @@ CREATE TABLE wiki (
 	text       TEXT          NOT NULL,
 	columns    INT           NOT NULL DEFAULT 1,
 
-	createdon  DATETIME      NOT NULL,
-	updatedon  DATETIME      NOT NULL,
+	createdon  TIMESTAMP     NOT NULL,
+	updatedon  TIMESTAMP     NOT NULL,
 	createdby  VARCHAR(32)   NOT NULL,
 	updatedby  VARCHAR(32)   NOT NULL,
 
-	UNIQUE KEY wiki_id (projectid, name),
+	UNIQUE (projectid, name),
 
 	CONSTRAINT wiki_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
-) charset=utf8 engine=InnoDB;
+);
 
 CREATE TABLE wiki_attachment (
 	projectid  VARCHAR(32)   NOT NULL,
@@ -62,17 +78,17 @@ CREATE TABLE wiki_attachment (
 	name       VARCHAR(255)  NOT NULL,
 	encname    VARCHAR(255)  NOT NULL,
 
-	createdon  DATETIME      NOT NULL,
+	createdon  TIMESTAMP     NOT NULL,
 	createdby  VARCHAR(32)   NOT NULL,
 
-	UNIQUE KEY wiki_attachment_id (projectid, wikiname, name),
+	UNIQUE (projectid, wikiname, name),
 
 	CONSTRAINT wiki_attachment_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE,
 
 	CONSTRAINT wiki_attachment_wikiid FOREIGN KEY (projectid,wikiname) REFERENCES wiki(projectid,name)
 		ON DELETE RESTRICT ON UPDATE CASCADE
-) charset=utf8 engine=InnoDB;
+);
 
 CREATE TABLE issue (
 	projectid     VARCHAR(32)   NOT NULL,
@@ -85,18 +101,20 @@ CREATE TABLE issue (
 	owner         VARCHAR(255)  NOT NULL,
 	priority      VARCHAR(32)   NOT NULL,
 
-	createdon     DATETIME      NOT NULL,
-	updatedon     DATETIME      NOT NULL,
+	createdon     TIMESTAMP     NOT NULL,
+	updatedon     TIMESTAMP     NOT NULL,
 	createdby     VARCHAR(32)   NOT NULL,
 	updatedby     VARCHAR(32)   NOT NULL,
 
 	PRIMARY KEY (projectid, id),
-	KEY issue_status_type_summary (projectid, status, type, summary),
-	KEY issue_summary (projectid, summary),
 
 	CONSTRAINT issue_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
-) charset=utf8 engine=InnoDB;
+);
+
+CREATE INDEX issue_status_type_summary ON issue(projectid, status, type, summary);
+
+CREATE INDEX issue_summary ON issue(projectid, summary);
 
 CREATE TABLE issue_attachment (
 	projectid  VARCHAR(32)   NOT NULL,
@@ -104,17 +122,17 @@ CREATE TABLE issue_attachment (
 	name       VARCHAR(255)  NOT NULL,
 	encname    VARCHAR(255)  NOT NULL,
 
-	createdon  DATETIME      NOT NULL,
+	createdon  TIMESTAMP     NOT NULL,
 	createdby  VARCHAR(32)   NOT NULL,
 
-	UNIQUE KEY issue_attachment_id (projectid, issueid, name),
+	UNIQUE (projectid, issueid, name),
 
 	CONSTRAINT issue_attachment_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE,
 
 	CONSTRAINT issue_attachment_issueid FOREIGN KEY (projectid,issueid) REFERENCES issue(projectid,id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
-) charset=utf8 engine=InnoDB;
+);
 
 CREATE TABLE issue_change (
 	projectid VARCHAR(32)  NOT NULL,
@@ -127,16 +145,17 @@ CREATE TABLE issue_change (
 	priority  VARCHAR(32)  NOT NULL,
 	comment   TEXT         NOT NULL,
 
-	updatedon DATETIME     NOT NULL,
+	updatedon TIMESTAMP    NOT NULL,
 	updatedby VARCHAR(32)  NOT NULL,
 
 	PRIMARY KEY (projectid, id, sno),
-	KEY issue_update_time (projectid, id, updatedon),
 
 	CONSTRAINT issue_update_id FOREIGN KEY (projectid,id) REFERENCES issue(projectid,id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
 
-) charset=utf8 engine=InnoDB;
+);
+
+CREATE INDEX issue_update_time ON issue_change(projectid, id, updatedon);
 
 CREATE TABLE issue_change_attachment (
 	projectid  VARCHAR(32)   NOT NULL,
@@ -145,17 +164,17 @@ CREATE TABLE issue_change_attachment (
 	name       VARCHAR(255)  NOT NULL,
 	encname    VARCHAR(255)  NOT NULL,
 
-	createdon  DATETIME      NOT NULL,
+	createdon  TIMESTAMP     NOT NULL,
 	createdby  VARCHAR(32)   NOT NULL,
 
-	UNIQUE KEY issue_change_attachment_id (projectid, issueid, name),
+	UNIQUE (projectid, issueid, name),
 
 	CONSTRAINT issue_change_attachment_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE,
 
 	CONSTRAINT issue_change_attachment_issueidsno FOREIGN KEY (projectid,issueid,issuesno) REFERENCES issue_change(projectid,id,sno)
 		ON DELETE RESTRICT ON UPDATE CASCADE
-) charset=utf8 engine=InnoDB;
+);
 
 CREATE TABLE file (
 	projectid   VARCHAR(32)   NOT NULL,
@@ -166,18 +185,20 @@ CREATE TABLE file (
 	md5sum      CHAR(32)      NOT NULL,
 	description TEXT          NOT NULL,
 
-	createdon  DATETIME       NOT NULL,
-	updatedon  DATETIME       NOT NULL, 
+	createdon  TIMESTAMP      NOT NULL,
+	updatedon  TIMESTAMP      NOT NULL, 
 	createdby  VARCHAR(32)    NOT NULL,
 	updatedby  VARCHAR(32)    NOT NULL,
 
-	UNIQUE KEY file_id (projectid, name),
-	UNIQUE KEY (encname),
-	INDEX file_tagged_name (projectid, tag, name),
+	UNIQUE (projectid, name),
+	UNIQUE (encname),
 
 	CONSTRAINT file_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
-) charset=utf8 engine=InnoDB;
+);
+
+CREATE INDEX file_tagged_name ON file(projectid, tag, name);
+
 
 CREATE TABLE code_review (
 	projectid VARCHAR(32)   NOT NULL,
@@ -185,40 +206,40 @@ CREATE TABLE code_review (
 	sno       BIGINT        NOT NULL,
 	comment   TEXT          NOT NULL,
 
-	createdon DATETIME      NOT NULL,
+	createdon TIMESTAMP     NOT NULL,
 	createdby VARCHAR(32)   NOT NULL,
 
-	updatedon DATETIME      NOT NULL,
+	updatedon TIMESTAMP     NOT NULL,
 	updatedby VARCHAR(32)   NOT NULL,
 
-	UNIQUE KEY code_review_id (projectid, rev, sno),
+	UNIQUE (projectid, rev, sno),
 
 	CONSTRAINT code_review_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
-) charset=utf8 engine=InnoDB;
+);
 
 CREATE TABLE log  (
-	id         BIGINT PRIMARY KEY AUTO_INCREMENT,
+	id         BIGSERIAL PRIMARY KEY,
 	projectid  VARCHAR(32)  NOT NULL,
 	type       VARCHAR(16)  NOT NULL,
 	action     VARCHAR(16)  NOT NULL,
 	userid     VARCHAR(32)  NOT NULL,
 	message    TEXT         NOT NULL,
-	createdon  DATETIME     NOT NULL,
-	INDEX timed_project_type_action (createdon, projectid, type, action)
-) charset=utf8 engine=InnoDB;
+	createdon  TIMESTAMP    NOT NULL
+);
+
+CREATE INDEX log_timed_project_type_action ON log(createdon, projectid, type, action);
 
 CREATE TABLE user_settings (
 	userid              VARCHAR(32) PRIMARY KEY,
 	code_hide_line_num  CHAR(1) NOT NULL,
 	code_hide_metadata  CHAR(1) NOT NULL,
 	icon_name           VARCHAR(255) UNIQUE NULL
-) charset=utf8 engine=InnoDB;
+);
 
-CREATE TABLE user (
+CREATE TABLE "user" (
 	userid     VARCHAR(32)  PRIMARY KEY,
 	passwd     VARCHAR(255) NOT NULL,
 	email      VARCHAR(255),
 	enabled    CHAR(1)      NOT NULL DEFAULT 'N' CHECK(enabled in ('Y', 'N'))
-) charset=utf8 engine=InnoDB;
-
+);

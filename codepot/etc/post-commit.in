@@ -23,6 +23,7 @@ sub get_config
 
 	my $config = {
 		database_hostname => $cfg->param ("database_hostname"),
+		database_port => $cfg->param ("database_port"),
 		database_username => $cfg->param ("database_username"),
 		database_password => $cfg->param ("database_password"),
 		database_name => $cfg->param ("database_name"),
@@ -40,9 +41,16 @@ sub open_database
 	my $dbtype = $cfg->{database_driver};
 	my $dbname = $cfg->{database_name};
 	my $dbhost = $cfg->{database_hostname};
+	my $dbport = $cfg->{database_port};
+
+	if ($dbtype eq 'postgre') { $dbtype = 'Pg'; }
+
+	my $dbstr = "DBI:$dbtype:database=$dbname;";
+	if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
+	if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
 
 	my $dbh = DBI->connect(
-		"DBI:$dbtype:$dbname:$dbhost",
+		$dbstr,
 		$cfg->{database_username},
 		$cfg->{database_password},
 		{ RaiseError => 0, PrintError => 0, AutoCommit => 0 }
@@ -102,7 +110,7 @@ if (!defined($cfg))
 my $dbh = open_database ($cfg);
 if (!defined($dbh))
 {
-	print (STDERR "Cannot open database\n");
+	printf (STDERR "Cannot open database - %s\n", $DBI::errstr);
 	exit (1);
 }
 

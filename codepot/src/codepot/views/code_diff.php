@@ -99,33 +99,31 @@ $this->load->view (
 
 <div class="menu" id="code_diff_mainarea_menu">
 <?php
+	$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
+	$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
+	$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
+	$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame');
+
 	$xpar = $this->converter->AsciiTohex ($headpath);
 	print anchor (
 		"code/file/{$project->id}/{$xpar}{$revreq}",
 		$this->lang->line('Details'));
 	print ' | ';
-	print anchor (
-		"code/blame/{$project->id}/{$xpar}{$revreq}",
-		'<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'));
+	print anchor ("code/blame/{$project->id}/{$xpar}{$revreq}", $blame_anchor_text);
+		
 	print ' | ';
 
 	if (!$fullview)
 	{
-		print anchor (
-			"code/fulldiff/{$project->id}/{$xpar}{$revreq}",
-			$this->lang->line('Full Difference'));
+		print anchor ("code/fulldiff/{$project->id}/{$xpar}{$revreq}", $fulldiff_anchor_text);
 	}
 	else
 	{
-		print anchor (
-			"code/diff/{$project->id}/{$xpar}{$revreq}",
-			$this->lang->line('Difference'));
+		print anchor ("code/diff/{$project->id}/{$xpar}{$revreq}", $diff_anchor_text);
 	}
 
 	print ' | ';
 
-
-	$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
 	if ($revision1 > 0)
 	{
 		if ($xpar == '') $revtrailer = $revreqroot;
