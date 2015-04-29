@@ -112,9 +112,9 @@ CREATE TABLE issue (
 		ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE INDEX issue_status_type_summary ON issue(projectid, status, type, summary);
+CREATE INDEX issue_index_1 ON issue(projectid, status, type, summary);
 
-CREATE INDEX issue_summary ON issue(projectid, summary);
+CREATE INDEX issue_index_2 ON issue(projectid, summary);
 
 CREATE TABLE issue_attachment (
 	projectid  VARCHAR(32)   NOT NULL,
@@ -143,7 +143,7 @@ CREATE TABLE issue_change (
 	status    VARCHAR(32)  NOT NULL,
 	owner     VARCHAR(255) NOT NULL,
 	priority  VARCHAR(32)  NOT NULL,
-	comment   TEXT         NOT NULL,
+	comment TEXT         NOT NULL,
 
 	updatedon TIMESTAMP    NOT NULL,
 	updatedby VARCHAR(32)  NOT NULL,
@@ -155,7 +155,7 @@ CREATE TABLE issue_change (
 
 );
 
-CREATE INDEX issue_update_time ON issue_change(projectid, id, updatedon);
+CREATE INDEX issue_change_index_1 ON issue_change(projectid, id, updatedon);
 
 CREATE TABLE issue_change_attachment (
 	projectid  VARCHAR(32)   NOT NULL,
@@ -197,14 +197,13 @@ CREATE TABLE file (
 		ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE INDEX file_tagged_name ON file(projectid, tag, name);
-
+CREATE INDEX file_index_1 ON file(projectid, tag, name);
 
 CREATE TABLE code_review (
 	projectid VARCHAR(32)   NOT NULL,
 	rev       BIGINT        NOT NULL,
 	sno       BIGINT        NOT NULL,
-	comment   TEXT          NOT NULL,
+	comment TEXT          NOT NULL,
 
 	createdon TIMESTAMP     NOT NULL,
 	createdby VARCHAR(32)   NOT NULL,
@@ -228,7 +227,7 @@ CREATE TABLE log  (
 	createdon  TIMESTAMP    NOT NULL
 );
 
-CREATE INDEX log_timed_project_type_action ON log(createdon, projectid, type, action);
+CREATE INDEX log_index_1 ON log(createdon, projectid, type, action);
 
 CREATE TABLE user_settings (
 	userid              VARCHAR(32) PRIMARY KEY,
