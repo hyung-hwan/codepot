@@ -174,7 +174,22 @@ class CI_DB_oci8_result extends CI_DB_result {
 		{
 			$id = ($this->curs_id) ? $this->curs_id : $this->stmt_id;
 			
-			return @oci_fetch_object($id);
+			// BEGIN HYUNG-HWAN
+			//return @oci_fetch_object($id);
+			$x = @oci_fetch_object($id);
+
+			if (is_object($x))
+			{
+				foreach ($x as $k => $v) 
+				{
+					if (is_object($v) && get_class($v) == 'OCI-Lob')
+					{
+						$x->$k = $v->load();
+					}
+				}	
+			}
+			return $x;
+			// END HYUNG-HWAN
 		}
 		
 		// If PHP 4 is being used we have to build our own result

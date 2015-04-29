@@ -11,7 +11,34 @@ default_site_name = "@PACKAGE@"
 ;------------------------------------------------------------------------------
 ; database settings
 ;
-; database_driver: mysql for MySQL, postgre for PostgreSQL
+; database_driver: mysql, mysqli, postgre, oci8
+;
+; == MySQL ==
+; database_hostname = "localhost"
+; database_port = ""
+; database_username = "codepot"
+; database_password = "codepot"
+; database_name = "codepot"
+; database_driver = "mysql"
+; database_prefix = ""
+;
+; == PostgresSQL ==
+; database_hostname = ""
+; database_port = ""
+; database_username = "codepot"
+; database_password = "codepot"
+; database_name = "codepot"
+; database_driver = "postgre"
+; database_prefix = ""
+;
+; == Oracle
+; database_hostname = "(DESCRIPTION=(ADDRESS=(COMMUNITY=tcp.world)(PROTOCOL=TCP)(HOST=192.168.1.126)(PORT=1521))(CONNECT_DATA=(SID=ORCL)))"
+; database_port = ""
+; database_username = "scott"
+; database_password = "tiger"
+; database_name = ""
+; database_driver = "oci8"
+; database_prefix = "cpot_"
 ;------------------------------------------------------------------------------
 database_hostname = "localhost"
 database_port = ""
