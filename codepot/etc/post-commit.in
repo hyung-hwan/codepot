@@ -12,6 +12,8 @@ my $REPO = $ARGV[0];
 my $REPOBASE = basename($REPO);
 my $REV = $ARGV[1];
 
+my $QC = '';
+
 sub get_config
 {
 	my $cfg = new Config::Simple();
@@ -44,15 +46,31 @@ sub open_database
 	my $dbport = $cfg->{database_port};
 
 	if ($dbtype eq 'postgre') { $dbtype = 'Pg'; }
+	elsif ($dbtype eq 'oci8') { $dbtype = 'Oracle'; }
+	elsif ($dbtype eq 'mysqli') { $dbtype = 'mysql'; }
 
-	my $dbstr = "DBI:$dbtype:database=$dbname;";
-	if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
-	if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
+	my $dbstr;
+	my $dbuser;
+	my $dbpass;
+	if ($dbtype eq 'Oracle')
+	{
+		$QC = '"';
+		$dbstr = "DBI:$dbtype:";
+		$dbuser = $cfg->{database_username} . '/' . $cfg->{database_password} . '@' . $dbhost;
+		$dbpass = '';
+	}
+	else
+	{
+		$dbstr = "DBI:$dbtype:database=$dbname;";
+		if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
+		if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
+
+		$dbuser = $cfg->{database_username};
+		$dbpass = $cfg->{database_password};
+	}
 
 	my $dbh = DBI->connect(
-		$dbstr,
-		$cfg->{database_username},
-		$cfg->{database_password},
+		$dbstr, $dbuser, $dbpass,
 		{ RaiseError => 0, PrintError => 0, AutoCommit => 0 }
 	);
 
@@ -75,12 +93,21 @@ sub write_commit_log
 #|  895 | code    | codepot   | svn,codepot,72            | 2011-10-10 14:26:43 | commit        | hyunghwan.chung | 
 
 	my $message = "svn,$projectid,$revision";
-	my $createdon = strftime ('%Y-%m-%d %H:%M:%S', localtime());
+
+
+	# the PHP side is executing ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS.FF.
+	# do i have to do it here or  use the database time (CURRENT_TIMESTAMP) instead?
+	# make sure that you have the same time between the app server and the data server.
+	# to minize side-effect of using the time of data server.
+	#my $createdon = strftime ('%Y-%m-%d %H:%M:%S', localtime());
 
 	$dbh->begin_work ();
 
-	my $query = $dbh->prepare ("INSERT INTO ${prefix}log (type,projectid,message,createdon,action,userid) VALUES (?,?,?,?,?,?)");
-	if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'commit', $userid))
+	#my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}log${QC} (${QC}type${QC},${QC}projectid${QC},${QC}message${QC},${QC}createdon${QC},${QC}action${QC},${QC}userid${QC}) VALUES (?,?,?,?,?,?)");
+	#if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'commit', $userid))
+
+	my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}log${QC} (${QC}type${QC},${QC}projectid${QC},${QC}message${QC},${QC}createdon${QC},${QC}action${QC},${QC}userid${QC}) VALUES (?,?,?,CURRENT_TIMESTAMP,?,?)");
+	if (!$query || !$query->execute ('code', $projectid, $message, 'commit', $userid))
 	{
 		my $errstr = $dbh->errstr();
 		$query->finish ();

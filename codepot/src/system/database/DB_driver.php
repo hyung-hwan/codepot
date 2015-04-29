@@ -149,12 +149,25 @@ class CI_DB_driver {
 					return FALSE;
 				}
 		
-				return TRUE;
+				// HYUNG-HWAN
+				//return TRUE;
+				// END HYUNG-HWAN
 			}
 		}
 
+
+		// HYUNG-HWAN
+		$this->db_post_initialize ();
+		// END HYUNG-HWAN
 		return TRUE;
 	}
+
+	// HYUNG-HWAN
+	function db_post_initialize ()
+	{
+		return TRUE;
+	}
+	// END HYUNG-HWAN
 		
 	// --------------------------------------------------------------------
 

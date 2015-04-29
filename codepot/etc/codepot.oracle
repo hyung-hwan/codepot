@@ -9,7 +9,7 @@
 --
 --
 -- DROP SEQUENCE "cpot_log_id_seq";
--- DROP TABLE "cpot_user";
+-- DROP TABLE "cpot_user_account";
 -- DROP TABLE "cpot_user_settings";
 -- DROP TABLE "cpot_log";
 -- DROP TABLE "cpot_code_review";
@@ -202,7 +202,7 @@ CREATE TABLE "cpot_user_settings" (
 	"icon_name"           VARCHAR(255) UNIQUE NULL
 );
 
-CREATE TABLE "cpot_user" (
+CREATE TABLE "cpot_user_account" (
 	"userid"     VARCHAR(32)  PRIMARY KEY,
 	"passwd"     VARCHAR(255) NOT NULL,
 	"email"      VARCHAR(255),

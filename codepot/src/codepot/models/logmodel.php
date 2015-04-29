@@ -23,7 +23,7 @@ class LogModel extends Model
 
 		if ($userid != '') $this->db->where ('userid', $userid);
 
-		$this->db->select ('count(id) as count');
+		$this->db->select ('count(*) as count');
 		$query = $this->db->get ('log');
 		if ($this->db->trans_status() === FALSE) 
 		{
@@ -33,7 +33,8 @@ class LogModel extends Model
 
 		$result = $query->result();
 		
-		$num = empty($result)? 0: $result[0]->count;
+		$num = empty($result)? 0:
+		       isset($result[0]->COUNT)? $result[0]->COUNT: $result[0]->count;
 
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() === FALSE) return FALSE;

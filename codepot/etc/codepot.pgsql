@@ -143,7 +143,7 @@ CREATE TABLE issue_change (
 	status    VARCHAR(32)  NOT NULL,
 	owner     VARCHAR(255) NOT NULL,
 	priority  VARCHAR(32)  NOT NULL,
-	comment TEXT         NOT NULL,
+	comment   TEXT         NOT NULL,
 
 	updatedon TIMESTAMP    NOT NULL,
 	updatedby VARCHAR(32)  NOT NULL,
@@ -203,7 +203,7 @@ CREATE TABLE code_review (
 	projectid VARCHAR(32)   NOT NULL,
 	rev       BIGINT        NOT NULL,
 	sno       BIGINT        NOT NULL,
-	comment TEXT          NOT NULL,
+	comment   TEXT          NOT NULL,
 
 	createdon TIMESTAMP     NOT NULL,
 	createdby VARCHAR(32)   NOT NULL,
@@ -236,7 +236,7 @@ CREATE TABLE user_settings (
 	icon_name           VARCHAR(255) UNIQUE NULL
 );
 
-CREATE TABLE "user" (
+CREATE TABLE user_account (
 	userid     VARCHAR(32)  PRIMARY KEY,
 	passwd     VARCHAR(255) NOT NULL,
 	email      VARCHAR(255),

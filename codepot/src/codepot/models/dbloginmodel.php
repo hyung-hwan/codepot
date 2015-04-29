@@ -41,7 +41,7 @@ class DbLoginModel extends LoginModel
 		$this->db->select ('userid,passwd,email');
 		$this->db->where ('userid', $userid);
 		$this->db->where ('enabled', 'Y');
-		$query = $this->db->get ('user');
+		$query = $this->db->get ('user_account');
 
 		if ($this->db->trans_status() == FALSE)
 		{
@@ -64,7 +64,7 @@ class DbLoginModel extends LoginModel
 		// the last 10 characters are the salt.
 		$hexsalt = substr ($user->passwd, -10);
 		$binsalt = pack('H*' , $hexsalt);
-			
+
 		if (strcmp ($this->format_password_with_salt($passwd,$binsalt),$user->passwd) != 0) return FALSE;
 
 		return parent::authenticate ($userid, $user->passwd, $user->email);
@@ -77,7 +77,7 @@ class DbLoginModel extends LoginModel
 
 		$this->db->where ('userid', $userid);
 		$this->db->set ('passwd', format_password($passwd,5));
-		$this->db->update ('user');
+		$this->db->update ('user_account');
 
 		if ($this->db->trans_status() === FALSE)
 		{

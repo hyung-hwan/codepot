@@ -12,7 +12,7 @@ use Digest::SHA1 qw (sha1_hex);
 
 
 my $CFG_FILE = '@CFGDIR@/codepot.ini';
-my $USER_TABLE_NAME = 'user';
+my $QC = '';
 
 sub get_config
 {
@@ -48,23 +48,32 @@ sub open_database
 	my $dbport = $cfg->{database_port};
 	my $dbprefix = $cfg->{database_prefix};
 
-	if ($dbtype eq 'postgre') 
-	{ 
-		$dbtype = 'Pg'; 
+	if ($dbtype eq 'postgre') { $dbtype = 'Pg'; }
+	elsif ($dbtype eq 'oci8') { $dbtype = 'Oracle'; }
+	elsif ($dbtype eq 'mysqli') { $dbtype = 'mysql'; }
 
-		# in postgresql, 'user' is a reserved word.
-		# it requires quotes for the word to be used as a normal word
-		if (length($dbprefix) <= 0) { $USER_TABLE_NAME = '"user"'; }
+	my $dbstr;
+	my $dbuser;
+	my $dbpass;
+	if ($dbtype eq 'Oracle')
+	{
+		$QC = '"';
+		$dbstr = "DBI:$dbtype:";
+		$dbuser = $cfg->{database_username} . '/' . $cfg->{database_password} . '@' . $dbhost;
+		$dbpass = '';
+	}
+	else
+	{
+		$dbstr = "DBI:$dbtype:database=$dbname;";
+		if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
+		if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
+
+		$dbuser = $cfg->{database_username};
+		$dbpass = $cfg->{database_password};
 	}
 
-	my $dbstr = "DBI:$dbtype:database=$dbname;";
-	if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
-	if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
-
 	my $dbh = DBI->connect(
-		$dbstr,
-		$cfg->{database_username},
-		$cfg->{database_password},
+		$dbstr, $dbuser, $dbpass,
 		{ RaiseError => 0, PrintError => 0, AutoCommit => 0 }
 	);
 
@@ -104,7 +113,7 @@ sub authenticate_database
 {
 	my ($dbh, $prefix, $userid, $password) = @_;
 	
-	my $query = $dbh->prepare ("SELECT userid,passwd FROM ${prefix}${USER_TABLE_NAME}} WHERE userid=? and enabled='N'");
+	my $query = $dbh->prepare ("SELECT ${QC}userid${QC},${QC}passwd${QC} FROM ${QC}${prefix}user_account${QC} WHERE ${QC}userid${QC}=? and ${QC}enabled${QC}='N'");
 	if (!$query || !$query->execute ($userid))
 	{
 		return (-1, $dbh->errstr());
@@ -136,7 +145,7 @@ sub add_user
 	
 	$dbh->begin_work ();
 
-	my $query = $dbh->prepare ("INSERT INTO ${prefix}${USER_TABLE_NAME} (userid,passwd,email,enabled) VALUES (?, ?, ?, ?)");
+	my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}user_account${QC} (${QC}userid${QC},${QC}passwd${QC},${QC}email${QC},${QC}enabled${QC}) VALUES (?, ?, ?, ?)");
 	if (!$query || !$query->execute ($userid, $fmt_pw, $email, 'N'))
 	{
 		my $errstr = $dbh->errstr();
@@ -156,7 +165,7 @@ sub delete_user
 
 	$dbh->begin_work ();
 
-	my $query = $dbh->prepare ("DELETE FROM ${prefix}${USER_TABLE_NAME} WHERE userid=?");
+	my $query = $dbh->prepare ("DELETE FROM ${QC}${prefix}user_account${QC} WHERE ${QC}userid${QC}=?");
 	if (!$query || !$query->execute ($userid) || $query->rows() <= 0)
 	{
 		my $errstr = $dbh->errstr();
@@ -176,7 +185,7 @@ sub toggle_user
 
 	$dbh->begin_work ();
 
-	my $query = $dbh->prepare ("UPDATE ${prefix}${USER_TABLE_NAME} SET enabled=? WHERE userid=?");
+	my $query = $dbh->prepare ("UPDATE ${QC}${prefix}user_account${QC} SET ${QC}enabled${QC}=? WHERE ${QC}userid${QC}=?");
 	if (!$query || !$query->execute ($enabled, $userid) || $query->rows() <= 0)
 	{
 		my $errstr = $dbh->errstr();
