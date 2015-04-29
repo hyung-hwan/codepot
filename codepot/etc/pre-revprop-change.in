@@ -18,6 +18,8 @@ my $USER = $ARGV[2];
 my $PROPNAME = $ARGV[3];
 my $ACTION = $ARGV[4];
 
+my $QC = '';
+
 sub get_config
 {
 	my $cfg = new Config::Simple();
@@ -52,15 +54,31 @@ sub open_database
 	my $dbport = $cfg->{database_port};
 
 	if ($dbtype eq 'postgre') { $dbtype = 'Pg'; }
+	elsif ($dbtype eq 'oci8') { $dbtype = 'Oracle'; }
+	elsif ($dbtype eq 'mysqli') { $dbtype = 'mysql'; }
 
-	my $dbstr = "DBI:$dbtype:database=$dbname;";
-	if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
-	if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
+	my $dbstr;
+	my $dbuser;
+	my $dbpass;
+	if ($dbtype eq 'Oracle')
+	{
+		$QC = '"';
+		$dbstr = "DBI:$dbtype:";
+		$dbuser = $cfg->{database_username} . '/' . $cfg->{database_password} . '@' . $dbhost;
+		$dbpass = '';
+	}
+	else
+	{
+		$dbstr = "DBI:$dbtype:database=$dbname;";
+		if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
+		if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
+
+		$dbuser = $cfg->{database_username};
+		$dbpass = $cfg->{database_password};
+	}
 
 	my $dbh = DBI->connect(
-		$dbstr,
-		$cfg->{database_username},
-		$cfg->{database_password},
+		$dbstr, $dbuser, $dbpass,
 		{ RaiseError => 0, PrintError => 0, AutoCommit => 0 }
 	);
 
@@ -77,7 +95,7 @@ sub is_project_member
 {
 	my ($dbh, $prefix, $projectid, $userid) = @_;
 
-	my $query = $dbh->prepare ("SELECT projectid FROM ${prefix}project_membership WHERE userid=? AND projectid=?");
+	my $query = $dbh->prepare ("SELECT ${QC}projectid${QC} FROM ${QC}${prefix}project_membership${QC} WHERE ${QC}userid${QC}=? AND ${QC}projectid${QC}=?");
 	if (!$query || !$query->execute ($userid, $projectid))
 	{
 		return (-1, $dbh->errstr());

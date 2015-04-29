@@ -162,15 +162,9 @@ sub authenticate_ldap
 
 sub authenticate_database
 {
-	my ($dbh, $prefix, $userid, $password, $driver) = @_;
+	my ($dbh, $prefix, $userid, $password, $qc) = @_;
 	
-	my $user_table_name = "${prefix}user";
-	if ($driver eq 'postgre' && length($prefix) <= 0) 
-	{
-		$user_table_name = '"user"';
-	}
-
-	my $query = $dbh->prepare ("SELECT userid,passwd FROM ${user_table_name} WHERE userid=? and enabled='Y'");
+	my $query = $dbh->prepare ("SELECT ${qc}userid${qc},${qc}passwd${qc} FROM ${qc}${prefix}user_account${qc} WHERE ${qc}userid${qc}=? and ${qc}enabled${qc}='Y'");
 	if (!$query || !$query->execute ($userid))
 	{
 		return (-1, $dbh->errstr());
@@ -201,15 +195,30 @@ sub open_database
 	my $dbport = $cfg->{database_port};
 
 	if ($dbtype eq 'postgre') { $dbtype = 'Pg'; }
+	elsif ($dbtype eq 'oci8') { $dbtype = 'Oracle'; }
+	elsif ($dbtype eq 'mysqli') { $dbtype = 'mysql'; }
 
-	my $dbstr = "DBI:$dbtype:database=$dbname;";
-	if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
-	if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
+	my $dbstr;
+	my $dbuser;
+	my $dbpass;
+	if ($dbtype eq 'Oracle')
+	{
+		$dbstr = "DBI:$dbtype:";
+		$dbuser = $cfg->{database_username} . '/' . $cfg->{database_password} . '@' . $dbhost;
+		$dbpass = '';
+	}
+	else
+	{
+		$dbstr = "DBI:$dbtype:database=$dbname;";
+		if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
+		if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
+
+		$dbuser = $cfg->{database_username};
+		$dbpass = $cfg->{database_password};
+	}
 
 	my $dbh = DBI->connect(
-		$dbstr,
-		$cfg->{database_username},
-		$cfg->{database_password},
+		$dbstr, $dbuser, $dbpass,
 		{ RaiseError => 0, PrintError => 0, AutoCommit => 0 }
 	);
 
@@ -224,9 +233,9 @@ sub close_database
 
 sub is_project_member
 {
-	my ($dbh, $prefix, $projectid, $userid) = @_;
+	my ($dbh, $prefix, $projectid, $userid, $qc) = @_;
 
-	my $query = $dbh->prepare ("SELECT projectid FROM ${prefix}project_membership WHERE userid=? AND projectid=?");
+	my $query = $dbh->prepare ("SELECT ${qc}projectid${qc} FROM ${qc}${prefix}project_membership${qc} WHERE ${qc}userid${qc}=? AND ${qc}projectid${qc}=?");
 	if (!$query || !$query->execute ($userid, $projectid))
 	{
 		return (-1, $dbh->errstr());
@@ -239,9 +248,9 @@ sub is_project_member
 
 sub is_project_public
 {
-	my ($dbh, $prefix, $projectid) = @_;
+	my ($dbh, $prefix, $projectid, $qc) = @_;
 
-	my $query = $dbh->prepare ("SELECT public FROM ${prefix}project WHERE id=?");
+	my $query = $dbh->prepare ("SELECT ${qc}public${qc} FROM ${qc}${prefix}project${qc} WHERE ${qc}id${qc}=?");
 	if (!$query || !$query->execute ($projectid))
 	{
 		return (-1, $dbh->errstr());
@@ -275,6 +284,9 @@ sub __handler
 	my $member = undef;
 	my $errmsg = undef;
 
+	my $qc = '';
+	if ($cfg->{database_driver} eq 'oci8') { $qc = '"'; }
+	
 	if ($r->proxyreq() == Apache2::Const::PROXYREQ_PROXY)
 	{
 		$author = $r->headers_in->{'Proxy-Authorization'};
@@ -301,7 +313,7 @@ sub __handler
 
 	if ($is_method_r)
 	{
-		($public, $errmsg) = is_project_public ($dbh, $cfg->{database_prefix}, $repo);
+		($public, $errmsg) = is_project_public ($dbh, $cfg->{database_prefix}, $repo, $qc);
 		if ($public <= -1)
 		{
 			# failed to contact the authentication server
@@ -326,7 +338,7 @@ sub __handler
 	elsif ($cfg->{login_model} eq 'DbLoginModel')
 	{
 		($auth, $errmsg) = authenticate_database (
-			$dbh, $cfg->{database_prefix}, $userid, $password, $cfg->{database_driver});
+			$dbh, $cfg->{database_prefix}, $userid, $password, $qc);
 		if ($auth <= -1)
 		{
 			$r->log_error ("Database error - $errmsg");
@@ -352,7 +364,7 @@ sub __handler
 		return Apache2::Const::OK;
 	}
 
-	($member, $errmsg) = is_project_member ($dbh, $cfg->{database_prefix}, $repo, $userid);
+	($member, $errmsg) = is_project_member ($dbh, $cfg->{database_prefix}, $repo, $userid, $qc);
 	if ($member <= -1)
 	{
 		$r->log_error ("Cannot check project membership - $errmsg");

@@ -15,6 +15,8 @@ my $USER = $ARGV[2];
 my $PROPNAME = $ARGV[3];
 my $ACTION = $ARGV[4];
 
+my $QC = '';
+
 # [STDIN] PROPVAL  ** the old property value is passed via STDIN.
 
 sub get_config
@@ -49,15 +51,31 @@ sub open_database
 	my $dbport = $cfg->{database_port};
 
 	if ($dbtype eq 'postgre') { $dbtype = 'Pg'; }
+	elsif ($dbtype eq 'oci8') { $dbtype = 'Oracle'; }
+	elsif ($dbtype eq 'mysqli') { $dbtype = 'mysql'; }
 
-	my $dbstr = "DBI:$dbtype:database=$dbname;";
-	if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
-	if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
+	my $dbstr;
+	my $dbuser;
+	my $dbpass;
+	if ($dbtype eq 'Oracle')
+	{
+		$QC = '"';
+		$dbstr = "DBI:$dbtype:";
+		$dbuser = $cfg->{database_username} . '/' . $cfg->{database_password} . '@' . $dbhost;
+		$dbpass = '';
+	}
+	else
+	{
+		$dbstr = "DBI:$dbtype:database=$dbname;";
+		if (length($dbhost) > 0) { $dbstr .= "host=$dbhost;"; }
+		if (length($dbport) > 0) { $dbstr .= "port=$dbport;"; }
+
+		$dbuser = $cfg->{database_username};
+		$dbpass = $cfg->{database_password};
+	}
 
 	my $dbh = DBI->connect(
-		$dbstr,
-		$cfg->{database_username},
-		$cfg->{database_password},
+		$dbstr, $dbuser, $dbpass,
 		{ RaiseError => 0, PrintError => 0, AutoCommit => 0 }
 	);
 
@@ -84,7 +102,7 @@ sub write_revprop_change_log
 
 	$dbh->begin_work ();
 
-	my $query = $dbh->prepare ("INSERT INTO ${prefix}log (type,projectid,message,createdon,action,userid) VALUES (?,?,?,?,?,?)");
+	my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}log${QC} (${QC}type${QC},${QC}projectid${QC},${QC}message${QC},${QC}createdon${QC},${QC}action${QC},${QC}userid${QC}) VALUES (?,?,?,?,?,?)");
 	if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'revpropchange', $userid))
 	{
 		my $errstr = $dbh->errstr();
