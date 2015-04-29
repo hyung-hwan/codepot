@@ -1,0 +1,244 @@
+-- ------------------------------------------------------------
+-- This file is the Codepot database schema file for PostreSQL.
+-- Note this file doesn't mandate which database to use.
+--
+-- Assumining "local all all password" in /var/lib/pgsql/data/pg_hba.conf
+--
+-- $ sqlplus "scott/tiger@(DESCRIPTION=(ADDRESS=(COMMUNITY=tcp.world)(PROTOCOL=TCP)(HOST=192.168.1.126)(PORT=1521))(CONNECT_DATA=(SID=ORCL)))" 
+-- SQL> @codepot.oracle
+--
+--
+-- DROP SEQUENCE "cpot_log_id_seq";
+-- DROP TABLE "cpot_user";
+-- DROP TABLE "cpot_user_settings";
+-- DROP TABLE "cpot_log";
+-- DROP TABLE "cpot_code_review";
+-- DROP TABLE "cpot_file";
+-- DROP TABLE "cpot_issue_change_attachment";
+-- DROP TABLE "cpot_issue_change";
+-- DROP TABLE "cpot_issue_attachment";
+-- DROP TABLE "cpot_issue";
+-- DROP TABLE "cpot_wiki_attachment";
+-- DROP TABLE "cpot_wiki";
+-- DROP TABLE "cpot_project_membership";
+-- DROP TABLE "cpot_project";
+-- DROP TABLE "cpot_site";
+-- ------------------------------------------------------------
+
+CREATE TABLE "cpot_site" (
+	"id"          VARCHAR(32)  PRIMARY KEY,
+	"name"        VARCHAR(128) NOT NULL,
+	"summary"     VARCHAR(255) NOT NULL,
+	"text"        CLOB         NOT NULL,
+	"createdon"   TIMESTAMP    NOT NULL,
+	"updatedon"   TIMESTAMP    NOT NULL,
+	"createdby"   VARCHAR(32)  NOT NULL,
+	"updatedby"   VARCHAR(32)  NOT NULL
+);
+
+CREATE TABLE "cpot_project" (
+	"id"            VARCHAR(32)  PRIMARY KEY,
+	"name"          VARCHAR(255) UNIQUE NOT NULL,
+	"summary"       VARCHAR(255) NOT NULL,
+	"description"   CLOB NOT NULL,
+	"commitable"    CHAR(1)    DEFAULT 'Y' NOT NULL,
+	"public"        CHAR(1)    DEFAULT 'Y' NOT NULL,
+	"createdon"     TIMESTAMP    NOT NULL,
+	"updatedon"     TIMESTAMP    NOT NULL,
+	"createdby"     VARCHAR(32)  NOT NULL,
+	"updatedby"     VARCHAR(32)  NOT NULL
+);
+
+CREATE TABLE "cpot_project_membership" (
+	"projectid" VARCHAR(32) NOT NULL,
+	"userid"    VARCHAR(32) NOT NULL,
+	"priority"  INTEGER     NOT NULL,
+	UNIQUE ("projectid", "userid"),
+	CONSTRAINT membership_projectid FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id") ON DELETE CASCADE 
+);
+
+CREATE TABLE "cpot_wiki" (
+	"projectid"  VARCHAR(32)   NOT NULL,
+	"name"       VARCHAR(255)  NOT NULL,
+	"text"       CLOB          NOT NULL,
+	"columns"    INT           DEFAULT 1 NOT NULL,
+	"createdon"  TIMESTAMP     NOT NULL,
+	"updatedon"  TIMESTAMP     NOT NULL,
+	"createdby"  VARCHAR(32)   NOT NULL,
+	"updatedby"  VARCHAR(32)   NOT NULL,
+	UNIQUE ("projectid", "name"),
+	CONSTRAINT wiki_projectid FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id")
+);
+-- [ NOTE ] oracle defaults to ON DELETE RESTRICT if it is not specified.
+
+CREATE TABLE "cpot_wiki_attachment" (
+	"projectid"  VARCHAR(32)   NOT NULL,
+	"wikiname"   VARCHAR(255)  NOT NULL,
+	"name"       VARCHAR(255)  NOT NULL,
+	"encname"    VARCHAR(255)  NOT NULL,
+	"createdon"  TIMESTAMP     NOT NULL,
+	"createdby"  VARCHAR(32)   NOT NULL,
+	UNIQUE ("projectid", "wikiname", "name"),
+	CONSTRAINT wiki_attachment_projectid FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id"),
+	CONSTRAINT wiki_attachment_wikiid FOREIGN KEY ("projectid","wikiname") REFERENCES "cpot_wiki"("projectid","name")
+);
+
+CREATE TABLE "cpot_issue" (
+	"projectid"     VARCHAR(32)   NOT NULL,
+	"id"            NUMBER(20,0)  NOT NULL,
+	"summary"       VARCHAR(255)  NOT NULL,
+	"description"   CLOB          NOT NULL,
+	"type"          VARCHAR(32)   NOT NULL,
+	"status"        VARCHAR(32)   NOT NULL,
+	"owner"         VARCHAR(255)  NOT NULL,
+	"priority"      VARCHAR(32)   NOT NULL,
+	"createdon"     TIMESTAMP     NOT NULL,
+	"updatedon"     TIMESTAMP     NOT NULL,
+	"createdby"     VARCHAR(32)   NOT NULL,
+	"updatedby"     VARCHAR(32)   NOT NULL,
+	PRIMARY KEY ("projectid", "id"),
+	CONSTRAINT issue_projectid FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id")
+);
+CREATE INDEX cpot_issue_index_1 ON "cpot_issue"("projectid", "status", "type", "summary");
+CREATE INDEX cpot_issue_index_2 ON "cpot_issue"("projectid", "summary");
+
+CREATE TABLE "cpot_issue_attachment" (
+	"projectid"  VARCHAR(32)   NOT NULL,
+	"issueid"    NUMBER(20,0)  NOT NULL,
+	"name"       VARCHAR(255)  NOT NULL,
+	"encname"    VARCHAR(255)  NOT NULL,
+	"createdon"  TIMESTAMP     NOT NULL,
+	"createdby"  VARCHAR(32)   NOT NULL,
+	UNIQUE ("projectid", "issueid", "name"),
+	CONSTRAINT issue_attachment_projectid FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id"),
+	CONSTRAINT issue_attachment_issueid FOREIGN KEY ("projectid","issueid") REFERENCES "cpot_issue"("projectid","id")
+);
+
+CREATE TABLE "cpot_issue_change" (
+	"projectid"    VARCHAR(32)  NOT NULL,
+	"id"           NUMBER(20,0) NOT NULL,
+	"sno"          NUMBER(20,0) NOT NULL,
+	"type"         VARCHAR(32)  NOT NULL,
+	"status"       VARCHAR(32)  NOT NULL,
+	"owner"        VARCHAR(255) NOT NULL,
+	"priority"     VARCHAR(32)  NOT NULL,
+	"comment" CLOB         NOT NULL,
+	"updatedon"    TIMESTAMP    NOT NULL,
+	"updatedby"    VARCHAR(32)  NOT NULL,
+	PRIMARY KEY ("projectid", "id", "sno"),
+	CONSTRAINT issue_update_id FOREIGN KEY ("projectid","id") REFERENCES "cpot_issue"("projectid","id")
+);
+
+CREATE INDEX cpot_issue_change_index_1 ON "cpot_issue_change"("projectid", "id", "updatedon");
+
+CREATE TABLE "cpot_issue_change_attachment" (
+	"projectid"  VARCHAR(32)   NOT NULL,
+	"issueid"    NUMBER(20,0)  NOT NULL,
+	"issuesno"   NUMBER(20,0)  NOT NULL,
+	"name"       VARCHAR(255)  NOT NULL,
+	"encname"    VARCHAR(255)  NOT NULL,
+	"createdon"  TIMESTAMP     NOT NULL,
+	"createdby"  VARCHAR(32)   NOT NULL,
+	UNIQUE ("projectid", "issueid", "name"),
+	CONSTRAINT issue_change_attachment_c1 FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id"),
+	CONSTRAINT issue_change_attachment_c2 FOREIGN KEY ("projectid","issueid","issuesno") REFERENCES "cpot_issue_change"("projectid","id","sno")
+);
+
+CREATE TABLE "cpot_file" (
+	"projectid"   VARCHAR(32)   NOT NULL,
+	"name"        VARCHAR(255)  NOT NULL,
+	"encname"     VARCHAR(255)  NOT NULL,
+	"tag"         VARCHAR(54)   NOT NULL,
+	"summary"     VARCHAR(255)  NOT NULL,
+	"md5sum"      CHAR(32)      NOT NULL,
+	"description" CLOB          NOT NULL,
+	"createdon"   TIMESTAMP      NOT NULL,
+	"updatedon"   TIMESTAMP      NOT NULL, 
+	"createdby"   VARCHAR(32)    NOT NULL,
+	"updatedby"   VARCHAR(32)    NOT NULL,
+	UNIQUE ("projectid", "name"),
+	UNIQUE ("encname"),
+	CONSTRAINT file_projectid FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id")
+);
+
+CREATE INDEX cpot_file_index_1 ON "cpot_file"("projectid", "tag", "name");
+
+CREATE TABLE "cpot_code_review" (
+	"projectid"    VARCHAR(32)   NOT NULL,
+	"rev"          NUMBER(20,0)  NOT NULL,
+	"sno"          NUMBER(20,0)  NOT NULL,
+	"comment" CLOB          NOT NULL,
+	"createdon"    TIMESTAMP     NOT NULL,
+	"createdby"    VARCHAR(32)   NOT NULL,
+	"updatedon"    TIMESTAMP     NOT NULL,
+	"updatedby"    VARCHAR(32)   NOT NULL,
+	UNIQUE ("projectid", "rev", "sno"),
+	CONSTRAINT code_review_projectid FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id")
+);
+
+CREATE TABLE "cpot_log"  (
+	"id"         NUMBER(20,0) PRIMARY KEY,
+	"projectid"  VARCHAR(32)  NOT NULL,
+	"type"       VARCHAR(16)  NOT NULL,
+	"action"     VARCHAR(16)  NOT NULL,
+	"userid"     VARCHAR(32)  NOT NULL,
+	"message"    CLOB         NOT NULL,
+	"createdon"  TIMESTAMP    NOT NULL
+);
+
+CREATE INDEX codepopt_log_index_1 ON "cpot_log"("createdon", "projectid", "type", "action");
+
+CREATE SEQUENCE "cpot_log_id_seq";
+CREATE OR REPLACE TRIGGER cpot_inc_log_id BEFORE INSERT ON "cpot_log" FOR EACH ROW WHEN (new."id" IS NULL)
+BEGIN
+	SELECT "cpot_log_id_seq".NEXTVAL INTO :new."id" FROM dual;
+END;
+/
+
+CREATE TABLE "cpot_user_settings" (
+	"userid"              VARCHAR(32) PRIMARY KEY,
+	"code_hide_line_num"  CHAR(1) NOT NULL,
+	"code_hide_metadata"  CHAR(1) NOT NULL,
+	"icon_name"           VARCHAR(255) UNIQUE NULL
+);
+
+CREATE TABLE "cpot_user" (
+	"userid"     VARCHAR(32)  PRIMARY KEY,
+	"passwd"     VARCHAR(255) NOT NULL,
+	"email"      VARCHAR(255),
+	"enabled"    CHAR(1)      DEFAULT 'N' NOT NULL CHECK("enabled" in ('Y', 'N'))
+);
+
+CREATE OR REPLACE TRIGGER cpot_upon_project_id_update AFTER UPDATE OF "id" ON "cpot_project" FOR EACH ROW
+BEGIN
+	UPDATE "cpot_project_membership" SET "projectid" = :new."id" WHERE "projectid" = :old."id";
+	UPDATE "cpot_wiki" SET "projectid" = :new."id" WHERE "projectid" = :old."id";
+	UPDATE "cpot_wiki_attachment" SET "projectid" = :new."id" WHERE "projectid" = :old."id";
+	UPDATE "cpot_issue" SET "projectid" = :new."id" WHERE "projectid"= :old."id";
+	UPDATE "cpot_issue_attachment" SET "projectid" = :new."id" WHERE "projectid" = :old."id";
+	UPDATE "cpot_issue_change" SET "projectid" = :new."id" WHERE "projectid" = :old."id";
+	UPDATE "cpot_issue_change_attachment" SET "projectid" = :new."id" WHERE "projectid" = :old."id";
+	UPDATE "cpot_file" SET "projectid" = :new."id" WHERE "projectid" = :old."id";
+	UPDATE "cpot_code_review" SET "projectid" = :new."id" WHERE "projectid" = :old."id";
+END;
+/
+
+CREATE OR REPLACE TRIGGER cpot_upon_wiki_name_update AFTER UPDATE OF "name" ON "cpot_wiki" FOR EACH ROW
+BEGIN
+	UPDATE "cpot_wiki_attachment" SET "wikiname" = :new."name" WHERE "projectid" = :old."projectid" AND "wikiname" = :old."name";
+END;
+/
+
+CREATE OR REPLACE TRIGGER cpot_upon_issue_id_update AFTER UPDATE OF "id" ON "cpot_issue" FOR EACH ROW
+BEGIN
+	UPDATE "cpot_issue_attachment" SET "issueid" = :new."id" WHERE "projectid" = :old."projectid" AND "issueid" = :old."id";
+	UPDATE "cpot_issue_change" SET "id" = :new."id" WHERE "projectid" = :old."projectid" AND "id" = :old."id";
+	UPDATE "cpot_issue_change_attachment" SET "issueid" = :new."id" WHERE "projectid" = :old."projectid" AND "issueid" = :old."id";
+END;
+/
+
+CREATE OR REPLACE TRIGGER cpot_upon_issue_chsno_update AFTER UPDATE OF "id" ON "cpot_issue_change" FOR EACH ROW
+BEGIN
+	UPDATE "cpot_issue_change_attachment" SET "issuesno" = :new."sno" WHERE "projectid" = :old."projectid" AND "issueid" = :old."id" AND "issuesno" = :old."sno";
+END;
+/

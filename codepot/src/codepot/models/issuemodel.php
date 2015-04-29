@@ -51,7 +51,7 @@ class IssueModel extends Model
 		if ($search->priority != '') $this->db->where ('priority', $search->priority);
 		if ($search->owner != '') $this->db->like ('owner', $search->owner);
 		if ($search->summary != '') $this->db->like ('summary', $search->summary);
-		$this->db->select ('count(id) as count');
+		$this->db->select ('count(*) as count');
 		$query = $this->db->get ('issue');
 		if ($this->db->trans_status() === FALSE) 
 		{
@@ -61,7 +61,8 @@ class IssueModel extends Model
 		
 		$result = $query->result();
 		
-		$num = empty($result)? 0: $result[0]->count;
+		$num = empty($result)? 0: 
+		       isset($result[0]->COUNT)? $result[0]->COUNT: $result[0]->count;
 
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() === FALSE) return FALSE;
@@ -112,10 +113,7 @@ class IssueModel extends Model
 		if ($hour_limit > 0)
 		{
 			//$this->db->where ("updatedon >= SYSDATE() - INTERVAL {$hour_limit} HOUR");
-			if (CODEPOT_DATABASE_DRIVER == 'mysql')
-				$this->db->where ("updatedon >= CURRENT_TIMESTAMP - INTERVAL {$hour_limit} HOUR");
-			else
-				$this->db->where ("updatedon >= CURRENT_TIMESTAMP - INTERVAL '{$hour_limit} HOUR'");
+			$this->db->where ("updatedon >= CURRENT_TIMESTAMP - INTERVAL '{$hour_limit}' HOUR");
 		}
 
 		if (strlen($userid) > 0) 
@@ -180,7 +178,7 @@ class IssueModel extends Model
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue_change');
 
-                $this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'create');
 		$this->db->set ('projectid', $issue->projectid);
@@ -189,7 +187,7 @@ class IssueModel extends Model
                 $this->db->insert ('log');
 
 		$this->db->trans_complete ();
-                if ($this->db->trans_status() === FALSE) return FALSE;
+		if ($this->db->trans_status() === FALSE) return FALSE;
 
 		return $newid;
 	}
@@ -211,10 +209,10 @@ class IssueModel extends Model
 		$this->db->set ('projectid', $issue->projectid);
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   $issue->id);
-                $this->db->insert ('log');
+		$this->db->insert ('log');
 
 		$this->db->trans_complete ();
-                if ($this->db->trans_status() === FALSE) return FALSE;
+		if ($this->db->trans_status() === FALSE) return FALSE;
 
 		return $issue->id;
 	}
@@ -247,16 +245,16 @@ class IssueModel extends Model
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue_change');
 
-                $this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $issue->projectid);
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   $issue->id);
-                $this->db->insert ('log');
+		$this->db->insert ('log');
 
 		$this->db->trans_complete ();
-                if ($this->db->trans_status() === FALSE) return FALSE;
+		if ($this->db->trans_status() === FALSE) return FALSE;
 
 		return $issue->id;
 	}
@@ -300,16 +298,16 @@ class IssueModel extends Model
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue');
 
-                $this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'change');
 		$this->db->set ('projectid', $project->id);
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   $id);
-                $this->db->insert ('log');
+		$this->db->insert ('log');
 
 		$this->db->trans_complete ();
-                if ($this->db->trans_status() === FALSE) return FALSE;
+		if ($this->db->trans_status() === FALSE) return FALSE;
 
 		return $id;
 	}
@@ -395,16 +393,16 @@ class IssueModel extends Model
 		$this->db->where ('id', $issue->id);
 		$this->db->delete ('issue');
 
-                $this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'delete');
 		$this->db->set ('projectid', $issue->projectid);
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   $issue->id);
-                $this->db->insert ('log');
+		$this->db->insert ('log');
 
 		$this->db->trans_complete ();
-                return $this->db->trans_status();
+		return $this->db->trans_status();
 	}
 
 }

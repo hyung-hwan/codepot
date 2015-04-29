@@ -16,17 +16,17 @@ CREATE TABLE site (
 ) charset=utf8 engine=InnoDB;
 
 CREATE TABLE project (
-	id          VARCHAR(32)  PRIMARY KEY,
-	name        VARCHAR(255) UNIQUE NOT NULL,
-	summary     VARCHAR(255) NOT NULL,
-	description TEXT NOT NULL,
-	commitable  CHAR(1)      NOT NULL DEFAULT 'Y',
-	public      CHAR(1)      NOT NULL DEFAULT 'Y',
+	id             VARCHAR(32)  PRIMARY KEY,
+	name           VARCHAR(255) UNIQUE NOT NULL,
+	summary        VARCHAR(255) NOT NULL,
+	description    TEXT NOT NULL,
+	commitable     CHAR(1)      NOT NULL DEFAULT 'Y',
+	public         CHAR(1)      NOT NULL DEFAULT 'Y',
 
-	createdon   DATETIME     NOT NULL,
-	updatedon   DATETIME     NOT NULL,
-	createdby   VARCHAR(32)  NOT NULL,
-	updatedby   VARCHAR(32)  NOT NULL
+	createdon      DATETIME     NOT NULL,
+	updatedon      DATETIME     NOT NULL,
+	createdby      VARCHAR(32)  NOT NULL,
+	updatedby      VARCHAR(32)  NOT NULL
 
 ) charset=utf8 engine=InnoDB;
 
@@ -117,18 +117,18 @@ CREATE TABLE issue_attachment (
 ) charset=utf8 engine=InnoDB;
 
 CREATE TABLE issue_change (
-	projectid VARCHAR(32)  NOT NULL,
-	id        BIGINT       NOT NULL,
-	sno       BIGINT       NOT NULL,
+	projectid    VARCHAR(32)  NOT NULL,
+	id           BIGINT       NOT NULL,
+	sno          BIGINT       NOT NULL,
 
-	type      VARCHAR(32)  NOT NULL,
-	status    VARCHAR(32)  NOT NULL,
-	owner     VARCHAR(255) NOT NULL,
-	priority  VARCHAR(32)  NOT NULL,
-	comment   TEXT         NOT NULL,
+	type         VARCHAR(32)  NOT NULL,
+	status       VARCHAR(32)  NOT NULL,
+	owner        VARCHAR(255) NOT NULL,
+	priority     VARCHAR(32)  NOT NULL,
+	comment TEXT         NOT NULL,
 
-	updatedon DATETIME     NOT NULL,
-	updatedby VARCHAR(32)  NOT NULL,
+	updatedon    DATETIME     NOT NULL,
+	updatedby    VARCHAR(32)  NOT NULL,
 
 	PRIMARY KEY (projectid, id, sno),
 	KEY issue_update_time (projectid, id, updatedon),
@@ -180,16 +180,16 @@ CREATE TABLE file (
 ) charset=utf8 engine=InnoDB;
 
 CREATE TABLE code_review (
-	projectid VARCHAR(32)   NOT NULL,
-	rev       BIGINT        NOT NULL,
-	sno       BIGINT        NOT NULL,
-	comment   TEXT          NOT NULL,
+	projectid    VARCHAR(32)   NOT NULL,
+	rev          BIGINT        NOT NULL,
+	sno          BIGINT        NOT NULL,
+	comment TEXT          NOT NULL,
 
-	createdon DATETIME      NOT NULL,
-	createdby VARCHAR(32)   NOT NULL,
+	createdon    DATETIME      NOT NULL,
+	createdby    VARCHAR(32)   NOT NULL,
 
-	updatedon DATETIME      NOT NULL,
-	updatedby VARCHAR(32)   NOT NULL,
+	updatedon    DATETIME      NOT NULL,
+	updatedby    VARCHAR(32)   NOT NULL,
 
 	UNIQUE KEY code_review_id (projectid, rev, sno),
 

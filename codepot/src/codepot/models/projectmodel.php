@@ -56,7 +56,7 @@ class ProjectModel extends Model
 	{
 		$this->db->trans_start ();
 
-		$this->db->select ('count(id) as count');
+		$this->db->select ('count(*) as count');
 		// having this line to make it same as getEntries()
 		// causes postgresql to emit this error:
 		//   column "project.name" must appear in the GROUP BY clause or 
@@ -87,8 +87,9 @@ class ProjectModel extends Model
 		}
 
 		$result = $query->result();
-		
-		$num = empty($result)? 0: $result[0]->count;
+
+		$num = empty($result)? 0: 
+		       isset($result[0]->COUNT)? $result[0]->COUNT: $result[0]->count;
 
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() === FALSE) return FALSE;
