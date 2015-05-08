@@ -13,7 +13,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
-<title><title><?php print htmlspecialchars($issue->id)?></title></title>
+<title><?php print htmlspecialchars($issue->id)?></title>
 </head>
 
 <body>
