@@ -12,7 +12,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
-<title><title><?php print htmlspecialchars($file->name)?></title></title>
+<title><?php print htmlspecialchars($file->name)?></title>
 </head>
 
 <body>
