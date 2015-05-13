@@ -130,7 +130,7 @@ svn_base_url = "${REQUEST_PROTOCOL}://${HTTP_HOST}/svn"
 ;------------------------------------------------------------------------------
 ; Login model to use. LdapLoginModel or DbLoginModel. 
 ;------------------------------------------------------------------------------
-#login_model = "LdapLoginModel"
+;login_model = "LdapLoginModel"
 login_model = "DbLoginModel"
 
 ;------------------------------------------------------------------------------
