@@ -95,12 +95,19 @@ $(function () {
 
 	ace_modes = codepot_get_ace_modes();
 	var detected_mode = null;
+	var text_mode = null;
+	var text_opt = null;
 	for (var i in ace_modes)
 	{
 		var mode = ace_modes[i];
 
 		var opt = $("<option></option>").val(mode.mode).text(mode.caption);
 
+		if (!text_mode && mode.caption == 'Text') 
+		{
+			text_mode = mode;
+			text_opt = opt;
+		}
 		if (mode.supportsFile("<?php print addslashes($file['name']); ?>"))
 		{
 			if (!detected_mode) 
@@ -112,6 +119,12 @@ $(function () {
 
 		
 		mode_menu.append(opt);
+	}
+
+	if (!detected_mode && text_mode) 
+	{
+		text_opt.attr('selected', 'selected');
+		detected_mode = text_mode;
 	}
 
 	var editor = ace.edit("code_edit_mainarea_result_code");
@@ -239,10 +252,9 @@ $this->load->view (
 
 <div class="title" id="code_edit_mainarea_title">
 <?php
-	/*print anchor (
+	print anchor (
 		"code/file/{$project->id}{$revreqroot}",
-		htmlspecialchars($project->name));*/
-	print htmlspecialchars($project->name);
+		htmlspecialchars($project->name));
 
 	$exps = explode ('/', $headpath);
 	$expsize = count($exps);
@@ -253,12 +265,9 @@ $this->load->view (
 		$xpar = $this->converter->AsciiToHex ($par);
 
 		print '/';
-		/*
 		print anchor (
 			"code/file/{$project->id}/{$xpar}{$revreq}",
 			htmlspecialchars($exps[$i]));
-		*/
-		print htmlspecialchars($exps[$i]);
 	}
 
 	if ($headpath != $file['fullpath'])
