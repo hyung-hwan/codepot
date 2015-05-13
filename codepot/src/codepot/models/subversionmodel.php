@@ -249,6 +249,50 @@ class SubversionModel extends Model
 		return $fileinfo;
 	}
 
+	public $store_file_errmsg = '';
+
+	function capture_save_error ($errno, $errmsg)
+	{
+		$this->store_file_errmsg = $errmsg;
+	}
+
+	function storeFile ($projectid, $path, $committer, $commit_message, $text)
+	{
+		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		$canon_path = $this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+		$canon_dir = dirname($canon_path);
+		$file_name = basename($canon_path);
+		$dirurl = 'file://' . $canon_dir;
+
+		set_error_handler (array ($this, 'capture_save_error'));
+		$tfname = @tempnam(__FILE__, 'codepot-store-file-');
+		restore_error_handler ();
+		if ($tfname === FALSE) 
+		{
+			return FALSE;
+		}
+
+		$actual_tfname = $tfname . '.d';
+		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
+
+/* TODO: optimize it not to get all files... svn_checkout needs to be enhanced???*/
+		set_error_handler (array ($this, 'capture_save_error'));
+		if (@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $committer) === FALSE ||
+		    @svn_checkout ($dirurl, $actual_tfname, SVN_REVISION_HEAD, SVN_NON_RECURSIVE) === FALSE ||
+		    @file_put_contents ("{$actual_tfname}/{$file_name}", $text) === FALSE ||
+		    ($result = @svn_commit ($commit_message, $actual_tfname)) === FALSE)
+		{
+			restore_error_handler ();
+			codepot_delete_files ($actual_tfname, TRUE);
+			@unlink ($tfname);
+			return FALSE;
+		}
+		restore_error_handler ();
+		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
+		@unlink ($tfname);
+		return TRUE;
+	}
+
 	function getRevHistory ($projectid, $path, $rev)
 	{
 		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";

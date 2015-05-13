@@ -6,6 +6,7 @@ class Code extends Controller
 	var $VIEW_FOLDER = 'code_folder';
 	var $VIEW_FILE = 'code_file';
 	var $VIEW_BLAME = 'code_blame';
+	var $VIEW_EDIT = 'code_edit';
 	var $VIEW_HISTORY = 'code_history';
 	var $VIEW_REVISION = 'code_revision';
 	var $VIEW_DIFF = 'code_diff';
@@ -219,6 +220,146 @@ class Code extends Controller
 			}
 		}
 	}
+
+	function edit ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+	
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		$data['login'] = $login;
+
+		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
+		$path = $this->_normalize_path ($path);
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE)
+		{
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else if ($project === NULL)
+		{
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
+			$file = $this->subversion->getFile ($projectid, $path, $rev);
+			if ($file === FALSE)
+			{
+				$data['project'] = $project;
+				$data['message'] = 'Failed to get file';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else if ($file['type'] == 'file')
+			{
+				$head_rev = $this->subversion->getHeadRev ($projectid, $path, $rev);
+				if ($head_rev === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = 'Failed to get head revision';
+					$this->load->view ($this->VIEW_ERROR, $data);
+				}
+				else
+				{
+					$file['head_rev'] = $head_rev;
+					$file['prev_rev'] = $this->subversion->getPrevRev (
+						$projectid, $path, $file['created_rev']);
+					$file['next_rev'] = $this->subversion->getNextRev (
+						$projectid, $path, $file['created_rev']);
+
+					$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
+					if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
+
+					$file['head_tag'] = $this->subversion->getRevProp ($projectid, $file['head_rev'], CODEPOT_SVN_TAG_PROPERTY);
+					if ($file['head_tag'] === FALSE) $file['head_tag'] = '';
+
+
+					$data['project'] = $project;
+					$data['headpath'] = $path;
+					$data['file'] = $file; 
+					$data['revision'] = $rev;
+
+					$this->load->view ($this->VIEW_EDIT, $data);
+				}
+			}
+			else
+			{
+				// it's not a file, you can't edit a directory.
+				$data['project'] = $project;
+				$data['message'] = 'You cannot edit a directory.';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+		}
+	}
+
+	function enjson_save ($projectid = '', $path = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+	
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'signin';
+		}
+		else if (($text = $this->input->post('text')) === FALSE)
+		{
+			$status = 'notext';
+		}
+		else if (($message = $this->input->post('message')) == FALSE)
+		{
+			$status = 'nomsg';
+		}
+		else
+		{
+			$path = $this->converter->HexToAscii ($path);
+			if ($path == '.') $path = ''; /* treat a period specially */
+			$path = $this->_normalize_path ($path);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = 'dberr';
+			}
+			else if ($project === NULL)
+			{
+				$status = 'noent';
+			}
+			else
+			{
+				if ($this->subversion->storeFile ($projectid, $path, $login['id'], $message, $text) === FALSE)
+				{
+					$status = 'repoerr - ' . $this->subversion->store_file_errmsg;
+				}
+				else
+				{
+					$status = 'ok';
+				}
+			}
+		}
+
+		$result = array (
+			'status' => $status
+		);
+
+		print codepot_json_encode ($result);
+	}
+
 
 	function history ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
