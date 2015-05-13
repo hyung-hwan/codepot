@@ -1,4 +1,4 @@
-SUBDIRS =  codepot css js system 
+SUBDIRS =  codepot css js ace system 
 
 wwwdir=$(WWWDIR)
 www_DATA =  \

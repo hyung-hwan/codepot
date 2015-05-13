@@ -137,6 +137,7 @@ AC_CONFIG_FILES([
 	src/css/Makefile
 	src/js/prettify/Makefile
 	src/js/Makefile
+	src/ace/Makefile
 	src/system/cache/Makefile
 	src/system/codeigniter/Makefile
 	src/system/database/drivers/mssql/Makefile

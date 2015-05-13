@@ -98,6 +98,29 @@
 }
 
 /*----------------------------------------------- 
+ * project source edit view 
+ *-----------------------------------------------*/
+#code_edit_mainarea_result_code {
+	font-family: consolas, monaco, "Andale Mono", monospace;
+	overflow: auto;
+	border: none;
+	white-space: pre;
+
+	tab-size: 5;
+	-moz-tab-size: 5;
+	-o-tab-size: 5;
+
+	font-size: 1em;
+	line-height: 1.4em;
+
+	position: absolute !important;
+	/*top: 300;
+	bottom: 200;
+	left: 100;
+	right: 100;*/
+}
+
+/*----------------------------------------------- 
  * project source history view 
  *-----------------------------------------------*/
 #code_history_mainarea_result {

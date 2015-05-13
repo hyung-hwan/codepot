@@ -54,6 +54,8 @@ $(function () {
 		}
 	});
 
+	$("#code_file_mainarea_edit_button").button();
+
 	// for code rendering
 	$("#code_file_mainarea_result_raw").html ($("#code_file_mainarea_result_code").html())
 	prettyPrint ();
@@ -233,8 +235,17 @@ $this->load->view (
 
 		print ' | ';
 		printf ('%s: %s', $this->lang->line('Size'), $file['size']);
+
+
+		if ((isset($login['id']) && $login['id'] != ''))
+		{
+			print ' ';
+			print anchor ("code/edit/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Edit'), 'id="code_file_mainarea_edit_button"');
+		}
 	?>
+
 	<a id="code_file_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
+	
 </div>
 
 <div style="display:none">
