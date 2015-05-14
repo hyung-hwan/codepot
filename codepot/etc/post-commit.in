@@ -7,9 +7,13 @@ use DBI;
 use File::Basename;
 use POSIX qw(strftime);
 
+use SVN::Core;
+use SVN::Repos;
+use SVN::Fs;
+
 my $CFG_FILE = '@CFGDIR@/codepot.ini';
-my $REPO = $ARGV[0];
-my $REPOBASE = basename($REPO);
+my $REPOFS = $ARGV[0];
+my $REPOBASE = basename($REPOFS);
 my $REV = $ARGV[1];
 
 my $QC = '';
@@ -120,11 +124,38 @@ sub write_commit_log
 	return (0, undef);
 }
 
+
+sub get_author
+{
+	my $pool = SVN::Pool->new(undef); 
+	my $svn = eval { SVN::Repos::open ($REPOFS, $pool) };
+	if (!defined($svn))
+	{
+		print (STDERR "Cannot open svn - $REPOFS\n");
+		return undef;
+	}
+	
+	my $fs = $svn->fs ();
+	if (!defined($fs))
+	{
+		print (STDERR "Cannot open fs - $REPOFS\n");
+		return undef;
+	}
+
+	my $author = $fs->revision_prop ($REV, 'svn:author');
+	return $author;
+}
+
 #------------------------------------------------------------
 # MAIN
 #------------------------------------------------------------
 
-my $AUTHOR = `svnlook author -r "${REV}" "${REPO}"`;
+my $AUTHOR = get_author();
+if (!defined($AUTHOR))
+{
+	print (STDERR "Cannot get author for $REPOBASE $REV\n");
+	exit (1);
+}
 chomp ($AUTHOR);
 
 my $cfg = get_config ();
