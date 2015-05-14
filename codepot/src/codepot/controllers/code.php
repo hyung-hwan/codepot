@@ -221,7 +221,7 @@ class Code extends Controller
 		}
 	}
 
-	function edit ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
+	protected function _edit ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD, $caller = 'file')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
@@ -291,6 +291,7 @@ class Code extends Controller
 					$data['headpath'] = $path;
 					$data['file'] = $file; 
 					$data['revision'] = $rev;
+					$data['caller'] = $caller;
 
 					$this->load->view ($this->VIEW_EDIT, $data);
 				}
@@ -303,6 +304,16 @@ class Code extends Controller
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
 		}
+	}
+
+	function edit ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
+	{
+		return $this->_edit ($projectid, $path, $rev, 'file');
+	}
+
+	function bledit ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
+	{
+		return $this->_edit ($projectid, $path, $rev, 'blame');
 	}
 
 	function enjson_save ($projectid = '', $path = '')

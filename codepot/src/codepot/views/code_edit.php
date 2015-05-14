@@ -33,7 +33,7 @@ $hex_headpath = $this->converter->AsciiToHex($headpath);
 ?>
 
 <script type="text/javascript">
-var base_return_anchor = codepot_merge_path('<?php print site_url() ?>', '<?php print "/code/file/{$project->id}/{$hex_headpath}" ?>');
+var base_return_anchor = codepot_merge_path('<?php print site_url() ?>', '<?php print "/code/${caller}/{$project->id}/{$hex_headpath}" ?>');
 
 function resize_editor()
 {
@@ -253,7 +253,7 @@ $this->load->view (
 <div class="title" id="code_edit_mainarea_title">
 <?php
 	print anchor (
-		"code/file/{$project->id}{$revreqroot}",
+		"code/${caller}/{$project->id}{$revreqroot}",
 		htmlspecialchars($project->name));
 
 	$exps = explode ('/', $headpath);
@@ -266,7 +266,7 @@ $this->load->view (
 
 		print '/';
 		print anchor (
-			"code/file/{$project->id}/{$xpar}{$revreq}",
+			"code/${caller}/{$project->id}/{$xpar}{$revreq}",
 			htmlspecialchars($exps[$i]));
 	}
 
@@ -284,9 +284,9 @@ $this->load->view (
 		/* Saving file work on the head only. so the links here don't include the given revision anymore */
 		print '<select id="code_edit_mainarea_mode"></select>';
 		print ' ';
-		print anchor ("code/file/{$project->id}/{$hex_headpath}", $this->lang->line('Save'), 'id="code_edit_mainarea_save_button"');
+		print anchor ("code/${caller}/{$project->id}/{$hex_headpath}", $this->lang->line('Save'), 'id="code_edit_mainarea_save_button"');
 		print ' ';
-		print anchor ("code/file/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Return'), 'id="code_edit_mainarea_return_button"');
+		print anchor ("code/${caller}/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Return'), 'id="code_edit_mainarea_return_button"');
 	?>
 
 </div>

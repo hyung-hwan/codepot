@@ -487,7 +487,8 @@ $this->load->view (
 		$xpar = $this->converter->AsciiTohex ($headpath);
 		if ($revision > 0 && $revision < $next_revision)
 		{
-			print anchor ("code/file/{$project->id}/{$xpar}", $this->lang->line('Head revision'));
+			$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
+			print anchor ("code/file/{$project->id}/{$xpar}", $head_revision_text);
 			print ' | ';
 		}
 

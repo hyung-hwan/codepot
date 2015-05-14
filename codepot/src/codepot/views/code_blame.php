@@ -51,6 +51,7 @@ $(function () {
 		}
 	});
 
+	$("#code_blame_mainarea_edit_button").button();
 	prettyPrint ();
 });
 </script>
@@ -153,7 +154,8 @@ $xpar = $this->converter->AsciiToHex ($headpath);
 
 if ($file['created_rev'] != $file['head_rev'])
 {
-	print anchor ("code/blame/{$project->id}/${xpar}", $this->lang->line('Head revision'));
+	$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
+	print anchor ("code/blame/{$project->id}/${xpar}", $head_revision_text);
 	print ' | ';
 }
 
@@ -190,18 +192,24 @@ print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $download_anchor_tex
 			sprintf("%s %s", $this->lang->line('Revision'), $file['created_rev'])
 		);
 
-                if (!empty($file['created_tag']))
-                {
+		if (!empty($file['created_tag']))
+		{
 			print ' ';
 			print ('<span class="left_arrow_indicator">');
 			print htmlspecialchars($file['created_tag']);
 			print ('</span>');
-                }
+		}
 		print ' ';
 		print anchor ("code/blame/{$project->id}/${xpar}/{$file['next_rev']}", '<i class="fa fa-arrow-circle-right"></i>');
 
 		print ' | ';
 		printf ('%s: %s', $this->lang->line('Size'), $file['size']);
+
+		if ((isset($login['id']) && $login['id'] != ''))
+		{
+			print ' ';
+			print anchor ("code/bledit/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Edit'), 'id="code_blame_mainarea_edit_button"');
+		}
 	?>
 	<a id="code_blame_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
 </div>
