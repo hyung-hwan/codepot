@@ -405,7 +405,10 @@ else
 
 	// show the history details of the previous revision at the root directory
 	$revanc = "code/revision/{$project->id}/!/{$file['against']['created_rev']}";
-	print anchor ($revanc, ($this->lang->line('Revision') . ' ' . $file['against']['created_rev']));
+	$codeanc = "code/file/{$project->id}/{$xpar}/{$file['against']['created_rev']}";
+	print anchor ($revanc, $this->lang->line('Revision'));
+	print ' ';
+	print anchor ($codeanc, $file['against']['created_rev']);
 
 	$currev = $file['created_rev'];
 	$nextrev = $file['against']['next_rev'];
@@ -506,7 +509,10 @@ else
 
 	// show the history details of the current revision at the root directory
 	$revanc = "code/revision/{$project->id}/!/{$file['created_rev']}";
-	print anchor ($revanc, ($this->lang->line('Revision') . ' ' . $file['created_rev']));
+	$codeanc = "code/file/{$project->id}/${xpar}/{$file['created_rev']}";
+	print anchor ($revanc, $this->lang->line('Revision'));
+	print ' ';
+	print anchor ($codeanc, $file['created_rev']);
 
 	$currev = $file['against']['created_rev'];
 	$nextrev = $file['next_rev'];
