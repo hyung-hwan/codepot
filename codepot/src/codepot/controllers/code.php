@@ -128,7 +128,7 @@ class Code extends Controller
 					if (strlen($rf) > 0)
 					{
 						$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
-						if ($readme !== FALSE)
+						if ($readme !== FALSE && $readme['type'] == 'file')
 						{
 							$data['readme_text'] = $readme['content'];
 							$data['readme_file'] = $rf;
