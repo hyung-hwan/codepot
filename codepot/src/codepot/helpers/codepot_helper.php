@@ -423,3 +423,95 @@ if (!function_exists ('codepot_get_fa_file_type'))
 		return 'file';
 	}
 }
+
+if ( ! function_exists('codepot_readfile'))
+{
+
+	function codepot_readfile ($location, $filename, $mimeType='application/octet-stream')
+	{ 
+		if(!file_exists($location))
+		{ 
+			header ("HTTP/1.0 404 Not Found");
+			return;
+		}
+
+		$size = filesize($location);
+		$time = date('r',filemtime($location));
+
+		if ($size <= 0)
+		{
+			header("Content-Type: $mimeType");
+			header('Cache-Control: public, must-revalidate, max-age=0');
+			header('Pragma: no-cache'); 
+			header('Content-Length: ' . $size);
+			header('Content-Disposition: attachment; filename=' . $filename);
+			header('Content-Transfer-Encoding: binary');
+			header('Connection: close'); 
+			header("Last-Modified: $time");
+			flush ();
+		}
+		else
+		{
+
+			$fm = @fopen($location,'rb');
+			if (!$fm) 
+			{ 
+				header ("HTTP/1.0 505 Internal server error");
+				return;
+			}
+	
+			$begin = 0;
+			$end = $size; 
+	
+			if (isset($_SERVER['HTTP_RANGE'])) 
+			{ 
+				if (preg_match('/bytes=\h*(\d+)-(\d*)[\D.*]?/i', $_SERVER['HTTP_RANGE'], $matches))
+				{ 
+					$begin = intval($matches[1]);
+					if (!empty($matches[2])) $end = intval($matches[2]) + 1; 
+				}
+			}
+	
+			if ($end < $begin) $end = $begin;
+	
+			if ($begin > 0 || $end < $size)
+			{
+				header('HTTP/1.0 206 Partial Content');
+			}
+			else
+			{
+				header('HTTP/1.0 200 OK'); 
+			}
+	
+			header("Content-Type: $mimeType");
+			header('Cache-Control: public, must-revalidate, max-age=0');
+			header('Pragma: no-cache'); 
+			header('Accept-Ranges: bytes');
+			header('Content-Length:' . ($end - $begin));
+			header("Content-Range: bytes $begin-" . ($end - 1) . "/$size");
+			header("Content-Disposition: attachment; filename=$filename");
+			header("Content-Transfer-Encoding: binary");
+			header("Last-Modified: $time");
+			header('Connection: close'); 
+			flush ();
+	
+			$cur = $begin;
+			fseek ($fm, $begin, 0);
+	
+			while (!feof($fm) && $cur < $end && (connection_status()==0)) 
+			{ 
+				$len =  min(1024*16,$end-$cur);
+				$x = fread ($fm, $len);
+				if ($x === FALSE) break;
+	
+				print $x;
+				$cur += $len;
+			}
+
+			fclose ($fm);
+		}
+	}
+
+
+}
+

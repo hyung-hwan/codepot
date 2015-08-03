@@ -196,6 +196,7 @@ class File extends Controller
 					return;
 				}
 
+				/*
 				header('Content-Type: application/octet-stream');
 				header('Content-Length: ' . $stat['size']);
 				header('Content-Disposition: attachment; filename=' . $name);
@@ -212,6 +213,8 @@ class File extends Controller
 					$data['message'] = "CANNOT GET FILE - {$file->name}";
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
+				*/
+				codepot_readfile ($path, $name);
 
 				/*
 				$this->load->helper('download');	
