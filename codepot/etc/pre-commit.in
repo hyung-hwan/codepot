@@ -167,6 +167,8 @@ sub check_commit_message
 	}
 	
 	my $log = $txn->prop ('svn:log');
+	$log =~ s/([[:punct:]]{1,2}\s+){3,}/ /g;
+	$log =~ s/[[:punct:]]{3,}/ /g;
 	$log =~ s/^\s+|\s+$//g; # trim leading spaces and  trailing spaces
 	if (length($log) < $minlen) 
 	{
