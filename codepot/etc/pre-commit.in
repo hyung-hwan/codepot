@@ -167,12 +167,13 @@ sub check_commit_message
 	}
 	
 	my $log = $txn->prop ('svn:log');
+	$log =~ s/\s{2,}/ /g;
 	$log =~ s/([[:punct:]]{1,2}\s+){3,}/ /g;
 	$log =~ s/[[:punct:]]{3,}/ /g;
 	$log =~ s/^\s+|\s+$//g; # trim leading spaces and  trailing spaces
 	if (length($log) < $minlen) 
 	{
-		print (STDERR "Commit message too short. must be >= $minlen\n");
+		print (STDERR "Commit message too short. meaningful part must be >= $minlen\n");
 		return 0;
 	}
 
