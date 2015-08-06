@@ -195,7 +195,7 @@ sub check_commit_message
 	my $log = $txn->prop ('svn:log');
 	# TODO: block a certain message patterns. create a configuration item
 	#      for this
-	#if ($log =~ /[[:punct:]]{5,}/ || contains_repeated_chars($log, 4))
+	#if ($log =~ /[[:punct:]]{5,}/ || $log =~ /[[:alpha:]]{40,}/ || contains_repeated_chars($log, 4))
 	#{
 	#	print (STDERR "Commit message rejected\n");
 	#	return 0;
