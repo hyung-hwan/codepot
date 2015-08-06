@@ -138,6 +138,32 @@ sub is_project_commitable
 	return (((scalar(@row) > 0 && $row[0] eq 'Y')? 1: 0), undef);
 }
 
+sub contains_repeated_chars
+{
+	my ($str, $limit) = @_;
+
+	my $len = length($str);
+	my $lc = '';
+	my $count = 1;
+
+	for (my $i = 0; $i < $len; $i++)
+	{
+		my $c = substr($str, $i, 1);
+		if ($lc eq $c)
+		{
+			$count++;
+			if ($count > $limit) { return 1; }
+		}
+		else
+		{
+			$count = 1;
+			$lc = $c;
+		}
+	}
+
+	return 0;
+}
+
 sub check_commit_message
 {
 	my ($minlen) = @_;
@@ -167,6 +193,14 @@ sub check_commit_message
 	}
 	
 	my $log = $txn->prop ('svn:log');
+	# TODO: block a certain message patterns. create a configuration item
+	#      for this
+	#if ($log =~ /[[:punct:]]{5,}/ || contains_repeated_chars($log, 4))
+	#{
+	#	print (STDERR "Commit message rejected\n");
+	#	return 0;
+	#}
+
 	$log =~ s/\s{2,}/ /g;
 	$log =~ s/([[:punct:]]{1,2}\s+){3,}/ /g;
 	$log =~ s/[[:punct:]]{3,}/ /g;
