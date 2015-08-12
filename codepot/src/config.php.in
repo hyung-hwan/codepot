@@ -84,8 +84,9 @@ function load_ini ($file)
 		array ('footer',                       'string',      ''),
 		array ('cloc_command_path',            'string',      CODEPOT_CFG_DIR.'/cloc.pl'),
 		array ('code_folder_readme',           'string',     'README'),
-		array ('svn_tag_property',             'string',     'codepot:tag'),
+		array ('email_sender',                 'string',     ''),
 
+		array ('svn_tag_property',             'string',     'codepot:tag'),
 
 		// these items are not used by php but by subersion hooks written in perl.
 		array ('svn_read_access',                          'string',      'member'),
