@@ -253,6 +253,11 @@ cloc_command_path =  "@CFGDIR@/cloc.pl"
 code_folder_readme = "README.wiki,README.txt,README"
 
 ;------------------------------------------------------------------------------
+; Email address to use when sending notification emails
+;------------------------------------------------------------------------------
+email_sender = ""
+
+;------------------------------------------------------------------------------
 ; Codepot sets this revision property to assign a tag to a specific revision. 
 ;------------------------------------------------------------------------------
 svn_tag_property = "codepot:tag"
@@ -287,3 +292,4 @@ svn_restriction_allowed_subdir_depth_max = "0"
 ; Set it to an empty string to allow all users.
 ;------------------------------------------------------------------------------
 codepot_user_executor = "root"
+
