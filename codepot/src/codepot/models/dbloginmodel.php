@@ -72,8 +72,7 @@ class DbLoginModel extends LoginModel
 
 	function changePassword ($userid, $passwd)
 	{
-		$this->db->trans_start ();
-		$this->db->trans_complete ();
+		$this->db->trans_begin ();
 
 		$this->db->where ('userid', $userid);
 		$this->db->set ('passwd', format_password($passwd,5));
@@ -91,8 +90,28 @@ class DbLoginModel extends LoginModel
 
 	function queryUserInfo ($userid)
 	{
+		$this->db->trans_start ();
+
+		$this->db->select ('email');
+		$this->db->where ('userid', $userid);
+		$query = $this->db->get ('user_account');
+
+		if ($this->db->trans_status() == FALSE)
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+
+		$result = $query->result ();
+		if (empty($result))
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+
 		$user['id'] = $userid;
-		$user['email'] = '';
+		$user['email'] = $result[0]->email;
+
 		return $user;
 	}
 }

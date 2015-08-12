@@ -110,8 +110,9 @@ class LdapLoginModel extends LoginModel
 
 	function queryUserInfo ($userid)
 	{
-		$ldap = @ldap_connect (
-			CODEPOT_LDAP_SERVER_HOST, CODEPOT_LDAP_SERVER_PORT);
+		//$ldap = @ldap_connect (
+		//	CODEPOT_LDAP_SERVER_HOST, CODEPOT_LDAP_SERVER_PORT);
+		$ldap = @ldap_connect (CODEPOT_LDAP_SERVER_URI);
 		if ($ldap === FALSE)
 		{
 			$this->setErrorMessage ("Can't connect to LDAP server");

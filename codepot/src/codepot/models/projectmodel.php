@@ -559,6 +559,34 @@ class ProjectModel extends Model
 
 		return $out;
 	}
+
+	function emailMessageToMembers ($projectid, $login_model, $subject, $message)
+	{
+		$this->db->trans_start ();
+		$this->db->select ('userid');
+		$this->db->where ('projectid', $projectid);
+		$query = $this->db->get ('project_membership');
+		$this->db->trans_complete ();
+		if ($this->db->trans_status() === FALSE) return FALSE;
+
+		$recipients = '';
+		foreach ($query->result() as $v)
+		{
+			$m = $login_model->queryUserInfo ($v->userid);
+			if ($m !== FALSE && $m['email'] != '')
+			{
+				if (!empty($recipients)) $recipients .= ', ';
+				$recipients .= $m['email'];
+			}
+		}
+
+		$additional_headers = '';
+		if (CODEPOT_EMAIL_SENDER != '') $additional_headers .= 'From: ' . CODEPOT_EMAIL_SENDER . "\r\n";
+
+		if (empty($recipients)) return FALSE;
+		mail ($recipients, $subject, wordwrap($message, 70, "\r\n"), $additional_headers);
+		return TRUE;
+	}
 }
 
 ?>

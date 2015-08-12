@@ -553,7 +553,8 @@ class Code extends Controller
 					if ($this->form_validation->run())
 					{
 						$review_comment = $this->input->post('new_review_comment');
-						if ($this->code_review->insertReview ($projectid, $rev, $login['id'], $review_comment) === FALSE)
+						$review_sno = $this->code_review->insertReview ($projectid, $rev, $login['id'], $review_comment);
+						if ($review_sno === FALSE)
 						{
 							$data['popup_error_message'] = 'Cannot add code review comment';
 						}
@@ -561,6 +562,13 @@ class Code extends Controller
 						{
 							// this is a hack to clear form data upon success
 							$this->form_validation->_field_data = array();
+
+							// TODO: message localization
+							$email_subject =  sprintf ('New review message #%d by %s in %s', $review_sno, $login['id'], $projectid);
+							$email_message = 'See ' . current_url();
+							$this->projects->emailMessageToMembers (
+								$projectid, $this->login, $email_subject, $email_message
+							);
 						}
 					}
 					else
