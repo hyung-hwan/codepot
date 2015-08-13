@@ -94,6 +94,7 @@ class LdapLoginModel extends LoginModel
 			{
 				$e = @ldap_get_entries($ldap, $r);
 				if ($e !== FALSE && count($e) > 0 && 
+				    array_key_exists(0, $e) &&
 				    array_key_exists(CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME, $e[0]))
 				{
 					$email = $e[0][CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME][0];
@@ -132,7 +133,47 @@ class LdapLoginModel extends LoginModel
 			return FALSE;
 		}
 
-		$f_userid = $this->formatString (CODEPOT_LDAP_USERID_FORMAT, $userid, '');
+		if (CODEPOT_LDAP_AUTH_MODE == 2)
+		{
+			$f_basedn = $this->formatString (CODEPOT_LDAP_USERID_SEARCH_BASE, $userid, '');
+			$f_filter = $this->formatString (CODEPOT_LDAP_USERID_SEARCH_FILTER, $userid, '');
+			
+			$sr = @ldap_search ($ldap, $f_basedn, $f_filter, array("dn"));
+			if ($sr === FALSE)
+			{
+				$this->setErrorMessage (ldap_error ($ldap));
+				ldap_close ($ldap);
+				return FALSE;
+			}
+
+			$ec = @ldap_count_entries ($ldap, $sr);
+			if ($ec === FALSE)
+			{
+				$this->setErrorMessage (ldap_error ($ldap));
+				ldap_close ($ldap);
+				return FALSE;
+			}
+
+			if ($ec <= 0)
+			{
+				$this->setErrorMessage ('No such user');
+				ldap_close ($ldap);
+				return FALSE;
+			}
+
+			if (($fe = @ldap_first_entry ($ldap, $sr)) === FALSE ||
+			    ($f_userid = ldap_get_dn ($ldap, $fe)) === FALSE)
+			{
+				$this->setErrorMessage (ldap_error ($ldap));
+				ldap_close ($ldap);
+				return FALSE;
+			}
+		}
+		else
+		{
+			$f_userid = $this->formatString (CODEPOT_LDAP_USERID_FORMAT, $userid, '');
+		}
+
 		$email = '';
 
 		if (CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME != '')
@@ -143,13 +184,13 @@ class LdapLoginModel extends LoginModel
 			{
 				$e = @ldap_get_entries($ldap, $r);
 				if ($e !== FALSE && count($e) > 0 && 
+				    array_key_exists(0, $e) &&
 				    array_key_exists(CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME, $e[0]))
 				{
 					$email = $e[0][CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME][0];
 				}
 			}
 		}
-
 
 		//@ldap_unbind ($ldap);
 		@ldap_close ($ldap);
