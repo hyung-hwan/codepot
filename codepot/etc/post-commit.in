@@ -205,8 +205,37 @@ sub get_author_email_ldap
 		return (-1, undef); 
 	}
 
-	my $f_basedn = format_string ($cfg->{ldap_userid_format}, $userid, '');
-	my $f_filter = '(' . $cfg->{ldap_mail_attribute_name} . '=*)';
+
+	my $f_basedn = '';
+	my $f_filter = '';
+
+	if ($cfg->{ldap_auth_mode} == 2)
+	{
+		$f_basedn = format_string ($cfg->{ldap_userid_search_base}, $userid, '');
+		$f_filter = format_string ($cfg->{ldap_userid_search_filter}, $userid, '');
+
+		$res = $ldap->search (base => $f_basedn, scope => 'sub', filter => $f_filter);
+		if ($res->code != LDAP_SUCCESS)
+		{
+			$ldap->unbind();
+			return (-1, undef);
+		} 
+
+		my $entry = $res->entry(0); # get the first entry only
+		if (!defined($entry))
+		{
+			$ldap->unbind();
+			return (0, undef);
+		}
+
+		$f_basedn = $entry->dn ();
+	}
+	else
+	{
+		$f_basedn = format_string ($cfg->{ldap_userid_format}, $userid, '');
+	}
+
+	$f_filter = '(' . $cfg->{ldap_mail_attribute_name} . '=*)';
 
 	$res = $ldap->search (base => $f_basedn, scope => 'sub', filter => $f_filter);
 	if ($res->code != LDAP_SUCCESS) 
