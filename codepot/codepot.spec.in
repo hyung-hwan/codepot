@@ -15,7 +15,7 @@ Group: Applications/Utilities
 #BuildArch: noarch
 Source0: %{name}-%{version}.tar.gz
 
-Requires: httpd %{php_package_name} %{php_package_name}-ldap %{php_package_name}-mysql %{php_package_name}-gd subversion subversion-perl mod_dav_svn mod_perl perl perl-LDAP perl-Config-Simple perl-URI perl-DBI perl-Digest-SHA1
+Requires: httpd %{php_package_name} %{php_package_name}-ldap %{php_package_name}-mysql %{php_package_name}-gd subversion subversion-perl mod_dav_svn mod_perl perl perl-LDAP perl-Config-Simple perl-URI perl-DBI perl-Digest-SHA1 perl-Mail-Sendmail
 # %{php_package_name}-pecl-svn > 1.2.0
 # %{php_package_name}-pgsql perl-DBD-Pg
 
