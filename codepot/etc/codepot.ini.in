@@ -258,6 +258,13 @@ code_folder_readme = "README.wiki,README.txt,README"
 email_sender = ""
 
 ;------------------------------------------------------------------------------
+; URL to include when sending a commit notification message.
+; You can specify multiple urls. in fact, it's a free text.
+; Replacement is performed for ${REV}, ${AUTHOR}, ${PROJECTID}.
+;------------------------------------------------------------------------------
+commit_notification_url = ""
+
+;------------------------------------------------------------------------------
 ; Codepot sets this revision property to assign a tag to a specific revision. 
 ;------------------------------------------------------------------------------
 svn_tag_property = "codepot:tag"

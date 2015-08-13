@@ -54,7 +54,8 @@ sub get_config
 		database_driver => $cfg->param ("database_driver"),
 		database_prefix => $cfg->param ("database_prefix"),
 
-		email_sender => $cfg->param ("email_sender")
+		email_sender => $cfg->param ("email_sender"),
+		commit_notification_url => $cfg->param ("commit_notification_url")
 	};
 
 	return $config;
@@ -343,6 +344,17 @@ sub email_message_to_project_members
 	return (1, undef);
 }
 
+sub format_commit_url 
+{
+	my ($fmt, $projectid, $author, $rev) = @_;
+
+	my $out = $fmt;
+	$out =~ s/\$\{PROJECTID\}/$projectid/g;
+	$out =~ s/\$\{AUTHOR\}/$author/g;
+	$out =~ s/\$\{REV\}/$rev/g;
+
+	return $out;
+}
 #------------------------------------------------------------
 # MAIN
 #------------------------------------------------------------
@@ -371,8 +383,17 @@ if (!defined($dbh))
 
 write_commit_log ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $AUTHOR);
 
-my $commit_subject = "Commit $REV by $AUTHOR in $REPOBASE";
-my $commit_message = $commit_subject; # TODO: compose a proper URL
+my $commit_subject = "Commit r$REV by $AUTHOR in $REPOBASE";
+my $commit_message = '';
+
+if ($cfg->{commit_notification_url} eq '')
+{
+	$commit_message = $commit_subject;
+}
+else
+{
+	$commit_message = 'See ' . format_commit_url($cfg->{commit_notification_url}, $REPOBASE, $AUTHOR, $REV);
+}
 
 email_message_to_project_members ($cfg, $dbh, $cfg->{database_prefix}, $REPOBASE, $commit_subject, $commit_message);
 
