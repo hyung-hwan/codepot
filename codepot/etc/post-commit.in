@@ -11,6 +11,11 @@ use SVN::Core;
 use SVN::Repos;
 use SVN::Fs;
 
+use Net::LDAP;
+use Net::LDAP qw(LDAP_SUCCESS);
+use URI;
+use Mail::Sendmail;
+
 my $CFG_FILE = '@CFGDIR@/codepot.ini';
 my $REPOFS = $ARGV[0];
 my $REPOBASE = basename($REPOFS);
@@ -28,13 +33,28 @@ sub get_config
 	}
 
 	my $config = {
+		login_model => $cfg->param ('login_model'),
+		
+		ldap_server_uri => $cfg->param ('ldap_server_uri'),
+		ldap_server_protocol_version => $cfg->param ('ldap_server_protocol_version'),
+		ldap_auth_mode => $cfg->param ('ldap_auth_mode'),
+		ldap_userid_format => $cfg->param ('ldap_userid_format'),
+		ldap_password_format => $cfg->param ('ldap_password_format'),
+		ldap_admin_binddn => $cfg->param ('ldap_admin_binddn'),
+		ldap_admin_password => $cfg->param ('ldap_admin_password'),
+		ldap_userid_search_base => $cfg->param ('ldap_userid_search_base'),
+		ldap_userid_search_filter => $cfg->param ('ldap_userid_search_filter'),
+		ldap_mail_attribute_name => $cfg->param ('ldap_mail_attribute_name'),
+
 		database_hostname => $cfg->param ("database_hostname"),
 		database_port => $cfg->param ("database_port"),
 		database_username => $cfg->param ("database_username"),
 		database_password => $cfg->param ("database_password"),
 		database_name => $cfg->param ("database_name"),
 		database_driver => $cfg->param ("database_driver"),
-		database_prefix => $cfg->param ("database_prefix")
+		database_prefix => $cfg->param ("database_prefix"),
+
+		email_sender => $cfg->param ("email_sender")
 	};
 
 	return $config;
@@ -146,6 +166,154 @@ sub get_author
 	return $author;
 }
 
+sub format_string 
+{
+	my ($fmt, $userid, $password) = @_;
+
+	my $out = $fmt;
+	$out =~ s/\$\{userid\}/$userid/g;
+	$out =~ s/\$\{password\}/$password/g;
+
+	return $out;
+}
+
+sub get_author_email_ldap
+{
+	my ($cfg, $userid) = @_;
+
+	my $uri = URI->new ($cfg->{ldap_server_uri});
+	my $ldap = Net::LDAP->new (
+		$uri->host, 
+		scheme => $uri->scheme,
+		port => $uri->port,
+		version => $cfg->{ldap_server_protocol_version}
+	);
+	if (!defined($ldap))
+	{
+		print (STDERR 'Cannot create LDAP');
+		return (-1, undef);
+	}
+
+	my $f_rootdn = format_string ($cfg->{ldap_admin_binddn}, $userid, '');
+	my $f_rootpw = format_string ($cfg->{ldap_admin_password}, $userid, '');
+
+	my $res = $ldap->bind ($f_rootdn, password => $f_rootpw);
+	if ($res->code != LDAP_SUCCESS) 
+	{
+		print (STDERR "Cannot bind LDAP as $f_rootdn - " . $res->error());
+		$ldap->unbind();
+		return (-1, undef); 
+	}
+
+	my $f_basedn = format_string ($cfg->{ldap_userid_format}, $userid, '');
+	my $f_filter = '(' . $cfg->{ldap_mail_attribute_name} . '=*)';
+
+	$res = $ldap->search (base => $f_basedn, scope => 'sub', filter => $f_filter);
+	if ($res->code != LDAP_SUCCESS) 
+	{
+		$ldap->unbind();
+		return (0, undef);
+	}
+
+	my $entry = $res->entry(0); # get the first entry only
+	if (!defined($entry))
+	{
+		$ldap->unbind();
+		return (0, undef);
+	}
+
+	my $xret = 0;
+	my $email = '';
+	my @attrs = $entry->attributes ();
+	foreach my $attr (@attrs)
+	{
+		if ($attr eq  $cfg->{ldap_mail_attribute_name})
+		{
+			$email = $entry->get_value ($attr);
+			$xret = 1;
+			last;
+		 }
+	}
+
+	$ldap->unbind();
+	return ($xret, $email);
+}
+
+sub get_author_email_db
+{
+	my ($cfg, $dbh, $prefix, $userid) = @_;
+
+	my $query = $dbh->prepare ("SELECT ${QC}email${QC} FROM ${QC}${prefix}user_account${QC} WHERE ${QC}userid${QC}=?");
+	if (!$query || !$query->execute ($userid))
+	{
+		return (-1, $dbh->errstr());
+	}
+
+	if (my @row = $query->fetchrow_array())
+	{
+		return (1, @row[0]);
+	}
+
+	return (0, undef);
+}
+
+sub email_message_to_project_members
+{
+	my ($cfg, $dbh, $prefix, $projectid, $subject, $message) = @_;
+
+	my $query = $dbh->prepare ("SELECT ${QC}userid${QC} FROM ${QC}${prefix}project_membership${QC} WHERE ${QC}projectid${QC}=?");
+	if (!$query || !$query->execute ($projectid))
+	{
+		return (-1, $dbh->errstr());
+	}
+
+	my @members;
+	while (my @row = $query->fetchrow_array())
+	{
+		push (@members, $row[0]);
+	}
+	$query->finish ();
+
+	my $recipients = '';
+	foreach my $member (@members)
+	{
+		my $xret;
+		my $email;
+
+		if ($cfg->{login_model} eq 'LdapLoginModel')
+		{
+			($xret, $email) = get_author_email_ldap ($cfg, $member)
+		}
+		elsif ($cfg->{login_model} eq 'DbLoginModel')
+		{
+			($xret, $email) = get_author_email_db ($cfg, $dbh, $prefix, $member);
+		}
+		else
+		{
+			$xret = -2;
+			$email = '';
+		}
+
+		if ($xret >= 1 && defined($email) && length($email) > 0)
+		{
+			if (length($recipients) > 0) { $recipients .= ', '; }
+			$recipients .= $email;
+		}
+	}
+
+	if (length($recipients) <= 0) { return (0, undef); }
+
+	my %mail = (
+		To => $recipients,
+		From => $cfg->{email_sender},
+		Subject => $subject,
+		Message => $message
+	);
+
+	Mail::Sendmail::sendmail (%mail);
+	return (1, undef);
+}
+
 #------------------------------------------------------------
 # MAIN
 #------------------------------------------------------------
@@ -173,7 +341,12 @@ if (!defined($dbh))
 }
 
 write_commit_log ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $AUTHOR);
+
+my $commit_subject = "Commit $REV by $AUTHOR in $REPOBASE";
+my $commit_message = $commit_subject; # TODO: compose a proper URL
+
+email_message_to_project_members ($cfg, $dbh, $cfg->{database_prefix}, $REPOBASE, $commit_subject, $commit_message);
+
 close_database ($dbh);
 
 exit (0);
-
