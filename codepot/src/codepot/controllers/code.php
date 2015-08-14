@@ -474,6 +474,11 @@ class Code extends Controller
 				" - {$projectid}";
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
+		else if ($rev < 0)
+		{
+			$data['message'] = 'INVALID REVISION NUMBER';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
 		else
 		{
 			if ($project->public !== 'Y' && $login['id'] == '')
@@ -564,7 +569,10 @@ class Code extends Controller
 							$this->form_validation->_field_data = array();
 
 							// TODO: message localization
-							$email_subject =  sprintf ('New review message #%d by %s in %s', $review_sno, $login['id'], $projectid);
+							$email_subject =  sprintf (
+								'New review message #%d for r%d by %s in %s', 
+								$review_sno, $rev, $login['id'], $projectid
+							);
 							$email_message = 'See ' . current_url();
 							$this->projects->emailMessageToMembers (
 								$projectid, $this->login, $email_subject, $email_message
@@ -626,7 +634,16 @@ class Code extends Controller
 			}
 			else
 			{
-				$reviews = $this->code_review->getReviews ($projectid, $rev);
+				$r_rev = $rev;
+				if ($r_rev < 0)
+				{
+					if (array_key_exists('history', $file))
+					{
+						$h = &$file['history'];
+						if (array_key_exists('rev', $h)) $r_rev = $h['rev'];
+					}
+				}
+				$reviews = $this->code_review->getReviews ($projectid, $r_rev);
 				if ($reviews === FALSE)
 				{
 					$data['project'] = $project;
