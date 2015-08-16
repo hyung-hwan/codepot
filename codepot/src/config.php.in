@@ -84,7 +84,10 @@ function load_ini ($file)
 		array ('footer',                       'string',      ''),
 		array ('cloc_command_path',            'string',      CODEPOT_CFG_DIR.'/cloc.pl'),
 		array ('code_folder_readme',           'string',     'README'),
+
 		array ('email_sender',                 'string',     ''),
+		array ('commit_notification',          'boolean',    TRUE),
+		array ('commit_review_notification',   'boolean',    TRUE),
 		array ('commit_notification_url',      'string',     ''),
 
 		array ('svn_tag_property',             'string',     'codepot:tag'),

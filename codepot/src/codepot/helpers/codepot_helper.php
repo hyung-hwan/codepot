@@ -219,6 +219,33 @@ if ( !function_exists ('codepot_zip_dir'))
 	}
 }
 
+
+if ( !function_exists ('codepot_unzip_file'))
+{
+	function codepot_unzip_file ($output_dir, $path)
+	{
+		$zip = new ZipArchive();
+		if ($zip->open ($path) === FALSE) return FALSE;
+
+		
+
+		if ($zip->extractTo ($output_dir) === FALSE)
+		{
+			$zip->close ();
+			return FALSE;
+		}
+
+		$names = array();
+		for ($i = 0; $i < $zip->numFiles; $i++)
+		{
+			array_push ($names, $zip->getNameIndex($i));
+		}
+		
+		$zip->close ();
+		return $names;
+	}
+}
+
 if ( !function_exists ('codepot_find_longest_matching_sequence'))
 {
 	function codepot_find_longest_matching_sequence ($old, $old_start, $old_len, $new, $new_start, $new_len)
@@ -229,7 +256,7 @@ if ( !function_exists ('codepot_find_longest_matching_sequence'))
 		$match_start_in_old = $old_start;
 		$match_start_in_new = $new_start;
 		$match_len = 0;
-	
+
 		$runs = array ();
 		for ($i = $old_start; $i < $old_end; $i++)
 		{
