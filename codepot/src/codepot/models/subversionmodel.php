@@ -250,14 +250,22 @@ class SubversionModel extends Model
 	}
 
 	public $store_file_errmsg = '';
+	public $import_files_errmsg = '';
 
 	function capture_save_error ($errno, $errmsg)
 	{
 		$this->store_file_errmsg = $errmsg;
 	}
 
+	function capture_import_error ($errno, $errmsg)
+	{
+		$this->import_files_errmsg = $errmsg;
+	}
+
 	function storeFile ($projectid, $path, $committer, $commit_message, $text)
 	{
+		$store_file_errmsg = '';
+
 		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 		$canon_path = $this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 		$canon_dir = dirname($canon_path);
@@ -287,6 +295,143 @@ class SubversionModel extends Model
 			@unlink ($tfname);
 			return FALSE;
 		}
+		restore_error_handler ();
+		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
+		@unlink ($tfname);
+		return TRUE;
+	}
+
+
+	function importFiles ($projectid, $path, $committer, $commit_message, $files, $uploader)
+	{
+		$import_files_errmsg = '';
+
+		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		$full_path = CODEPOT_SVNREPO_DIR."/{$projectid}";
+		if (strlen($path) > 0) $full_path .= "/{$path}";
+		$canon_path = $this->_canonical_path($full_path);
+		$dirurl = 'file://' . $canon_path;
+
+		set_error_handler (array ($this, 'capture_import_error'));
+		$tfname = @tempnam(__FILE__, 'codepot-import-files-');
+		restore_error_handler ();
+		if ($tfname === FALSE) 
+		{
+			return FALSE;
+		}
+
+		$actual_tfname = $tfname . '.d';
+		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
+
+		mkdir ($actual_tfname);
+
+		set_error_handler (array ($this, 'capture_import_error'));
+		if (@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $committer) === FALSE ||
+		    @svn_checkout ($dirurl, $actual_tfname, SVN_REVISION_HEAD, SVN_NON_RECURSIVE) === FALSE)
+		{
+			restore_error_handler ();
+			codepot_delete_files ($actual_tfname, TRUE);
+			@unlink ($tfname);
+			return FALSE;
+		}
+
+		foreach ($files as $f)
+		{
+			$xname = $actual_tfname . '/' . $f['name'];
+			if ($f['type'] == 'dir')
+			{
+				if (@mkdir($xname) === FALSE ||
+				    @svn_add ($xname, TRUE, TRUE) === FALSE)
+				{
+					restore_error_handler ();
+					codepot_delete_files ($actual_tfname, TRUE);
+					@unlink ($tfname);
+					return FALSE;
+				}
+			}
+			else if ($f['type'] == 'file')
+			{
+				$config['allowed_types'] = '*';
+				$config['max_size'] = 0;
+				$config['overwrite'] = FALSE;
+				
+				$config['remove_spaces'] = FALSE;
+				$config['encrypt_name'] = TRUE;
+
+				if (strcasecmp($f['unzip'], 'yes') == 0 && 
+				    strcasecmp(substr($f['name'], -4), '.zip') == 0)
+				{
+					$unzip = TRUE;
+					if (function_exists('sys_get_temp_dir'))
+						$config['upload_path'] = sys_get_temp_dir();
+					else
+						$config['upload_path'] = '/tmp';
+				}
+				else
+				{
+					$unzip = FALSE;
+					$config['upload_path'] = $actual_tfname;
+				}
+
+				$uploader->initialize ($config);
+
+				if (!$uploader->do_upload($f['fid']))
+				{
+					restore_error_handler ();
+					codepot_delete_files ($actual_tfname, TRUE);
+					@unlink ($tfname);
+					return FALSE;
+				}
+
+				$ud = $uploader->data();
+
+				if ($unzip)
+				{
+					$x = codepot_unzip_file ($actual_tfname, $ud['full_path']);
+					@unlink ($ud['full_path']);
+					if ($x === FALSE)
+					{
+						restore_error_handler ();
+						codepot_delete_files ($actual_tfname, TRUE);
+						@unlink ($tfname);
+						return FALSE;
+					}
+
+					foreach ($x as $y)
+					{
+						if (@svn_add ($actual_tfname . '/' . $y, TRUE, TRUE) === FALSE)
+						{
+							restore_error_handler ();
+							codepot_delete_files ($actual_tfname, TRUE);
+							@unlink ($tfname);
+							return FALSE;
+						}
+					}
+				}
+				else
+				{
+					@rename ($ud['full_path'], $xname);
+					if (@svn_add ($xname, TRUE, TRUE) === FALSE)
+					{
+						restore_error_handler ();
+						codepot_delete_files ($actual_tfname, TRUE);
+						@unlink ($tfname);
+						return FALSE;
+					}
+				}
+			}
+
+			// ignore other types 
+		}
+
+		if (($result = @svn_commit ($commit_message, $actual_tfname)) === FALSE)
+		{
+			restore_error_handler ();
+			codepot_delete_files ($actual_tfname, TRUE);
+			@unlink ($tfname);
+			return FALSE;
+		}
+
 		restore_error_handler ();
 		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
 		@unlink ($tfname);

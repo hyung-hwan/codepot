@@ -258,6 +258,16 @@ code_folder_readme = "README.wiki,README.txt,README"
 email_sender = ""
 
 ;------------------------------------------------------------------------------
+; Send notification upon a new commit if yes
+;------------------------------------------------------------------------------
+commit_notification = "yes"
+
+;------------------------------------------------------------------------------
+; Send commit review notification if yes
+;------------------------------------------------------------------------------
+commit_review_notification = "yes"
+
+;------------------------------------------------------------------------------
 ; URL to include when sending a commit notification message.
 ; You can specify multiple urls. in fact, it's a free text.
 ; Replacement is performed for ${REV}, ${AUTHOR}, ${PROJECTID}.

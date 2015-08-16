@@ -55,6 +55,7 @@ sub get_config
 		database_prefix => $cfg->param ("database_prefix"),
 
 		email_sender => $cfg->param ("email_sender"),
+		commit_notification => $cfg->param ("commit_notification"),
 		commit_notification_url => $cfg->param ("commit_notification_url")
 	};
 
@@ -340,6 +341,11 @@ sub email_message_to_project_members
 		Message => $message
 	);
 
+	if (length($cfg->{email_sender}) > 0)
+	{
+		$mail{From} .= $cfg->{email_sender};
+	}
+
 	Mail::Sendmail::sendmail (%mail);
 	return (1, undef);
 }
@@ -383,19 +389,22 @@ if (!defined($dbh))
 
 write_commit_log ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $AUTHOR);
 
-my $commit_subject = "Commit r$REV by $AUTHOR in $REPOBASE";
-my $commit_message = '';
-
-if ($cfg->{commit_notification_url} eq '')
+if (lc($cfg->{commit_notification}) eq 'yes')
 {
-	$commit_message = $commit_subject;
-}
-else
-{
-	$commit_message = 'See ' . format_commit_url($cfg->{commit_notification_url}, $REPOBASE, $AUTHOR, $REV);
-}
+	my $commit_subject = "Commit r$REV by $AUTHOR in $REPOBASE";
+	my $commit_message = '';
 
-email_message_to_project_members ($cfg, $dbh, $cfg->{database_prefix}, $REPOBASE, $commit_subject, $commit_message);
+	if ($cfg->{commit_notification_url} eq '')
+	{
+		$commit_message = $commit_subject;
+	}
+	else
+	{
+		$commit_message = 'See ' . format_commit_url($cfg->{commit_notification_url}, $REPOBASE, $AUTHOR, $REV);
+	}
+
+	email_message_to_project_members ($cfg, $dbh, $cfg->{database_prefix}, $REPOBASE, $commit_subject, $commit_message);
+}
 
 close_database ($dbh);
 

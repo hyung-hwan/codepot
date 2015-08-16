@@ -35,7 +35,8 @@ class Code extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
-	
+		$this->load->library ('upload');
+
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
@@ -73,72 +74,119 @@ class Code extends Controller
 				$data['message'] = 'Failed to get file';
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
-			else if ($file['type'] == 'file')
+			else 
 			{
-				$head_rev = $this->subversion->getHeadRev ($projectid, $path, $rev);
-				if ($head_rev === FALSE)
+				$popup_error_message = '';
+
+				$post_new_message = $this->input->post('code_folder_new_message');
+				$post_max_item_no = $this->input->post('code_folder_new_item_count');
+				$post_unzip = $this->input->post('code_folder_new_item_unzip');
+				if ($post_new_message !== FALSE && $post_max_item_no !== FALSE)
 				{
-					$data['project'] = $project;
-					$data['message'] = 'Failed to get head revision';
-					$this->load->view ($this->VIEW_ERROR, $data);
-				}
-				else
-				{
-					$file['head_rev'] = $head_rev;
-					$file['prev_rev'] = $this->subversion->getPrevRev (
-						$projectid, $path, $file['created_rev']);
-					$file['next_rev'] = $this->subversion->getNextRev (
-						$projectid, $path, $file['created_rev']);
-
-					$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
-					if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
-
-					$file['head_tag'] = $this->subversion->getRevProp ($projectid, $file['head_rev'], CODEPOT_SVN_TAG_PROPERTY);
-					if ($file['head_tag'] === FALSE) $file['head_tag'] = '';
-
-
-					$data['project'] = $project;
-					$data['headpath'] = $path;
-					$data['file'] = $file; 
-					$data['revision'] = $rev;
-
-					$this->load->view ($this->VIEW_FILE, $data);
-				}
-			}
-			else
-			{
-				$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
-				if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
-
-				$data['project'] = $project;
-				$data['headpath'] = $path;
-				$data['file'] = $file;
-
-				$data['revision'] = $rev;
-				$data['prev_revision'] =
-					$this->subversion->getPrevRev ($projectid, $path, $rev);
-				$data['next_revision'] =
-					$this->subversion->getNextRev ($projectid, $path, $rev);
-
-				$data['readme_text'] = '';
-				$data['readme_file'] = '';
-				foreach (explode(',', CODEPOT_CODE_FOLDER_README) as $rf)
-				{
-					$rf = trim($rf);
-					if (strlen($rf) > 0)
+					$import_files = array ();
+					for ($i = 0; $i < $post_max_item_no; $i++)
 					{
-						$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
-						if ($readme !== FALSE && $readme['type'] == 'file')
+						$d = $this->input->post("code_folder_new_item_dir_$i");
+
+						if (strlen($d) > 0) 
 						{
-							$data['readme_text'] = $readme['content'];
-							$data['readme_file'] = $rf;
-							break;
+							array_push ($import_files, array ('type' => 'dir', 'name' => $d));
 						}
+
+						$fid = "code_folder_new_item_file_$i";
+						if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
+						{
+							array_push ($import_files, array ('type' => 'file', 'name' => $_FILES[$fid]['name'], 'fid' => $fid, 'unzip' => $post_unzip));
+						}
+					}
+
+					if (count($import_files) > 0 && $this->subversion->importFiles ($projectid, $path, $login['id'], $post_new_message, $import_files, $this->upload) === FALSE)
+					{
+						$popup_error_message = '<pre>' . $this->subversion->import_files_errmsg . '</pre>';
+					}
+					else
+					{
+						$refreshed_file = $this->subversion->getFile ($projectid, $path, $rev);
+						if ($refreshed_file === FALSE)
+						{
+							$data['project'] = $project;
+							$data['message'] = 'Failed to get file';
+							$this->load->view ($this->VIEW_ERROR, $data);
+							return; /* EXIT HERE */
+						}
+
+						$file = $refreshed_file;
 					}
 				}
 
-				$data['wildcard_pattern'] = '*';
-				$this->load->view ($this->VIEW_FOLDER, $data);
+				$data['popup_error_message'] = $popup_error_message;
+				if ($file['type'] == 'file')
+				{
+					$head_rev = $this->subversion->getHeadRev ($projectid, $path, $rev);
+					if ($head_rev === FALSE)
+					{
+						$data['project'] = $project;
+						$data['message'] = 'Failed to get head revision';
+						$this->load->view ($this->VIEW_ERROR, $data);
+					}
+					else
+					{
+						$file['head_rev'] = $head_rev;
+						$file['prev_rev'] = $this->subversion->getPrevRev (
+							$projectid, $path, $file['created_rev']);
+						$file['next_rev'] = $this->subversion->getNextRev (
+							$projectid, $path, $file['created_rev']);
+
+						$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
+						if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
+
+						$file['head_tag'] = $this->subversion->getRevProp ($projectid, $file['head_rev'], CODEPOT_SVN_TAG_PROPERTY);
+						if ($file['head_tag'] === FALSE) $file['head_tag'] = '';
+
+
+						$data['project'] = $project;
+						$data['headpath'] = $path;
+						$data['file'] = $file; 
+						$data['revision'] = $rev;
+
+						$this->load->view ($this->VIEW_FILE, $data);
+					}
+				}
+				else
+				{
+					$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
+					if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
+
+					$data['project'] = $project;
+					$data['headpath'] = $path;
+					$data['file'] = $file;
+
+					$data['revision'] = $rev;
+					$data['prev_revision'] =
+						$this->subversion->getPrevRev ($projectid, $path, $rev);
+					$data['next_revision'] =
+						$this->subversion->getNextRev ($projectid, $path, $rev);
+
+					$data['readme_text'] = '';
+					$data['readme_file'] = '';
+					foreach (explode(',', CODEPOT_CODE_FOLDER_README) as $rf)
+					{
+						$rf = trim($rf);
+						if (strlen($rf) > 0)
+						{
+							$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
+							if ($readme !== FALSE && $readme['type'] == 'file')
+							{
+								$data['readme_text'] = $readme['content'];
+								$data['readme_file'] = $rf;
+								break;
+							}
+						}
+					}
+
+					$data['wildcard_pattern'] = '*';
+					$this->load->view ($this->VIEW_FOLDER, $data);
+				}
 			}
 		}
 	}
@@ -430,7 +478,6 @@ class Code extends Controller
 					}
 				}
 
-
 				$data['project'] = $project;
 				$data['fullpath'] = $path;
 				$data['file'] = $file;
@@ -568,15 +615,18 @@ class Code extends Controller
 							// this is a hack to clear form data upon success
 							$this->form_validation->_field_data = array();
 
-							// TODO: message localization
-							$email_subject =  sprintf (
-								'New review message #%d for r%d by %s in %s', 
-								$review_sno, $rev, $login['id'], $projectid
-							);
-							$email_message = 'See ' . current_url();
-							$this->projects->emailMessageToMembers (
-								$projectid, $this->login, $email_subject, $email_message
-							);
+							if (CODEPOT_COMMIT_REVIEW_NOTIFICATION)
+							{
+								// TODO: message localization
+								$email_subject =  sprintf (
+									'New review message #%d for r%d by %s in %s', 
+									$review_sno, $rev, $login['id'], $projectid
+								);
+								$email_message = 'See ' . current_url();
+								$this->projects->emailMessageToMembers (
+									$projectid, $this->login, $email_subject, $email_message
+								);
+							}
 						}
 					}
 					else

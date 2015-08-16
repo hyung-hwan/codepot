@@ -180,7 +180,80 @@ function render_readme()
 }
 
 
+var new_file_item_no = 0;
+var new_dir_item_no = 0;
+
+function get_new_item_html(no, type, name)
+{
+	return codepot_sprintf ('<li><input type="%s" name="code_folder_new_item_%s_%d" /></li>',  type, name, no);
+}
+
 $(function () {
+
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+
+	new_file_item_no = 0;
+	new_dir_item_no = 0;
+	$('#code_folder_mainarea_new_file_form_item_list').append (get_new_item_html(new_file_item_no, 'file', 'file'));
+	$('#code_folder_mainarea_new_dir_form_item_list').append (get_new_item_html(new_dir_item_no, 'text', 'dir'));
+
+	$("#code_folder_mainarea_new_file_form_div").dialog (
+		{
+			title: '<?php print $this->lang->line('File');?>',
+			resizable: true,
+			autoOpen: false,
+			modal: true,
+			buttons: {
+				'More': function () {
+					++new_file_item_no;
+					$('#code_folder_mainarea_new_file_form_item_list').append (get_new_item_html(new_file_item_no, 'file', 'file'));
+				},
+				'<?php print $this->lang->line('OK')?>': function () {
+					$('#code_folder_mainarea_new_file_item_count').val (new_file_item_no + 1);
+					$('#code_folder_mainarea_new_file_form').submit();
+					$(this).dialog('close');
+				},
+				'<?php print $this->lang->line('Cancel')?>': function () {
+					$(this).dialog('close');
+				}
+
+			},
+			clsoe: function() {}
+		}
+	);
+
+	$("#code_folder_mainarea_new_dir_form_div").dialog (
+		{
+			title: '<?php print $this->lang->line('Directory');?>',
+			resizable: true,
+			autoOpen: false,
+			modal: true,
+			buttons: {
+				'More': function () {
+					++new_dir_item_no;
+					$('#code_folder_mainarea_new_dir_form_item_list').append (get_new_item_html(new_dir_item_no, 'text', 'dir'));
+				},
+				'<?php print $this->lang->line('OK')?>': function () {
+					$('#code_folder_mainarea_new_dir_item_count').val (new_dir_item_no + 1);
+					$('#code_folder_mainarea_new_dir_form').submit();
+					$(this).dialog('close');
+				},
+				'<?php print $this->lang->line('Cancel')?>': function () {
+					$(this).dialog('close');
+				}
+
+			},
+			clsoe: function() {}
+		}
+	);
+
+	$("#code_folder_mainarea_new_file_button").button().click (function() {
+		$("#code_folder_mainarea_new_file_form_div").dialog('open');
+	});
+	$("#code_folder_mainarea_new_dir_button").button().click (function() {
+		$("#code_folder_mainarea_new_dir_form_div").dialog('open');
+	});
+<?php endif; ?>
 
 <?php if ($file_count > 0): ?>
 	<?php
@@ -194,7 +267,6 @@ $(function () {
 		btn_label = "<?php print $this->lang->line('Show metadata')?>";
 
 	btn = $("#code_folder_mainarea_metadata_button").button({"label": btn_label}).click (function () {
-		
 		if ($("#code_folder_mainarea_result_info").is(":visible"))
 		{
 			$("#code_folder_mainarea_result_info").hide("blind",{},200);
@@ -271,6 +343,23 @@ $(function () {
 	});
 
 	render_readme ();
+
+
+
+<?php if (strlen($popup_error_message) > 0): ?>
+	$("#code_folder_popup_error_div").dialog( {
+			title: '<?php print $this->lang->line('Error')?>',
+			width: 'auto',
+			height: 'auto',
+			modal: true,
+			autoOpen: true,
+			buttons: {
+					"<?php print $this->lang->line('OK')?>": function() {
+							$( this ).dialog( "close" );
+					}
+			}
+	});
+<?php endif; ?>
 });
 
 </script>
@@ -451,10 +540,21 @@ $this->load->view (
 	print ' ';
 	print anchor ("code/file/{$project->id}/${xpar}/{$next_revision}", '<i class="fa fa-arrow-circle-right"></i>');
 
-	if ($file_count > 0)
+
+	if ((isset($login['id']) && $login['id'] != '') || $file_count > 0)
 	{
 		print ' | ';
-		printf ('<a id="code_folder_mainarea_metadata_button" href="#">%s</a>', $this->lang->line('Metadata'));
+
+		if (isset($login['id']) && $login['id'] != '')
+		{
+			printf ('<a id="code_folder_mainarea_new_file_button" href="#">%s</a>', $this->lang->line('New file'));
+			printf ('<a id="code_folder_mainarea_new_dir_button" href="#">%s</a>', $this->lang->line('New directory'));
+		}
+
+		if ($file_count > 0)
+		{
+			printf ('<a id="code_folder_mainarea_metadata_button" href="#">%s</a>', $this->lang->line('Metadata'));
+		}
 	}
 
 	print form_close();
@@ -677,6 +777,38 @@ $this->load->view (
 
 </div> <!-- code_folder_mainarea_result -->
 
+
+
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+<div id="code_folder_mainarea_new_file_form_div">
+	<?php 
+		$attrs = array ('id' => 'code_folder_mainarea_new_file_form');
+		// this posts to the head revision regardless of the revision being shown
+		print form_open_multipart("code/file/{$project->id}/".$this->converter->AsciiToHex($headpath), $attrs);
+	?>
+	<input type='hidden' name='code_folder_new_item_count' id='code_folder_mainarea_new_file_item_count' />
+	<div><?php print $this->lang->line('Message'); ?>:</div>
+	<div><textarea type='textarea' name='code_folder_new_message' style='width:100%;'></textarea></div>
+	<div><input type='checkbox' name='code_folder_new_item_unzip' value='yes'/><?php print $this->lang->line('Unzip a zip file'); ?></div>
+	<div><ul id='code_folder_mainarea_new_file_form_item_list'></ul></div>
+	<?php print form_close();?>
+</div>
+
+<div id="code_folder_mainarea_new_dir_form_div">
+	<?php 
+		$attrs = array ('id' => 'code_folder_mainarea_new_dir_form');
+		// this posts to the head revision regardless of the revision being shown
+		print form_open_multipart("code/file/{$project->id}/".$this->converter->AsciiToHex($headpath), $attrs);
+	?>
+	<input type='hidden' name='code_folder_new_item_count' id='code_folder_mainarea_new_dir_item_count' />
+	<div><?php print $this->lang->line('Message'); ?>:</div>
+	<div><textarea type='textarea' name='code_folder_new_message' style='width:100%;'></textarea></div>
+	<div><ul id='code_folder_mainarea_new_dir_form_item_list'></ul></div>
+	<?php print form_close();?>
+</div>
+<?php endif; ?>
+
+
 </div> <!-- code_folder_mainarea -->
 
 <div class='footer-pusher'></div> <!-- for sticky footer -->
@@ -688,6 +820,12 @@ $this->load->view (
 <?php $this->load->view ('footer'); ?>
 
 <!-- ================================================================== -->
+
+<?php if (strlen($popup_error_message) > 0): ?>
+<div id="code_folder_popup_error_div">
+<?php print $popup_error_message?>
+</div>
+<?php endif; ?>
 
 </body>
 

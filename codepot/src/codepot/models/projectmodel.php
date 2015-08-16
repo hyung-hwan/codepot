@@ -584,7 +584,7 @@ class ProjectModel extends Model
 		if (CODEPOT_EMAIL_SENDER != '') $additional_headers .= 'From: ' . CODEPOT_EMAIL_SENDER . "\r\n";
 
 		if (empty($recipients)) return FALSE;
-		mail ($recipients, $subject, wordwrap($message, 70, "\r\n"), $additional_headers);
+		mail ($recipients, $subject, $message, $additional_headers);
 		return TRUE;
 	}
 }
