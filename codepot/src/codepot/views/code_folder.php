@@ -180,8 +180,7 @@ function render_readme()
 }
 
 
-var new_file_item_no = 0;
-var new_dir_item_no = 0;
+var new_item_no = 0;
 
 function get_new_item_html(no, type, name)
 {
@@ -192,25 +191,27 @@ $(function () {
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 
-	new_file_item_no = 0;
-	new_dir_item_no = 0;
-	$('#code_folder_mainarea_new_file_form_item_list').append (get_new_item_html(new_file_item_no, 'file', 'file'));
-	$('#code_folder_mainarea_new_dir_form_item_list').append (get_new_item_html(new_dir_item_no, 'text', 'dir'));
+	new_item_no = 0;
+	$('#code_folder_mainarea_new_file_form_item_list').append (get_new_item_html(new_item_no, 'file', 'file'));
+	$('#code_folder_mainarea_new_dir_form_item_list').append (get_new_item_html(new_item_no, 'text', 'dir'));
 
-	$("#code_folder_mainarea_new_file_form_div").dialog (
+	$("#code_folder_mainarea_new_form_tabs").tabs ();
+
+	$("#code_folder_mainarea_new_form_div").dialog (
 		{
-			title: '<?php print $this->lang->line('File');?>',
+			title: '<?php print $this->lang->line('New');?>',
 			resizable: true,
 			autoOpen: false,
 			modal: true,
 			buttons: {
 				'More': function () {
-					++new_file_item_no;
-					$('#code_folder_mainarea_new_file_form_item_list').append (get_new_item_html(new_file_item_no, 'file', 'file'));
+					++new_item_no;
+					$('#code_folder_mainarea_new_file_form_item_list').append (get_new_item_html(new_item_no, 'file', 'file'));
+					$('#code_folder_mainarea_new_dir_form_item_list').append (get_new_item_html(new_item_no, 'text', 'dir'));
 				},
 				'<?php print $this->lang->line('OK')?>': function () {
-					$('#code_folder_mainarea_new_file_item_count').val (new_file_item_no + 1);
-					$('#code_folder_mainarea_new_file_form').submit();
+					$('#code_folder_mainarea_new_item_count').val (new_item_no + 1);
+					$('#code_folder_mainarea_new_form').submit();
 					$(this).dialog('close');
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
@@ -222,37 +223,10 @@ $(function () {
 		}
 	);
 
-	$("#code_folder_mainarea_new_dir_form_div").dialog (
-		{
-			title: '<?php print $this->lang->line('Directory');?>',
-			resizable: true,
-			autoOpen: false,
-			modal: true,
-			buttons: {
-				'More': function () {
-					++new_dir_item_no;
-					$('#code_folder_mainarea_new_dir_form_item_list').append (get_new_item_html(new_dir_item_no, 'text', 'dir'));
-				},
-				'<?php print $this->lang->line('OK')?>': function () {
-					$('#code_folder_mainarea_new_dir_item_count').val (new_dir_item_no + 1);
-					$('#code_folder_mainarea_new_dir_form').submit();
-					$(this).dialog('close');
-				},
-				'<?php print $this->lang->line('Cancel')?>': function () {
-					$(this).dialog('close');
-				}
-
-			},
-			clsoe: function() {}
-		}
-	);
-
-	$("#code_folder_mainarea_new_file_button").button().click (function() {
-		$("#code_folder_mainarea_new_file_form_div").dialog('open');
+	$("#code_folder_mainarea_new_button").button().click (function() {
+		$("#code_folder_mainarea_new_form_div").dialog('open');
 	});
-	$("#code_folder_mainarea_new_dir_button").button().click (function() {
-		$("#code_folder_mainarea_new_dir_form_div").dialog('open');
-	});
+
 <?php endif; ?>
 
 <?php if ($file_count > 0): ?>
@@ -547,8 +521,7 @@ $this->load->view (
 
 		if (isset($login['id']) && $login['id'] != '')
 		{
-			printf ('<a id="code_folder_mainarea_new_file_button" href="#">%s</a>', $this->lang->line('New file'));
-			printf ('<a id="code_folder_mainarea_new_dir_button" href="#">%s</a>', $this->lang->line('New directory'));
+			printf ('<a id="code_folder_mainarea_new_button" href="#">%s</a>', $this->lang->line('New'));
 		}
 
 		if ($file_count > 0)
@@ -780,34 +753,36 @@ $this->load->view (
 
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
-<div id="code_folder_mainarea_new_file_form_div">
+
+<div id="code_folder_mainarea_new_form_div">
 	<?php 
-		$attrs = array ('id' => 'code_folder_mainarea_new_file_form');
-		// this posts to the head revision regardless of the revision being shown
-		print form_open_multipart("code/file/{$project->id}/".$this->converter->AsciiToHex($headpath), $attrs);
+	$attrs = array ('id' => 'code_folder_mainarea_new_form');
+	// this form posts to the head revision regardless of the revision being shown currently
+	print form_open_multipart("code/file/{$project->id}/".$this->converter->AsciiToHex($headpath), $attrs);
 	?>
-	<input type='hidden' name='code_folder_new_item_count' id='code_folder_mainarea_new_file_item_count' />
+	<input type='hidden' name='code_folder_new_item_count' id='code_folder_mainarea_new_item_count' />
+
 	<div><?php print $this->lang->line('Message'); ?>:</div>
 	<div><textarea type='textarea' name='code_folder_new_message' style='width:100%;'></textarea></div>
-	<div><input type='checkbox' name='code_folder_new_item_unzip' value='yes'/><?php print $this->lang->line('Unzip a zip file'); ?></div>
-	<div><ul id='code_folder_mainarea_new_file_form_item_list'></ul></div>
+	
+	<div id="code_folder_mainarea_new_form_tabs" style="width:100%;">
+		<ul>
+			<li><a href="#code_folder_mainarea_new_file_div">File</a></li>
+			<li><a href="#code_folder_mainarea_new_dir_div">Directory</a></li>
+		</ul>
+		<div id="code_folder_mainarea_new_file_div">
+			<div><input type='checkbox' name='code_folder_new_item_unzip' value='yes'/><?php print $this->lang->line('Unzip a zip file'); ?></div>
+			<div><ul id='code_folder_mainarea_new_file_form_item_list'></ul></div>
+		</div>
+		<div id="code_folder_mainarea_new_dir_div">
+			<div><ul id='code_folder_mainarea_new_dir_form_item_list'></ul></div>
+		</div>
+	</div>
+
 	<?php print form_close();?>
 </div>
 
-<div id="code_folder_mainarea_new_dir_form_div">
-	<?php 
-		$attrs = array ('id' => 'code_folder_mainarea_new_dir_form');
-		// this posts to the head revision regardless of the revision being shown
-		print form_open_multipart("code/file/{$project->id}/".$this->converter->AsciiToHex($headpath), $attrs);
-	?>
-	<input type='hidden' name='code_folder_new_item_count' id='code_folder_mainarea_new_dir_item_count' />
-	<div><?php print $this->lang->line('Message'); ?>:</div>
-	<div><textarea type='textarea' name='code_folder_new_message' style='width:100%;'></textarea></div>
-	<div><ul id='code_folder_mainarea_new_dir_form_item_list'></ul></div>
-	<?php print form_close();?>
-</div>
 <?php endif; ?>
-
 
 </div> <!-- code_folder_mainarea -->
 
