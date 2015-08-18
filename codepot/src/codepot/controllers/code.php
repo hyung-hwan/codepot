@@ -364,6 +364,77 @@ class Code extends Controller
 		return $this->_edit ($projectid, $path, $rev, 'blame');
 	}
 
+	function xhr_import ($projectid = '', $path = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+		$this->load->library ('upload');
+	
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'signin';
+		}
+		else
+		{
+			$path = $this->converter->HexToAscii ($path);
+			if ($path == '.') $path = ''; /* treat a period specially */
+			$path = $this->_normalize_path ($path);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "dberr - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "noent - no such project {$projectid}";
+			}
+			else
+			{
+				$post_new_message = $this->input->post('code_folder_new_message');
+				$post_max_item_no = $this->input->post('code_folder_new_item_count');
+				$post_unzip = $this->input->post('code_folder_new_item_unzip');
+				if ($post_new_message !== FALSE && $post_max_item_no !== FALSE)
+				{
+					$import_files = array ();
+					for ($i = 0; $i < $post_max_item_no; $i++)
+					{
+						$d = $this->input->post("code_folder_new_item_dir_$i");
+
+						if (strlen($d) > 0) 
+						{
+							array_push ($import_files, array ('type' => 'dir', 'name' => $d));
+						}
+
+						$fid = "code_folder_new_item_file_$i";
+						if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
+						{
+							array_push ($import_files, array ('type' => 'file', 'name' => $_FILES[$fid]['name'], 'fid' => $fid, 'unzip' => $post_unzip));
+						}
+					}
+
+					if (count($import_files) > 0 && $this->subversion->importFiles ($projectid, $path, $login['id'], $post_new_message, $import_files, $this->upload) === FALSE)
+					{
+						$status = 'repoerr - ' . $this->subversion->import_files_errmsg;
+					}
+					else
+					{
+						$status = 'ok';
+					}
+				}
+				else
+				{
+					$status = 'posterr - invalid post data';
+				}
+			}
+		}
+
+		print $status;
+	}
+
 	function enjson_save ($projectid = '', $path = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');

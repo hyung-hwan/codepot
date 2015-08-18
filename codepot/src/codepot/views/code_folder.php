@@ -49,9 +49,27 @@
 		$revreq = "/{$revision}";
 		$revreqroot = '/' . $this->converter->AsciiToHex('.') . $revreq;
 	}
+
+	$hex_headpath = $this->converter->AsciiToHex($headpath);
 ?>
 
 <script type="text/javascript">
+
+function show_alert (outputMsg, titleMsg) 
+{
+	$("#code_folder_mainarea_alert").html(outputMsg).dialog({
+		title: titleMsg,
+		resizable: true,
+		modal: true,
+		width: 500,
+		buttons: {
+			"OK": function () {
+				$(this).dialog("close");
+			}
+		}
+	});
+}
+
 function show_tooltip(id, x, y, contents) {
 	$('<div id="' + id + '">' + contents + '</div>').css( {
 		position: 'absolute',
@@ -72,7 +90,7 @@ function show_loc_by_lang_graph (response)
 	var loc = $.parseJSON(response);
 	if (loc == null)
 	{
-		alert ('Invalid data received');
+		show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
 	}
 	else
 	{
@@ -151,7 +169,7 @@ function show_loc_by_file_graph (response)
 	var loc = $.parseJSON(response);
 	if (loc == null)
 	{
-		alert ('Invalid data received');
+		show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
 	}
 	else
 	{
@@ -179,12 +197,12 @@ function render_readme()
 	<?php endif; ?>
 }
 
-
 var new_item_no = 0;
+var import_in_progress = 0;
 
 function get_new_item_html(no, type, name)
 {
-	return codepot_sprintf ('<li><input type="%s" name="code_folder_new_item_%s_%d" /></li>',  type, name, no);
+	return codepot_sprintf ('<li><input type="%s" id="code_folder_mainarea_new_item_%s_%d" name="code_folder_new_item_%s_%d" /></li>',  type, name, no, name, no);
 }
 
 $(function () {
@@ -197,25 +215,83 @@ $(function () {
 
 	$("#code_folder_mainarea_new_form_tabs").tabs ();
 
-	$("#code_folder_mainarea_new_form_div").dialog (
+	$('#code_folder_mainarea_new_form_div').dialog (
 		{
 			title: '<?php print $this->lang->line('New');?>',
 			resizable: true,
 			autoOpen: false,
+			width: 500,
 			modal: true,
 			buttons: {
 				'More': function () {
+					if (import_in_progress > 0) return;
+
 					++new_item_no;
 					$('#code_folder_mainarea_new_file_form_item_list').append (get_new_item_html(new_item_no, 'file', 'file'));
 					$('#code_folder_mainarea_new_dir_form_item_list').append (get_new_item_html(new_item_no, 'text', 'dir'));
 				},
 				'<?php print $this->lang->line('OK')?>': function () {
+					if (import_in_progress > 0) return;
+
 					$('#code_folder_mainarea_new_item_count').val (new_item_no + 1);
-					$('#code_folder_mainarea_new_form').submit();
-					$(this).dialog('close');
+
+					if (!!window.FormData)
+					{
+						// FormData is supported
+						import_in_progress = 1;
+
+						var form_data = new FormData();
+
+						form_data.append ('code_folder_new_message', $('#code_folder_mainarea_new_message').val());
+						form_data.append ('code_folder_new_item_count', $('#code_folder_mainarea_new_item_count').val());
+						form_data.append ('code_folder_new_item_unzip', $('#code_folder_mainarea_new_item_unzip').val());
+						for (var i = 0; i <= new_item_no; i++)
+						{
+							var f = $('#code_folder_mainarea_new_item_file_' + i).get(0).files[0];
+							if (f != null) form_data.append ('code_folder_new_item_file_' + i, f);
+
+							var d = $('#code_folder_mainarea_new_item_dir_' + i).val();
+							if (d != null && d != '') form_data.append ('code_folder_new_item_dir_' + i, d);
+						}
+
+						$('#code_folder_mainarea_new_form_div').dialog('disable');
+						$.ajax({
+							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/code/xhr_import/{$project->id}/{$hex_headpath}"; ?>'),
+							type: 'POST',
+							data: form_data,
+							mimeType: 'multipart/form-data',
+							contentType: false,
+							processData: false,
+							cache: false,
+
+							success: function (data, textStatus, jqXHR) { 
+								import_in_progress = 0;
+								$('#code_folder_mainarea_new_form_div').dialog('enable');
+								$('#code_folder_mainarea_new_form_div').dialog('close');
+								if (data == 'ok') 
+									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/code/file/{$project->id}/{$hex_headpath}"; ?>'));
+								else
+									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', '');
+							},
+
+							error: function (jqXHR, textStatus, errorThrown) { 
+								import_in_progress = 0;
+								$('#code_folder_mainarea_new_form_div').dialog('enable');
+								$('#code_folder_mainarea_new_form_div').dialog('close');
+								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
+							}
+						});
+					}
+					else
+					{
+						$('#code_folder_mainarea_new_form_div').dialog('close');
+						$('#code_folder_mainarea_new_form').submit();
+					}
+
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
-					$(this).dialog('close');
+					if (import_in_progress > 0) return;
+					$('#code_folder_mainarea_new_form_div').dialog('close');
 				}
 
 			},
@@ -223,8 +299,8 @@ $(function () {
 		}
 	);
 
-	$("#code_folder_mainarea_new_button").button().click (function() {
-		$("#code_folder_mainarea_new_form_div").dialog('open');
+	$('#code_folder_mainarea_new_button').button().click (function() {
+		$('#code_folder_mainarea_new_form_div').dialog('open');
 	});
 
 <?php endif; ?>
@@ -495,8 +571,7 @@ $this->load->view (
 		print ' | ';
 	} 
 
-	$xpar = $this->converter->AsciiTohex ($headpath);
-	print anchor ("code/file/{$project->id}/${xpar}/{$prev_revision}", '<i class="fa fa-arrow-circle-left"></i>');
+	print anchor ("code/file/{$project->id}/${hex_headpath}/{$prev_revision}", '<i class="fa fa-arrow-circle-left"></i>');
 	print ' ';
 
 	// anchor to the revision history at the root directory
@@ -512,7 +587,7 @@ $this->load->view (
 	}
 
 	print ' ';
-	print anchor ("code/file/{$project->id}/${xpar}/{$next_revision}", '<i class="fa fa-arrow-circle-right"></i>');
+	print anchor ("code/file/{$project->id}/${hex_headpath}/{$next_revision}", '<i class="fa fa-arrow-circle-right"></i>');
 
 
 	if ((isset($login['id']) && $login['id'] != '') || $file_count > 0)
@@ -557,11 +632,10 @@ $this->load->view (
 	else 
 	{
 		print '<div class="menu" id="code_folder_mainarea_menu">';
-		$xpar = $this->converter->AsciiTohex ($headpath);
 		if ($revision > 0 && $revision < $next_revision)
 		{
 			$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
-			print anchor ("code/file/{$project->id}/{$xpar}", $head_revision_text);
+			print anchor ("code/file/{$project->id}/{$hex_headpath}", $head_revision_text);
 			print ' | ';
 		}
 
@@ -573,17 +647,17 @@ $this->load->view (
 
 		if ($revision > 0)
 		{
-			if ($xpar == '') $revtrailer = $revreqroot;
-			else $revtrailer = "/{$xpar}{$revreq}";
+			if ($hex_headpath == '') $revtrailer = $revreqroot;
+			else $revtrailer = "/{$hex_headpath}{$revreq}";
 			print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
 		}
 		else
 		{
-			print anchor ("code/history/{$project->id}/{$xpar}", $history_anchor_text);
+			print anchor ("code/history/{$project->id}/{$hex_headpath}", $history_anchor_text);
 		}
 
 		print ' | ';
-		print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $download_anchor_text);
+		print anchor ("code/fetch/{$project->id}/${hex_headpath}{$revreq}", $download_anchor_text);
 		
 		print '</div>';
 
@@ -763,7 +837,7 @@ $this->load->view (
 	<input type='hidden' name='code_folder_new_item_count' id='code_folder_mainarea_new_item_count' />
 
 	<div><?php print $this->lang->line('Message'); ?>:</div>
-	<div><textarea type='textarea' name='code_folder_new_message' style='width:100%;'></textarea></div>
+	<div><textarea type='textarea' id='code_folder_mainarea_new_message' name='code_folder_new_message' style='width:100%;'></textarea></div>
 	
 	<div id="code_folder_mainarea_new_form_tabs" style="width:100%;">
 		<ul>
@@ -771,7 +845,7 @@ $this->load->view (
 			<li><a href="#code_folder_mainarea_new_dir_div">Directory</a></li>
 		</ul>
 		<div id="code_folder_mainarea_new_file_div">
-			<div><input type='checkbox' name='code_folder_new_item_unzip' value='yes'/><?php print $this->lang->line('Unzip a zip file'); ?></div>
+			<div><input type='checkbox' id='code_folder_mainarea_new_item_unzip' name='code_folder_new_item_unzip' value='yes'/><?php print $this->lang->line('Unzip a zip file'); ?></div>
 			<div><ul id='code_folder_mainarea_new_file_form_item_list'></ul></div>
 		</div>
 		<div id="code_folder_mainarea_new_dir_div">
@@ -783,6 +857,8 @@ $this->load->view (
 </div>
 
 <?php endif; ?>
+
+<div id='code_folder_mainarea_alert'></div>
 
 </div> <!-- code_folder_mainarea -->
 
