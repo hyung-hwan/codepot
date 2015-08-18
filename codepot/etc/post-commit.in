@@ -336,7 +336,6 @@ sub email_message_to_project_members
 
 	my %mail = (
 		To => $recipients,
-		From => $cfg->{email_sender},
 		Subject => $subject,
 		Message => $message
 	);
