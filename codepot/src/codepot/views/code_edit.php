@@ -180,7 +180,7 @@ $(function () {
 							// once the existing document is saved, arrange to return 
 							// to the the head revision regardless of the original revision.
 							return_button.attr ('href', base_return_anchor);
-							show_alert ('Saved', "<?php print $this->lang->line('Success')?>");
+							//show_alert ('Saved', "<?php print $this->lang->line('Success')?>");
 						}
 						else
 						{
