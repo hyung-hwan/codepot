@@ -102,7 +102,7 @@ class Code extends Controller
 
 					if (count($import_files) > 0 && $this->subversion->importFiles ($projectid, $path, $login['id'], $post_new_message, $import_files, $this->upload) === FALSE)
 					{
-						$popup_error_message = '<pre>' . htmlspecialchars($this->subversion->import_files_errmsg) . '</pre>';
+						$popup_error_message = $this->subversion->import_files_errmsg;
 					}
 					else
 					{

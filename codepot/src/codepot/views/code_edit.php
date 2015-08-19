@@ -54,8 +54,10 @@ function show_alert (outputMsg, titleMsg)
 {
 	$("#code_edit_mainarea_alert").html(outputMsg).dialog({
 		title: titleMsg,
-		resizable: false,
+		resizable: true,
 		modal: true,
+		width: 'auto',
+		height: 'auto',
 		buttons: {
 			"OK": function () {
 				$(this).dialog("close");
@@ -68,6 +70,7 @@ var ace_modes = null;
 var editor_changed = false;
 var save_button = null;
 var return_button = null;
+var saving_in_progress = false;
 
 function set_editor_changed (changed)
 {
@@ -145,27 +148,31 @@ $(function () {
 		editor.getSession().setMode ($(this).val());
 	});
 
-
-	$("#code_edit_mainarea_save_form").dialog ({
+	$('#code_edit_mainarea_save_form').dialog ({
 		title: '<?php print $this->lang->line('Save')?>',
 		autoOpen: false,
 		modal: true,
 		width: '60%',
 		buttons: { 
 			'<?php print $this->lang->line('OK')?>': function () { 
+				if (saving_in_progress) return;
+
 				var save_message = $("#code_edit_mainarea_save_message").val();
 				if (save_message == '') return false;
 
 				editor.setReadOnly (true);
 				save_button.button ("disable");
+				saving_in_progress = true;
 				$.ajax({
 					method: "POST",
 					dataType: "json",
 					url: codepot_merge_path('<?php print site_url() ?>',  '<?php print "/code/enjson_save/{$project->id}/{$hex_headpath}"; ?>'),
 					data: { "message": save_message, "text": editor.getValue() },
 
-					success: function(json) { 
-
+					success: function(json, textStatus, jqXHR) { 
+						saving_in_progress = false;
+						$('#code_edit_mainarea_save_form').dialog('enable'); 
+						$('#code_edit_mainarea_save_form').dialog('close'); 
 						if (json.status == "ok")
 						{
 							set_editor_changed (false);
@@ -173,30 +180,39 @@ $(function () {
 							// once the existing document is saved, arrange to return 
 							// to the the head revision regardless of the original revision.
 							return_button.attr ('href', base_return_anchor);
-							show_alert ('Saved', '');
+							show_alert ('Saved', "<?php print $this->lang->line('Success')?>");
 						}
 						else
 						{
-							show_alert ('Not saved - ' + codepot_htmlspecialchars(json.status), '');
+							show_alert ('<pre>' + codepot_htmlspecialchars(json.status) + '</pre>', "<?php print $this->lang->line('Error')?>");
 							save_button.button ("enable");
 						}
 						editor.setReadOnly (false);
 					},
 
-					error: function(data) { 
-						show_alert ('Not saved', '');
+					error: function(jqXHR, textStatus, errorThrown) { 
+						saving_in_progress = false;
+						$('#code_edit_mainarea_save_form').dialog('enable'); 
+						$('#code_edit_mainarea_save_form').dialog('close'); 
+						show_alert ('Not saved - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
 						editor.setReadOnly (false);
 						save_button.button ("enable");
 					}
 				});
-				$(this).dialog('close'); 
+
+				$('#code_edit_mainarea_save_form').dialog('disable'); 
 			},
 
 			'<?php print $this->lang->line('Cancel')?>': function () { 
+				if (saving_in_progress) return;
 				$(this).dialog('close'); 
 			}
 		},
-		close: function() { }
+
+		beforeClose: function() { 
+			// if saving is in progress, prevent dialog closing
+			return !saving_in_progress;
+		}
 	}); 
 
 

@@ -57,11 +57,12 @@
 
 function show_alert (outputMsg, titleMsg) 
 {
-	$("#code_folder_mainarea_alert").html(outputMsg).dialog({
+	$('#code_folder_mainarea_alert').html(outputMsg).dialog({
 		title: titleMsg,
 		resizable: true,
 		modal: true,
-		width: 500,
+		width: 'auto',
+		height: 'auto',
 		buttons: {
 			"OK": function () {
 				$(this).dialog("close");
@@ -198,7 +199,7 @@ function render_readme()
 }
 
 var new_item_no = 0;
-var import_in_progress = 0;
+var import_in_progress = false;
 
 function get_new_item_html(no, type, name)
 {
@@ -220,25 +221,26 @@ $(function () {
 			title: '<?php print $this->lang->line('New');?>',
 			resizable: true,
 			autoOpen: false,
-			width: 500,
+			width: 'auto',
+			height: 'auto',
 			modal: true,
 			buttons: {
 				'More': function () {
-					if (import_in_progress > 0) return;
+					if (import_in_progress) return;
 
 					++new_item_no;
 					$('#code_folder_mainarea_new_file_form_item_list').append (get_new_item_html(new_item_no, 'file', 'file'));
 					$('#code_folder_mainarea_new_dir_form_item_list').append (get_new_item_html(new_item_no, 'text', 'dir'));
 				},
 				'<?php print $this->lang->line('OK')?>': function () {
-					if (import_in_progress > 0) return;
+					if (import_in_progress) return;
 
 					$('#code_folder_mainarea_new_item_count').val (new_item_no + 1);
 
 					if (!!window.FormData)
 					{
 						// FormData is supported
-						import_in_progress = 1;
+						import_in_progress = true;
 
 						var form_data = new FormData();
 
@@ -265,17 +267,22 @@ $(function () {
 							cache: false,
 
 							success: function (data, textStatus, jqXHR) { 
-								import_in_progress = 0;
+								import_in_progress = false;
 								$('#code_folder_mainarea_new_form_div').dialog('enable');
 								$('#code_folder_mainarea_new_form_div').dialog('close');
 								if (data == 'ok') 
+								{
+									// refresh the page to the head revision
 									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/code/file/{$project->id}/{$hex_headpath}"; ?>'));
+								}
 								else
-									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', '');
+								{
+									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+								}
 							},
 
 							error: function (jqXHR, textStatus, errorThrown) { 
-								import_in_progress = 0;
+								import_in_progress = false;
 								$('#code_folder_mainarea_new_form_div').dialog('enable');
 								$('#code_folder_mainarea_new_form_div').dialog('close');
 								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
@@ -290,12 +297,16 @@ $(function () {
 
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
-					if (import_in_progress > 0) return;
+					if (import_in_progress) return;
 					$('#code_folder_mainarea_new_form_div').dialog('close');
 				}
 
 			},
-			clsoe: function() {}
+
+			beforeClose: function() { 
+				// if importing is in progress, prevent dialog closing
+				return !import_in_progress;
+			}
 		}
 	);
 
@@ -395,20 +406,8 @@ $(function () {
 	render_readme ();
 
 
-
 <?php if (strlen($popup_error_message) > 0): ?>
-	$("#code_folder_popup_error_div").dialog( {
-			title: '<?php print $this->lang->line('Error')?>',
-			width: 'auto',
-			height: 'auto',
-			modal: true,
-			autoOpen: true,
-			buttons: {
-					"<?php print $this->lang->line('OK')?>": function() {
-							$( this ).dialog( "close" );
-					}
-			}
-	});
+	show_alert (<?php print codepot_json_encode('<pre>' . htmlspecialchars($popup_error_message) . '</pre>'); ?>, "<?php print $this->lang->line('Error')?>");
 <?php endif; ?>
 });
 
@@ -871,12 +870,6 @@ $this->load->view (
 <?php $this->load->view ('footer'); ?>
 
 <!-- ================================================================== -->
-
-<?php if (strlen($popup_error_message) > 0): ?>
-<div id="code_folder_popup_error_div">
-<?php print $popup_error_message?>
-</div>
-<?php endif; ?>
 
 </body>
 

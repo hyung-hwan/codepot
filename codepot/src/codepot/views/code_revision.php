@@ -23,6 +23,22 @@
 
 <script type="text/javascript">
 
+function show_alert (outputMsg, titleMsg) 
+{
+	$('#code_revision_mainarea_alert').html(outputMsg).dialog({
+		title: titleMsg,
+		resizable: true,
+		modal: true,
+		width: 'auto',
+		height: 'auto',
+		buttons: {
+			"OK": function () {
+				$(this).dialog("close");
+			}
+		}
+	});
+}
+
 <?php $review_count = count($reviews); ?>
 <?php $is_loggedin = ($login['id'] != ''); ?>
 <?php $can_edit = ($is_loggedin && $login['id'] == $file['history']['author']); ?>
@@ -164,23 +180,6 @@ $(function() {
 });
 <?php endif; ?>
 
-<?php if (strlen($popup_error_message) > 0): ?>
-$(function() {
-	$("#code_revision_popup_error_div").dialog( { 
-		title: '<?php print $this->lang->line('Error')?>',
-		width: 'auto',
-		height: 'auto',
-		modal: true,
-		autoOpen: true,
-		buttons: {
-			"<?php print $this->lang->line('OK')?>": function() {
-				$( this ).dialog( "close" );
-			}
-		}
-	});
-});
-<?php endif; ?>
-
 function render_wiki()
 {
 	<?php 
@@ -228,8 +227,9 @@ $(function() {
 	hide_unneeded_divs ();
 	render_wiki ();
 
-
-	
+<?php if (strlen($popup_error_message) > 0): ?>
+	show_alert (<?php print codepot_json_encode('<pre>' . htmlspecialchars($popup_error_message) . '</pre>'); ?>, "<?php print $this->lang->line('Error')?>");
+<?php endif; ?>
 });
 
 </script>
@@ -560,6 +560,8 @@ $history = $file['history'];
 
 </div> <!-- code_revision_mainarea_result -->
 
+<div id='code_revision_mainarea_alert'></div>
+
 </div> <!-- code_revision_mainarea -->
 
 <div class='footer-pusher'></div> <!-- for sticky footer -->
@@ -640,11 +642,6 @@ $history = $file['history'];
 </div>
 <?php endif; ?> <!-- $is_loggedin -->
 
-<?php if (strlen($popup_error_message) > 0): ?>
-<div id="code_revision_popup_error_div">
-<?php print $popup_error_message?>
-</div>
-<?php endif; ?>
 
 </body>
 
