@@ -713,7 +713,8 @@ $this->load->view (
 			{
 				// file
 				$hexpath = $this->converter->AsciiToHex($fullpath);
-				print "<tr class='{$rowclass}'>";
+				$executable_class  = array_key_exists('executable', $f)? 'executable': '';
+				print "<tr class='{$rowclass} {$executable_class}'>";
 				print '<td>';
 				$fa_type = codepot_get_fa_file_type ($f['name']);
 				print "<i class='fa fa-{$fa_type}-o'></i> ";

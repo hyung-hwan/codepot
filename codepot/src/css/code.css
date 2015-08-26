@@ -10,6 +10,10 @@
 	vertical-align: middle;
 }
 
+#code_folder_mainarea_result_table tr.executable {
+	background-color: #F0FAF0;
+}
+
 #code_folder_mainarea_result_readme {
 	padding: 0.2em 0.2em 0.2em 0.2em;
 }
