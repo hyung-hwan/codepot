@@ -1137,6 +1137,26 @@ class SubversionModel extends Model
 		return @svn_proplist ($workurl, 0, $rev);
 	}
 
+	function getProp ($projectid, $path, $rev, $prop)
+	{
+		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+
+		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
+		$info = @svn_info ($workurl, FALSE, $rev);
+
+		if ($info === FALSE || count($info) != 1) 
+		{
+			if ($rev == SVN_REVISION_HEAD || $path == '') return FALSE;
+
+			// rebuild the URL with a peg revision and retry it.
+			$workurl = "{$orgurl}@{$rev}";
+			$info = @svn_info ($workurl, FALSE, $rev);
+			if ($info === FALSE || count($info) != 1)  return FALSE;
+		}
+
+		return @svn_propget ($workurl, $prop, FALSE, $rev);
+	}
+
 	function _cloc_revision_by_lang ($projectid, $path, $rev)
 	{
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
