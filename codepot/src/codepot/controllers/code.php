@@ -157,6 +157,28 @@ class Code extends Controller
 					$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
 					if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
 
+					
+					foreach ($file['content'] as &$f)
+					{
+						$exe = $this->subversion->getProp (
+							$projectid, $path . '/' . $f['name'], 
+							$file['created_rev'], 'svn:executable');
+						if ($exe !== FALSE && is_array($exe)) 
+						{
+							// the answer is like this
+							// Array ( [file:///var/lib/codepot/svnrepo/sg/trunk/drbdfix/drbdfix.sh] => Array ( [svn:executable] => * ) )
+							foreach ($exe as &$ex)
+							{
+								if (array_key_exists('svn:executable', $ex)) 
+								{
+									$f['executable'] = $ex['svn:executable'];
+									break;
+								}
+							}
+						}
+					}
+
+
 					$data['project'] = $project;
 					$data['headpath'] = $path;
 					$data['file'] = $file;
