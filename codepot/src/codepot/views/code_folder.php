@@ -343,7 +343,7 @@ $(function () {
 								xi++;
 							}
 						}
-					form_data.append ('code_folder_delete_file_count', xi);
+						form_data.append ('code_folder_delete_file_count', xi);
 
 						$('#code_folder_mainarea_delete_form_div').dialog('disable');
 						$.ajax({
