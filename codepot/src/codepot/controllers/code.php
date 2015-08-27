@@ -87,10 +87,15 @@ class Code extends Controller
 					for ($i = 0; $i < $post_max_item_no; $i++)
 					{
 						$d = $this->input->post("code_folder_new_item_dir_$i");
-
 						if (strlen($d) > 0) 
 						{
 							array_push ($import_files, array ('type' => 'dir', 'name' => $d));
+						}
+
+						$d = $this->input->post("code_folder_new_item_empfile_$i");
+						if (strlen($d) > 0) 
+						{
+							array_push ($import_files, array ('type' => 'empfile', 'name' => $d));
 						}
 
 						$fid = "code_folder_new_item_file_$i";
@@ -416,22 +421,27 @@ class Code extends Controller
 			}
 			else
 			{
-				$post_new_message = $this->input->post('code_folder_new_message');
-				$post_max_item_no = $this->input->post('code_folder_new_item_count');
-				$post_unzip = $this->input->post('code_folder_new_item_unzip');
+				$post_new_message = $this->input->post('code_new_message');
+				$post_max_item_no = $this->input->post('code_new_item_count');
+				$post_unzip = $this->input->post('code_new_item_unzip');
 				if ($post_new_message !== FALSE && $post_max_item_no !== FALSE)
 				{
 					$import_files = array ();
 					for ($i = 0; $i < $post_max_item_no; $i++)
 					{
-						$d = $this->input->post("code_folder_new_item_dir_$i");
-
+						$d = $this->input->post("code_new_item_dir_$i");
 						if (strlen($d) > 0) 
 						{
 							array_push ($import_files, array ('type' => 'dir', 'name' => $d));
 						}
 
-						$fid = "code_folder_new_item_file_$i";
+						$d = $this->input->post("code_new_item_empfile_$i");
+						if (strlen($d) > 0) 
+						{
+							array_push ($import_files, array ('type' => 'empfile', 'name' => $d));
+						}
+
+						$fid = "code_new_item_file_$i";
 						if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
 						{
 							array_push ($import_files, array ('type' => 'file', 'name' => $_FILES[$fid]['name'], 'fid' => $fid, 'unzip' => $post_unzip));
@@ -487,14 +497,14 @@ class Code extends Controller
 			}
 			else
 			{
-				$post_delete_message = $this->input->post('code_folder_delete_message');
-				$post_delete_file_count = $this->input->post('code_folder_delete_file_count');
+				$post_delete_message = $this->input->post('code_delete_message');
+				$post_delete_file_count = $this->input->post('code_delete_file_count');
 				if ($post_delete_message !== FALSE && $post_delete_file_count !== FALSE)
 				{
 					$delete_files = array ();
 					for ($i = 0; $i < $post_delete_file_count; $i++)
 					{
-						$d = $this->input->post("code_folder_delete_file_$i");
+						$d = $this->input->post("code_delete_file_$i");
 
 						if (strlen($d) > 0) 
 						{
