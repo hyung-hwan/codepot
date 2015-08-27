@@ -200,6 +200,7 @@ function render_readme()
 
 var new_item_no = 0;
 var import_in_progress = false;
+var delete_in_progress = false;
 
 function get_new_item_html(no, type, name)
 {
@@ -310,8 +311,99 @@ $(function () {
 		}
 	);
 
+	$('#code_folder_mainarea_delete_form_div').dialog (
+		{
+			title: '<?php print $this->lang->line('Delete');?>',
+			resizable: true,
+			autoOpen: false,
+			width: 'auto',
+			height: 'auto',
+			modal: true,
+			buttons: {
+				'<?php print $this->lang->line('OK')?>': function () {
+					if (delete_in_progress) return;
+
+					$('#code_folder_mainarea_new_item_count').val (new_item_no + 1);
+
+					if (!!window.FormData)
+					{
+						// FormData is supported
+						delete_in_progress = true;
+
+						var form_data = new FormData();
+
+						form_data.append ('code_folder_delete_message', $('#code_folder_mainarea_delete_message').val());
+						var xi = 0;
+						for (var i = 0; i < <?php print $file_count; ?>; i++)
+						{
+							var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
+							if (f != null && f.is(':checked'))
+							{
+								form_data.append ('code_folder_delete_file_' + xi, f.val());
+								xi++;
+							}
+						}
+					form_data.append ('code_folder_delete_file_count', xi);
+
+						$('#code_folder_mainarea_delete_form_div').dialog('disable');
+						$.ajax({
+							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/code/xhr_delete/{$project->id}/{$hex_headpath}"; ?>'),
+							type: 'POST',
+							data: form_data,
+							mimeType: 'multipart/form-data',
+							contentType: false,
+							processData: false,
+							cache: false,
+
+							success: function (data, textStatus, jqXHR) { 
+								delete_in_progress = false;
+								$('#code_folder_mainarea_delete_form_div').dialog('enable');
+								$('#code_folder_mainarea_delete_form_div').dialog('close');
+								if (data == 'ok') 
+								{
+									// refresh the page to the head revision
+									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/code/file/{$project->id}/{$hex_headpath}"; ?>'));
+								}
+								else
+								{
+									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+								}
+							},
+
+							error: function (jqXHR, textStatus, errorThrown) { 
+								delete_in_progress = false;
+								$('#code_folder_mainarea_delete_form_div').dialog('enable');
+								$('#code_folder_mainarea_delete_form_div').dialog('close');
+								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
+							}
+						});
+					}
+					else
+					{
+						show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
+					}
+
+				},
+				'<?php print $this->lang->line('Cancel')?>': function () {
+					if (delete_in_progress) return;
+					$('#code_folder_mainarea_delete_form_div').dialog('close');
+				}
+
+			},
+
+			beforeClose: function() { 
+				// if importing is in progress, prevent dialog closing
+				return !delete_in_progress;
+			}
+		}
+	);
+
 	$('#code_folder_mainarea_new_button').button().click (function() {
 		$('#code_folder_mainarea_new_form_div').dialog('open');
+	});
+
+	$('#code_folder_mainarea_delete_button').button().click (function() {
+		$('#code_folder_mainarea_delete_form_div').dialog('open');
 	});
 
 <?php endif; ?>
@@ -368,6 +460,12 @@ $(function () {
 	});
 <?php endif; ?>
 
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+	$('#code_folder_mainarea_result_table_select_all').button().click (function() {
+		$('.file_selector').prop('checked', $('#code_folder_mainarea_result_table_select_all').is(':checked'));
+	});
+<?php endif; ?>
+
 	$('#code_search_submit').button().click (function () {
 		if ($.trim($("#code_search_string").val()) != "")
 		{
@@ -376,14 +474,6 @@ $(function () {
 			$('#code_search_form').submit ();
 		}
 	});
-	/* 
-	$('#code_search_form').submit (function(e) {
-		if ($.trim($("#code_search_string").val()) === "")
-		{
-			// prevent submission when the search string is empty.
-			e.preventDefault();
-		}
-	});*/
 
 	$('#code_search_invertedly').button();
 	$('#code_search_case_insensitively').button();
@@ -404,7 +494,6 @@ $(function () {
 	});
 
 	render_readme ();
-
 
 <?php if (strlen($popup_error_message) > 0): ?>
 	show_alert (<?php print codepot_json_encode('<pre>' . htmlspecialchars($popup_error_message) . '</pre>'); ?>, "<?php print $this->lang->line('Error')?>");
@@ -565,7 +654,6 @@ $this->load->view (
 		print form_hidden('search_wildcard_pattern', set_value('search_wildcard_pattern', $wildcard_pattern));
 
 		print ' ';
-		//print form_submit('search_submit', $this->lang->line('Search'), 'id="code_search_submit"');
 		printf ('<a id="code_search_submit" href="#">%s</a>', $this->lang->line('Search'));
 		print ' | ';
 	} 
@@ -596,6 +684,7 @@ $this->load->view (
 		if (isset($login['id']) && $login['id'] != '')
 		{
 			printf ('<a id="code_folder_mainarea_new_button" href="#">%s</a>', $this->lang->line('New'));
+			printf ('<a id="code_folder_mainarea_delete_button" href="#">%s</a>', $this->lang->line('Delete'));
 		}
 
 		if ($file_count > 0)
@@ -664,6 +753,10 @@ $this->load->view (
 
 		print '<table id="code_folder_mainarea_result_table" class="fit-width-result-table">';
 		print '<tr class="heading">';
+		if (isset($login['id']) && $login['id'] != '')
+		{
+			print '<th align="middle"><input type="checkbox" id="code_folder_mainarea_result_table_select_all", "select_all" /><label for="code_folder_mainarea_result_table_select_all"><i class="fa fa-check"></i></label></th>';
+		}
 		print '<th>' . $this->lang->line('Name') . '</th>';
 		print '<th>' . $this->lang->line('Revision') . '</th>';
 		print '<th>' . $this->lang->line('Size') . '</th>';
@@ -687,6 +780,12 @@ $this->load->view (
 				// directory 
 				$hexpath = $this->converter->AsciiToHex($fullpath);
 				print "<tr class='{$rowclass}'>";
+				if (isset($login['id']) && $login['id'] != '')
+				{
+					print '<td align="middle">';
+					printf ('<input type="checkbox" name="code_folder_file_%d" value="%s" class="file_selector" id="code_folder_mainarea_result_table_file_selector_%d" />', $rownum, addslashes($f['name']), $rownum);
+					print '</td>';
+				}
 				print '<td>';
 				print '<i class="fa fa-folder-o"></i> ';
 				print anchor (
@@ -701,7 +800,6 @@ $this->load->view (
 				print htmlspecialchars($f['last_author']);
 				print '</td>';
 				print '<td><code>';
-				//print date('r', $f['time_t']);
 				print date('Y-m-d', $f['time_t']);
 				print '</code></td>';
 				print '<td></td>';
@@ -715,6 +813,12 @@ $this->load->view (
 				$hexpath = $this->converter->AsciiToHex($fullpath);
 				$executable_class  = array_key_exists('executable', $f)? 'executable': '';
 				print "<tr class='{$rowclass} {$executable_class}'>";
+				if (isset($login['id']) && $login['id'] != '')
+				{
+					print '<td align="middle">';
+					printf ('<input type="checkbox" name="code_folder_file_%d", value="%s" class="file_selector" id="code_folder_mainarea_result_table_file_selector_%d" />', $rownum, addslashes($f['name']), $rownum);
+					print '</td>';
+				}
 				print '<td>';
 				$fa_type = codepot_get_fa_file_type ($f['name']);
 				print "<i class='fa fa-{$fa_type}-o'></i> ";
@@ -854,6 +958,11 @@ $this->load->view (
 	</div>
 
 	<?php print form_close();?>
+</div>
+
+<div id="code_folder_mainarea_delete_form_div">
+	<div><?php print $this->lang->line('Message'); ?>:</div>
+	<div><textarea type='textarea' id='code_folder_mainarea_delete_message' name='code_folder_delete_message' style='width:100%;'></textarea></div>
 </div>
 
 <?php endif; ?>

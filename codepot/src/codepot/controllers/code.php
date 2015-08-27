@@ -457,6 +457,70 @@ class Code extends Controller
 		print $status;
 	}
 
+	function xhr_delete ($projectid = '', $path = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+		$this->load->library ('upload');
+	
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'signin';
+		}
+		else
+		{
+			$path = $this->converter->HexToAscii ($path);
+			if ($path == '.') $path = ''; /* treat a period specially */
+			$path = $this->_normalize_path ($path);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "dberr - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "noent - no such project {$projectid}";
+			}
+			else
+			{
+				$post_delete_message = $this->input->post('code_folder_delete_message');
+				$post_delete_file_count = $this->input->post('code_folder_delete_file_count');
+				if ($post_delete_message !== FALSE && $post_delete_file_count !== FALSE)
+				{
+					$delete_files = array ();
+					for ($i = 0; $i < $post_delete_file_count; $i++)
+					{
+						$d = $this->input->post("code_folder_delete_file_$i");
+
+						if (strlen($d) > 0) 
+						{
+							array_push ($delete_files, $d);
+						}
+					}
+
+					if (count($delete_files) > 0 && $this->subversion->deleteFiles ($projectid, $path, $login['id'], $post_delete_message, $delete_files, $this->upload) === FALSE)
+					{
+						$status = 'repoerr - ' . $this->subversion->delete_files_errmsg;
+					}
+					else
+					{
+						$status = 'ok';
+					}
+				}
+				else
+				{
+					$status = 'posterr - invalid post data';
+				}
+			}
+		}
+
+		print $status;
+	}
+
 	function enjson_save ($projectid = '', $path = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
