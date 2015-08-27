@@ -355,6 +355,17 @@ class SubversionModel extends Model
 					return FALSE;
 				}
 			}
+			else if ($f['type'] == 'empfile')
+			{
+				if (@touch($xname) === FALSE ||
+				    @svn_add ($xname, TRUE, TRUE) === FALSE)
+				{
+					restore_error_handler ();
+					codepot_delete_files ($actual_tfname, TRUE);
+					@unlink ($tfname);
+					return FALSE;
+				}
+			}
 			else if ($f['type'] == 'file')
 			{
 				$config['allowed_types'] = '*';

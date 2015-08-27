@@ -14,4 +14,6 @@ $lang['CODE_SEARCH_RECURSIVELY'] = 'Search recursively to sub-directories';
 $lang['CODE_SEARCH_IN_NAME'] = 'Search in file names';
 $lang['CODE_SEARCH_IS_REGEX'] = 'Search string is a regular expression';
 $lang['CODE_SEARCH_WILDCARD'] = 'Enter a wildcard pattern';
+
+$lang['CODE_FMT_DELETE_X_SELECTED_FILES'] = 'Delete %d selected file(s)';
 ?>

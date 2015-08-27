@@ -14,4 +14,7 @@ $lang['CODE_SEARCH_RECURSIVELY'] = '서브디렉토리를 포함하여 검색합
 $lang['CODE_SEARCH_IN_NAME'] = '파일이름을 검색합니다';
 $lang['CODE_SEARCH_IS_REGEX'] = '검색어가 정규식입니다';
 $lang['CODE_SEARCH_WILDCARD'] = '와일드카드 패턴을 입력하세요';
+
+$lang['CODE_FMT_DELETE_X_SELECTED_FILES'] = '선택된 파일 %d개를 삭제합니다';
+
 ?>

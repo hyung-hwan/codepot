@@ -214,6 +214,7 @@ $(function () {
 	new_item_no = 0;
 	$('#code_folder_mainarea_new_file_form_item_list').append (get_new_item_html(new_item_no, 'file', 'file'));
 	$('#code_folder_mainarea_new_dir_form_item_list').append (get_new_item_html(new_item_no, 'text', 'dir'));
+	$('#code_folder_mainarea_new_empfile_form_item_list').append (get_new_item_html(new_item_no, 'text', 'empfile'));
 
 	$("#code_folder_mainarea_new_form_tabs").tabs ();
 
@@ -232,6 +233,7 @@ $(function () {
 					++new_item_no;
 					$('#code_folder_mainarea_new_file_form_item_list').append (get_new_item_html(new_item_no, 'file', 'file'));
 					$('#code_folder_mainarea_new_dir_form_item_list').append (get_new_item_html(new_item_no, 'text', 'dir'));
+					$('#code_folder_mainarea_new_empfile_form_item_list').append (get_new_item_html(new_item_no, 'text', 'empfile'));
 				},
 				'<?php print $this->lang->line('OK')?>': function () {
 					if (import_in_progress) return;
@@ -245,16 +247,19 @@ $(function () {
 
 						var form_data = new FormData();
 
-						form_data.append ('code_folder_new_message', $('#code_folder_mainarea_new_message').val());
-						form_data.append ('code_folder_new_item_count', $('#code_folder_mainarea_new_item_count').val());
-						form_data.append ('code_folder_new_item_unzip', $('#code_folder_mainarea_new_item_unzip').val());
+						form_data.append ('code_new_message', $('#code_folder_mainarea_new_message').val());
+						form_data.append ('code_new_item_count', $('#code_folder_mainarea_new_item_count').val());
+						form_data.append ('code_new_item_unzip', $('#code_folder_mainarea_new_item_unzip').val());
 						for (var i = 0; i <= new_item_no; i++)
 						{
 							var f = $('#code_folder_mainarea_new_item_file_' + i).get(0).files[0];
-							if (f != null) form_data.append ('code_folder_new_item_file_' + i, f);
+							if (f != null) form_data.append ('code_new_item_file_' + i, f);
 
 							var d = $('#code_folder_mainarea_new_item_dir_' + i).val();
-							if (d != null && d != '') form_data.append ('code_folder_new_item_dir_' + i, d);
+							if (d != null && d != '') form_data.append ('code_new_item_dir_' + i, d);
+
+							var d = $('#code_folder_mainarea_new_item_empfile_' + i).val();
+							if (d != null && d != '') form_data.append ('code_new_item_empfile_' + i, d);
 						}
 
 						$('#code_folder_mainarea_new_form_div').dialog('disable');
@@ -332,18 +337,18 @@ $(function () {
 
 						var form_data = new FormData();
 
-						form_data.append ('code_folder_delete_message', $('#code_folder_mainarea_delete_message').val());
+						form_data.append ('code_delete_message', $('#code_folder_mainarea_delete_message').val());
 						var xi = 0;
 						for (var i = 0; i < <?php print $file_count; ?>; i++)
 						{
 							var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
 							if (f != null && f.is(':checked'))
 							{
-								form_data.append ('code_folder_delete_file_' + xi, f.val());
+								form_data.append ('code_delete_file_' + xi, f.val());
 								xi++;
 							}
 						}
-						form_data.append ('code_folder_delete_file_count', xi);
+						form_data.append ('code_delete_file_count', xi);
 
 						$('#code_folder_mainarea_delete_form_div').dialog('disable');
 						$.ajax({
@@ -403,6 +408,15 @@ $(function () {
 	});
 
 	$('#code_folder_mainarea_delete_button').button().click (function() {
+		var xi = 0;
+		for (var i = 0; i < <?php print $file_count; ?>; i++)
+		{
+			var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
+			if (f != null && f.is(':checked')) xi++;
+		}
+		$('#code_folder_mainarea_delete_display_message').text (
+			codepot_sprintf ("<?php print addslashes($this->lang->line('CODE_FMT_DELETE_X_SELECTED_FILES')) ?>", xi)
+		);
 		$('#code_folder_mainarea_delete_form_div').dialog('open');
 	});
 
@@ -945,8 +959,9 @@ $this->load->view (
 	
 	<div id="code_folder_mainarea_new_form_tabs" style="width:100%;">
 		<ul>
-			<li><a href="#code_folder_mainarea_new_file_div">File</a></li>
-			<li><a href="#code_folder_mainarea_new_dir_div">Directory</a></li>
+			<li><a href="#code_folder_mainarea_new_file_div"><?php print $this->lang->line('Upload'); ?></a></li>
+			<li><a href="#code_folder_mainarea_new_dir_div"><?php print $this->lang->line('Directory'); ?></a></li>
+			<li><a href="#code_folder_mainarea_new_empfile_div"><?php print $this->lang->line('File'); ?></a></li>
 		</ul>
 		<div id="code_folder_mainarea_new_file_div">
 			<div><input type='checkbox' id='code_folder_mainarea_new_item_unzip' name='code_folder_new_item_unzip' value='yes'/><?php print $this->lang->line('Unzip a zip file'); ?></div>
@@ -955,14 +970,18 @@ $this->load->view (
 		<div id="code_folder_mainarea_new_dir_div">
 			<div><ul id='code_folder_mainarea_new_dir_form_item_list'></ul></div>
 		</div>
+		<div id="code_folder_mainarea_new_empfile_div">
+			<div><ul id='code_folder_mainarea_new_empfile_form_item_list'></ul></div>
+		</div>
 	</div>
 
 	<?php print form_close();?>
 </div>
 
 <div id="code_folder_mainarea_delete_form_div">
+	<div><span id='code_folder_mainarea_delete_display_message'></span><br />&nbsp;</div>
 	<div><?php print $this->lang->line('Message'); ?>:</div>
-	<div><textarea type='textarea' id='code_folder_mainarea_delete_message' name='code_folder_delete_message' style='width:100%;'></textarea></div>
+	<div><textarea type='textarea' id='code_folder_mainarea_delete_message' name='code_folder_delete_message' style='width:100%;' ></textarea></div>
 </div>
 
 <?php endif; ?>
