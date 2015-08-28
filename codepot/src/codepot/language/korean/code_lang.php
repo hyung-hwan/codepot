@@ -16,5 +16,5 @@ $lang['CODE_SEARCH_IS_REGEX'] = '검색어가 정규식입니다';
 $lang['CODE_SEARCH_WILDCARD'] = '와일드카드 패턴을 입력하세요';
 
 $lang['CODE_FMT_DELETE_X_SELECTED_FILES'] = '선택된 파일 %d개를 삭제합니다';
-
+$lang['CODE_FMT_RENAME_X_SELECTED_FILES'] = '선택된 파일 %d개의 이름변경';
 ?>

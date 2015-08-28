@@ -16,4 +16,5 @@ $lang['CODE_SEARCH_IS_REGEX'] = 'Search string is a regular expression';
 $lang['CODE_SEARCH_WILDCARD'] = 'Enter a wildcard pattern';
 
 $lang['CODE_FMT_DELETE_X_SELECTED_FILES'] = 'Delete %d selected file(s)';
+$lang['CODE_FMT_RENAME_X_SELECTED_FILES'] = 'Rename %d selected file(s)';
 ?>
