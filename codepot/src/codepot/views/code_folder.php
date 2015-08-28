@@ -201,6 +201,8 @@ function render_readme()
 var new_item_no = 0;
 var import_in_progress = false;
 var delete_in_progress = false;
+var rename_in_progress = false;
+var rename_last_input = {};
 
 function get_new_item_html(no, type, name)
 {
@@ -212,9 +214,9 @@ $(function () {
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 
 	new_item_no = 0;
-	$('#code_folder_mainarea_new_file_form_item_list').append (get_new_item_html(new_item_no, 'file', 'file'));
-	$('#code_folder_mainarea_new_dir_form_item_list').append (get_new_item_html(new_item_no, 'text', 'dir'));
-	$('#code_folder_mainarea_new_empfile_form_item_list').append (get_new_item_html(new_item_no, 'text', 'empfile'));
+	$('#code_folder_mainarea_new_file_list').append (get_new_item_html(new_item_no, 'file', 'file'));
+	$('#code_folder_mainarea_new_dir_list').append (get_new_item_html(new_item_no, 'text', 'dir'));
+	$('#code_folder_mainarea_new_empfile_list').append (get_new_item_html(new_item_no, 'text', 'empfile'));
 
 	$("#code_folder_mainarea_new_form_tabs").tabs ();
 
@@ -231,9 +233,9 @@ $(function () {
 					if (import_in_progress) return;
 
 					++new_item_no;
-					$('#code_folder_mainarea_new_file_form_item_list').append (get_new_item_html(new_item_no, 'file', 'file'));
-					$('#code_folder_mainarea_new_dir_form_item_list').append (get_new_item_html(new_item_no, 'text', 'dir'));
-					$('#code_folder_mainarea_new_empfile_form_item_list').append (get_new_item_html(new_item_no, 'text', 'empfile'));
+					$('#code_folder_mainarea_new_file_list').append (get_new_item_html(new_item_no, 'file', 'file'));
+					$('#code_folder_mainarea_new_dir_list').append (get_new_item_html(new_item_no, 'text', 'dir'));
+					$('#code_folder_mainarea_new_empfile_list').append (get_new_item_html(new_item_no, 'text', 'empfile'));
 				},
 				'<?php print $this->lang->line('OK')?>': function () {
 					if (import_in_progress) return;
@@ -328,8 +330,6 @@ $(function () {
 				'<?php print $this->lang->line('OK')?>': function () {
 					if (delete_in_progress) return;
 
-					$('#code_folder_mainarea_new_item_count').val (new_item_no + 1);
-
 					if (!!window.FormData)
 					{
 						// FormData is supported
@@ -339,7 +339,7 @@ $(function () {
 
 						form_data.append ('code_delete_message', $('#code_folder_mainarea_delete_message').val());
 						var xi = 0;
-						for (var i = 0; i < <?php print $file_count; ?>; i++)
+						for (var i = 1; i <= <?php print $file_count; ?>; i++)
 						{
 							var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
 							if (f != null && f.is(':checked'))
@@ -403,23 +403,152 @@ $(function () {
 		}
 	);
 
+	$('#code_folder_mainarea_rename_form_div').dialog (
+		{
+			title: '<?php print $this->lang->line('rename');?>',
+			resizable: true,
+			autoOpen: false,
+			width: 'auto',
+			height: 'auto',
+			modal: true,
+			buttons: {
+				'<?php print $this->lang->line('OK')?>': function () {
+					if (rename_in_progress) return;
+
+					if (!!window.FormData)
+					{
+						// FormData is supported
+						rename_in_progress = true;
+
+						var form_data = new FormData();
+
+						form_data.append ('code_rename_message', $('#code_folder_mainarea_rename_message').val());
+						var xi = 0;
+						for (var i = 1; i <= <?php print $file_count; ?>; i++)
+						{
+							var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
+							if (f != null && f.is(':checked'))
+							{
+								form_data.append ('code_rename_file_old_' + xi, f.val());
+
+								var fx = $('#code_folder_mainarea_rename_file_' + xi);
+								var fxv = fx != null? fx.val(): '';
+								form_data.append ('code_rename_file_new_' + xi, fxv);
+
+								xi++;
+							}
+						}
+						form_data.append ('code_rename_file_count', xi);
+
+						$('#code_folder_mainarea_rename_form_div').dialog('disable');
+						$.ajax({
+							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/code/xhr_rename/{$project->id}/{$hex_headpath}"; ?>'),
+							type: 'POST',
+							data: form_data,
+							mimeType: 'multipart/form-data',
+							contentType: false,
+							processData: false,
+							cache: false,
+
+							success: function (data, textStatus, jqXHR) { 
+								rename_in_progress = false;
+								$('#code_folder_mainarea_rename_form_div').dialog('enable');
+								$('#code_folder_mainarea_rename_form_div').dialog('close');
+								if (data == 'ok') 
+								{
+									// refresh the page to the head revision
+									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/code/file/{$project->id}/{$hex_headpath}"; ?>'));
+								}
+								else
+								{
+									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+								}
+							},
+
+							error: function (jqXHR, textStatus, errorThrown) { 
+								rename_in_progress = false;
+								$('#code_folder_mainarea_rename_form_div').dialog('enable');
+								$('#code_folder_mainarea_rename_form_div').dialog('close');
+								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
+							}
+						});
+					}
+					else
+					{
+						show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
+					}
+
+				},
+				'<?php print $this->lang->line('Cancel')?>': function () {
+					if (rename_in_progress) return;
+					$('#code_folder_mainarea_rename_form_div').dialog('close');
+				}
+
+			},
+
+			beforeClose: function() { 
+				// if importing is in progress, prevent dialog closing
+				rename_last_input = {};
+				var xi = 0;
+				for (var i = 1; i <= <?php print $file_count; ?>; i++)
+				{
+					var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
+					if (f != null && f.is(':checked'))
+					{
+						var fx = $('#code_folder_mainarea_rename_file_' + xi);
+						var fxv = fx != null? fx.val(): '';
+						rename_last_input[f.val()] = fxv;
+
+						xi++;
+					}
+				}
+
+				return !rename_in_progress;
+			}
+		}
+	);
+
 	$('#code_folder_mainarea_new_button').button().click (function() {
 		$('#code_folder_mainarea_new_form_div').dialog('open');
 	});
 
 	$('#code_folder_mainarea_delete_button').button().click (function() {
 		var xi = 0;
-		for (var i = 0; i < <?php print $file_count; ?>; i++)
+		for (var i = 1; i <= <?php print $file_count; ?>; i++)
 		{
 			var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
 			if (f != null && f.is(':checked')) xi++;
 		}
-		$('#code_folder_mainarea_delete_display_message').text (
+		$('#code_folder_mainarea_delete_form_div').dialog ('option', 'title', 
 			codepot_sprintf ("<?php print addslashes($this->lang->line('CODE_FMT_DELETE_X_SELECTED_FILES')) ?>", xi)
 		);
 		$('#code_folder_mainarea_delete_form_div').dialog('open');
 	});
 
+	$('#code_folder_mainarea_rename_button').button().click (function() {
+		var xi = 0;
+
+		$('#code_folder_mainarea_rename_file_table').empty();
+		for (var i = 1; i <= <?php print $file_count; ?>; i++)
+		{
+			var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
+			if (f != null && f.is(':checked')) 
+			{
+				var li = rename_last_input[f.val()];
+				if (li == null) li = '';
+				$('#code_folder_mainarea_rename_file_table').append (
+					codepot_sprintf ('<tr><td>%s</td><td><input type="text" id="code_folder_mainarea_rename_file_%d" value="%s"/></td></tr>', 
+						codepot_htmlspecialchars(f.val()), xi, codepot_addslashes(li))
+				);
+				xi++;
+			}
+		}
+
+		$('#code_folder_mainarea_rename_form_div').dialog ('option', 'title', 
+			codepot_sprintf ("<?php print addslashes($this->lang->line('CODE_FMT_RENAME_X_SELECTED_FILES')) ?>", xi)
+		);
+		$('#code_folder_mainarea_rename_form_div').dialog('open');
+	});
 <?php endif; ?>
 
 <?php if ($file_count > 0): ?>
@@ -699,6 +828,7 @@ $this->load->view (
 		{
 			printf ('<a id="code_folder_mainarea_new_button" href="#">%s</a>', $this->lang->line('New'));
 			printf ('<a id="code_folder_mainarea_delete_button" href="#">%s</a>', $this->lang->line('Delete'));
+			printf ('<a id="code_folder_mainarea_rename_button" href="#">%s</a>', $this->lang->line('Rename'));
 		}
 
 		if ($file_count > 0)
@@ -965,13 +1095,13 @@ $this->load->view (
 		</ul>
 		<div id="code_folder_mainarea_new_file_div">
 			<div><input type='checkbox' id='code_folder_mainarea_new_item_unzip' name='code_folder_new_item_unzip' value='yes'/><?php print $this->lang->line('Unzip a zip file'); ?></div>
-			<div><ul id='code_folder_mainarea_new_file_form_item_list'></ul></div>
+			<div><ul id='code_folder_mainarea_new_file_list'></ul></div>
 		</div>
 		<div id="code_folder_mainarea_new_dir_div">
-			<div><ul id='code_folder_mainarea_new_dir_form_item_list'></ul></div>
+			<div><ul id='code_folder_mainarea_new_dir_list'></ul></div>
 		</div>
 		<div id="code_folder_mainarea_new_empfile_div">
-			<div><ul id='code_folder_mainarea_new_empfile_form_item_list'></ul></div>
+			<div><ul id='code_folder_mainarea_new_empfile_list'></ul></div>
 		</div>
 	</div>
 
@@ -979,9 +1109,16 @@ $this->load->view (
 </div>
 
 <div id="code_folder_mainarea_delete_form_div">
-	<div><span id='code_folder_mainarea_delete_display_message'></span><br />&nbsp;</div>
 	<div><?php print $this->lang->line('Message'); ?>:</div>
 	<div><textarea type='textarea' id='code_folder_mainarea_delete_message' name='code_folder_delete_message' style='width:100%;' ></textarea></div>
+</div>
+
+<div id="code_folder_mainarea_rename_form_div">
+	<div><?php print $this->lang->line('Message'); ?>:</div>
+	<div><textarea type='textarea' id='code_folder_mainarea_rename_message' name='code_folder_rename_message' style='width:100%;' ></textarea></div>
+	<div id="code_folder_mainarea_rename_file_div">
+		<div><table id='code_folder_mainarea_rename_file_table'></table></div>
+	</div>
 </div>
 
 <?php endif; ?>

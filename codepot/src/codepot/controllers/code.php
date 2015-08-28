@@ -107,7 +107,7 @@ class Code extends Controller
 
 					if (count($import_files) > 0 && $this->subversion->importFiles ($projectid, $path, $login['id'], $post_new_message, $import_files, $this->upload) === FALSE)
 					{
-						$popup_error_message = $this->subversion->import_files_errmsg;
+						$popup_error_message = $this->subversion->getErrorMessage();
 					}
 					else
 					{
@@ -450,7 +450,7 @@ class Code extends Controller
 
 					if (count($import_files) > 0 && $this->subversion->importFiles ($projectid, $path, $login['id'], $post_new_message, $import_files, $this->upload) === FALSE)
 					{
-						$status = 'repoerr - ' . $this->subversion->import_files_errmsg;
+						$status = 'repoerr - ' . $this->subversion->getErrorMessage();
 					}
 					else
 					{
@@ -471,8 +471,7 @@ class Code extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
-		$this->load->library ('upload');
-	
+
 		$login = $this->login->getUser ();
 		$revision_saved = -1;
 
@@ -512,9 +511,72 @@ class Code extends Controller
 						}
 					}
 
-					if (count($delete_files) > 0 && $this->subversion->deleteFiles ($projectid, $path, $login['id'], $post_delete_message, $delete_files, $this->upload) === FALSE)
+					if (count($delete_files) > 0 && $this->subversion->deleteFiles ($projectid, $path, $login['id'], $post_delete_message, $delete_files) === FALSE)
 					{
-						$status = 'repoerr - ' . $this->subversion->delete_files_errmsg;
+						$status = 'repoerr - ' . $this->subversion->getErrorMessage();
+					}
+					else
+					{
+						$status = 'ok';
+					}
+				}
+				else
+				{
+					$status = 'posterr - invalid post data';
+				}
+			}
+		}
+
+		print $status;
+	}
+
+	function xhr_rename ($projectid = '', $path = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'signin';
+		}
+		else
+		{
+			$path = $this->converter->HexToAscii ($path);
+			if ($path == '.') $path = ''; /* treat a period specially */
+			$path = $this->_normalize_path ($path);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "dberr - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "noent - no such project {$projectid}";
+			}
+			else
+			{
+				$post_rename_message = $this->input->post('code_rename_message');
+				$post_rename_file_count = $this->input->post('code_rename_file_count');
+				if ($post_rename_message !== FALSE && $post_rename_file_count !== FALSE)
+				{
+					$rename_files = array ();
+					for ($i = 0; $i < $post_rename_file_count; $i++)
+					{
+						$d1 = $this->input->post("code_rename_file_old_$i");
+						$d2 = $this->input->post("code_rename_file_new_$i");
+						if (strlen($d1) > 0 && strlen($d2) > 0) 
+						{
+							array_push ($rename_files, array($d1, $d2));
+						}
+					}
+
+					if (count($rename_files) > 0 && $this->subversion->renameFiles ($projectid, $path, $login['id'], $post_rename_message, $rename_files) === FALSE)
+					{
+						$status = 'repoerr - ' . $this->subversion->getErrorMessage();
 					}
 					else
 					{
@@ -570,7 +632,7 @@ class Code extends Controller
 			{
 				if ($this->subversion->storeFile ($projectid, $path, $login['id'], $message, $text) === FALSE)
 				{
-					$status = 'repoerr - ' . $this->subversion->store_file_errmsg;
+					$status = 'repoerr - ' . $this->subversion->getErrorMessage();
 				}
 				else
 				{

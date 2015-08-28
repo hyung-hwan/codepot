@@ -2,6 +2,18 @@
 
 class SubversionModel extends Model
 {
+	protected $errmsg = '';
+
+	function capture_error ($errno, $errmsg)
+	{
+		$this->errmsg = $errmsg;
+	}
+
+	function getErrorMessage ()
+	{
+		return $this->errmsg;
+	}
+
 	function SubversionModel ()
 	{
 		parent::Model ();
@@ -249,28 +261,10 @@ class SubversionModel extends Model
 		return $fileinfo;
 	}
 
-	public $store_file_errmsg = '';
-	public $import_files_errmsg = '';
-	public $delete_files_errmsg = '';
-
-	function capture_save_error ($errno, $errmsg)
-	{
-		$this->store_file_errmsg = $errmsg;
-	}
-
-	function capture_import_error ($errno, $errmsg)
-	{
-		$this->import_files_errmsg = $errmsg;
-	}
-
-	function capture_delete_error ($errno, $errmsg)
-	{
-		$this->delete_files_errmsg = $errmsg;
-	}
 
 	function storeFile ($projectid, $path, $committer, $commit_message, $text)
 	{
-		$store_file_errmsg = '';
+		$errmsg = '';
 
 		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 		$canon_path = $this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
@@ -278,7 +272,7 @@ class SubversionModel extends Model
 		$file_name = basename($canon_path);
 		$dirurl = 'file://' . $canon_dir;
 
-		set_error_handler (array ($this, 'capture_save_error'));
+		set_error_handler (array ($this, 'capture_error'));
 		$tfname = @tempnam(__FILE__, 'codepot-store-file-');
 		restore_error_handler ();
 		if ($tfname === FALSE) 
@@ -290,7 +284,7 @@ class SubversionModel extends Model
 		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
 
 /* TODO: optimize it not to get all files... svn_checkout needs to be enhanced???*/
-		set_error_handler (array ($this, 'capture_save_error'));
+		set_error_handler (array ($this, 'capture_error'));
 		if (@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $committer) === FALSE ||
 		    @svn_checkout ($dirurl, $actual_tfname, SVN_REVISION_HEAD, SVN_NON_RECURSIVE) === FALSE ||
 		    @file_put_contents ("{$actual_tfname}/{$file_name}", $text) === FALSE ||
@@ -310,7 +304,7 @@ class SubversionModel extends Model
 
 	function importFiles ($projectid, $path, $committer, $commit_message, $files, $uploader)
 	{
-		$this->import_files_errmsg = '';
+		$this->errmsg = '';
 
 		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 		$full_path = CODEPOT_SVNREPO_DIR."/{$projectid}";
@@ -318,7 +312,7 @@ class SubversionModel extends Model
 		$canon_path = $this->_canonical_path($full_path);
 		$dirurl = 'file://' . $canon_path;
 
-		set_error_handler (array ($this, 'capture_import_error'));
+		set_error_handler (array ($this, 'capture_error'));
 		$tfname = @tempnam(__FILE__, 'codepot-import-files-');
 		restore_error_handler ();
 		if ($tfname === FALSE) 
@@ -329,10 +323,9 @@ class SubversionModel extends Model
 		$actual_tfname = $tfname . '.d';
 		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
 
-		mkdir ($actual_tfname);
-
-		set_error_handler (array ($this, 'capture_import_error'));
-		if (@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $committer) === FALSE ||
+		set_error_handler (array ($this, 'capture_error'));
+		if (@mkdir ($actual_tfname) === FALSE ||
+		    @svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $committer) === FALSE ||
 		    @svn_checkout ($dirurl, $actual_tfname, SVN_REVISION_HEAD, 0) === FALSE)
 		{
 			restore_error_handler ();
@@ -455,9 +448,9 @@ class SubversionModel extends Model
 		return TRUE;
 	}
 
-	function deleteFiles ($projectid, $path, $committer, $commit_message, $files, $uploader)
+	function deleteFiles ($projectid, $path, $committer, $commit_message, $files)
 	{
-		$this->delete_files_errmsg = '';
+		$this->errmsg = '';
 
 		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 		$full_path = CODEPOT_SVNREPO_DIR."/{$projectid}";
@@ -465,7 +458,7 @@ class SubversionModel extends Model
 		$canon_path = $this->_canonical_path($full_path);
 		$dirurl = 'file://' . $canon_path;
 
-		set_error_handler (array ($this, 'capture_delete_error'));
+		set_error_handler (array ($this, 'capture_error'));
 		$tfname = @tempnam(__FILE__, 'codepot-delete-files-');
 		restore_error_handler ();
 		if ($tfname === FALSE) 
@@ -476,10 +469,9 @@ class SubversionModel extends Model
 		$actual_tfname = $tfname . '.d';
 		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
 
-		mkdir ($actual_tfname);
-
-		set_error_handler (array ($this, 'capture_delete_error'));
-		if (@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $committer) === FALSE ||
+		set_error_handler (array ($this, 'capture_error'));
+		if (@mkdir ($actual_tfname) === FALSE ||
+		    @svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $committer) === FALSE ||
 		    @svn_checkout ($dirurl, $actual_tfname, SVN_REVISION_HEAD, 0) === FALSE)
 		{
 			restore_error_handler ();
@@ -493,6 +485,77 @@ class SubversionModel extends Model
 			$xname = $actual_tfname . '/' . $f;
 
 			if (@svn_delete ($xname, TRUE) === FALSE)
+			{
+				restore_error_handler ();
+				codepot_delete_files ($actual_tfname, TRUE);
+				@unlink ($tfname);
+				return FALSE;
+			}
+		}
+
+		if (($result = @svn_commit ($commit_message, $actual_tfname)) === FALSE)
+		{
+			restore_error_handler ();
+			codepot_delete_files ($actual_tfname, TRUE);
+			@unlink ($tfname);
+			return FALSE;
+		}
+
+		restore_error_handler ();
+		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
+		@unlink ($tfname);
+		return TRUE;
+	}
+
+	function renameFiles ($projectid, $path, $committer, $commit_message, $files)
+	{
+		$this->errmsg = '';
+
+		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
+		$full_path = CODEPOT_SVNREPO_DIR."/{$projectid}";
+		if (strlen($path) > 0) $full_path .= "/{$path}";
+		$canon_path = $this->_canonical_path($full_path);
+		$dirurl = 'file://' . $canon_path;
+
+		set_error_handler (array ($this, 'capture_error'));
+		$tfname = @tempnam(__FILE__, 'codepot-rename-files-');
+		restore_error_handler ();
+		if ($tfname === FALSE) 
+		{
+			return FALSE;
+		}
+
+		$actual_tfname = $tfname . '.d';
+		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
+
+		set_error_handler (array ($this, 'capture_error'));
+		if (@mkdir ($actual_tfname) === FALSE ||
+		    @svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $committer) === FALSE ||
+		    @svn_checkout ($dirurl, $actual_tfname, SVN_REVISION_HEAD, 0) === FALSE)
+		{
+			restore_error_handler ();
+			codepot_delete_files ($actual_tfname, TRUE);
+			@unlink ($tfname);
+			return FALSE;
+		}
+
+		foreach ($files as $f)
+		{
+			$xname = $actual_tfname . '/' . $f[0];
+			$yname = $actual_tfname . '/' . $f[1];
+
+			if ($f[0] == $f[1]) continue;
+
+			if (@file_exists($yname))
+			{
+				$this->errmsg = "{$f[1]} already exists";
+				restore_error_handler ();
+				codepot_delete_files ($actual_tfname, TRUE);
+				@unlink ($tfname);
+				return FALSE;
+			}
+
+			if (@svn_move ($xname, $yname, TRUE) === FALSE)
 			{
 				restore_error_handler ();
 				codepot_delete_files ($actual_tfname, TRUE);
