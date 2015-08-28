@@ -206,7 +206,10 @@ var rename_last_input = {};
 
 function get_new_item_html(no, type, name)
 {
-	return codepot_sprintf ('<li><input type="%s" id="code_folder_mainarea_new_item_%s_%d" name="code_folder_new_item_%s_%d" /></li>',  type, name, no, name, no);
+	return codepot_sprintf (
+		'<li><input type="%s" id="code_folder_mainarea_new_item_%s_%d" name="code_folder_new_item_%s_%d" %s /></li>',  
+		type, name, no, name, no, ((type == 'file')? 'multiple=""': '')
+	);
 }
 
 $(function () {
@@ -240,8 +243,6 @@ $(function () {
 				'<?php print $this->lang->line('OK')?>': function () {
 					if (import_in_progress) return;
 
-					$('#code_folder_mainarea_new_item_count').val (new_item_no + 1);
-
 					if (!!window.FormData)
 					{
 						// FormData is supported
@@ -250,19 +251,43 @@ $(function () {
 						var form_data = new FormData();
 
 						form_data.append ('code_new_message', $('#code_folder_mainarea_new_message').val());
-						form_data.append ('code_new_item_count', $('#code_folder_mainarea_new_item_count').val());
 						form_data.append ('code_new_item_unzip', $('#code_folder_mainarea_new_item_unzip').val());
+
+						var f_no = 0, d_no = 0, ef_no = 0;
 						for (var i = 0; i <= new_item_no; i++)
 						{
-							var f = $('#code_folder_mainarea_new_item_file_' + i).get(0).files[0];
-							if (f != null) form_data.append ('code_new_item_file_' + i, f);
+							f = $('#code_folder_mainarea_new_item_file_' + i).get(0);
+							if (f != null)
+							{
+								for (var n = 0; n < f.files.length; n++)
+								{
+									if (f.files[n] != null) 
+									{
+										form_data.append ('code_new_item_file_' + f_no, f.files[n]);
+										f_no++;
+									}
+								}
+							}
 
 							var d = $('#code_folder_mainarea_new_item_dir_' + i).val();
-							if (d != null && d != '') form_data.append ('code_new_item_dir_' + i, d);
+							if (d != null && d != '') 
+							{
+								form_data.append ('code_new_item_dir_' + d_no, d);
+								d_no++;
+							}
 
 							var d = $('#code_folder_mainarea_new_item_empfile_' + i).val();
-							if (d != null && d != '') form_data.append ('code_new_item_empfile_' + i, d);
+							if (d != null && d != '') 
+							{
+								form_data.append ('code_new_item_empfile_' + ef_no, d);
+								ef_no++;
+							}
 						}
+						var x_no = f_no;
+						if (d_no > x_no) x_no = d_no;
+						if (ef_no > x_no) x_no = ef_no;
+
+						form_data.append ('code_new_item_count', x_no);
 
 						$('#code_folder_mainarea_new_form_div').dialog('disable');
 						$.ajax({
@@ -299,10 +324,8 @@ $(function () {
 					}
 					else
 					{
-						$('#code_folder_mainarea_new_form_div').dialog('close');
-						$('#code_folder_mainarea_new_form').submit();
+						show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
 					}
-
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
 					if (import_in_progress) return;
@@ -387,7 +410,6 @@ $(function () {
 					{
 						show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
 					}
-
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
 					if (delete_in_progress) return;
@@ -637,10 +659,6 @@ $(function () {
 	});
 
 	render_readme ();
-
-<?php if (strlen($popup_error_message) > 0): ?>
-	show_alert (<?php print codepot_json_encode('<pre>' . htmlspecialchars($popup_error_message) . '</pre>'); ?>, "<?php print $this->lang->line('Error')?>");
-<?php endif; ?>
 });
 
 </script>
@@ -1077,13 +1095,6 @@ $this->load->view (
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 
 <div id="code_folder_mainarea_new_form_div">
-	<?php 
-	$attrs = array ('id' => 'code_folder_mainarea_new_form');
-	// this form posts to the head revision regardless of the revision being shown currently
-	print form_open_multipart("code/file/{$project->id}/".$this->converter->AsciiToHex($headpath), $attrs);
-	?>
-	<input type='hidden' name='code_folder_new_item_count' id='code_folder_mainarea_new_item_count' />
-
 	<div><?php print $this->lang->line('Message'); ?>:</div>
 	<div><textarea type='textarea' id='code_folder_mainarea_new_message' name='code_folder_new_message' style='width:100%;'></textarea></div>
 	
@@ -1104,8 +1115,6 @@ $this->load->view (
 			<div><ul id='code_folder_mainarea_new_empfile_list'></ul></div>
 		</div>
 	</div>
-
-	<?php print form_close();?>
 </div>
 
 <div id="code_folder_mainarea_delete_form_div">
