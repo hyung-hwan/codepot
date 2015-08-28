@@ -76,55 +76,6 @@ class Code extends Controller
 			}
 			else 
 			{
-				$popup_error_message = '';
-
-				$post_new_message = $this->input->post('code_folder_new_message');
-				$post_max_item_no = $this->input->post('code_folder_new_item_count');
-				$post_unzip = $this->input->post('code_folder_new_item_unzip');
-				if ($post_new_message !== FALSE && $post_max_item_no !== FALSE)
-				{
-					$import_files = array ();
-					for ($i = 0; $i < $post_max_item_no; $i++)
-					{
-						$d = $this->input->post("code_folder_new_item_dir_$i");
-						if (strlen($d) > 0) 
-						{
-							array_push ($import_files, array ('type' => 'dir', 'name' => $d));
-						}
-
-						$d = $this->input->post("code_folder_new_item_empfile_$i");
-						if (strlen($d) > 0) 
-						{
-							array_push ($import_files, array ('type' => 'empfile', 'name' => $d));
-						}
-
-						$fid = "code_folder_new_item_file_$i";
-						if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
-						{
-							array_push ($import_files, array ('type' => 'file', 'name' => $_FILES[$fid]['name'], 'fid' => $fid, 'unzip' => $post_unzip));
-						}
-					}
-
-					if (count($import_files) > 0 && $this->subversion->importFiles ($projectid, $path, $login['id'], $post_new_message, $import_files, $this->upload) === FALSE)
-					{
-						$popup_error_message = $this->subversion->getErrorMessage();
-					}
-					else
-					{
-						$refreshed_file = $this->subversion->getFile ($projectid, $path, $rev);
-						if ($refreshed_file === FALSE)
-						{
-							$data['project'] = $project;
-							$data['message'] = 'Failed to get file';
-							$this->load->view ($this->VIEW_ERROR, $data);
-							return; /* EXIT HERE */
-						}
-
-						$file = $refreshed_file;
-					}
-				}
-
-				$data['popup_error_message'] = $popup_error_message;
 				if ($file['type'] == 'file')
 				{
 					$head_rev = $this->subversion->getHeadRev ($projectid, $path, $rev);
@@ -162,7 +113,6 @@ class Code extends Controller
 					$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
 					if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
 
-					
 					foreach ($file['content'] as &$f)
 					{
 						$exe = $this->subversion->getProp (
@@ -182,7 +132,6 @@ class Code extends Controller
 							}
 						}
 					}
-
 
 					$data['project'] = $project;
 					$data['headpath'] = $path;
