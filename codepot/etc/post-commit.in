@@ -168,6 +168,28 @@ sub get_author
 	return $author;
 }
 
+sub get_commit_message
+{
+	my $pool = SVN::Pool->new(undef);
+	my $svn = eval { SVN::Repos::open ($REPOFS, $pool) };
+	if (!defined($svn))
+	{
+		print (STDERR "Cannot open svn - $REPOFS\n");
+		return undef;
+	}
+
+	my $fs = $svn->fs ();
+	if (!defined($fs))
+	{
+		print (STDERR "Cannot open fs - $REPOFS\n");
+		return undef;
+	}
+
+	my $author = $fs->revision_prop ($REV, 'svn:log');
+	return $author;
+}
+
+
 sub format_string 
 {
 	my ($fmt, $userid, $password) = @_;
@@ -399,8 +421,15 @@ if (lc($cfg->{commit_notification}) eq 'yes')
 	}
 	else
 	{
-		$commit_message = 'See ' . format_commit_url($cfg->{commit_notification_url}, $REPOBASE, $AUTHOR, $REV);
+		$commit_message = format_commit_url($cfg->{commit_notification_url}, $REPOBASE, $AUTHOR, $REV);
 	}
+
+	my $m = get_commit_message ();
+	if (defined($m))
+	{
+		$commit_message = $commit_message . "\n" . $m;
+	}
+
 
 	email_message_to_project_members ($cfg, $dbh, $cfg->{database_prefix}, $REPOBASE, $commit_subject, $commit_message);
 }
