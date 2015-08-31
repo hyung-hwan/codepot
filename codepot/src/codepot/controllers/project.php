@@ -34,6 +34,7 @@ class Project extends Controller
 
 		if ($filter == '')
 		{
+			$search = new stdClass();
 			$search->id = '';
 			$search->name = '';
 			$search->summary = '';

@@ -10,6 +10,7 @@ class SiteModel extends Model
 
 	function getDefault ()
 	{
+		$site = new stdClass();
 		$site->id = CODEPOT_DEFAULT_SITE_LANGUAGE;
 		$site->name = CODEPOT_DEFAULT_SITE_NAME;
 		$site->summary = '';
