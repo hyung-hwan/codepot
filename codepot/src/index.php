@@ -49,7 +49,11 @@ if (function_exists('date_default_timezone_set') && !ini_get('date.timezone'))
 	else if (file_exists('/etc/timezone'))
 	{
 		// Debian
-		$tz = file_get_contents('/etc/timezone');
+		$tz = @file_get_contents('/etc/timezone');
+		if ($tz !== FALSE && strlen($tz) > 0)
+		{
+			$tz = substr ($tz, 0, strpos ($tz, "\n"));
+		}
 	}
 	else if (file_exists('/etc/sysconfig/clock'))
 	{

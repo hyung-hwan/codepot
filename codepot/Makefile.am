@@ -6,7 +6,6 @@ SUBDIRS = etc src sbin pecl-svn
 EXTRA_DIST = README mkmf.sh DEBIAN
 
 PHP_PACKAGE_NAME ?= php
-TARGET_ARCH ?= $(shell uname -m)
 
 install-data-hook:
 	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@"
@@ -33,14 +32,16 @@ distclean-local:
 # TODO: specify --with-phpextdir and --with-phpextinidir for the deb target
 deb: dist-gzip
 	tar -zxvf "$(PACKAGE)-$(VERSION).tar.gz"
-	cd "$(PACKAGE)-$(VERSION)"; ./configure \
+	cd "$(PACKAGE)-$(VERSION)"; PHPEXTDIR="`php5 --info 2>/dev/null | grep ^extension_dir | awk '{print $$5;}'`"; ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
 		--with-wwwdir=/var/www/codepot \
 		--with-cfgdir=/etc/codepot \
 		--with-depotdir=/var/lib/codepot \
 		--with-logdir=/var/log/codepot \
-		--with-cachedir=/var/cache/codepot
+		--with-cachedir=/var/cache/codepot \
+		--with-phpextdir="$${PHPEXTDIR}" \
+		--with-phpextinidir=/etc/php5/conf.d
 	rm -rf "/var/tmp/$(PACKAGE)-$(VERSION)"
 	cd "$(PACKAGE)-$(VERSION)"; make install DESTDIR="/var/tmp/$(PACKAGE)-$(VERSION)"
 	cd "$(PACKAGE)-$(VERSION)/DEBIAN"; make install DESTDIR="/var/tmp/$(PACKAGE)-$(VERSION)"
@@ -57,4 +58,4 @@ rpm: dist
 	mkdir -p "@abs_top_builddir@/RPM/SRPMS"
 	mkdir -p "@abs_top_builddir@/RPM/RPMS"
 	cp codepot-@VERSION@.tar.gz "@abs_top_builddir@/RPM/SOURCES"
-	rpmbuild --define "_topdir @abs_top_builddir@/RPM" --define "php_package_name $(PHP_PACKAGE_NAME)" -ba codepot.spec --target="$(TARGET_ARCH)"
+	TARGET_ARCH="`uname -m`"; rpmbuild --define "_topdir @abs_top_builddir@/RPM" --define "php_package_name $(PHP_PACKAGE_NAME)" -ba codepot.spec --target="$${TARGET_ARCH}"

@@ -1,9 +1,9 @@
 Package: @PACKAGE@
 Version: @VERSION@
-Maintainer: @PACKAGE_BUGREPORT@
+Maintainer: CHUNG, HYUNG-HWAN
 Homepage: @PACKAGE_URL@
 Depends: subversion, apache2, libapache2-svn, libapache2-mod-perl2, libapache2-mod-php5, php5, php5-ldap, php5-gd, perl, libdbi-perl, libconfig-simple-perl, libsvn-perl, libnet-ldap-perl, libdigest-sha1-perl
-Recommends: php5-mysql, php5-svn (>= 0.5.1)
+Recommends: php5-mysql
 Suggests: slapd, mysql-server
 Section: web
 Priority: optional
