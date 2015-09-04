@@ -42,6 +42,11 @@ extern zend_module_entry svn_module_entry;
 
 #include "svn_client.h"
 
+#if defined(SVN_DEPTH_INFINITY_OR_FILES)
+	/* version 1.5 at least */
+#	define PHP_SVN_SUPPORT_DEPTH
+#endif
+
 PHP_MINIT_FUNCTION(svn);
 PHP_MSHUTDOWN_FUNCTION(svn);
 PHP_RINIT_FUNCTION(svn);
@@ -67,6 +72,9 @@ PHP_FUNCTION(svn_commit);
 PHP_FUNCTION(svn_add);
 PHP_FUNCTION(svn_status);
 PHP_FUNCTION(svn_update);
+#if defined(PHP_SVN_SUPPORT_DEPTH)
+PHP_FUNCTION(svn_update2);
+#endif
 PHP_FUNCTION(svn_import);
 PHP_FUNCTION(svn_info);
 PHP_FUNCTION(svn_export);

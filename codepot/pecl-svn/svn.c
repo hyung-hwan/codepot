@@ -128,10 +128,50 @@ static ZEND_RSRC_DTOR_FUNC(php_svn_repos_fs_txn_dtor)
 #define SVN_STATIC_ME(name) ZEND_FENTRY(name, ZEND_FN(svn_ ## name), NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 /** Fixme = this list needs padding out... */
 static zend_function_entry svn_methods[] = {
-	SVN_STATIC_ME(cat)
 	SVN_STATIC_ME(checkout)
+	SVN_STATIC_ME(cat)
+	SVN_STATIC_ME(ls)
 	SVN_STATIC_ME(log)
+	SVN_STATIC_ME(auth_set_parameter)
+	SVN_STATIC_ME(auth_get_parameter)
+	SVN_STATIC_ME(client_version)
+	SVN_STATIC_ME(config_ensure)
+	SVN_STATIC_ME(diff)
+	SVN_STATIC_ME(cleanup)
+	SVN_STATIC_ME(revert)
+	SVN_STATIC_ME(resolved)
+	SVN_STATIC_ME(commit)
+	SVN_STATIC_ME(lock)
+	SVN_STATIC_ME(unlock)
+	SVN_STATIC_ME(add)
 	SVN_STATIC_ME(status)
+	SVN_STATIC_ME(update)
+#if defined(PHP_SVN_SUPPORT_DEPTH)
+	SVN_STATIC_ME(update2)
+#endif
+	SVN_STATIC_ME(import)
+	SVN_STATIC_ME(info)
+	SVN_STATIC_ME(export)
+	SVN_STATIC_ME(copy)
+	SVN_STATIC_ME(switch)
+	SVN_STATIC_ME(blame)
+	SVN_STATIC_ME(delete)
+	SVN_STATIC_ME(mkdir)
+	SVN_STATIC_ME(move)
+	SVN_STATIC_ME(proplist)
+	SVN_STATIC_ME(propget)
+	SVN_STATIC_ME(propset)
+	SVN_STATIC_ME(prop_delete)
+	SVN_STATIC_ME(revprop_get)
+	SVN_STATIC_ME(revprop_set)
+	SVN_STATIC_ME(revprop_delete)
+	SVN_STATIC_ME(repos_create)
+	SVN_STATIC_ME(repos_recover)
+	SVN_STATIC_ME(repos_hotcopy)
+	SVN_STATIC_ME(repos_open)
+	SVN_STATIC_ME(repos_fs)
+	SVN_STATIC_ME(repos_fs_begin_txn_for_commit)
+	SVN_STATIC_ME(repos_fs_commit_txn)
 
 	{NULL, NULL, NULL}
 };
@@ -139,12 +179,12 @@ static zend_function_entry svn_methods[] = {
 
 /* {{{ svn_functions[] */
 zend_function_entry svn_functions[] = {
-	PHP_FE(svn_checkout,		NULL)
-	PHP_FE(svn_cat,			NULL)
-	PHP_FE(svn_ls,			NULL)
-	PHP_FE(svn_log,			NULL)
-	PHP_FE(svn_auth_set_parameter,	NULL)
-	PHP_FE(svn_auth_get_parameter,	NULL)
+	PHP_FE(svn_checkout, NULL)
+	PHP_FE(svn_cat, NULL)
+	PHP_FE(svn_ls, NULL)
+	PHP_FE(svn_log, NULL)
+	PHP_FE(svn_auth_set_parameter, NULL)
+	PHP_FE(svn_auth_get_parameter, NULL)
 	PHP_FE(svn_client_version, NULL)
 	PHP_FE(svn_config_ensure, NULL)
 	PHP_FE(svn_diff, NULL)
@@ -157,6 +197,9 @@ zend_function_entry svn_functions[] = {
 	PHP_FE(svn_add, NULL)
 	PHP_FE(svn_status, NULL)
 	PHP_FE(svn_update, NULL)
+#if defined(PHP_SVN_SUPPORT_DEPTH)
+	PHP_FE(svn_update2, NULL)
+#endif
 	PHP_FE(svn_import, NULL)
 	PHP_FE(svn_info, NULL)
 	PHP_FE(svn_export, NULL)
@@ -554,15 +597,14 @@ PHP_MINIT_FUNCTION(svn)
 	INIT_CLASS_ENTRY(ce, "Svn", svn_methods);
 	ce_Svn = zend_register_internal_class(&ce TSRMLS_CC);
 
-
 	INIT_CLASS_ENTRY(ce, "SvnWc", NULL);
-		ce_SvnWc = zend_register_internal_class(&ce TSRMLS_CC);
+	ce_SvnWc = zend_register_internal_class(&ce TSRMLS_CC);
 
 	INIT_CLASS_ENTRY(ce, "SvnWcSchedule", NULL);
-		ce_SvnWcSchedule = zend_register_internal_class(&ce TSRMLS_CC);
+	ce_SvnWcSchedule = zend_register_internal_class(&ce TSRMLS_CC);
 
 	INIT_CLASS_ENTRY(ce, "SvnNode", NULL);
-		ce_SvnNode = zend_register_internal_class(&ce TSRMLS_CC);
+	ce_SvnNode = zend_register_internal_class(&ce TSRMLS_CC);
 
 
 #define CLASS_CONST_LONG(class_name, const_name, value) \
@@ -585,6 +627,14 @@ PHP_MINIT_FUNCTION(svn)
 	CLASS_CONST_LONG(Svn, "PREV", SVN_REVISION_PREV);
 	CLASS_CONST_LONG(Svn, "UNSPECIFIED", SVN_REVISION_UNSPECIFIED);
 
+#if defined(PHP_SVN_SUPPORT_DEPTH)
+	CLASS_CONST_LONG(Svn, "DEPTH_UNKNOWN", svn_depth_unknown);
+	CLASS_CONST_LONG(Svn, "DEPTH_EXCLUDE", svn_depth_exclude);
+	CLASS_CONST_LONG(Svn, "DEPTH_EMPTY", svn_depth_empty);
+	CLASS_CONST_LONG(Svn, "DEPTH_FILES", svn_depth_files);
+	CLASS_CONST_LONG(Svn, "DEPTH_IMMEDIATES", svn_depth_immediates);
+	CLASS_CONST_LONG(Svn, "DEPTH_INFINITY", svn_depth_infinity);
+#endif
 
 	CLASS_CONST_LONG(SvnWc, "NONE", svn_wc_status_none);
 	CLASS_CONST_LONG(SvnWc, "UNVERSIONED", svn_wc_status_unversioned);
@@ -610,7 +660,6 @@ PHP_MINIT_FUNCTION(svn)
 	CLASS_CONST_LONG(SvnNode, "FILE", svn_node_file);
 	CLASS_CONST_LONG(SvnNode, "DIR", svn_node_dir);
 	CLASS_CONST_LONG(SvnNode, "UNKNOWN", svn_node_unknown);
-
 
 	REGISTER_STRING_CONSTANT("SVN_AUTH_PARAM_DEFAULT_USERNAME", SVN_AUTH_PARAM_DEFAULT_USERNAME, CONST_CS|CONST_PERSISTENT);
 	REGISTER_STRING_CONSTANT("SVN_AUTH_PARAM_DEFAULT_PASSWORD", SVN_AUTH_PARAM_DEFAULT_PASSWORD, CONST_CS|CONST_PERSISTENT);
@@ -647,6 +696,15 @@ PHP_MINIT_FUNCTION(svn)
 	REGISTER_LONG_CONSTANT("SVN_NO_IGNORE", SVN_NO_IGNORE, CONST_CS|CONST_PERSISTENT);   /* --no-ignore */
 	REGISTER_LONG_CONSTANT("SVN_IGNORE_EXTERNALS", SVN_IGNORE_EXTERNALS, CONST_CS|CONST_PERSISTENT);   /* --ignore-externals */
 
+#if defined(PHP_SVN_SUPPORT_DEPTH)
+	REGISTER_LONG_CONSTANT("SVN_DEPTH_UNKNOWN", svn_depth_unknown, CONST_CS|CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("SVN_DEPTH_EXCLUDE", svn_depth_exclude, CONST_CS|CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("SVN_DEPTH_EMPTY", svn_depth_empty, CONST_CS|CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("SVN_DEPTH_FILES", svn_depth_files, CONST_CS|CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("SVN_DEPTH_IMMEDIATES", svn_depth_immediates, CONST_CS|CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("SVN_DEPTH_INFINITY", svn_depth_infinity, CONST_CS|CONST_PERSISTENT);
+#endif
+
 	REGISTER_LONG_CONSTANT("SVN_WC_STATUS_NONE", svn_wc_status_none, CONST_CS|CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("SVN_WC_STATUS_UNVERSIONED", svn_wc_status_unversioned, CONST_CS|CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("SVN_WC_STATUS_NORMAL", svn_wc_status_normal, CONST_CS|CONST_PERSISTENT);
@@ -666,7 +724,6 @@ PHP_MINIT_FUNCTION(svn)
 	REGISTER_LONG_CONSTANT("SVN_NODE_FILE", svn_node_file, CONST_CS|CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("SVN_NODE_DIR", svn_node_dir, CONST_CS|CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("SVN_NODE_UNKNOWN", svn_node_unknown, CONST_CS|CONST_PERSISTENT);
-
 
 	REGISTER_LONG_CONSTANT("SVN_WC_SCHEDULE_NORMAL", svn_wc_schedule_normal, CONST_CS|CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("SVN_WC_SCHEDULE_ADD", svn_wc_schedule_add, CONST_CS|CONST_PERSISTENT);
@@ -720,7 +777,7 @@ PHP_MINFO_FUNCTION(svn)
 }
 /* }}} */
 
-/* {{{ proto bool svn_checkout(string repository_url, string target_path [, int revision = SVN_REVISION_HEAD [, int flags]])
+/* {{{ proto bool svn_checkout(string repository_url, string target_path [, int revision = SVN_REVISION_HEAD [, int flags [, int depth]]])
 	Checks out a particular revision from a repository into target_path. */
 PHP_FUNCTION(svn_checkout)
 {
@@ -730,14 +787,14 @@ PHP_FUNCTION(svn_checkout)
 	int repos_url_len, target_path_len;
 	svn_error_t *err;
 	svn_opt_revision_t revision = { 0 }, peg_revision = { 0 };
-	long flags = 0;
+	long flags = 0, depth = svn_depth_infinity;
 	apr_pool_t *subpool;
 	const char *true_path;
 
 	revision.value.number = svn_opt_revision_unspecified;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|ll",
-			&repos_url, &repos_url_len, &target_path, &target_path_len, &revision.value.number, &flags) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|lll",
+			&repos_url, &repos_url_len, &target_path, &target_path_len, &revision.value.number, &flags, &depth) == FAILURE) {
 		return;
 	}
 
@@ -772,6 +829,18 @@ PHP_FUNCTION(svn_checkout)
 		goto cleanup;
 	}
 
+#if defined(PHP_SVN_SUPPORT_DEPTH)
+	err = svn_client_checkout3 (NULL,
+			true_path,
+			can_target_path,
+			&peg_revision,
+			&revision,
+			depth,
+			!(flags & SVN_NON_RECURSIVE),
+			flags & SVN_IGNORE_EXTERNALS,
+			SVN_G(ctx),
+			subpool);
+#else
 	err = svn_client_checkout2 (NULL,
 			true_path,
 			can_target_path,
@@ -781,6 +850,7 @@ PHP_FUNCTION(svn_checkout)
 			flags & SVN_IGNORE_EXTERNALS,
 			SVN_G(ctx),
 			subpool);
+#endif
 
 	if (err) {
 		php_svn_handle_error (err TSRMLS_CC);
@@ -3749,6 +3819,69 @@ cleanup:
 }
 /* }}} */
 
+#if defined(PHP_SVN_SUPPORT_DEPTH)
+
+/* {{{ proto int svn_update2(string path [, int revno [, int flags [, int depth]]])
+	Updates a working copy at path to revno */
+PHP_FUNCTION(svn_update2)
+{
+	const char *path = NULL;
+	const char *utf8_path = NULL;
+	int pathlen;
+	zend_bool recurse = 1;
+	apr_pool_t *subpool;
+	svn_error_t *err;
+	svn_revnum_t result_rev;
+	svn_opt_revision_t rev;
+	long revno = -1;
+	long flags = 0;
+	long depth = svn_depth_infinity;
+
+	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|lll",
+				&path, &pathlen, &revno, &flags, &depth)) {
+		return;
+	}
+
+	PHP_SVN_INIT_CLIENT();
+	subpool = svn_pool_create(SVN_G(pool));
+	if (!subpool) {
+		RETURN_FALSE;
+	}
+
+	err = svn_utf_cstring_to_utf8 (&utf8_path, path, subpool);
+	if (err)
+	{
+		php_svn_handle_error(err TSRMLS_CC);
+		RETVAL_FALSE;
+		goto cleanup;
+	}
+
+	path = svn_path_canonicalize(utf8_path, subpool);
+
+	rev.value.number = revno;
+	rev.kind = php_svn_get_revision_kind (rev);
+	 
+	err = svn_client_update3(&result_rev, path, &rev, 
+			depth, 
+			FALSE, /* depth_is_sticky */
+			flags & SVN_IGNORE_EXTERNALS, /* ignore_externals */
+			FALSE, /* allow_unver_obstructions */
+			SVN_G(ctx), subpool);
+
+	if (err) {
+		php_svn_handle_error(err TSRMLS_CC);
+		RETVAL_FALSE;
+	} else {
+		RETVAL_LONG(result_rev);
+	}
+
+cleanup:
+	svn_pool_destroy(subpool);
+
+}
+/* }}} */
+
+#endif
 
 static void php_svn_get_version(char *buf, int buflen)
 {
