@@ -830,14 +830,19 @@ PHP_FUNCTION(svn_checkout)
 	}
 
 #if defined(PHP_SVN_SUPPORT_DEPTH)
+	if (ZEND_NUM_ARGS() < 5) {
+		/* depth is not specified. adjust 'depth' for backward compatibilty */
+		if (flags & SVN_NON_RECURSIVE) depth = svn_depth_files;
+	}
+
 	err = svn_client_checkout3 (NULL,
 			true_path,
 			can_target_path,
 			&peg_revision,
 			&revision,
 			depth,
-			!(flags & SVN_NON_RECURSIVE),
-			flags & SVN_IGNORE_EXTERNALS,
+			flags & SVN_IGNORE_EXTERNALS, /* ignore_externals */
+			FALSE, /* allow_unver_obstructions */
 			SVN_G(ctx),
 			subpool);
 #else
@@ -3831,7 +3836,8 @@ PHP_FUNCTION(svn_update2)
 	zend_bool recurse = 1;
 	apr_pool_t *subpool;
 	svn_error_t *err;
-	svn_revnum_t result_rev;
+	apr_array_header_t *result_revs;
+	apr_array_header_t *path_array;
 	svn_opt_revision_t rev;
 	long revno = -1;
 	long flags = 0;
@@ -3858,10 +3864,14 @@ PHP_FUNCTION(svn_update2)
 
 	path = svn_path_canonicalize(utf8_path, subpool);
 
+	path_array = apr_array_make (subpool, 1, sizeof(char *));
+	APR_ARRAY_PUSH(path_array, const char *) = path;
+
 	rev.value.number = revno;
 	rev.kind = php_svn_get_revision_kind (rev);
-	 
-	err = svn_client_update3(&result_rev, path, &rev, 
+
+	err = svn_client_update3(
+			&result_revs, path_array, &rev, 
 			depth, 
 			FALSE, /* depth_is_sticky */
 			flags & SVN_IGNORE_EXTERNALS, /* ignore_externals */
@@ -3872,7 +3882,7 @@ PHP_FUNCTION(svn_update2)
 		php_svn_handle_error(err TSRMLS_CC);
 		RETVAL_FALSE;
 	} else {
-		RETVAL_LONG(result_rev);
+		RETVAL_LONG(APR_ARRAY_IDX(result_revs, 0, long));
 	}
 
 cleanup:
