@@ -15,6 +15,10 @@ UPGRADING FROM 0.2.0
   mysql> ALTER TABLE user_settings CHANGE code_hide_details code_hide_metadata CHAR(1) NOT NULL;
   mysql> ALTER TABLE site ADD COLUMN(summary VARCHAR(255) NOT NULL);
   mysql> RENAME TABLE user TO user_account;
+  mysql> ALTER TABLE file DROP INDEX encname;
+  mysql> INSERT INTO file_list (projectid, name, filename, encname, md5sum, description) SELECT projectid, name, name, encname, md5sum, summary FROM file WHERE md5sum != '';
+  mysql> ALTER TABLE file DROP COLUMN summary;
+  mysql> ALTER TABLE file DROP COLUMN md5sum;
 
 INSTALLATION ON CENTOS
 

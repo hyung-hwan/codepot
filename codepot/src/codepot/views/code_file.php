@@ -52,6 +52,8 @@ $(function () {
 			$("#code_file_mainarea_metadata_button").button(
 				"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
 		}
+
+		return false; // prevent the default behavior
 	});
 
 	$("#code_file_mainarea_edit_button").button();

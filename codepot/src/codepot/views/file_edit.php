@@ -105,18 +105,7 @@ $this->load->view (
 		<?php print form_input('file_tag', set_value('file_tag', $file->tag), $extra)?>
 		<?php print form_error('file_tag');?>
 	</div>
-	
-	<div class='form_input_label'>
-		<?php print form_label($this->lang->line('Summary').': ', 'file_summary')?>
-		<?php print form_error('file_summary');?>
-	</div>
-	<div class='form_input_field'>
-		<?php 
-			$extra = 'maxlength="255" size="80"';
-		?>
-		<?php print form_input('file_summary', set_value('file_summary', $file->summary), $extra)?>
-	</div>
-	
+
 	<div class='form_input_label'>
 		<?php print form_label($this->lang->line('Description').': ', 'file_description')?>
 		<a href='#' id='file_edit_mainarea_description_preview_button'><?php print $this->lang->line('Preview')?></a>
