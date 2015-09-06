@@ -378,19 +378,19 @@ class Code extends Controller
 					$import_files = array ();
 					for ($i = 0; $i < $post_max_item_no; $i++)
 					{
-						$d = $this->input->post("code_new_item_dir_$i");
+						$d = $this->input->post("code_new_item_dir_{$i}");
 						if (strlen($d) > 0) 
 						{
 							array_push ($import_files, array ('type' => 'dir', 'name' => $d));
 						}
 
-						$d = $this->input->post("code_new_item_empfile_$i");
+						$d = $this->input->post("code_new_item_empfile_{$i}");
 						if (strlen($d) > 0) 
 						{
 							array_push ($import_files, array ('type' => 'empfile', 'name' => $d));
 						}
 
-						$fid = "code_new_item_file_$i";
+						$fid = "code_new_item_file_{$i}";
 						if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
 						{
 							array_push ($import_files, array ('type' => 'file', 'name' => $_FILES[$fid]['name'], 'fid' => $fid, 'unzip' => $post_unzip));

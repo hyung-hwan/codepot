@@ -532,6 +532,7 @@ $(function () {
 
 	$('#code_folder_mainarea_new_button').button().click (function() {
 		$('#code_folder_mainarea_new_form_div').dialog('open');
+		return false; // prevent the default behavior
 	});
 
 	$('#code_folder_mainarea_delete_button').button().click (function() {
@@ -545,6 +546,8 @@ $(function () {
 			codepot_sprintf ("<?php print addslashes($this->lang->line('CODE_FMT_DELETE_X_SELECTED_FILES')) ?>", xi)
 		);
 		$('#code_folder_mainarea_delete_form_div').dialog('open');
+
+		return false; // prevent the default behavior
 	});
 
 	$('#code_folder_mainarea_rename_button').button().click (function() {
@@ -570,6 +573,8 @@ $(function () {
 			codepot_sprintf ("<?php print addslashes($this->lang->line('CODE_FMT_RENAME_X_SELECTED_FILES')) ?>", xi)
 		);
 		$('#code_folder_mainarea_rename_form_div').dialog('open');
+
+		return false; // prevent the default behavior
 	});
 <?php endif; ?>
 
@@ -597,6 +602,8 @@ $(function () {
 			$("#code_folder_mainarea_metadata_button").button(
 				"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
 		}
+
+		return false;
 	});
 
 	btn = $("#code_folder_mainarea_result_info_loc_by_lang_button").button().click (function () {
@@ -638,6 +645,8 @@ $(function () {
 			$('#code_search_string_icon').addClass("fa-cog fa-spin");
 			$('#code_search_form').submit ();
 		}
+
+		return false; // prevent the default behavior
 	});
 
 	$('#code_search_invertedly').button();
@@ -1089,8 +1098,6 @@ $this->load->view (
 ?>
 
 </div> <!-- code_folder_mainarea_result -->
-
-
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 

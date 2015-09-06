@@ -157,7 +157,7 @@ class File extends Controller
 				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 			}
 
-			$file = $this->files->get ($login['id'], $project, $name);
+			$file = $this->files->fetch_file ($login['id'], $project, $name);
 			if ($file === FALSE)
 			{
 				$data['project'] = $project;
@@ -166,8 +166,11 @@ class File extends Controller
 			}
 			else if ($file === NULL)
 			{
-				redirect ("file/create/{$projectid}/" . 
-					$this->converter->AsciiToHex($name));
+				/*redirect ("file/create/{$projectid}/" . 
+					$this->converter->AsciiToHex($name));*/
+				$data['project'] = $project;
+				$data['message'] = "CANNOT FIND FILE - {$name}";
+				$this->load->view ($this->VIEW_ERROR, $data);
 			}
 			else
 			{
@@ -277,8 +280,6 @@ class File extends Controller
 			$this->form_validation->set_rules (
 				'file_tag', 'tag', 'required|max_length[50]');
 			$this->form_validation->set_rules (
-				'file_summary', 'summary', 'required|max_length[255]');
-			$this->form_validation->set_rules (
 				'file_description', 'description', 'required');
 			$this->form_validation->set_error_delimiters (
 				'<span class="form_field_error">','</span>');
@@ -293,7 +294,6 @@ class File extends Controller
 				$file->name = '';
 				$file->encname = '';
 				$file->tag = $this->input->post('file_tag');
-				$file->summary = $this->input->post('file_summary');
 				$file->description = $this->input->post('file_description');
 
 				if ($this->form_validation->run())
@@ -316,6 +316,10 @@ class File extends Controller
 					}
 					else
 					{
+						$data['message'] = 'NOT SUPPORTED ANYMORE';
+						$data['file'] = $file;
+						$this->load->view ($this->VIEW_EDIT, $data);
+						/*
 						$fname = $_FILES['file_name']['name'];
 
 						if (strpos ($fname, ':') !== FALSE)
@@ -357,7 +361,7 @@ class File extends Controller
 							$file->name = $_FILES['file_name']['name'];
 							$file->encname = $upload['file_name'];
 
-							$md5sum = md5_file ($upload['full_path']);
+							$md5sum = @md5_file ($upload['full_path']);
 							if ($md5sum === FALSE)
 							{
 								@unlink ($upload['full_path']);
@@ -382,11 +386,13 @@ class File extends Controller
 										$this->converter->AsciiToHex($file->name));
 								}
 							}
-						}
+						} */
 					}
 				}
 				else
 				{
+					if ($mode == 'update') $file->name = $name;
+
 					$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 					$data['file'] = $file;
 					$this->load->view ($this->VIEW_EDIT, $data);
@@ -431,10 +437,11 @@ class File extends Controller
 		}
 	}
 
+	/*
 	function create ($projectid = '', $name = '')
 	{
 		return $this->_edit_file ($projectid, $name, "create");
-	}
+	}*/
 
 	function update ($projectid = '', $name = '')
 	{
@@ -543,6 +550,101 @@ class File extends Controller
 
 		}
 	}
+
+	function xhr_import ($projectid = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('FileModel', 'files');
+		$this->load->library ('upload');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'signin';
+		}
+		else
+		{
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "dberr - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "noent - no such project {$projectid}";
+			}
+			else
+			{
+				$post_new_tag = $this->input->post('file_new_tag');
+				$post_new_name = $this->input->post('file_new_name');
+				$post_new_description = $this->input->post('file_new_description');
+				$post_new_file_count = $this->input->post('file_new_file_count');
+
+				if ($post_new_tag === FALSE || ($post_new_tag = trim($post_new_tag)) == '')
+				{
+					$status = 'error - no tag';
+				}
+				else if ($post_new_name === FALSE || ($post_new_name = trim($post_new_name)) == '')
+				{
+					$status = 'error - no name';
+				}
+				else if ($post_new_description === FALSE || ($post_new_description = $post_new_description) == '')
+				{
+					$status = 'error - no description';
+				}
+				else
+				{
+					if ($post_new_file_count === FALSE || $post_new_file_count <= 0) $post_new_file_count = 0;
+
+					$status = '';
+					$import_files = array ();
+					for ($i = 0; $i < $post_new_file_count; $i++)
+					{
+						$fid = "file_new_file_{$i}";
+						if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
+						{
+							$d = $this->input->post("file_new_file_desc_{$i}");
+							if ($d === FALSE || ($d = trim($d)) == '')
+							{
+								$status = "error - no short description for {$_FILES[$fid]['name']}";
+								break;
+							}
+
+							if (strpos($_FILES[$fid]['name'], ':') !== FALSE)
+							{
+								/* for wiki */
+								$status = "error - colon not allowed - {$_FILES[$fid]['name']}";
+								break;
+							}
+
+							array_push ($import_files, array ('fid' => $fid, 'name' => $_FILES[$fid]['name'], 'desc' => $d));
+						}
+					}
+
+					if ($status == '')
+					{
+						if (count($import_files) <= 0)
+						{
+							$status = 'error - no files uploaded';
+						}
+						else if ($this->files->import ($login['id'], $projectid, $post_new_tag, $post_new_name, $post_new_description, $import_files, $this->upload) === FALSE)
+						{
+							$status = 'error - ' . $this->files->getErrorMessage();
+						}
+						else
+						{
+							$status = 'ok';
+						}
+					}
+				}
+			}
+
+			print $status;
+		}
+	}
+
 }
 
 ?>

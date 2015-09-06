@@ -179,6 +179,22 @@ CREATE TABLE file (
 		ON DELETE RESTRICT ON UPDATE CASCADE
 ) charset=utf8 engine=InnoDB;
 
+CREATE TABLE file_list (
+	projectid   VARCHAR(32)   NOT NULL,
+	name        VARCHAR(255)  NOT NULL,
+	filename    VARCHAR(255)  NOT NULL,
+	encname     VARCHAR(255)  NOT NULL,
+	md5sum      CHAR(32)      NOT NULL,
+	description VARCHAR(255)  NOT NULL,
+
+	INDEX file_list_id (projectid, name),
+	UNIQUE KEY file_list_fileid (projectid, filename),
+	UNIQUE KEY (encname),
+
+	CONSTRAINT file_list_projectid FOREIGN KEY (projectid,name) REFERENCES file(projectid,name)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+) charset=utf8 engine=InnoDB;
+
 CREATE TABLE code_review (
 	projectid    VARCHAR(32)   NOT NULL,
 	rev          BIGINT        NOT NULL,
