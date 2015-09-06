@@ -53,6 +53,7 @@ $(function () {
 	$("#issue_home_mainarea_search_button").button().click (
 		function () { 
 			$('#issue_home_mainarea_search_form').dialog('open'); 
+			return false; // prevent the default behavior
 		}
 	);
 });

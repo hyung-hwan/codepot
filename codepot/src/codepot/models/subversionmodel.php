@@ -261,7 +261,6 @@ class SubversionModel extends Model
 		return $fileinfo;
 	}
 
-
 	function storeFile ($projectid, $path, $committer, $commit_message, $text)
 	{
 		$errmsg = '';

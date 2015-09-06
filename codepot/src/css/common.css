@@ -594,7 +594,7 @@ body {
 }
 
 .content .mainarea pre.line-numbered code.line-numbered-code {
-	/* this should override some properties of .content .mainarea .prettyprint */
+	/* this should override some properties of .prettyprint */
 	color:black;
 	display:block;
 
@@ -616,12 +616,12 @@ body {
 	clear:both;
 }
 
-.content .mainarea .prettyprint ol {
+.prettyprint ol {
 	/* this is used for line numbering when numbering is sequential. */
 	white-space: pre-wrap;
 } 
 
-.content .mainarea .prettyprint {
+.prettyprint {
 	/* anything that make prettyprint area different from other pres? */
 	/*background-color: #FFFFFF;*/
 	/*border: 1px solid #ccc;*/
@@ -640,24 +640,24 @@ body {
 
 }
 
-.content .prettyprint .pln { color: #222222; } 
-.content .prettyprint .str { color: #AA1111; }
-.content .prettyprint .kwd { color: #2222ff; }
-.content .prettyprint .com { color: #888a88; font-style: italic; }
-.content .prettyprint .typ { color: #4271ae; }
-.content .prettyprint .lit { color: #f5871f; }
-.content .prettyprint .pun { color: #4d4d4c; }
-.content .prettyprint .opn { color: #4d4d4c; }
-.content .prettyprint .clo { color: #4d4d4c; }
-.content .prettyprint .tag { color: #c82829; }
-.content .prettyprint .atn { color: #f5871f; }
-.content .prettyprint .atv { color: #3e999f; }
-.content .prettyprint .dec { color: #f5871f; }
-.content .prettyprint .var { color: #c82829; }
-.content .prettyprint .fun { color: #4271ae; }
+.prettyprint .pln { color: #222222; } 
+.prettyprint .str { color: #AA1111; }
+.prettyprint .kwd { color: #2222ff; }
+.prettyprint .com { color: #888a88; font-style: italic; }
+.prettyprint .typ { color: #4271ae; }
+.prettyprint .lit { color: #f5871f; }
+.prettyprint .pun { color: #4d4d4c; }
+.prettyprint .opn { color: #4d4d4c; }
+.prettyprint .clo { color: #4d4d4c; }
+.prettyprint .tag { color: #c82829; }
+.prettyprint .atn { color: #f5871f; }
+.prettyprint .atv { color: #3e999f; }
+.prettyprint .dec { color: #f5871f; }
+.prettyprint .var { color: #c82829; }
+.prettyprint .fun { color: #4271ae; }
 
 /* Specify class=linenums on a pre to get line numbering */
-.content .prettyprint ol.linenums { 
+.prettyprint ol.linenums { 
 	margin-top: 0;
 	margin-bottom: 0;
 	margin-left: 1em;
@@ -666,40 +666,40 @@ body {
 } /* IE indents via margin-left */
 
 /*
-.content .prettyprint li.L0,
-.content .prettyprint li.L1,
-.content .prettyprint li.L2,
-.content .prettyprint li.L3,
-.content .prettyprint li.L5,
-.content .prettyprint li.L6,
-.content .prettyprint li.L7,
-.content .prettyprint li.L8 { list-style-type: none }
+.prettyprint li.L0,
+.prettyprint li.L1,
+.prettyprint li.L2,
+.prettyprint li.L3,
+.prettyprint li.L5,
+.prettyprint li.L6,
+.prettyprint li.L7,
+.prettyprint li.L8 { list-style-type: none }
 */
 /* Alternate shading for lines */
 /*
-.content .prettyprint li.L1,
-.content .prettyprint li.L3,
-.content .prettyprint li.L5,
-.content .prettyprint li.L7,
-.content .prettyprint li.L9 { background: #eee }
+.prettyprint li.L1,
+.prettyprint li.L3,
+.prettyprint li.L5,
+.prettyprint li.L7,
+.prettyprint li.L9 { background: #eee }
 */
 
 @media print {
-	.content .prettyprint .pln { color: #222222; } 
-	.content .prettyprint .str { color: #AA1111; }
-	.content .prettyprint .kwd { color: #2222ff; font-weight: bold; }
-	.content .prettyprint .com { color: #888a88; font-style: italic; }
-	.content .prettyprint .typ { color: #4271ae; font-weight: bold; }
-	.content .prettyprint .lit { color: #f5871f; }
-	.content .prettyprint .pun { color: #4d4d4c; }
-	.content .prettyprint .opn { color: #4d4d4c; }
-	.content .prettyprint .clo { color: #4d4d4c; }
-	.content .prettyprint .tag { color: #c82829; font-weight: bold; }
-	.content .prettyprint .atn { color: #f5871f; }
-	.content .prettyprint .atv { color: #3e999f; }
-	.content .prettyprint .dec { color: #f5871f; }
-	.content .prettyprint .var { color: #c82829; }
-	.content .prettyprint .fun { color: #4271ae; }
+	.prettyprint .pln { color: #222222; } 
+	.prettyprint .str { color: #AA1111; }
+	.prettyprint .kwd { color: #2222ff; font-weight: bold; }
+	.prettyprint .com { color: #888a88; font-style: italic; }
+	.prettyprint .typ { color: #4271ae; font-weight: bold; }
+	.prettyprint .lit { color: #f5871f; }
+	.prettyprint .pun { color: #4d4d4c; }
+	.prettyprint .opn { color: #4d4d4c; }
+	.prettyprint .clo { color: #4d4d4c; }
+	.prettyprint .tag { color: #c82829; font-weight: bold; }
+	.prettyprint .atn { color: #f5871f; }
+	.prettyprint .atv { color: #3e999f; }
+	.prettyprint .dec { color: #f5871f; }
+	.prettyprint .var { color: #c82829; }
+	.prettyprint .fun { color: #4271ae; }
 }
 
 .content .infostrip {

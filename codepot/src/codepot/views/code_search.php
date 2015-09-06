@@ -33,6 +33,7 @@ $(function() {
 			$('#code_search_string_icon').addClass ('fa-cog fa-spin');
 			$('#code_search_form').submit ();
 		}
+		return false; // prevent the default behavior
 	});
 
 	/*

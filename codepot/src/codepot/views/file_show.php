@@ -89,7 +89,7 @@ $this->load->view (
 		),
 
 		'ctxmenuitems' => array (
-			array ("file/create/{$project->id}", '<i class="fa fa-plus"></i> ' . $this->lang->line('New')),
+			//array ("file/create/{$project->id}", '<i class="fa fa-plus"></i> ' . $this->lang->line('New')),
 			array ("file/update/{$project->id}/{$hexname}", '<i class="fa fa-edit"></i> ' . $this->lang->line('Edit')),
 			array ("file/delete/{$project->id}/{$hexname}", '<i class="fa fa-trash"></i> ' . $this->lang->line('Delete'))
 		)
@@ -104,11 +104,7 @@ $this->load->view (
 <div class="title"><?php print htmlspecialchars($file->name)?></div>
 
 <div class="infostrip" id="wiki_show_mainarea_infostrip">
-	<?php 
-		$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
-		print  anchor ("file/get/{$project->id}/". $this->converter->AsciiToHex($file->name), $download_anchor_text);
-	?>
-	| <a id="file_show_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
+	<a id="file_show_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
 </div>
 
 <div id="file_show_mainarea_result">
@@ -131,9 +127,18 @@ $this->load->view (
 	<li><?php print $this->lang->line('Last updated by')?> <?php print  $file->updatedby ?></li>
 	</ul>
 
-	<div class="title"><?php print $this->lang->line('MD5')?></div>
+	<div class="title"><?php print $this->lang->line('Files')?></div>
 	<ul>
-	<li><?php print  $file->md5sum ?></li>
+	<?php
+	foreach ($file->file_list as $f)
+	{
+		$xname = $this->converter->AsciiToHex($f->filename);
+		print '<li>'; 
+		print anchor ("file/get/{$project->id}/{$xname}", $f->filename);
+		print " <tt>{$f->md5sum}</tt>";
+		print '</li>';
+	}
+	?>
 	</ul>
 
 </div> <!-- file_show_mainarea_result_info -->
