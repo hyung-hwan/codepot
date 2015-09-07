@@ -20,6 +20,7 @@ UPGRADING FROM 0.2.0
   mysql> INSERT INTO file_list (projectid, name, filename, encname, md5sum, description) SELECT projectid, name, name, encname, md5sum, summary FROM file WHERE md5sum != '';
   mysql> ALTER TABLE file DROP COLUMN summary;
   mysql> ALTER TABLE file DROP COLUMN md5sum;
+  mysql> ALTER TABLE file DROP COLUMN encname;
 
 INSTALLATION ON CENTOS
 
