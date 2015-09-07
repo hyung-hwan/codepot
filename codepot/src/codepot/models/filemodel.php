@@ -251,7 +251,6 @@ class FileModel extends Model
 
 		$this->db->set ('projectid', $projectid);
 		$this->db->set ('name', $name);
-		$this->db->set ('encname', '');
 		$this->db->set ('tag', $tag);
 		$this->db->set ('description', $description);
 		$this->db->set ('createdon', date('Y-m-d H:i:s'));

@@ -145,23 +145,33 @@ CREATE TABLE "cpot_issue_change_attachment" (
 );
 
 CREATE TABLE "cpot_file" (
-	"projectid"   VARCHAR(32)   NOT NULL,
-	"name"        VARCHAR(255)  NOT NULL,
-	"encname"     VARCHAR(255)  NOT NULL,
-	"tag"         VARCHAR(54)   NOT NULL,
-	"summary"     VARCHAR(255)  NOT NULL,
-	"md5sum"      CHAR(32)      NOT NULL,
-	"description" CLOB          NOT NULL,
+	"projectid"   VARCHAR(32)    NOT NULL,
+	"name"        VARCHAR(255)   NOT NULL,
+	"tag"         VARCHAR(54)    NOT NULL,
+	"description" CLOB           NOT NULL,
 	"createdon"   TIMESTAMP      NOT NULL,
 	"updatedon"   TIMESTAMP      NOT NULL, 
 	"createdby"   VARCHAR(32)    NOT NULL,
 	"updatedby"   VARCHAR(32)    NOT NULL,
 	UNIQUE ("projectid", "name"),
-	UNIQUE ("encname"),
 	CONSTRAINT file_projectid FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id")
 );
 
 CREATE INDEX cpot_file_index_1 ON "cpot_file"("projectid", "tag", "name");
+
+CREATE TABLE "cpot_file_list" (
+	"projectid"   VARCHAR(32)   NOT NULL,
+	"name"        VARCHAR(255)  NOT NULL,
+	"filename"    VARCHAR(255)  NOT NULL,
+	"encname"     VARCHAR(255)  NOT NULL,
+	"md5sum"      CHAR(32)      NOT NULL,
+	"description" CLOB          NOT NULL,
+	UNIQUE ("projectid", "filename"),
+	UNIQUE ("encname"),
+	CONSTRAINT file_list_projectid FOREIGN KEY ("projectid","name") REFERENCES "cpot_file"("projectid","name")
+);
+
+CREATE INDEX cpot_file_list_index_1 ON "cpot_file_list"("projectid", "name");
 
 CREATE TABLE "cpot_code_review" (
 	"projectid"    VARCHAR(32)   NOT NULL,
@@ -240,5 +250,11 @@ END;
 CREATE OR REPLACE TRIGGER cpot_upon_issue_chsno_update AFTER UPDATE OF "id" ON "cpot_issue_change" FOR EACH ROW
 BEGIN
 	UPDATE "cpot_issue_change_attachment" SET "issuesno" = :new."sno" WHERE "projectid" = :old."projectid" AND "issueid" = :old."id" AND "issuesno" = :old."sno";
+END;
+/
+
+CREATE OR REPLACE TRIGGER cpot_upon_file_name_update AFTER UPDATE OF "name" ON "cpot_file" FOR EACH ROW
+BEGIN
+	UPDATE "cpot_file_list" SET "name" = :new."name" WHERE "projectid" = :old."projectid" AND "name" = :old."name";
 END;
 /
