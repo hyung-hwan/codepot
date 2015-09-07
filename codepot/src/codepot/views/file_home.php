@@ -260,7 +260,11 @@ $this->load->view (
 <div class="title"><?php print $this->lang->line('Files')?></div>
 
 <div class="infostrip">
-	<?php printf ($this->lang->line('FILE_FMT_TOTAL_X_FILES'), count($files)); ?> 
+	<?php 
+	$total_file_count = 0;
+	foreach ($files as $f) $total_file_count += count($f->file_list);
+	printf ($this->lang->line('FILE_FMT_TOTAL_X_FILES'), $total_file_count); 
+	?> 
 
 	<?php if (isset($login['id']) && $login['id'] != ''): ?>
 	| 
