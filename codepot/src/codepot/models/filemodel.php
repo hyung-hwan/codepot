@@ -56,7 +56,7 @@ class FileModel extends Model
 		return $file;
 	}
 
-	function fetch_file ($userid, $project, $name)
+	function fetchFile ($userid, $project, $name)
 	{
 		$this->db->trans_start ();
 		$this->db->where ('projectid', $project->id);

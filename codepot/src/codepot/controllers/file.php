@@ -157,7 +157,7 @@ class File extends Controller
 				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 			}
 
-			$file = $this->files->fetch_file ($login['id'], $project, $name);
+			$file = $this->files->fetchFile ($login['id'], $project, $name);
 			if ($file === FALSE)
 			{
 				$data['project'] = $project;
@@ -612,10 +612,11 @@ class File extends Controller
 								break;
 							}
 
-							if (strpos($_FILES[$fid]['name'], ':') !== FALSE)
+							if (strpos($_FILES[$fid]['name'], ':') !== FALSE ||
+							    strpos($_FILES[$fid]['name'], '/') !== FALSE)
 							{
 								/* for wiki */
-								$status = "error - colon not allowed - {$_FILES[$fid]['name']}";
+								$status = "error - colon or slash not allowed - {$_FILES[$fid]['name']}";
 								break;
 							}
 
