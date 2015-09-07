@@ -260,10 +260,14 @@ $this->load->view (
 </div> <!-- file_show_mainarea_result -->
 
 
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+
 <div id='file_show_mainarea_delete_form_div'>
 	<input type='checkbox' id='file_show_mainarea_delete_confirm' />
 	<?php print $this->lang->line('MSG_SURE_TO_DELETE_THIS') . ' - ' . htmlspecialchars($file->name); ?>
 </div>
+
+<?php endif; ?>
 
 <div id='file_show_mainarea_alert'></div>
 
