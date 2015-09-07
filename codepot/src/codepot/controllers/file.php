@@ -6,7 +6,6 @@ class File extends Controller
 	var $VIEW_HOME = 'file_home';
 	var $VIEW_SHOW = 'file_show';
 	var $VIEW_EDIT = 'file_edit';
-	var $VIEW_DELETE = 'file_delete';
 
 	function File ()
 	{
@@ -238,7 +237,7 @@ class File extends Controller
 		}
 	}
 
-	function _edit_file ($projectid, $name, $mode)
+	function update ($projectid = '', $name = '')
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
@@ -276,7 +275,7 @@ class File extends Controller
 		else
 		{
 			$this->form_validation->set_rules (
-				'file_projectid', 'project ID', 'required|alpha_dash|max_length[32]');
+				'file_name', 'name', 'required|max_length[255]');
 			$this->form_validation->set_rules (
 				'file_tag', 'tag', 'required|max_length[50]');
 			$this->form_validation->set_rules (
@@ -284,246 +283,33 @@ class File extends Controller
 			$this->form_validation->set_error_delimiters (
 				'<span class="form_field_error">','</span>');
 
-			$data['mode'] = $mode;
 			$data['message'] = '';
 			$data['project'] = $project;
 
 			if ($this->input->post('file'))
 			{
-				$file->projectid = $this->input->post('file_projectid');
-				$file->name = '';
-				$file->encname = '';
+				$file->name = $this->input->post('file_name');
 				$file->tag = $this->input->post('file_tag');
 				$file->description = $this->input->post('file_description');
 
 				if ($this->form_validation->run())
 				{
-					if ($mode == 'update')
-					{
-						$file->name = $this->input->post('file_name');
-
-						if ($this->files->update ($login['id'], $file) === FALSE)
-						{
-							$data['message'] = 'DATABASE ERROR';
-							$data['file'] = $file;
-							$this->load->view ($this->VIEW_EDIT, $data);
-						}
-						else 
-						{
-							redirect ("file/show/{$project->id}/" .
-								$this->converter->AsciiToHex($file->name));
-						}
-					}
-					else
-					{
-						$data['message'] = 'NOT SUPPORTED ANYMORE';
-						$data['file'] = $file;
-						$this->load->view ($this->VIEW_EDIT, $data);
-						/*
-						$fname = $_FILES['file_name']['name'];
-
-						if (strpos ($fname, ':') !== FALSE)
-						{
-							$data['message'] = $this->lang->line ('FILE_MSG_NAME_NO_COLON');
-							$data['file'] = $file;
-							$this->load->view ($this->VIEW_EDIT, $data);
-							return;
-						}
-
-						$ext = substr ($fname, strrpos ($fname, '.') + 1);
-
-						// delete all \" instances ... 
-						$_FILES['file_name']['type'] = 
-							str_replace('\"', '', $_FILES['file_name']['type']);
-						// delete all \\ instances ...  
-						$_FILES['file_name']['type'] = 
-							str_replace('\\', '', $_FILES['file_name']['type']);
-
-						//$config['allowed_types'] = $ext;
-						$config['allowed_types'] = '*';
-						$config['upload_path'] = CODEPOT_FILE_DIR;
-						$config['max_size'] = CODEPOT_MAX_UPLOAD_SIZE;
-						$config['encrypt_name'] = TRUE;
-
-						$this->load->library ('upload');
-						$this->upload->initialize ($config);
-					
-						if (!$this->upload->do_upload ('file_name'))
-						{
-							$data['file'] = $file;
-							$data['message'] = $this->upload->display_errors('', '');
-							$this->load->view ($this->VIEW_EDIT, $data);
-						}
-						else 
-						{
-							$upload = $this->upload->data ();
-
-							$file->name = $_FILES['file_name']['name'];
-							$file->encname = $upload['file_name'];
-
-							$md5sum = @md5_file ($upload['full_path']);
-							if ($md5sum === FALSE)
-							{
-								@unlink ($upload['full_path']);
-								$data['message'] = "CANNOT GET MD5SUM - {$file->name}";
-								$data['file'] = $file;
-								$this->load->view ($this->VIEW_EDIT, $data);
-							}
-							else
-							{
-								$file->md5sum = $md5sum;
-
-								if ($this->files->create ($login['id'], $file) === FALSE)
-								{
-									@unlink (CODEPOT_FILE_DIR . "/{$file->encname}");
-									$data['message'] = 'DATABASE ERROR';
-									$data['file'] = $file;
-									$this->load->view ($this->VIEW_EDIT, $data);
-								}
-								else 
-								{
-									redirect ("file/show/{$project->id}/" .
-										$this->converter->AsciiToHex($file->name));
-								}
-							}
-						} */
-					}
-				}
-				else
-				{
-					if ($mode == 'update') $file->name = $name;
-
-					$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
-					$data['file'] = $file;
-					$this->load->view ($this->VIEW_EDIT, $data);
-				}
-			}
-			else
-			{
-				if ($mode == 'update')
-				{
-					$file = $this->files->get ($login['id'], $project, $name);
-					if ($file === FALSE)
+					if ($this->files->update ($login['id'], $projectid, $name, $file) === FALSE)
 					{
 						$data['message'] = 'DATABASE ERROR';
-						$this->load->view ($this->VIEW_ERROR, $data);
-					}
-					else if ($file == NULL)
-					{
-						$data['message'] = sprintf 
-							($this->lang->line('FILE_MSG_NO_SUCH_FILE'), $name);
-						$this->load->view ($this->VIEW_ERROR, $data);
-					}
-					else
-					{
 						$data['file'] = $file;
 						$this->load->view ($this->VIEW_EDIT, $data);
-					}
-				}
-				else
-				{
-					$file->projectid = $projectid;
-					$file->name = $name;
-					$file->encname = '';
-					$file->tag = '';
-					$file->summary = '';
-					$file->description = '';
-
-					$data['file'] = $file;
-					$this->load->view ($this->VIEW_EDIT, $data);	
-				}
-			}
-
-		}
-	}
-
-	/*
-	function create ($projectid = '', $name = '')
-	{
-		return $this->_edit_file ($projectid, $name, "create");
-	}*/
-
-	function update ($projectid = '', $name = '')
-	{
-		return $this->_edit_file ($projectid, $name, "update");
-	}
-
-	function delete ($projectid = '', $name = '')
-	{
-		$this->load->helper ('form');
-		$this->load->library ('form_validation');
-		$this->load->model ('ProjectModel', 'projects');
-		$this->load->model ('FileModel', 'files');
-
-		$login = $this->login->getUser ();
-		if ($login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
-		$data['login'] = $login;
-
-		$name = $this->converter->HexToAscii ($name);
-
-		$project = $this->projects->get ($projectid);
-		if ($project === FALSE)
-		{
-			$data['message'] = 'DATABASE ERROR';
-			$this->load->view ($this->VIEW_ERROR, $data);
-		}
-		else if ($project === NULL)
-		{
-			$data['message'] = 
-				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
-				" - {$projectid}";
-			$this->load->view ($this->VIEW_ERROR, $data);
-		}
-		else if (!$login['sysadmin?'] && 
-		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
-		{
-			$data['project'] = $project;
-			$data['message'] = sprintf (
-				$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
-			$this->load->view ($this->VIEW_ERROR, $data);
-		}
-		else
-		{
-			$data['message'] = '';
-			$data['project'] = $project;
-
-			$this->form_validation->set_rules ('file_confirm', 'confirm', 'alpha');
-			$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
-
-			if($this->input->post('file'))
-			{
-				$file->projectid = $this->input->post('file_projectid');
-				$file->name = $this->input->post('file_name');
-				$data['file_confirm'] = $this->input->post('file_confirm');
-
-				if ($this->form_validation->run())
-				{
-					if ($data['file_confirm'] == 'yes')
-					{
-						$result = $this->files->delete ($login['id'], $file);
-						if ($result === FALSE)
-						{
-							$data['message'] = 'DATABASE ERROR';
-							$data['file'] = $file;
-							$this->load->view ($this->VIEW_DELETE, $data);
-						}
-						else
-						{
-							redirect ("file/home/{$project->id}");
-						}
 					}
 					else 
 					{
-						redirect ("file/show/{$project->id}/" . 
-							$this->converter->AsciiToHex($file->name));
+						redirect ("file/show/{$project->id}/" . $this->converter->AsciiToHex($file->name));
 					}
 				}
 				else
 				{
 					$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 					$data['file'] = $file;
-					$this->load->view ($this->VIEW_DELETE, $data);
+					$this->load->view ($this->VIEW_EDIT, $data);
 				}
 			}
 			else
@@ -534,7 +320,7 @@ class File extends Controller
 					$data['message'] = 'DATABASE ERROR';
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
-				else if ($file === NULL)
+				else if ($file == NULL)
 				{
 					$data['message'] = sprintf 
 						($this->lang->line('FILE_MSG_NO_SUCH_FILE'), $name);
@@ -542,12 +328,10 @@ class File extends Controller
 				}
 				else
 				{
-					$data['file_confirm'] = 'no';
 					$data['file'] = $file;
-					$this->load->view ($this->VIEW_DELETE, $data);
+					$this->load->view ($this->VIEW_EDIT, $data);
 				}
 			}
-
 		}
 	}
 
@@ -630,7 +414,7 @@ class File extends Controller
 						{
 							$status = 'error - no files uploaded';
 						}
-						else if ($this->files->import ($login['id'], $projectid, $post_new_tag, $post_new_name, $post_new_description, $import_files, $this->upload) === FALSE)
+						else if ($this->files->import ($login['id'], $projectid, $post_new_name, $post_new_tag, $post_new_description, $import_files, $this->upload) === FALSE)
 						{
 							$status = 'error - ' . $this->files->getErrorMessage();
 						}
@@ -645,6 +429,57 @@ class File extends Controller
 			print $status;
 		}
 	}
+
+
+	function xhr_delete ($projectid = '', $name = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('FileModel', 'files');
+
+		$login = $this->login->getUser ();
+
+		if ($login['id'] == '')
+		{
+			$status = 'signin';
+		}
+		else
+		{
+			$name = $this->converter->HexToAscii ($name);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else
+			{
+				$post_delete_confirm = $this->input->post('file_delete_confirm');
+				
+				if ($post_delete_confirm !== FALSE && $post_delete_confirm == 'Y')
+				{
+					if ($this->files->delete ($login['id'], $projectid, $name) === FALSE)
+					{
+						$status = 'error - ' . $this->files->getErrorMessage();
+					}
+					else
+					{
+						$status = 'ok';
+					}
+				}
+				else
+				{
+					$status = 'error - not confirmed';
+				}
+			}
+		}
+
+		print $status;
+	}
+
 
 }
 

@@ -135,21 +135,37 @@ class FileModel extends Model
 	}
 	*/
 
-	function update ($userid, $file)
+	function update ($userid, $projectid, $name, $file)
 	{
 		$this->db->trans_start ();
-		$this->db->where ('projectid', $file->projectid);
-		$this->db->where ('name', $file->name);
+
+		/*
+		$this->db->where ('projectid', $projectid);
+		$this->db->where ('name', $name);
+		$this->db->set ('name', $file->name);
 		$this->db->set ('tag', $file->tag);
 		$this->db->set ('description', $file->description);
 		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('file');
+		// file_list gets updated for the schema itself (reference/trigger)
+		*/
+		$this->db->where ('f.projectid', $projectid);
+		$this->db->where ('f.name', $name);
+		$this->db->where ('f.projectid = fl.projectid');
+		$this->db->where ('f.name = fl.name');
+		$this->db->set ('f.name', $file->name);
+		$this->db->set ('f.tag', $file->tag);
+		$this->db->set ('f.description', $file->description);
+		$this->db->set ('f.updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('f.updatedby', $userid);
+		$this->db->set ('fl.name', $file->name);
+		$this->db->update ('file as f, file_list as fl');
 
 		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('type',      'file');
 		$this->db->set ('action',    'update');
-		$this->db->set ('projectid', $file->projectid);
+		$this->db->set ('projectid', $projectid);
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   $file->name);
 		$this->db->insert ('log');
@@ -158,46 +174,43 @@ class FileModel extends Model
 		return $this->db->trans_status();
 	}
 
-	function delete ($userid, $file)
+	private function _delete_file ($userid, $projectid, $name)
 	{
 		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
-		$this->db->where ('projectid', $file->projectid);
-		$this->db->where ('name', $file->name);
+		$this->db->where ('projectid', $projectid);
+		$this->db->where ('name', $name);
 		$query = $this->db->get ('file_list');
 		if ($this->db->trans_status() === FALSE)
 		{
+			$this->errmsg = $this->db->_error_message(); 
 			$this->db->trans_rollback ();
 			return FALSE;
 		}
 
 		$result = $query->result ();
-		if (empty($result))
-		{
-			$this->db->trans_rollback ();
-			return FALSE;
-		}
-
 		$file_names = array ();
 		foreach ($result as $f)
 		{
 			array_push ($file_names, $f->encname);
 		}
 
-		$this->db->where ('projectid', $file->projectid);
-		$this->db->where ('name', $file->name);
+		$this->db->where ('projectid', $projectid);
+		$this->db->where ('name', $name);
 		$this->db->delete ('file_list');
 		if ($this->db->trans_status() === FALSE)
 		{
+			$this->errmsg = $this->db->_error_message(); 
 			$this->db->trans_rollback ();
 			return FALSE;
 		}
 
-		$this->db->where ('projectid', $file->projectid);
-		$this->db->where ('name', $file->name);
+		$this->db->where ('projectid', $projectid);
+		$this->db->where ('name', $name);
 		$this->db->delete ('file');
 		if ($this->db->trans_status() === FALSE)
 		{
+			$this->errmsg = $this->db->_error_message(); 
 			$this->db->trans_rollback ();
 			return FALSE;
 		}
@@ -205,13 +218,14 @@ class FileModel extends Model
 		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('type',      'file');
 		$this->db->set ('action',    'delete');
-		$this->db->set ('projectid', $file->projectid);
+		$this->db->set ('projectid', $projectid);
 		$this->db->set ('userid',    $userid);
-		$this->db->set ('message',   $file->name);
+		$this->db->set ('message',   $name);
 		$this->db->insert ('log');
 
 		if ($this->db->trans_status() === FALSE)
 		{
+			$this->errmsg = $this->db->_error_message(); 
 			$this->db->trans_rollback ();
 			return FALSE;
 		}
@@ -225,6 +239,7 @@ class FileModel extends Model
 			{
 				if ($i == 0)
 				{
+					$this->errmsg = $this->db->_error_message(); 
 					$this->db->trans_rollback ();
 					return FALSE;
 				}
@@ -240,12 +255,21 @@ class FileModel extends Model
 		return TRUE;
 	}
 
+	function delete ($userid, $projectid, $name)
+	{
+		set_error_handler (array ($this, 'capture_error'));
+		$errmsg = '';
+		$x = $this->_delete_file ($userid, $projectid, $name);
+		restore_error_handler ();
+		return $x;
+	}
+
 	private function delete_all_files ($files)
 	{
 		foreach ($files as $f) @unlink ($f);
 	}
 
-	private function _import ($userid, $projectid, $tag, $name, $description, $import_files, $uploader)
+	private function _import_files ($userid, $projectid, $name, $tag, $description, $import_files, $uploader)
 	{
 		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
@@ -334,11 +358,11 @@ class FileModel extends Model
 		return TRUE;
 	}
 
-	function import ($userid, $projectid, $tag, $name, $description, $import_files, $uploader)
+	function import ($userid, $projectid, $name, $tag, $description, $import_files, $uploader)
 	{
 		set_error_handler (array ($this, 'capture_error'));
 		$errmsg = '';
-		$x = $this->_import ($userid, $projectid, $tag, $name, $description, $import_files, $uploader);
+		$x = $this->_import_files ($userid, $projectid, $name, $tag, $description, $import_files, $uploader);
 		restore_error_handler ();
 		return $x;
 	}

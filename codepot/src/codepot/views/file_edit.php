@@ -82,17 +82,12 @@ $this->load->view (
 <?php if ($message != "") print '<div id="file_message" class="form_message">'.htmlspecialchars($message).'</div>'; ?>
 
 <div class="form_container">
-<?php print form_open_multipart("file/$mode/{$project->id}/" . $this->converter->AsciiToHex($file->name))?>
+<?php print form_open_multipart("file/update/{$project->id}/" . $this->converter->AsciiToHex($file->name))?>
 
 	<div class='form_input_field'>
-		<?php print form_label($this->lang->line('Name').': ', 'file_name')?>
 		<?php 
-			$extra = ($mode == 'update')? 'readonly="readonly"': ''; 
-			$extra .= 'maxlength="255" size="40"';
-			if ($mode == 'update')
-				print form_input('file_name', set_value('file_name', $file->name), $extra);
-			else
-				print form_upload('file_name', set_value('file_name', $file->name), $extra);
+			print form_label($this->lang->line('Name').': ', 'file_name');
+			print form_input('file_name', set_value('file_name', $file->name), 'maxlength="255" size="40"');
 		?>
 		<?php print form_error('file_name');?>
 	</div>
@@ -116,11 +111,7 @@ $this->load->view (
 	</div>
 	<div id='file_edit_mainarea_description_preview' class='form_input_preview'></div>
 
-	
-	<?php print form_hidden('file_projectid', set_value('file_projectid', $file->projectid))?>
-
-	<?php $caption = ($mode == 'update')? $this->lang->line('Update'): $this->lang->line('Create'); ?>
-	<?php print form_submit('file', $caption)?>
+	<?php print form_submit('file', $this->lang->line('Update')); ?>
 
 <?php print form_close();?>
 </div>

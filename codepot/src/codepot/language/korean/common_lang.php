@@ -1,4 +1,5 @@
 <?php
+$lang['Add'] = '추가';
 $lang['Administration'] = '관리';
 $lang['All'] = '모두';
 $lang['Apply'] = '적용';

@@ -1,4 +1,5 @@
 <?php
+$lang['Add'] = 'Add';
 $lang['Administration'] = 'Administration';
 $lang['All'] = 'Semua';
 $lang['Apply'] = 'Menterapkan';
