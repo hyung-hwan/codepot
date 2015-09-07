@@ -179,10 +179,7 @@ CREATE TABLE issue_change_attachment (
 CREATE TABLE file (
 	projectid   VARCHAR(32)   NOT NULL,
 	name        VARCHAR(255)  NOT NULL,
-	encname     VARCHAR(255)  NOT NULL,
 	tag         VARCHAR(54)   NOT NULL,
-	summary     VARCHAR(255)  NOT NULL,
-	md5sum      CHAR(32)      NOT NULL,
 	description TEXT          NOT NULL,
 
 	createdon  TIMESTAMP      NOT NULL,
@@ -191,13 +188,29 @@ CREATE TABLE file (
 	updatedby  VARCHAR(32)    NOT NULL,
 
 	UNIQUE (projectid, name),
-	UNIQUE (encname),
 
 	CONSTRAINT file_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 CREATE INDEX file_index_1 ON file(projectid, tag, name);
+
+CREATE TABLE file_list (
+	projectid   VARCHAR(32)   NOT NULL,
+	name        VARCHAR(255)  NOT NULL,
+	filename    VARCHAR(255)  NOT NULL,
+	encname     VARCHAR(255)  NOT NULL,
+	md5sum      CHAR(32)      NOT NULL,
+	description VARCHAR(255)  NOT NULL,
+
+	UNIQUE (projectid, filename),
+	UNIQUE (encname),
+
+	CONSTRAINT file_list_projectid FOREIGN KEY (projectid,name) REFERENCES file(projectid,name)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+CREATE INDEX file_list_index_1 ON file(projectid, name);
 
 CREATE TABLE code_review (
 	projectid VARCHAR(32)   NOT NULL,

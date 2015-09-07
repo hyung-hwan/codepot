@@ -160,10 +160,7 @@ CREATE TABLE issue_change_attachment (
 CREATE TABLE file (
 	projectid   VARCHAR(32)   NOT NULL,
 	name        VARCHAR(255)  NOT NULL,
-	encname     VARCHAR(255)  NOT NULL,
 	tag         VARCHAR(54)   NOT NULL,
-	summary     VARCHAR(255)  NOT NULL,
-	md5sum      CHAR(32)      NOT NULL,
 	description TEXT          NOT NULL,
 
 	createdon  DATETIME       NOT NULL,
