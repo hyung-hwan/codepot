@@ -189,7 +189,11 @@ $(function () {
 								import_in_progress = false;
 								$('#file_home_mainarea_new_form_div').dialog('enable');
 								$('#file_home_mainarea_new_form_div').dialog('close');
-								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
+								var errmsg = '';
+								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+								if (errmsg == '' && textStatus != null) errmsg = textStatus;
+								if (errmsg == '') errmsg = 'Unknown error';
+								show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
 							}
 						});
 					}
