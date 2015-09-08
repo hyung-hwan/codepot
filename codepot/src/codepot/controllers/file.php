@@ -346,18 +346,23 @@ class File extends Controller
 
 		if ($login['id'] == '')
 		{
-			$status = 'signin';
+			$status = 'error - anonymous user';
 		}
 		else
 		{
 			$project = $this->projects->get ($projectid);
 			if ($project === FALSE)
 			{
-				$status = "dberr - failed to get the project {$projectid}";
+				$status = "error - failed to get the project {$projectid}";
 			}
 			else if ($project === NULL)
 			{
-				$status = "noent - no such project {$projectid}";
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
 			}
 			else
 			{
@@ -425,9 +430,9 @@ class File extends Controller
 					}
 				}
 			}
-
-			print $status;
 		}
+
+		print $status;
 	}
 
 
@@ -440,7 +445,7 @@ class File extends Controller
 
 		if ($login['id'] == '')
 		{
-			$status = 'signin';
+			$status = 'error - anonymous user';
 		}
 		else
 		{
@@ -454,6 +459,11 @@ class File extends Controller
 			else if ($project === NULL)
 			{
 				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
 			}
 			else
 			{
