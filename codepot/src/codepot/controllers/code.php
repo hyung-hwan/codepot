@@ -351,7 +351,7 @@ class Code extends Controller
 
 		if ($login['id'] == '')
 		{
-			$status = 'signin';
+			$status = 'error - anonymous user';
 		}
 		else
 		{
@@ -362,11 +362,16 @@ class Code extends Controller
 			$project = $this->projects->get ($projectid);
 			if ($project === FALSE)
 			{
-				$status = "dberr - failed to get the project {$projectid}";
+				$status = "error - failed to get the project {$projectid}";
 			}
 			else if ($project === NULL)
 			{
-				$status = "noent - no such project {$projectid}";
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
 			}
 			else
 			{
@@ -399,7 +404,7 @@ class Code extends Controller
 
 					if (count($import_files) > 0 && $this->subversion->importFiles ($projectid, $path, $login['id'], $post_new_message, $import_files, $this->upload) === FALSE)
 					{
-						$status = 'repoerr - ' . $this->subversion->getErrorMessage();
+						$status = 'error - ' . $this->subversion->getErrorMessage();
 					}
 					else
 					{
@@ -408,7 +413,7 @@ class Code extends Controller
 				}
 				else
 				{
-					$status = 'posterr - invalid post data';
+					$status = 'error - invalid post data';
 				}
 			}
 		}
@@ -426,7 +431,7 @@ class Code extends Controller
 
 		if ($login['id'] == '')
 		{
-			$status = 'signin';
+			$status = 'error - anonymous user';
 		}
 		else
 		{
@@ -437,11 +442,16 @@ class Code extends Controller
 			$project = $this->projects->get ($projectid);
 			if ($project === FALSE)
 			{
-				$status = "dberr - failed to get the project {$projectid}";
+				$status = "error - failed to get the project {$projectid}";
 			}
 			else if ($project === NULL)
 			{
-				$status = "noent - no such project {$projectid}";
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
 			}
 			else
 			{
@@ -462,7 +472,7 @@ class Code extends Controller
 
 					if (count($delete_files) > 0 && $this->subversion->deleteFiles ($projectid, $path, $login['id'], $post_delete_message, $delete_files) === FALSE)
 					{
-						$status = 'repoerr - ' . $this->subversion->getErrorMessage();
+						$status = 'error - ' . $this->subversion->getErrorMessage();
 					}
 					else
 					{
@@ -471,7 +481,7 @@ class Code extends Controller
 				}
 				else
 				{
-					$status = 'posterr - invalid post data';
+					$status = 'error - invalid post data';
 				}
 			}
 		}
@@ -489,7 +499,7 @@ class Code extends Controller
 
 		if ($login['id'] == '')
 		{
-			$status = 'signin';
+			$status = 'error - anonymous user';
 		}
 		else
 		{
@@ -500,11 +510,16 @@ class Code extends Controller
 			$project = $this->projects->get ($projectid);
 			if ($project === FALSE)
 			{
-				$status = "dberr - failed to get the project {$projectid}";
+				$status = "error - failed to get the project {$projectid}";
 			}
 			else if ($project === NULL)
 			{
-				$status = "noent - no such project {$projectid}";
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
 			}
 			else
 			{
@@ -525,7 +540,7 @@ class Code extends Controller
 
 					if (count($rename_files) > 0 && $this->subversion->renameFiles ($projectid, $path, $login['id'], $post_rename_message, $rename_files) === FALSE)
 					{
-						$status = 'repoerr - ' . $this->subversion->getErrorMessage();
+						$status = 'error - ' . $this->subversion->getErrorMessage();
 					}
 					else
 					{
@@ -534,7 +549,7 @@ class Code extends Controller
 				}
 				else
 				{
-					$status = 'posterr - invalid post data';
+					$status = 'error - invalid post data';
 				}
 			}
 		}
