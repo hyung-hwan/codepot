@@ -318,7 +318,12 @@ $(function () {
 								import_in_progress = false;
 								$('#code_folder_mainarea_new_form_div').dialog('enable');
 								$('#code_folder_mainarea_new_form_div').dialog('close');
-								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
+
+								var errmsg = '';
+								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+								if (errmsg == '' && textStatus != null) errmsg = textStatus;
+								if (errmsg == '') errmsg = 'Unknown error';
+								show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
 							}
 						});
 					}
@@ -402,7 +407,12 @@ $(function () {
 								delete_in_progress = false;
 								$('#code_folder_mainarea_delete_form_div').dialog('enable');
 								$('#code_folder_mainarea_delete_form_div').dialog('close');
-								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
+
+								var errmsg = '';
+								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+								if (errmsg == '' && textStatus != null) errmsg = textStatus;
+								if (errmsg == '') errmsg = 'Unknown error';
+								show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
 							}
 						});
 					}
@@ -491,7 +501,12 @@ $(function () {
 								rename_in_progress = false;
 								$('#code_folder_mainarea_rename_form_div').dialog('enable');
 								$('#code_folder_mainarea_rename_form_div').dialog('close');
-								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
+
+								var errmsg = '';
+								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+								if (errmsg == '' && textStatus != null) errmsg = textStatus;
+								if (errmsg == '') errmsg = 'Unknown error';
+								show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
 							}
 						});
 					}
