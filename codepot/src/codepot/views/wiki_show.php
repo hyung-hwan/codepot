@@ -76,6 +76,7 @@ $(function () {
 			$("#wiki_show_mainarea_metadata_button").button(
 				"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
 		}
+		return false;
 	});
 
 	render_wiki ();
