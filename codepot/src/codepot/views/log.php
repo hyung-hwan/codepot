@@ -196,7 +196,7 @@ $this->load->view (
 		if ($log['type'] == 'code')
 		{
 			print '<td class="object">';
-			print anchor (	
+			print anchor (
 				"code/revision/{$log['projectid']}/{$xdot}/{$code['rev']}", 
 				"r{$code['rev']}");
 			print '</td>';
@@ -261,7 +261,7 @@ $this->load->view (
 				$trimmed = $this->lang->line('Issue') . " {$log['message']}";
 			}
 
-			if ($uri != '')
+			if ($uri != '' && $trimmed != '')
 			{
 				print anchor (
 					$uri,
@@ -276,10 +276,7 @@ $this->load->view (
 			$fmt = $this->lang->line (
 				'MSG_LOG_'.strtoupper($log['action']).'_BY');
 
-			//print htmlspecialchars (sprintf($fmt, $log['userid']));
-			printf (
-				htmlspecialchars ($fmt),
-				anchor ("/site/userlog/{$log['userid']}", htmlspecialchars ($log['userid'])));
+			printf ($fmt, anchor ("/site/userlog/{$log['userid']}", htmlspecialchars($log['userid'])));
 			print '</span>';
 		}
 
