@@ -38,13 +38,15 @@ function render_wiki()
 	if (isNaN(x_column_count) || x_column_count < 1) x_column_count = 1;
 	else if (x_column_count > 9) x_column_count = 9; // sync this max value with wiki_edit. TODO: put this into codepot.ini
 
-	column_count = x_column_count.toString();
-
-	$("#wiki_show_mainarea_wiki").css ({
-		"-moz-column-count":    column_count,
-		"-webkit-column-count": column_count,
-		"column-count":         column_count
-	});
+	if (x_column_count > 1)
+	{
+		column_count = x_column_count.toString();
+		$("#wiki_show_mainarea_wiki").css ({
+			"-moz-column-count":    column_count,
+			"-webkit-column-count": column_count,
+			"column-count":         column_count
+		});
+	}
 
 	creole_render_wiki (
 		"wiki_show_mainarea_wiki_text", 
