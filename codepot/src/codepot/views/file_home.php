@@ -53,7 +53,6 @@ function render_wiki(input_text)
 	prettyPrint ();
 }
 
-var new_item_no = 0;
 var import_in_progress = false;
 var populated_file_obj = [];
 var populated_file_max = 0;
@@ -107,8 +106,6 @@ function cancel_out_new_file (no)
 $(function () { 
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
-
-	new_item_no = 0;
 
 	$('#file_home_mainarea_new_files').change (function () {
 		populate_selected_files ();
@@ -344,15 +341,12 @@ else
 
 		$file_list_count = count($file->file_list);
 
-		for ($i = 0; $i < $file_list_count; $i++)
+		if ($file_list_count <= 0)
 		{
 			print "<tr class='{$rowclass}'>";
 
-			$f = $file->file_list[$i];
-			$xname = $this->converter->AsciiToHex ($f->filename);
-
 			print '<td>';
-			if ($i == 0 && $file->tag != $oldtag)
+			if ($file->tag != $oldtag)
 			{
 				print htmlspecialchars($file->tag);
 				$oldtag = $file->tag;
@@ -360,22 +354,50 @@ else
 			print '</td>';
 
 			print '<td>';
-			if ($i == 0) print anchor ("file/show/{$project->id}/{$hexname}", htmlspecialchars($file->name));
+			print anchor ("file/show/{$project->id}/{$hexname}", htmlspecialchars($file->name));
 			print '</td>';
 
-			print '<td>';
-			print anchor ("file/get/{$project->id}/{$xname}", $f->filename);
-			print '</td>';
-
-			print '<td>';
-			print htmlspecialchars($f->description);
-			print '</td>';
-
-			print '<td><tt>';
-			print $f->md5sum;
-			print '</tt></td>';
+			print '<td></td>';
+			print '<td></td>';
+			print '<td></td>';
 
 			print '</tr>';
+		}
+		else
+		{
+			for ($i = 0; $i < $file_list_count; $i++)
+			{
+				print "<tr class='{$rowclass}'>";
+
+				$f = $file->file_list[$i];
+				$xname = $this->converter->AsciiToHex ($f->filename);
+
+				print '<td>';
+				if ($i == 0 && $file->tag != $oldtag)
+				{
+					print htmlspecialchars($file->tag);
+					$oldtag = $file->tag;
+				}
+				print '</td>';
+
+				print '<td>';
+				if ($i == 0) print anchor ("file/show/{$project->id}/{$hexname}", htmlspecialchars($file->name));
+				print '</td>';
+
+				print '<td>';
+				print anchor ("file/get/{$project->id}/{$xname}", htmlspecialchars($f->filename));
+				print '</td>';
+
+				print '<td>';
+				print htmlspecialchars($f->description);
+				print '</td>';
+
+				print '<td><tt>';
+				print $f->md5sum;
+				print '</tt></td>';
+
+				print '</tr>';
+			}
 		}
 	}
 	print '</table>';
@@ -406,9 +428,7 @@ else
 		</div>
 		<div id='file_home_mainarea_new_description_preview' class='form_input_preview'>
 		</div>
-
 	</div>
-
 </div>
 
 <?php endif; ?>

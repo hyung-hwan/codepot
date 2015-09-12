@@ -404,7 +404,7 @@ class File extends Controller
 							if (strpos($_FILES[$fid]['name'], ':') !== FALSE ||
 							    strpos($_FILES[$fid]['name'], '/') !== FALSE)
 							{
-								/* for wiki */
+								// prevents these letters for wiki creole 
 								$status = "error - colon or slash not allowed - {$_FILES[$fid]['name']}";
 								break;
 							}
@@ -435,6 +435,172 @@ class File extends Controller
 		print $status;
 	}
 
+	function xhr_add_file ($projectid = '', $name = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('FileModel', 'files');
+		$this->load->library ('upload');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$name = $this->converter->HexToAscii ($name);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else
+			{
+				$post_add_file_count = $this->input->post('file_add_file_count');
+				if ($post_add_file_count === FALSE || $post_add_file_count <= 0) $post_add_file_count = 0;
+
+				$status = '';
+				$add_files = array ();
+				for ($i = 0; $i < $post_add_file_count; $i++)
+				{
+					$fid = "file_add_file_{$i}";
+					if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
+					{
+						$d = $this->input->post("file_add_file_desc_{$i}");
+						if ($d === FALSE || ($d = trim($d)) == '')
+						{
+							$status = "error - no short description for {$_FILES[$fid]['name']}";
+							break;
+						}
+
+						if (strpos($_FILES[$fid]['name'], ':') !== FALSE ||
+							strpos($_FILES[$fid]['name'], '/') !== FALSE)
+						{
+							// prevents these letters for wiki creole
+							$status = "error - colon or slash not allowed - {$_FILES[$fid]['name']}";
+							break;
+						}
+
+						array_push ($add_files, array ('fid' => $fid, 'name' => $_FILES[$fid]['name'], 'desc' => $d));
+					}
+				}
+
+				if ($status == '')
+				{
+					if (count($add_files) <= 0)
+					{
+						$status = 'error - no files uploaded';
+					}
+					else if ($this->files->addFiles ($login['id'], $projectid, $name, $add_files, $this->upload) === FALSE)
+					{
+						$status = 'error - ' . $this->files->getErrorMessage();
+					}
+					else
+					{
+						$status = 'ok';
+					}
+				}
+			}
+		}
+
+		print $status;
+	}
+
+	function xhr_edit_file ($projectid = '', $name = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('FileModel', 'files');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$name = $this->converter->HexToAscii ($name);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else
+			{
+				$post_edit_file_count = $this->input->post('file_edit_file_count');
+				if ($post_edit_file_count === FALSE || $post_edit_file_count <= 0) $post_edit_file_count = 0;
+
+				$status = '';
+				$edit_files = array ();
+				for ($i = 0; $i < $post_edit_file_count; $i++)
+				{
+					$n = $this->input->post("file_edit_file_name_{$i}");
+					$k = $this->input->post("file_edit_file_kill_{$i}");
+					$d = $this->input->post("file_edit_file_desc_{$i}");
+
+					if ($n != '')
+					{
+						if ($k == 'yes')
+						{
+							array_push ($edit_files, array ('name' => $n, 'kill' => $k));
+						}
+						else if ($d !== FALSE)
+						{
+							if (($d = trim($d)) == '')
+							{
+								$status = "error - no short description for {$n}";
+								break;
+							}
+
+							array_push ($edit_files, array ('name' => $n, 'desc' => $d));
+						}
+					}
+				}
+
+				if ($status == '')
+				{
+					if (count($edit_files) <= 0)
+					{
+						//$status = 'error - no input avaialble';
+						$status = 'ok';
+					}
+					else if ($this->files->editFiles ($login['id'], $projectid, $name, $edit_files) === FALSE)
+					{
+						$status = 'error - ' . $this->files->getErrorMessage();
+					}
+					else
+					{
+						$status = 'ok';
+					}
+				}
+			}
+		}
+
+		print $status;
+	}
 
 	function xhr_delete ($projectid = '', $name = '')
 	{

@@ -245,7 +245,7 @@ foreach ($latest_projects as $project)
 				$trimmed = $this->lang->line('Issue') . " {$log['message']}";
 			}
 
-			if ($uri != '')
+			if ($uri != '' && $trimmed != '')
 				print anchor ($uri, htmlspecialchars($trimmed));
 			else
 				print htmlspecialchars($trimmed);
