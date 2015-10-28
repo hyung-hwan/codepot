@@ -302,7 +302,14 @@ if ($login['settings'] != NULL &&
 	{
 		$line = &$content[$i];
 
-		print htmlspecialchars ($line['line']);
+		if (property_exists($project, 'codecharset') && strlen($project->codecharset))
+		{
+			print htmlspecialchars (iconv($project->codecharset, 'UTF-8//IGNORE', $line['line']));
+		}
+		else
+		{
+			print htmlspecialchars ($line['line']);
+		}
 		print "\n";
 	}
 

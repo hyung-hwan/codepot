@@ -38,6 +38,7 @@ CREATE TABLE project (
 	description TEXT NOT NULL,
 	commitable  CHAR(1)      NOT NULL DEFAULT 'Y',
 	public      CHAR(1)      NOT NULL DEFAULT 'Y',
+	codecharset VARCHAR(32),
 
 	createdon   TIMESTAMP    NOT NULL,
 	updatedon   TIMESTAMP    NOT NULL,

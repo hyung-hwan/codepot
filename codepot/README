@@ -21,6 +21,7 @@ UPGRADING FROM 0.2.0
   mysql> ALTER TABLE file DROP COLUMN summary;
   mysql> ALTER TABLE file DROP COLUMN md5sum;
   mysql> ALTER TABLE file DROP COLUMN encname;
+  mysql> ALTER TABLE project ADD COLUMN (codecharset VARCHAR(32));
 
 INSTALLATION ON CENTOS
 
