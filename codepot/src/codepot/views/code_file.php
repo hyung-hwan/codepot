@@ -299,7 +299,18 @@ if ($login['settings'] != NULL &&
 		}
 	}
 
-	if (!$is_image_stream) print htmlspecialchars($file['content']); 
+	if (!$is_image_stream) 
+	{
+		if (property_exists($project, 'codecharset') && strlen($project->codecharset))
+		{
+			print htmlspecialchars(iconv ($project->codecharset, 'UTF-8//IGNORE', $file['content'])); 
+		}
+		else
+		{
+			print htmlspecialchars($file['content']); 
+		}
+	
+	}
 ?>
 </pre>
 
