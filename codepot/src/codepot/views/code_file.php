@@ -301,15 +301,34 @@ if ($login['settings'] != NULL &&
 
 	if (!$is_image_stream) 
 	{
-		if (property_exists($project, 'codecharset') && strlen($project->codecharset))
+		$charset = '';
+		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 		{
-			print htmlspecialchars(iconv ($project->codecharset, 'UTF-8//IGNORE', $file['content'])); 
+			$p = &$file['properties'];
+			if (array_key_exists('svn:mime-type', $p))
+			{
+				if (@preg_match('|\s*[\w/+]+;\s*charset=(\S+)|i', $p['svn:mime-type'], $matches)) 
+				{
+					$charset = $matches[1];
+				}
+			}
 		}
-		else
+
+		if ($charset == '')
+		{
+			if (property_exists($project, 'codecharset') && strlen($project->codecharset))
+				$charset = $project->codecharset;
+		}
+
+		if ($charset == '')
 		{
 			print htmlspecialchars($file['content']); 
 		}
-	
+		else
+		{
+			// ignore iconv error
+			print htmlspecialchars(@iconv ($charset, 'UTF-8//IGNORE', $file['content'])); 
+		}
 	}
 ?>
 </pre>

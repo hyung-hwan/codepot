@@ -298,17 +298,40 @@ if ($login['settings'] != NULL &&
 
 	printf ('<code class="line-numbered-code prettyprint %s %s" id="code_blame_mainarea_result_code">', $prettyprint_linenums, $prettyprint_lang);
 
+
+
+	$charset = '';
+	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+	{
+		$p = &$file['properties'];
+		if (array_key_exists('svn:mime-type', $p))
+		{
+			if (@preg_match('|\s*[\w/+]+;\s*charset=(\S+)|i', $p['svn:mime-type'], $matches)) 
+			{
+				$charset = $matches[1];
+			}
+		}
+	}
+
+	if ($charset == '')
+	{
+		if (property_exists($project, 'codecharset') && strlen($project->codecharset))
+			$charset = $project->codecharset;
+	}
+
+
 	for ($i = 0; $i < $len; $i++)
 	{
 		$line = &$content[$i];
 
-		if (property_exists($project, 'codecharset') && strlen($project->codecharset))
+		if ($charset == '')
 		{
-			print htmlspecialchars (iconv($project->codecharset, 'UTF-8//IGNORE', $line['line']));
+			print htmlspecialchars ($line['line']);
 		}
 		else
 		{
-			print htmlspecialchars ($line['line']);
+			// ignore iconv error 
+			print htmlspecialchars (@iconv($charset, 'UTF-8//IGNORE', $line['line']));
 		}
 		print "\n";
 	}
