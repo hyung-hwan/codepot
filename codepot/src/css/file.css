@@ -48,6 +48,12 @@
 	text-transform: uppercase;
 }
 
+#file_show_mainarea_files td {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	line-height: 1.5em;
+}
+
 #file_edit_mainarea_description {
 	width: 100%;
 }

@@ -527,11 +527,11 @@ $this->load->view (
 		$f = $file->file_list[$i];
 	
 		$xname = $this->converter->AsciiToHex($f->filename);
-		print '<tr><td>';
-		print anchor ("file/get/{$project->id}/{$xname}", htmlspecialchars($f->filename));
-		print '</td><td>';
+		print '<tr><td class="file-name-td">';
+		print anchor ("file/get/{$project->id}/{$xname}", '<i class="fa fa-download" /> ' . htmlspecialchars($f->filename));
+		print '</td><td class="file-description-td">';
 		print htmlspecialchars($f->description);
-		print '</td><td>';
+		print '</td><td class="file-md5sum-td">';
 		print " <tt>{$f->md5sum}</tt>";
 		print '</td></tr>';
 	}

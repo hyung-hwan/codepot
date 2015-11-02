@@ -174,6 +174,10 @@ class SubversionModel extends Model
 		$str = @svn_blame ($workurl, $rev);
 		if ($str === FALSE) return FALSE;
 
+		$prop = @svn_proplist ($workurl, FALSE, $rev);
+		if ($prop === FALSE) return FALSE;
+		$fileinfo['properties'] = array_key_exists($orgurl, $prop)?  $prop[$orgurl]: NULL;
+
 		$log = @svn_log ($workurl, 
 			$fileinfo['created_rev'], 
 			$fileinfo['created_rev'],
