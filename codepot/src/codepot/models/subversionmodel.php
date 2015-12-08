@@ -1260,6 +1260,56 @@ class SubversionModel extends Model
 		return $result;
 	}
 
+	function mapRevPropToRev ($projectid, $revprop_name)
+	{
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
+
+		set_error_handler (array ($this, 'capture_error'));
+		$info = @svn_info ($url, FALSE);
+		restore_error_handler ();
+		if ($info == FALSE || count($info) != 1) return FALSE;
+
+		$props = array ();
+		$xi = $info[0];
+		for ($rev = $xi['revision']; $rev > 0; $rev--)
+		{
+			set_error_handler (array ($this, 'capture_error'));
+			$val = @svn_revprop_get ($url, $rev, $revprop_name);
+			restore_error_handler ();
+			if ($val != '')
+			{
+				$props[$val] = $rev;
+			}
+		}
+
+		return $props;
+	}
+
+	function findRevWithRevProp ($projectid, $revprop_name, $revprop_value)
+	{
+		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
+
+		set_error_handler (array ($this, 'capture_error'));
+		$info = @svn_info ($url, FALSE);
+		restore_error_handler ();
+		if ($info == FALSE || count($info) != 1) return FALSE;
+
+		$xi = $info[0];
+		for ($rev = $xi['revision']; $rev > 0; $rev--)
+		{
+			set_error_handler (array ($this, 'capture_error'));
+			$val = @svn_revprop_get ($url, $rev, $revprop_name);
+			restore_error_handler ();
+			if ($val != '' && $revprop_value == $val)
+			{
+				return $rev;
+			}
+		}
+
+		return -1;
+	}
+
+
 	function listProps ($projectid, $path, $rev)
 	{
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");

@@ -557,6 +557,50 @@ class Code extends Controller
 		print $status;
 	}
 
+	function xhr_gettagrev ($projectid = '', $tag = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+
+		$login = $this->login->getUser ();
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE)
+		{
+			$status = "error - failed to get the project {$projectid}";
+		}
+		else if ($project === NULL)
+		{
+			$status = "error - no such project {$projectid}";
+		}
+		else
+		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
+			$tag = $this->converter->HexToAscii ($tag);
+
+			$rev = $this->subversion->findRevWithRevProp ($projectid, CODEPOT_SVN_TAG_PROPERTY, $tag);
+			if ($rev === FALSE)
+			{
+				$status = 'repoerr - ' . $this->subversion->getErrorMessage();
+			}
+			else if ($rev <= -1)
+			{
+				$status = 'noent';
+			}
+			else
+			{
+				$status = 'ok - ' . $rev;
+			}
+		}
+
+		print $status;
+	}
+
 	function enjson_save ($projectid = '', $path = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
@@ -1574,5 +1618,4 @@ class Code extends Controller
 			$this->graph->createGraph();
 		}
 	}
-
 }
