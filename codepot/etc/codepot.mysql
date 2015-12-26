@@ -170,7 +170,6 @@ CREATE TABLE file (
 	updatedby  VARCHAR(32)    NOT NULL,
 
 	UNIQUE KEY file_id (projectid, name),
-	UNIQUE KEY (encname),
 	INDEX file_tagged_name (projectid, tag, name),
 
 	CONSTRAINT file_projectid FOREIGN KEY (projectid) REFERENCES project(id)

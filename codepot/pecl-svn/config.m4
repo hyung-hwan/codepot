@@ -14,7 +14,7 @@ PHP_ARG_WITH(svn-apr, for specifying the location of apr for svn,
 if test "$PHP_SVN" != "no"; then
 
 	AC_MSG_CHECKING([for svn includes])
-	for i in $PHP_SVN /usr/local /usr /opt /sw; do
+	for i in $PHP_SVN /usr/local /usr /opt /sw /usr/pkg; do
 		if test -r $i/include/subversion-1/svn_client.h ; then
 			SVN_DIR=$i/include/subversion-1
 			PHP_SVN_INCLUDES="-I$SVN_DIR"
@@ -37,7 +37,7 @@ if test "$PHP_SVN" != "no"; then
 	fi
 
 	AC_MSG_CHECKING([for apr and apr-util])
-	for i in $PHP_SVN_APR $PHP_SVN /usr/local /usr /opt /sw; do
+	for i in $PHP_SVN_APR $PHP_SVN /usr/local /usr /opt /sw /usr/pkg; do
 		dnl APR 1.0 tests
 		if test -r $i/bin/apr-1-config ; then
 			apr_config_path="$i/bin/apr-1-config"
