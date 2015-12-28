@@ -35,11 +35,12 @@ $(function () {
 <!---------------------------------------------------------------------------->
 
 <?php
+$user = new stdClass();
 $user->id = $login['id'];
 
 $this->load->view (
-        'projectbar',
-        array (
+	'projectbar',
+	array (
 		'banner' => NULL,
 
 		'page' => array (
@@ -48,8 +49,8 @@ $this->load->view (
 			'user' => $user,
 		),
 
-                'ctxmenuitems' => array ()
-        )
+		'ctxmenuitems' => array ()
+	)
 );
 ?>
 

@@ -77,6 +77,8 @@ class User extends Controller
 		}
 
 		$this->load->model ('ProjectModel', 'projects');
+
+		$user = new stdClass();
 		$user->id = $login['id'];
 
 		$myprojs = $this->projects->getMyProjects ($login['id']);
@@ -100,7 +102,7 @@ class User extends Controller
 			$numprojs = count($myprojs);
 			for ($i = 0; $i < $numprojs; $i++) 
 				$projids[$i] = $myprojs[$i]->id;
-		
+
 			$num_log_entries = $this->logs->getNumEntries ($projids);
 			if ($num_log_entries === FALSE)
 			{
@@ -190,7 +192,7 @@ class User extends Controller
 
 				$this->load->library ('upload');
 				$this->upload->initialize ($config);
-		
+
 				if ($this->upload->do_upload ('icon_img_file_name'))
 				{
 					$upload = $this->upload->data ();
@@ -199,6 +201,7 @@ class User extends Controller
 				}
 			}
 
+			
 			//
 			// make sure that these field also exist in the database
 			// also change the sanity check in LoginModel/getUser()
@@ -232,6 +235,7 @@ class User extends Controller
 			if ($settings === FALSE || $settings === NULL)
 			{
 				if ($settings === FALSE) $data['message'] = 'DATABASE ERROR';
+				$settings = new stdClass();
 				$settings->code_hide_line_num = ' ';
 				$settings->code_hide_metadata = ' ';
 				$settings->icon_name = '';
