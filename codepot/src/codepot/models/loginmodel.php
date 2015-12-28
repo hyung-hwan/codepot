@@ -42,7 +42,8 @@ class LoginModel extends Model
 			if ($settings !== NULL) 
 			{
 				$settings = @unserialize ($settings);
-				if ($settings === FALSE) $settings = NULL;
+				if ($settings === FALSE || $settings === NULL) 
+					$settings = new stdObject();
 
 				// Sanity check on the session/cookie data
 				// See Controller/User->settings() for required fields.

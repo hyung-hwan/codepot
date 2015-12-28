@@ -56,6 +56,7 @@ class Issue extends Controller
 
 			if ($filter == '')
 			{
+				$search = new stdClass();
 				$search->type = '';
 				$search->status = '';
 				$search->priority = '';
@@ -77,7 +78,6 @@ class Issue extends Controller
 			$data['search'] = $search;
 
 			$this->load->library ('pagination');
-
 
 			if ($filter == '' && $offset == '')
 			{
@@ -181,6 +181,7 @@ class Issue extends Controller
 			$change_post = $this->input->post('issue_change');
 			if ($change_post == 'change')
 			{
+				$change = new stdClass();
 				$change->type = $this->input->post('issue_change_type');
 				$change->status = $this->input->post('issue_change_status');
 				$change->owner = $this->input->post('issue_change_owner');
@@ -317,6 +318,7 @@ class Issue extends Controller
 
 			if ($this->input->post('issue'))
 			{
+				$issue = new stdClass();
 				$issue->projectid = $this->input->post('issue_projectid');
 				$issue->id = $this->input->post('issue_id');
 				$issue->summary = $this->input->post('issue_summary');
@@ -374,6 +376,7 @@ class Issue extends Controller
 				}
 				else
 				{
+					$issue = new stdClass();
 					$issue->projectid = $projectid;
 					$issue->id = $id;
 					$issue->summary = '';
@@ -456,6 +459,7 @@ class Issue extends Controller
 
 			if($this->input->post('issue'))
 			{
+				$issue = new stdClass();
 				$issue->projectid = $this->input->post('issue_projectid');
 				$issue->id = $this->input->post('issue_id');
 				$data['issue_confirm'] = $this->input->post('issue_confirm');
