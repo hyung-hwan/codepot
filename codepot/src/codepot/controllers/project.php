@@ -197,6 +197,7 @@ class Project extends Controller
 
 			// recompose the project information from POST data.
 			unset ($project);
+			$project = new stdClass();
 			$project->id = $tmpid;
 			$project->name = $this->input->post('project_name');
 			$project->summary = $this->input->post('project_summary');
@@ -259,6 +260,7 @@ class Project extends Controller
 		if ($login['id'] == '')
 			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 
+		$project = new stdClass();
 		$project->id = $projectid;
 		$project->name = '';
 		$project->summary = '';
@@ -486,6 +488,7 @@ class Project extends Controller
 
 			if ($filter == '')
 			{
+				$search = new stdClass();
 				$search->id = '';
 				$search->name = '';
 				$search->summary = '';
