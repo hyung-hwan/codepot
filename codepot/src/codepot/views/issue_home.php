@@ -290,7 +290,8 @@ $this->load->view (
 		),
 
 		'ctxmenuitems' => array (
-			array ("issue/create/{$project->id}", '<i class="fa fa-plus"></i> ' . $this->lang->line('New'), 'issue_home_new')
+			// DEPRECATED
+			//array ("issue/create/{$project->id}", '<i class="fa fa-plus"></i> ' . $this->lang->line('New'), 'issue_home_new')
 		)
 	)
 ); 

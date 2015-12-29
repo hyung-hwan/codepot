@@ -257,6 +257,8 @@ class Issue extends Controller
 		}
 	}
 
+/*
+DEPRECATED
 	function _edit_issue ($projectid, $hexid, $mode)
 	{
 		$this->load->helper ('form');
@@ -414,6 +416,7 @@ class Issue extends Controller
 		return $this->_edit_issue ($projectid, $hexid, 'update');
 	}
 
+
 	function delete ($projectid = '', $hexid = '')
 	{
 		$this->load->helper ('form');
@@ -516,6 +519,7 @@ class Issue extends Controller
 
 		}
 	}
+*/
 
 	function xhr_create ($projectid = '')
 	{
@@ -609,7 +613,7 @@ class Issue extends Controller
 
 					if ($status == '')
 					{
-						if ($this->issues->create_with_files ($login['id'], $issue, $attached_files, $this->upload) === FALSE)
+						if ($this->issues->createWithFiles ($login['id'], $issue, $attached_files, $this->upload) === FALSE)
 						{
 							$status = 'error - ' . $this->issues->getErrorMessage();
 						}
@@ -681,7 +685,7 @@ class Issue extends Controller
 
 					if ($status == '')
 					{
-						if ($this->issues->update_summary_and_description ($login['id'], $issue) === FALSE)
+						if ($this->issues->updateSummaryAndDescription ($login['id'], $issue) === FALSE)
 						{
 							$status = 'error - ' . $this->issues->getErrorMessage();
 						}
@@ -689,6 +693,223 @@ class Issue extends Controller
 						{
 							$status = 'ok';
 						}
+					}
+				}
+			}
+		}
+
+		print $status;
+	}
+
+	function xhr_delete ($projectid = '', $issueid = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('IssueModel', 'issues');
+
+		$login = $this->login->getUser ();
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$issueid = $this->converter->HexToAscii ($issueid);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else
+			{
+				$post_delete_confirm = $this->input->post('issue_delete_confirm');
+				
+				if ($post_delete_confirm !== FALSE && $post_delete_confirm == 'Y')
+				{
+					if ($this->issues->deleteWithFiles ($login['id'], $projectid, $issueid) === FALSE)
+					{
+						$status = 'error - ' . $this->issues->getErrorMessage();
+					}
+					else
+					{
+						$status = 'ok';
+					}
+				}
+				else
+				{
+					$status = 'error - not confirmed';
+				}
+			}
+		}
+
+		print $status;
+	}
+
+	function xhr_add_file ($projectid = '', $issueid = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('IssueModel', 'issues');
+		$this->load->library ('upload');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$issueid = $this->converter->HexToAscii ($issueid);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else
+			{
+				$post_add_file_count = $this->input->post('issue_add_file_count');
+				if ($post_add_file_count === FALSE || $post_add_file_count <= 0) $post_add_file_count = 0;
+
+				$status = '';
+				$add_files = array ();
+				for ($i = 0; $i < $post_add_file_count; $i++)
+				{
+					$fid = "issue_add_file_{$i}";
+					if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
+					{
+						$d = $this->input->post("file_add_file_desc_{$i}");
+						if ($d === FALSE || ($d = trim($d)) == '') $d = ''; 
+
+						if (strpos($_FILES[$fid]['name'], ':') !== FALSE ||
+						    strpos($_FILES[$fid]['name'], '/') !== FALSE)
+						{
+							// prevents these letters for wiki creole
+							$status = "error - colon or slash not allowed - {$_FILES[$fid]['name']}";
+							break;
+						}
+
+						array_push ($add_files, array ('fid' => $fid, 'name' => $_FILES[$fid]['name'], 'desc' => $d));
+					}
+				}
+
+				if ($status == '')
+				{
+					if (count($add_files) <= 0)
+					{
+						$status = 'error - no files uploaded';
+					}
+					else if ($this->issues->addFiles ($login['id'], $projectid, $issueid, $add_files, $this->upload) === FALSE)
+					{
+						$status = 'error - ' . $this->issues->getErrorMessage();
+					}
+					else
+					{
+						$status = 'ok';
+					}
+				}
+			}
+		}
+
+		print $status;
+	}
+
+	function xhr_edit_file ($projectid = '', $issueid = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('IssueModel', 'issues');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$issueid = $this->converter->HexToAscii ($issueid);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else
+			{
+				$post_edit_file_count = $this->input->post('issue_edit_file_count');
+				if ($post_edit_file_count === FALSE || $post_edit_file_count <= 0) $post_edit_file_count = 0;
+
+				$status = '';
+				$edit_files = array ();
+				for ($i = 0; $i < $post_edit_file_count; $i++)
+				{
+					$n = $this->input->post("issue_edit_file_name_{$i}");
+					$k = $this->input->post("issue_edit_file_kill_{$i}");
+					$d = $this->input->post("issue_edit_file_desc_{$i}");
+
+					if ($n != '')
+					{
+						if ($k == 'yes')
+						{
+							array_push ($edit_files, array ('name' => $n, 'kill' => $k));
+						}
+						else if ($d !== FALSE)
+						{
+							if (($d = trim($d)) == '')
+							{
+								$status = "error - no short description for {$n}";
+								break;
+							}
+
+							array_push ($edit_files, array ('name' => $n, 'desc' => $d));
+						}
+					}
+				}
+
+				if ($status == '')
+				{
+					if (count($edit_files) <= 0)
+					{
+						//$status = 'error - no input avaialble';
+						$status = 'ok';
+					}
+					else if ($this->issues->editFiles ($login['id'], $projectid, $issueid, $edit_files) === FALSE)
+					{
+						$status = 'error - ' . $this->issues->getErrorMessage();
+					}
+					else
+					{
+						$status = 'ok';
 					}
 				}
 			}
