@@ -204,3 +204,34 @@
 #issue_edit_mainarea_buttons {
 	padding-top: 0.5em;
 }
+
+
+/*-----------------------------------------------
+ * issue home view - new issue dialog
+ *-----------------------------------------------*/
+#issue_home_mainarea_new_description_tabs {
+	border: none !important;
+}
+
+#issue_home_mainarea_new_description_tabs .ui-tabs-panel {
+	padding: 0.2em 0em 0em 0em !important;
+}
+
+#issue_home_mainarea_new_description_tabs .ui-widget-header {
+	border: none !important;
+	background: none !important;
+	padding: 0em !important;
+}
+
+#issue_home_mainarea_new_description_tabs .ui-tabs-nav {
+	padding: 0em !important;
+}
+
+/* #issue_home_mainarea_new_description_tabs .ui-tabs-nav li { */
+.ui-tabs .ui-tabs-nav li.ui-state-default {
+	border-bottom: 1px solid #cccccc !important;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-state-active {
+	border-bottom: 1px solid #fbd850 !important;
+}
