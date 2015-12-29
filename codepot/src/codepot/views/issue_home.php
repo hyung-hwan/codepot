@@ -58,14 +58,14 @@ function render_wiki(input_text)
 	creole_render_wiki_with_input_text (
 		input_text,
 		"issue_home_mainarea_new_description_preview", 
-		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
+		"<?php print site_url()?>/issue/show/<?php print $project->id?>/",
+		"<?php print site_url()?>/issue/file0/<?php print $project->id?>/"
 	);
 
 	prettyPrint ();
 }
 
-var import_in_progress = false;
+var work_in_progress = false;
 var populated_file_obj = [];
 var populated_file_max = 0;
 
@@ -137,12 +137,12 @@ $(function () {
 			buttons: {
 
 				'<?php print $this->lang->line('OK')?>': function () {
-					if (import_in_progress) return;
+					if (work_in_progress) return;
 
 					if (!!window.FormData)
 					{
 						// FormData is supported
-						import_in_progress = true;
+						work_in_progress = true;
 
 						var form_data = new FormData();
 
@@ -178,7 +178,7 @@ $(function () {
 							cache: false,
 
 							success: function (data, textStatus, jqXHR) { 
-								import_in_progress = false;
+								work_in_progress = false;
 								$('#issue_home_mainarea_new_form').dialog('enable');
 								$('#issue_home_mainarea_new_form').dialog('close');
 								if (data == 'ok') 
@@ -193,7 +193,7 @@ $(function () {
 							},
 
 							error: function (jqXHR, textStatus, errorThrown) { 
-								import_in_progress = false;
+								work_in_progress = false;
 								$('#issue_home_mainarea_new_form').dialog('enable');
 								$('#issue_home_mainarea_new_form').dialog('close');
 								var errmsg = '';
@@ -210,14 +210,14 @@ $(function () {
 					}
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
-					if (import_in_progress) return;
+					if (work_in_progress) return;
 					$('#issue_home_mainarea_new_form').dialog('close');
 				}
 			},
 
 			beforeClose: function() { 
 				// if importing is in progress, prevent dialog closing
-				return !import_in_progress;
+				return !work_in_progress;
 			}
 		}
 	);
@@ -380,7 +380,7 @@ else
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 <div id='issue_home_mainarea_new_form'>
 	<div style='line-height: 2em;'>
-		<?php 		
+		<?php
 		print form_dropdown (
 			'issue_home_new_type', 
 			$issue_type_array,

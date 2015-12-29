@@ -575,9 +575,9 @@ class Issue extends Controller
 				}
 				else if ($issue->summary === FALSE || ($issue->summary = trim($issue->summary)) == '')
 				{
-					$status = 'error - no name';
+					$status = 'error - no summary';
 				}
-				else if ($issue->description === FALSE || ($issue->description = $issue->description) == '')
+				else if ($issue->description === FALSE || ($issue->description = trim($issue->description)) == '')
 				{
 					$status = 'error - no description';
 				}
@@ -623,5 +623,217 @@ class Issue extends Controller
 		}
 
 		print $status;
+	}
+
+	function xhr_update ($projectid = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('IssueModel', 'issues');
+		$this->load->library ('upload');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else
+			{
+				$issue = new stdClass();
+				$issue->projectid = $projectid;
+				$issue->id = $this->input->post('issue_edit_id');
+				$issue->summary = $this->input->post('issue_edit_summary');
+				$issue->description = $this->input->post('issue_edit_description');
+				//$issue->type = $this->input->post('issue_edit_type');
+
+				if ($issue->id === FALSE || ($issue->id = trim($issue->id)) == '')
+				{
+					$status = 'error - no ID';
+				}
+				else if ($issue->summary === FALSE || ($issue->summary = trim($issue->summary)) == '')
+				{
+					$status = 'error - no summary';
+				}
+				else if ($issue->description === FALSE || ($issue->description = trim($issue->description)) == '')
+				{
+					$status = 'error - no description';
+				}
+				else
+				{
+					$status = '';
+
+					if ($status == '')
+					{
+						if ($this->issues->update_summary_and_description ($login['id'], $issue) === FALSE)
+						{
+							$status = 'error - ' . $this->issues->getErrorMessage();
+						}
+						else
+						{
+							$status = 'ok';
+						}
+					}
+				}
+			}
+		}
+
+		print $status;
+	}
+
+	private function _handle_file ($login, $projectid, $issueid, $filename)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('IssueModel', 'issues');
+
+		$data['login'] = $login;
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE)
+		{
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else if ($project === NULL)
+		{
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
+			$att = $this->issues->getFile ($login['id'], $project, $issueid, $filename);
+			if ($att === FALSE)
+			{
+				$data['project'] = $project;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else if ($att === NULL)
+			{
+				$data['project'] = $project;
+				$data['message'] = sprintf (
+					$this->lang->line('ISSUE_MSG_NO_SUCH_FILE'), $filename);
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else
+			{
+				$path = CODEPOT_ISSUE_FILE_DIR . "/{$att->encname}";
+
+				$stat = @stat($path);
+				if ($stat === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = sprintf (
+						$this->lang->line('issue_MSG_FAILED_TO_READ_FILE'), $filename);
+					$this->load->view ($this->VIEW_ERROR, $data);
+					return;
+				}
+
+				$etag = sprintf ('%x-%x-%x-%x', $stat['dev'], $stat['ino'], $stat['size'], $stat['mtime']);
+				$lastmod = gmdate ('D, d M Y H:i:s', $stat['mtime']);
+
+				header ('Last-Modified: ' . $lastmod . ' GMT');
+				header ('Etag: ' . $etag);
+
+				if ((isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) ||
+				    (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $stat['mtime']))
+				{
+					header('Not Modified', true, 304);
+					flush ();
+					return;
+				}
+
+				header ('Content-Type: ' . mime_content_type($path));
+				header ('Content-Length: ' . $stat['size']);
+				header ('Content-Disposition: inline; filename=' . $filename);
+				flush ();
+
+				$x = @readfile($path);
+				if ($x === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = sprintf (
+						$this->lang->line('ISSUE_MSG_FAILED_TO_READ_FILE'), $filename);
+					$this->load->view ($this->VIEW_ERROR, $data);
+				}
+			}
+		}
+	}
+
+	function file ($projectid = '', $issueid = '', $filename = '')
+	{
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+
+		if ($issueid == '' || $filename == '')
+		{
+			$data['login'] = $login;
+			$data['message'] = 'INVALID PARAMETERS';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$filename = $this->converter->HexToAscii ($filename);
+
+		$part = explode (':', $filename);
+		if (count($part) == 3)
+		{
+			if ($part[0] != '') $projectid = $part[0];
+			if ($part[1] != '') $issueid = $part[1];
+			if ($part[2] != '') $filename = $part[2];
+		}
+
+		$this->_handle_file ($login, $projectid, $issueid, $filename);
+	}
+
+
+	function file0 ($projectid = '', $target = '')
+	{
+		//$target => projectid:issueid:filename
+
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+
+		if ($target == '')
+		{
+			$data['login'] = $login;
+			$data['message'] = 'INVALID PARAMETERS';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$target = $this->converter->HexToAscii ($target);
+		$part = explode (':', $target);
+		if (count($part) == 3)
+		{
+			if ($part[0] == '') $part[0] = $projectid;
+			$this->_handle_attachment ($login, $part[0], $part[1], $part[2]);
+		}
 	}
 }
