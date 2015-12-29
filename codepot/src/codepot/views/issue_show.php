@@ -749,11 +749,14 @@ $this->load->view (
 </div> <!-- issue_show_mainarea_description -->
 
 <div id="issue_show_mainarea_files">
-<i class='fa fa-plug'></i> <?php print $this->lang->line('Attachments'); ?>
+
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
+	<i class='fa fa-plug'></i> <?php print $this->lang->line('Attachments'); ?>
 	<a id="issue_show_mainarea_add_file_button" href='#'><?php print $this->lang->line('Add')?></a>
 	<a id="issue_show_mainarea_edit_file_button" href='#'><?php print $this->lang->line('Edit')?></a>
+<?php elseif (!empty($issue->files)): ?>
+	<i class='fa fa-plug'></i> <?php print $this->lang->line('Attachments'); ?>
 <?php endif; ?>
 
 <?php if (!empty($issue->files)): ?>
