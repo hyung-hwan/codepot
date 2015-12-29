@@ -102,6 +102,10 @@
 	font-size: 0.9em;
 }
 
+#issue_show_mainarea_files {
+	padding-top: 0.5em;
+}
+
 #issue_show_mainarea_changes {
 	margin-top: 1em;
 	padding-top: 0.5em;

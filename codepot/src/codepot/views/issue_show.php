@@ -749,7 +749,7 @@ $this->load->view (
 </div> <!-- issue_show_mainarea_description -->
 
 <div id="issue_show_mainarea_files">
-<?php print $this->lang->line('Attachments'); ?>
+<i class='fa fa-plug'></i> <?php print $this->lang->line('Attachments'); ?>
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 	<a id="issue_show_mainarea_add_file_button" href='#'><?php print $this->lang->line('Add')?></a>
