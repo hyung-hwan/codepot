@@ -22,6 +22,8 @@ UPGRADING FROM 0.2.0
   mysql> ALTER TABLE file DROP COLUMN md5sum;
   mysql> ALTER TABLE file DROP COLUMN encname;
   mysql> ALTER TABLE project ADD COLUMN (codecharset VARCHAR(32));
+  mysql> DROP TABLE issue_attachment;
+  mysql> create the issue_file_list table according to the definition found in codepot.mysql
 
 INSTALLATION ON CENTOS
 

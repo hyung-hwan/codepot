@@ -12,6 +12,18 @@ body {
 	height: 100%; /* for sticky footer */
 }
 
+textarea {
+	font-family: consolas, monaco, "Andale Mono", monospace;
+
+	tab-size: 5;
+	-moz-tab-size: 5;
+	-o-tab-size: 5;
+
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
 .content {
 	font-size: 0.9em;
 	font-family: /*Ubuntu,*/ "Trebuchet MS", Tahoma, Verdana, sans-serif;
@@ -80,14 +92,6 @@ body {
 	white-space: pre-wrap !important;
 }
 
-.content textarea {
-	font-family: consolas, monaco, "Andale Mono", monospace;
-
-	tab-size: 5;
-	-moz-tab-size: 5;
-	-o-tab-size: 5;
-}
-
 .content .collapsible-box {
 	margin: 0;
 	padding: 0;
@@ -97,7 +101,7 @@ body {
 	background: #E5ECF9 none repeat scroll 0 0;
 	border: #D4DBE8 1px solid;
 	color: #1C94C4;
-        font-size: 0.9em;
+	font-size: 0.9em;
 }
 
 .content .collapsible-box-list {

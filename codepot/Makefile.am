@@ -11,6 +11,7 @@ install-data-hook:
 	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@"
 	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@/svnrepo"
 	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@/files"
+	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@/issuefiles"
 	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@/attachments"
 	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@/usericons"
 	$(INSTALL) -d "$(DESTDIR)@LOGDIR@"
@@ -19,6 +20,7 @@ install-data-hook:
 uninstall-hook:
 	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/usericons"
 	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/attachments"
+	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/issuefiles"
 	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/files"
 	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/svnrepo"
 	$(RMDIR) "$(DESTDIR)@DEPOTDIR@"

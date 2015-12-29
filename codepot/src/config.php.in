@@ -72,6 +72,7 @@ function load_ini ($file)
 
 		array ('svnrepo_dir',                  'string',      CODEPOT_DEPOT_DIR.'/svnrepo'),
 		array ('file_dir',                     'string',      CODEPOT_DEPOT_DIR.'/files'),
+		array ('issue_file_dir',               'string',      CODEPOT_DEPOT_DIR.'/issuefiles'),
 		array ('attachment_dir',               'string',      CODEPOT_DEPOT_DIR.'/attachments'),
 		array ('usericon_dir',                 'string',      CODEPOT_DEPOT_DIR.'/usericons'),
 

@@ -187,6 +187,11 @@ svnrepo_dir = "@DEPOTDIR@/svnrepo"
 file_dir = "@DEPOTDIR@/files"
 
 ;------------------------------------------------------------------------------
+; directory to store issue attachments
+;------------------------------------------------------------------------------
+issue_file_dir = "@DEPOTDIR@/issuefiles"
+
+;------------------------------------------------------------------------------
 ; directory to store wiki attachments
 ;------------------------------------------------------------------------------
 attachment_dir = "@DEPOTDIR@/attachments"

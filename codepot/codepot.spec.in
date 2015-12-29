@@ -85,6 +85,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %dir %attr(-,apache,apache) /var/lib/codepot/svnrepo
 %dir %attr(-,apache,apache) /var/lib/codepot/files
+%dir %attr(-,apache,apache) /var/lib/codepot/issuefiles
 %dir %attr(-,apache,apache) /var/lib/codepot/attachments
 %dir %attr(-,apache,apache) /var/lib/codepot/usericons
 %dir %attr(-,apache,apache) /var/log/codepot
