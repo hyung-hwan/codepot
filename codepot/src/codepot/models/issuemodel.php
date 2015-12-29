@@ -451,6 +451,7 @@ class IssueModel extends Model
 		return $this->db->trans_status();
 	}
 
+	
 	private function delete_all_files ($files)
 	{
 		foreach ($files as $f) @unlink ($f);
@@ -580,7 +581,7 @@ class IssueModel extends Model
 		return $newid;
 	}
 
-	function create_with_files ($userid, $issue, $attached_files, $uploader)
+	function createWithFiles ($userid, $issue, $attached_files, $uploader)
 	{
 		set_error_handler (array ($this, 'capture_error'));
 		$errmsg = '';
@@ -589,7 +590,7 @@ class IssueModel extends Model
 		return $x;
 	}
 
-	function update_summary_and_description ($userid, $issue)
+	function updateSummaryAndDescription ($userid, $issue)
 	{
 		// TODO: check if userid can do this..
 		$this->db->trans_start ();
@@ -613,6 +614,278 @@ class IssueModel extends Model
 		if ($this->db->trans_status() === FALSE) return FALSE;
 
 		return $issue->id;
+	}
+
+	private function _delete_issue ($userid, $projectid, $issueid)
+	{
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
+
+		$this->db->where ('projectid', $projectid);
+		$this->db->where ('issueid', $issueid);
+		$query = $this->db->get ('issue_file_list');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$result = $query->result ();
+		$file_names = array ();
+		foreach ($result as $f)
+		{
+			array_push ($file_names, $f->encname);
+		}
+
+		$this->db->where ('projectid', $projectid);
+		$this->db->where ('issueid', $issueid);
+		$this->db->delete ('issue_file_list');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$this->db->where ('projectid', $projectid);
+		$this->db->where ('id', $issueid);
+		$this->db->delete ('issue_change');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$this->db->where ('projectid', $projectid);
+		$this->db->where ('id', $issueid);
+		$this->db->delete ('issue');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'issue');
+		$this->db->set ('action',    'delete');
+		$this->db->set ('projectid', $projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $issueid);
+		$this->db->insert ('log');
+
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$file_name_count = count($file_names);
+		for ($i = 0; $i < $file_name_count; $i++)
+		{
+			$encname = $file_names[$i];
+			$path = CODEPOT_ISSUE_FILE_DIR . '/' . $encname;
+			if (@unlink ($path) === FALSE)
+			{
+				if ($i == 0)
+				{
+					$this->db->trans_rollback ();
+					return FALSE;
+				}
+				else
+				{
+					// there is no good way to recover from the error.
+					// carry on. some files will get orphaned.
+				}
+			}
+		}
+
+		$this->db->trans_commit ();
+		return TRUE;
+	}
+
+	function deleteWithFiles ($userid, $projectid, $issueid)
+	{
+		set_error_handler (array ($this, 'capture_error'));
+		$errmsg = '';
+		$x = $this->_delete_issue ($userid, $projectid, $issueid);
+		restore_error_handler ();
+		return $x;
+	}
+
+
+	private function _add_files ($userid, $projectid, $issueid, $add_files, $uploader)
+	{
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
+
+		$config['allowed_types'] = '*';
+		$config['upload_path'] = CODEPOT_ISSUE_FILE_DIR;
+		$config['max_size'] = CODEPOT_MAX_UPLOAD_SIZE;
+		$config['encrypt_name'] = TRUE;
+		$config['overwrite'] = FALSE;
+		$config['remove_spaces'] = FALSE;
+		$uploader->initialize ($config);
+
+		$ok_files = array();
+		$file_count = count($add_files);
+		for ($i = 0; $i < $file_count; $i++)
+		{
+			$f = $add_files[$i];
+			if (!$uploader->do_upload($f['fid']))
+			{
+				$this->errmsg = "Failed to upload {$f['name']}";
+				$this->db->trans_rollback ();
+				$this->delete_all_files ($ok_files);
+				return FALSE;
+			}
+
+			$ud = $uploader->data();
+			array_push ($ok_files, $ud['full_path']);
+
+			$md5sum = @md5_file ($ud['full_path']);
+			if ($md5sum === FALSE)
+			{
+				$this->db->trans_rollback ();
+				$this->delete_all_files ($ok_files);
+				return FALSE;
+			}
+
+			$this->db->set ('projectid', $projectid);
+			$this->db->set ('issueid', $issueid);
+			$this->db->set ('filename', $f['name']);
+			$this->db->set ('encname', $ud['file_name']);
+
+			$this->db->set ('md5sum', $md5sum);
+			$this->db->set ('description', $f['desc']);
+			$this->db->insert ('issue_file_list');
+			if ($this->db->trans_status() === FALSE)
+			{
+				$this->errmsg = $this->db->_error_message(); 
+				$this->db->trans_rollback ();
+				$this->delete_all_files ($ok_files);
+				return FALSE;
+			}
+		}
+
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'issue');
+		$this->db->set ('action',    'update');
+		$this->db->set ('projectid', $projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $issueid);
+		$this->db->insert ('log');
+
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			$this->delete_all_files ($ok_files);
+			return FALSE;
+		}
+
+		$this->db->trans_commit ();
+		return TRUE;
+	}
+
+	function addFiles ($userid, $projectid, $issueid, $add_files, $uploader)
+	{
+		set_error_handler (array ($this, 'capture_error'));
+		$errmsg = '';
+		$x = $this->_add_files ($userid, $projectid, $issueid, $add_files, $uploader);
+		restore_error_handler ();
+		return $x;
+	}
+
+	private function _edit_files ($userid, $projectid, $issueid, $edit_files)
+	{
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
+
+		$kill_files = array();
+		$file_count = count($edit_files);
+		for ($i = 0; $i < $file_count; $i++)
+		{
+			$f = $edit_files[$i];
+
+			if (array_key_exists('kill', $f))
+			{
+				$this->db->where ('projectid', $projectid);
+				$this->db->where ('issueid', $issueid);
+				$this->db->where ('filename', $f['name']);
+				$this->db->select ('encname');
+				$query = $this->db->get('issue_file_list');
+				if ($this->db->trans_status() === FALSE)
+				{
+					$this->errmsg = $this->db->_error_message(); 
+					$this->db->trans_rollback ();
+					return FALSE;
+				}
+
+				$result = $query->result ();
+				if (empty($result)) 
+				{
+					$this->errmsg = "no such file - {$f['name']}";
+					$this->db->trans_rollback ();
+					return FALSE;
+				}
+
+				array_push ($kill_files, CODEPOT_ISSUE_FILE_DIR . '/' . $result[0]->encname);
+
+				$this->db->where ('projectid', $projectid);
+				$this->db->where ('issueid', $issueid);
+				$this->db->where ('filename', $f['name']);
+				$query = $this->db->delete('issue_file_list');
+				if ($this->db->trans_status() === FALSE)
+				{
+					$this->errmsg = $this->db->_error_message(); 
+					$this->db->trans_rollback ();
+					return FALSE;
+				}
+			}
+			else if (array_key_exists('desc', $f))
+			{
+				$this->db->where ('projectid', $projectid);
+				$this->db->where ('issueid', $issueid);
+				$this->db->where ('filename', $f['name']);
+				$this->db->set ('description', $f['desc']);
+				$this->db->update ('issue_file_list');
+				if ($this->db->trans_status() === FALSE)
+				{
+					$this->errmsg = $this->db->_error_message(); 
+					$this->db->trans_rollback ();
+					return FALSE;
+				}
+			}
+		}
+
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'issue');
+		$this->db->set ('action',    'update');
+		$this->db->set ('projectid', $projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $issueid);
+		$this->db->insert ('log');
+
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$this->delete_all_files ($kill_files);
+		$this->db->trans_commit ();
+		return TRUE;
+	}
+
+	function editFiles ($userid, $projectid, $issueid, $edit_files)
+	{
+		set_error_handler (array ($this, 'capture_error'));
+		$errmsg = '';
+		$x = $this->_edit_files ($userid, $projectid, $issueid, $edit_files);
+		restore_error_handler ();
+		return $x;
 	}
 }
 

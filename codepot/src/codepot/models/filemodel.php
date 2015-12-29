@@ -241,7 +241,6 @@ class FileModel extends Model
 			{
 				if ($i == 0)
 				{
-					$this->errmsg = $this->db->_error_message(); 
 					$this->db->trans_rollback ();
 					return FALSE;
 				}

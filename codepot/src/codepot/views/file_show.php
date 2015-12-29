@@ -124,32 +124,32 @@ function kill_edit_file (no)
 			d.prop ('disabled', true);
 		}
 	}
-	
 }
 
 var delete_in_progress = false;
 var add_file_in_progress = false;
 var edit_file_in_progress = false;
 
-var original_file_name = [<?php
-for ($i = 0; $i < $file_count; $i++)
-{
-	$f = $file->file_list[$i];
-	printf ("%s\t'%s'", (($i == 0)? '': ",\n"), addslashes($f->filename));
-}
-print "\n";
-?>
+var original_file_name = [
+	<?php
+	for ($i = 0; $i < $file_count; $i++)
+	{
+		$f = $file->file_list[$i];
+		printf ("%s\t'%s'", (($i == 0)? '': ",\n"), addslashes($f->filename));
+	}
+	print "\n";
+	?>
 ];
 
 var original_file_desc = [
-<?php
-for ($i = 0; $i < $file_count; $i++)
-{
-	$f = $file->file_list[$i];
-	printf ("%s\t'%s'", (($i == 0)? '': ",\n"), addslashes($f->description));
-}
-print "\n";
-?>
+	<?php
+	for ($i = 0; $i < $file_count; $i++)
+	{
+		$f = $file->file_list[$i];
+		printf ("%s\t'%s'", (($i == 0)? '': ",\n"), addslashes($f->description));
+	}
+	print "\n";
+	?>
 ];
 
 $(function () {

@@ -135,6 +135,27 @@ CREATE TABLE issue_attachment (
 		ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+CREATE TABLE issue_file_list (
+	projectid   VARCHAR(32)   NOT NULL,
+	issueid     BIGINT        NOT NULL,
+	filename    VARCHAR(255)  NOT NULL,
+	encname     VARCHAR(255)  NOT NULL,
+	md5sum      CHAR(32)      NOT NULL,
+	description VARCHAR(255)  NOT NULL,
+
+	createdon   DATETIME      NOT NULL,
+	createdby   VARCHAR(32)   NOT NULL,
+
+	UNIQUE (projectid, issueid, filename),
+	UNIQUE (encname),
+
+	CONSTRAINT issue_file_list_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+
+	CONSTRAINT issue_file_list_issueid FOREIGN KEY (projectid,issueid) REFERENCES issue(projectid,id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
 CREATE TABLE issue_change (
 	projectid VARCHAR(32)  NOT NULL,
 	id        BIGINT       NOT NULL,
