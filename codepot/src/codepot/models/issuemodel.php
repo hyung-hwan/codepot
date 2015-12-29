@@ -22,34 +22,49 @@ class IssueModel extends Model
 
 	function get ($userid, $project, $id)
 	{
-		$this->db->trans_start ();
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
+
 		$this->db->where ('projectid', $project->id);
 		$this->db->where ('id', $id);
 		$query = $this->db->get ('issue');
 		if ($this->db->trans_status() === FALSE) 
 		{
-			$this->db->trans_complete ();
+			$this->db->trans_rollback ();
 			return FALSE;
 		}
 
 		$result = $query->result ();
 		if (empty($result))
 		{
-			$this->db->trans_complete ();
+			$this->db->trans_commit ();
 			return NULL;
 		}
+
+		$this->db->where ('projectid', $project->id);
+		$this->db->where ('issueid', $id);
+		$query = $this->db->get ('issue_file_list');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+		$files = $query->result();
 
 		$this->db->where ('projectid', $project->id);
 		$this->db->where ('id', $id);
 		$this->db->order_by ('sno', 'asc');
 		$query = $this->db->get ('issue_change');
-
-		$this->db->trans_complete ();
-		if ($this->db->trans_status() === FALSE) return FALSE;
-
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
 		$changes = $query->result();
 
+		$this->db->trans_commit ();
+
 		$result[0]->changes = $changes;
+		$result[0]->files = $files;
 		return $result[0];
 	}
 
@@ -143,6 +158,25 @@ class IssueModel extends Model
 
 		if ($this->db->trans_status() === FALSE) return FALSE;
 		return $query->result ();
+	}
+
+	function getFile ($userid, $project, $issueid, $filename)
+	{
+		$this->db->trans_start ();
+
+		$this->db->select ('filename,encname,md5sum,description,createdon,createdby');
+		$this->db->where ('projectid', $project->id);
+		$this->db->where ('issueid', $issueid);
+		$this->db->where ('filename', $filename);
+
+		$query = $this->db->get ('issue_file_list');
+		$this->db->trans_complete ();
+
+		if ($this->db->trans_status() === FALSE) return FALSE;
+		$result = $query->result ();
+		if (empty($result)) return NULL;
+
+		return $result[0];
 	}
 
 	function create ($userid, $issue)
@@ -553,6 +587,32 @@ class IssueModel extends Model
 		$x = $this->_create_issue ($userid, $issue, $attached_files, $uploader);
 		restore_error_handler ();
 		return $x;
+	}
+
+	function update_summary_and_description ($userid, $issue)
+	{
+		// TODO: check if userid can do this..
+		$this->db->trans_start ();
+		$this->db->where ('projectid', $issue->projectid);
+		$this->db->where ('id', $issue->id);
+		$this->db->set ('summary', $issue->summary);
+		$this->db->set ('description', $issue->description);
+		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedby', $userid);
+		$this->db->update ('issue');
+
+		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('type',      'issue');
+		$this->db->set ('action',    'update');
+		$this->db->set ('projectid', $issue->projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $issue->id);
+		$this->db->insert ('log');
+
+		$this->db->trans_complete ();
+		if ($this->db->trans_status() === FALSE) return FALSE;
+
+		return $issue->id;
 	}
 }
 

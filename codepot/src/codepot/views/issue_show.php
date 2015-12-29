@@ -21,7 +21,27 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
+<?php
+$hex_issue_id = $this->converter->AsciiToHex ($issue->id);
+?>
+
 <script type="text/javascript">
+
+function show_alert (outputMsg, titleMsg) 
+{
+	$('#issue_show_mainarea_alert').html(outputMsg).dialog({
+		title: titleMsg,
+		resizable: true,
+		modal: true,
+		width: 'auto',
+		height: 'auto',
+		buttons: {
+			"OK": function () {
+				$(this).dialog("close");
+			}
+		}
+	});
+}
 
 $.widget("ui.combobox", {
 	_create: function() {
@@ -78,7 +98,95 @@ $.widget("ui.combobox", {
 });
 
 
+var work_in_progress = false;
+
 $(function () { 
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+	$("#issue_show_mainarea_edit_description_tabs").tabs ();
+	$("#issue_show_mainarea_edit_description_tabs").bind ('tabsshow', function (event, ui) {
+		if (ui.index == 1) render_wiki ($("#issue_show_mainarea_edit_description").val());
+	});
+
+	$('#issue_show_mainarea_edit_form').dialog (
+		{
+			title: '<?php print $this->lang->line('Edit');?>',
+			resizable: true,
+			autoOpen: false,
+			width: 'auto',
+			height: 'auto',
+			modal: true,
+			buttons: {
+
+				'<?php print $this->lang->line('OK')?>': function () {
+					if (work_in_progress) return;
+
+					if (!!window.FormData)
+					{
+						// FormData is supported
+						work_in_progress = true;
+
+						var form_data = new FormData();
+
+						form_data.append ('issue_edit_id', '<?php print $issue->id; ?>');
+						form_data.append ('issue_edit_summary', $('#issue_show_mainarea_edit_summary').val());
+						form_data.append ('issue_edit_description', $('#issue_show_mainarea_edit_description').val());
+
+						$('#issue_show_mainarea_edit_form').dialog('disable');
+						$.ajax({
+							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/issue/xhr_update/{$project->id}"; ?>'),
+							type: 'POST',
+							data: form_data,
+							mimeType: 'multipart/form-data',
+							contentType: false,
+							processData: false,
+							cache: false,
+
+							success: function (data, textStatus, jqXHR) { 
+								work_in_progress = false;
+								$('#issue_show_mainarea_edit_form').dialog('enable');
+								$('#issue_show_mainarea_edit_form').dialog('close');
+								if (data == 'ok') 
+								{
+									// refresh the page to the head revision
+									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/issue/show/{$project->id}/{$hex_issue_id}"; ?>'));
+								}
+								else
+								{
+									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+								}
+							},
+
+							error: function (jqXHR, textStatus, errorThrown) { 
+								work_in_progress = false;
+								$('#issue_show_mainarea_edit_form').dialog('enable');
+								$('#issue_show_mainarea_edit_form').dialog('close');
+								var errmsg = '';
+								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+								if (errmsg == '' && textStatus != null) errmsg = textStatus;
+								if (errmsg == '') errmsg = 'Unknown error';
+								show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
+							}
+						});
+					}
+					else
+					{
+						show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
+					}
+				},
+				'<?php print $this->lang->line('Cancel')?>': function () {
+					if (work_in_progress) return;
+					$('#issue_show_mainarea_edit_form').dialog('close');
+				}
+			},
+
+			beforeClose: function() { 
+				// if importing is in progress, prevent dialog closing
+				return !work_in_progress;
+			}
+		}
+	);
+<?php endif; ?>
+
 	/*
 	$("#issue_change_type").combobox();
 	$("#issue_change_status").combobox();
@@ -116,6 +224,15 @@ $(function () {
 			close: function() { }
 		} 
 	); 
+
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+	$("#issue_show_mainarea_edit_button").button().click (
+		function () { 
+			$('#issue_show_mainarea_edit_form').dialog('open'); 
+			return false; // prevent the default behavior
+		}
+	);
+<?php endif; ?>
 
 	$("#issue_show_mainarea_change_form_open").button().click (
 		function () { 
@@ -176,7 +293,6 @@ $(function () {
 <!---------------------------------------------------------------------------->
 
 <?php
-$hexid = $this->converter->AsciiToHex ($issue->id);
 $this->load->view (
 	'projectbar',
 	array (
@@ -190,8 +306,8 @@ $this->load->view (
 
 		'ctxmenuitems' => array (
 			array ("issue/create/{$project->id}", '<i class="fa fa-plus"></i> ' . $this->lang->line('New')),
-			array ("issue/update/{$project->id}/{$hexid}", '<i class="fa fa-edit"></i> ' . $this->lang->line('Edit')),
-			array ("issue/delete/{$project->id}/{$hexid}", '<i class="fa fa-trash"></i> ' . $this->lang->line('Delete'))
+			array ("issue/update/{$project->id}/{$hex_issue_id}", '<i class="fa fa-edit"></i> ' . $this->lang->line('Edit')),
+			array ("issue/delete/{$project->id}/{$hex_issue_id}", '<i class="fa fa-trash"></i> ' . $this->lang->line('Delete'))
 		)
 	)
 );
@@ -237,6 +353,14 @@ $this->load->view (
 			print ': '; 
 			print htmlspecialchars($issue->owner);
 		}
+
+		if (isset($login['id']) && $login['id'] != '')
+		{
+			print ' | ';
+			print '<a id="issue_show_mainarea_edit_button" href="#">';
+			print $this->lang->line('Edit');
+			print '</a>';
+		}
 	?>
 </div>
 
@@ -245,6 +369,28 @@ $this->load->view (
 <?php print htmlspecialchars($issue->description); ?>
 </pre>
 </div> <!-- issue_show_mainarea_description -->
+
+<div id="issue_show_mainarea_file_list">
+<?php if (!empty($issue->files)): ?>
+<ul>
+<?php
+	
+	foreach ($issue->files as $f)
+	{
+		$hexname = $this->converter->AsciiToHex ($f->filename);
+		print '<li>';
+		print anchor (
+			"issue/file/{$project->id}/{$issue->id}/{$hexname}", 
+			htmlspecialchars($f->filename)
+		);
+
+		if (!empty($f->description)) printf ('- %s', htmlspecialchars($f->description));
+		print '</li>';
+	}
+?>
+</ul>
+<?php endif; ?>
+</div>
 
 <div id="issue_show_mainarea_changes">
 <?php
@@ -376,11 +522,41 @@ $this->load->view (
 	print '</table>';
 ?>
 
+
 </div>
+
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+<div id='issue_show_mainarea_edit_form'>
+	<div style='line-height: 2em;'>
+		<?php
+		print form_dropdown (
+			'issue_show_edit_type', 
+			$issue_type_array,
+			set_value('issue_show_edit_type', $issue->type),
+			'id="issue_show_mainarea_edit_type" disabled="disabled"'
+		);
+		?>
+		<input type='text' id='issue_show_mainarea_edit_summary' name='issue_home_new_summary' size='50' placeholder='<?php print $this->lang->line('Summary'); ?>' value='<?php print addslashes($issue->summary); ?>'/>
+	</div>
+
+	<div id='issue_show_mainarea_edit_description_tabs' style='width:100%;'>
+		<ul>
+			<li><a href='#issue_show_mainarea_edit_description_input'><?php print $this->lang->line('Description'); ?></a></li>
+			<li><a href='#issue_show_mainarea_edit_description_preview'><?php print $this->lang->line('Preview'); ?></a></li>
+		</ul>
+
+		<div id='issue_show_mainarea_edit_description_input'>
+			<textarea type='textarea' id='issue_show_mainarea_edit_description' name='issue_home_new_description' rows=24 cols=100 style='width:100%;'><?php print htmlspecialchars($issue->description); ?></textarea>
+		</div>
+		<div id='issue_show_mainarea_edit_description_preview' class='form_input_preview'>
+		</div>
+	</div>
+</div>
+<?php endif; ?>
 
 <div id="issue_show_mainarea_change_form">
 
-	<?php print form_open("issue/show/{$project->id}/{$hexid}/", 'id="issue_change_form"')?>
+	<?php print form_open("issue/show/{$project->id}/{$hex_issue_id}/", 'id="issue_change_form"')?>
 
 		<input type='hidden' name='issue_change' id='issue_change' value='change' />
 
@@ -462,6 +638,8 @@ $this->load->view (
 	<?php print $this->lang->line ('ISSUE_MSG_CONFIRM_UNDO')?>
 </div>
 
+<div id='issue_show_mainarea_alert'></div>
+
 </div> <!-- issue_show_mainarea -->
 
 <div class='footer-pusher'></div> <!-- for sticky footer -->
@@ -476,8 +654,8 @@ $this->load->view (
 
 
 <?php 
-	$creole_base = site_url() . "/wiki/show/{$project->id}/"; 
-	$creole_attachment_base = site_url() . "/wiki/attachment0/{$project->id}/"; 
+	$creole_base = site_url() . "/issue/show/{$project->id}/{$issue->id}/"; 
+	$creole_attachment_base = site_url() . "/issue/file/{$project->id}/{$issue->id}/"; 
 ?>
 
 <script type="text/javascript">
