@@ -379,7 +379,7 @@ class File extends Controller
 				{
 					$status = 'error - no name';
 				}
-				else if ($post_new_description === FALSE || ($post_new_description = $post_new_description) == '')
+				else if ($post_new_description === FALSE || ($post_new_description = trim($post_new_description)) == '')
 				{
 					$status = 'error - no description';
 				}

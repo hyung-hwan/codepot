@@ -229,7 +229,7 @@ class Wiki extends Controller
 		$this->_handle_attachment ($login, $projectid, $wikiname, $name);
 	}
 
-	function _handle_attachment ($login, $projectid, $wikiname, $name)
+	private function _handle_attachment ($login, $projectid, $wikiname, $name)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('WikiModel', 'wikis');
