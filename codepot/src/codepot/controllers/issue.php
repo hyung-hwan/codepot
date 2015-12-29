@@ -517,4 +517,111 @@ class Issue extends Controller
 		}
 	}
 
+	function xhr_create ($projectid = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('IssueModel', 'issues');
+		$this->load->library ('upload');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else
+			{
+				$issue = new stdClass();
+				$issue->projectid = $projectid;
+				$issue->summary = $this->input->post('issue_new_summary');
+				$issue->description = $this->input->post('issue_new_description');
+				$issue->type = $this->input->post('issue_new_type');
+				$issue->status = $this->issuehelper->STATUS_NEW;
+				$issue->priority = $this->issuehelper->PRIORITY_OTHER;
+				if ($this->projects->projectHasMember($project->id, $login['id']))
+				{
+					// let the current user be the issue owner if he/she is a
+					// project memeber.
+					$issue->owner = $login['id'];
+				}
+				else
+				{
+					// if not, assign the issue to the first member.
+					$issue->owner = (count($project->members) > 0)? $project->members[0]: '';
+				}
+
+				$post_new_file_count = $this->input->post('issue_new_file_count');
+
+				if ($issue->type === FALSE || ($issue->type = trim($issue->type)) == '')
+				{
+					$status = 'error - no type';
+				}
+				else if ($issue->summary === FALSE || ($issue->summary = trim($issue->summary)) == '')
+				{
+					$status = 'error - no name';
+				}
+				else if ($issue->description === FALSE || ($issue->description = $issue->description) == '')
+				{
+					$status = 'error - no description';
+				}
+				else
+				{
+					if ($post_new_file_count === FALSE || $post_new_file_count <= 0) $post_new_file_count = 0;
+
+					$status = '';
+					$attached_files = array ();
+					for ($i = 0; $i < $post_new_file_count; $i++)
+					{
+						$fid = "issue_new_file_{$i}";
+						if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
+						{
+							$d = $this->input->post("issue_new_file_desc_{$i}");
+							if ($d === FALSE || ($d = trim($d)) == '') $d = ''; // description optional
+
+							if (strpos($_FILES[$fid]['name'], ':') !== FALSE ||
+							    strpos($_FILES[$fid]['name'], '/') !== FALSE)
+							{
+								// prevents these letters for wiki creole 
+								$status = "error - colon or slash not allowed - {$_FILES[$fid]['name']}";
+								break;
+							}
+
+							array_push ($attached_files, array ('fid' => $fid, 'name' => $_FILES[$fid]['name'], 'desc' => $d));
+						}
+					}
+
+					if ($status == '')
+					{
+						if ($this->issues->create_with_files ($login['id'], $issue, $attached_files, $this->upload) === FALSE)
+						{
+							$status = 'error - ' . $this->issues->getErrorMessage();
+						}
+						else
+						{
+							$status = 'ok';
+						}
+					}
+				}
+			}
+		}
+
+		print $status;
+	}
 }

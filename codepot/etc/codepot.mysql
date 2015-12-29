@@ -99,21 +99,24 @@ CREATE TABLE issue (
 		ON DELETE RESTRICT ON UPDATE CASCADE
 ) charset=utf8 engine=InnoDB;
 
-CREATE TABLE issue_attachment (
-	projectid  VARCHAR(32)   NOT NULL,
-	issueid    BIGINT        NOT NULL,
-	name       VARCHAR(255)  NOT NULL,
-	encname    VARCHAR(255)  NOT NULL,
+CREATE TABLE issue_file_list (
+	projectid   VARCHAR(32)   NOT NULL,
+	issueid     BIGINT        NOT NULL,
+	filename    VARCHAR(255)  NOT NULL,
+	encname     VARCHAR(255)  NOT NULL,
+	md5sum      CHAR(32)      NOT NULL,
+	description VARCHAR(255)  NOT NULL,
 
-	createdon  DATETIME      NOT NULL,
-	createdby  VARCHAR(32)   NOT NULL,
+	createdon   DATETIME      NOT NULL,
+	createdby   VARCHAR(32)   NOT NULL,
 
-	UNIQUE KEY issue_attachment_id (projectid, issueid, name),
+	UNIQUE KEY issue_file_list_id (projectid, issueid, filename),
+	UNIQUE KEY (encname),
 
-	CONSTRAINT issue_attachment_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+	CONSTRAINT issue_file_list_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE,
 
-	CONSTRAINT issue_attachment_issueid FOREIGN KEY (projectid,issueid) REFERENCES issue(projectid,id)
+	CONSTRAINT issue_file_list_issueid FOREIGN KEY (projectid,issueid) REFERENCES issue(projectid,id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
 ) charset=utf8 engine=InnoDB;
 
