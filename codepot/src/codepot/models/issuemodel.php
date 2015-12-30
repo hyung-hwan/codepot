@@ -899,6 +899,32 @@ class IssueModel extends Model
 		restore_error_handler ();
 		return $x;
 	}
+
+	function isCreatedBy ($projectid, $issueid, $userid)
+	{
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
+
+		$this->db->where ('projectid', $projectod);
+		$this->db->where ('id', $issueid);
+		$query = $this->db->get ('issue');
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$result = $query->result ();
+		if (empty($result))
+		{
+			$this->db->trans_commit ();
+			return FALSE;
+		}
+
+		$this->db->trans_commit ();
+
+		$issue = &$result[0];
+		return ($issue->created_by == $userid);
+	}
 }
 
 ?>

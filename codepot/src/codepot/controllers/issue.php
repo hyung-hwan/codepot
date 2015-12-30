@@ -661,8 +661,7 @@ DEPRECATED
 			// TODO: add a project option to accept an issue from anonymous users, logged-in users or just members.
 			else if (!$login['sysadmin?'] && 
 			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE &&
-			         ($issue = $this->issues->get ($login['id'], $project, $issueid)) !== FALSE &&
-			         $login['id'] != $issue->createdby)
+			         $this->issues->isCreatedBy($projectid, $issueid, $login['id']) === FALSE)
 			{
 				$status = "error - not a member nor a creator - {$login['id']}";
 			}
@@ -793,8 +792,7 @@ DEPRECATED
 			// TODO: add a project option to accept an issue from anonymous users, logged-in users or just members.
 			else if (!$login['sysadmin?'] && 
 			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE &&
-			         ($issue = $this->issues->get ($login['id'], $project, $issueid)) !== FALSE &&
-			         $login['id'] != $issue->createdby)
+			         $this->issues->isCreatedBy($projectid, $issueid, $login['id']) === FALSE)
 			{
 				$status = "error - not a member nor a creator - {$login['id']}";
 			}
@@ -875,8 +873,7 @@ DEPRECATED
 			// TODO: add a project option to accept an issue from anonymous users, logged-in users or just members.
 			else if (!$login['sysadmin?'] && 
 			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE &&
-			         ($issue = $this->issues->get ($login['id'], $project, $issueid)) !== FALSE &&
-			         $login['id'] != $issue->createdby)
+			         $this->issues->isCreatedBy($projectid, $issueid, $login['id']) === FALSE)
 			{
 				$status = "error - not a member nor a creator - {$login['id']}";
 			}
