@@ -545,11 +545,13 @@ DEPRECATED
 			{
 				$status = "error - no such project {$projectid}";
 			}
-			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
-			{
-				$status = "error - not a member {$login['id']}";
-			}
+			// By default, any logged-in user can create an issue.
+			// TODO: add a project option to accept an issue from anonymous users, logged-in users or just members.
+			//else if (!$login['sysadmin?'] && 
+			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			//{
+			//	$status = "error - not a member {$login['id']}";
+			//}
 			else
 			{
 				$issue = new stdClass();
@@ -629,7 +631,7 @@ DEPRECATED
 		print $status;
 	}
 
-	function xhr_update ($projectid = '')
+	function xhr_update ($projectid = '', $issueid = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('IssueModel', 'issues');
@@ -644,6 +646,8 @@ DEPRECATED
 		}
 		else
 		{
+			$issueid = $this->converter->HexToAscii ($issueid);
+
 			$project = $this->projects->get ($projectid);
 			if ($project === FALSE)
 			{
@@ -653,16 +657,20 @@ DEPRECATED
 			{
 				$status = "error - no such project {$projectid}";
 			}
+			// By default, any logged-in user can edit an issue text.
+			// TODO: add a project option to accept an issue from anonymous users, logged-in users or just members.
 			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE &&
+			         ($issue = $this->issues->get ($login['id'], $project, $issueid)) !== FALSE &&
+			         $login['id'] != $issue->createdby)
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - not a member nor a creator - {$login['id']}";
 			}
 			else
 			{
 				$issue = new stdClass();
 				$issue->projectid = $projectid;
-				$issue->id = $this->input->post('issue_edit_id');
+				$issue->id = $issueid;
 				$issue->summary = $this->input->post('issue_edit_summary');
 				$issue->description = $this->input->post('issue_edit_description');
 				//$issue->type = $this->input->post('issue_edit_type');
@@ -733,7 +741,7 @@ DEPRECATED
 			else
 			{
 				$post_delete_confirm = $this->input->post('issue_delete_confirm');
-				
+
 				if ($post_delete_confirm !== FALSE && $post_delete_confirm == 'Y')
 				{
 					if ($this->issues->deleteWithFiles ($login['id'], $projectid, $issueid) === FALSE)
@@ -781,10 +789,14 @@ DEPRECATED
 			{
 				$status = "error - no such project {$projectid}";
 			}
+			// By default, any logged-in user can attach a file to an issue body.
+			// TODO: add a project option to accept an issue from anonymous users, logged-in users or just members.
 			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE &&
+			         ($issue = $this->issues->get ($login['id'], $project, $issueid)) !== FALSE &&
+			         $login['id'] != $issue->createdby)
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - not a member nor a creator - {$login['id']}";
 			}
 			else
 			{
@@ -798,7 +810,7 @@ DEPRECATED
 					$fid = "issue_add_file_{$i}";
 					if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
 					{
-						$d = $this->input->post("file_add_file_desc_{$i}");
+						$d = $this->input->post("issue_add_file_desc_{$i}");
 						if ($d === FALSE || ($d = trim($d)) == '') $d = ''; 
 
 						if (strpos($_FILES[$fid]['name'], ':') !== FALSE ||
@@ -859,10 +871,14 @@ DEPRECATED
 			{
 				$status = "error - no such project {$projectid}";
 			}
+			// By default, any logged-in user can edit attached files.
+			// TODO: add a project option to accept an issue from anonymous users, logged-in users or just members.
 			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE &&
+			         ($issue = $this->issues->get ($login['id'], $project, $issueid)) !== FALSE &&
+			         $login['id'] != $issue->createdby)
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - not a member nor a creator - {$login['id']}";
 			}
 			else
 			{

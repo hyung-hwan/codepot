@@ -234,13 +234,12 @@ $(function () {
 
 						var form_data = new FormData();
 
-						form_data.append ('issue_edit_id', '<?php print $issue->id; ?>');
 						form_data.append ('issue_edit_summary', $('#issue_show_mainarea_edit_summary').val());
 						form_data.append ('issue_edit_description', $('#issue_show_mainarea_edit_description').val());
 
 						$('#issue_show_mainarea_edit_form').dialog('disable');
 						$.ajax({
-							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/issue/xhr_update/{$project->id}"; ?>'),
+							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/issue/xhr_update/{$project->id}/{$hex_issue_id}"; ?>'),
 							type: 'POST',
 							data: form_data,
 							mimeType: 'multipart/form-data',
@@ -787,7 +786,7 @@ $this->load->view (
 			htmlspecialchars($f->filename)
 		);
 
-		if (!empty($f->description)) printf ('- %s', htmlspecialchars($f->description));
+		if (!empty($f->description)) printf (' - %s', htmlspecialchars($f->description));
 		print '</li>';
 	}
 ?>
