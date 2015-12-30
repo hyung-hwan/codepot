@@ -593,6 +593,8 @@ class IssueModel extends Model
 	function updateSummaryAndDescription ($userid, $issue)
 	{
 		// TODO: check if userid can do this..
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
+
 		$this->db->trans_start ();
 		$this->db->where ('projectid', $issue->projectid);
 		$this->db->where ('id', $issue->id);
@@ -601,6 +603,12 @@ class IssueModel extends Model
 		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
 
 		$this->db->set ('createdon', date('Y-m-d H:i:s'));
 		$this->db->set ('type',      'issue');
@@ -609,10 +617,14 @@ class IssueModel extends Model
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   $issue->id);
 		$this->db->insert ('log');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
 
-		$this->db->trans_complete ();
-		if ($this->db->trans_status() === FALSE) return FALSE;
-
+		$this->db->trans_commit ();
 		return $issue->id;
 	}
 
