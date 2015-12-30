@@ -23,6 +23,14 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
+<?php
+$creole_base = site_url() . "/wiki/show/{$project->id}/"; 
+// the issue page doesn't exist yet. so use wiki/attachment0 instead of
+// issue/file/issueid. the local imange reference like {{xxx.png}}
+// won't work. furthermore, the file hasn't been uploaded and isn't available.
+$creole_file_base = site_url() . "/wiki/attachment0/{$project->id}/"; 
+?>
+
 <script type="text/javascript">
 /* <![CDATA[ */
 function show_alert (outputMsg, titleMsg) 
@@ -53,13 +61,13 @@ function AsciiToHex (x) {
 }
 
 
-function render_wiki(input_text)
+function preview_new_description(input_text)
 {
 	creole_render_wiki_with_input_text (
 		input_text,
 		"issue_home_mainarea_new_description_preview", 
-		"<?php print site_url()?>/issue/show/<?php print $project->id?>/",
-		"<?php print site_url()?>/issue/file0/<?php print $project->id?>/"
+		"<?php print $creole_base; ?>",
+		"<?php print $creole_file_base; ?>"
 	);
 
 	prettyPrint ();
@@ -121,9 +129,9 @@ $(function () {
 		populate_selected_files ();
 	});
 
-	$("#issue_home_mainarea_new_description_tabs").tabs ();
-	$("#issue_home_mainarea_new_description_tabs").bind ('tabsshow', function (event, ui) {
-		if (ui.index == 1) render_wiki ($("#issue_home_mainarea_new_description").val());
+	$('#issue_home_mainarea_new_description_tabs').tabs ();
+	$('#issue_home_mainarea_new_description_tabs').bind ('tabsshow', function (event, ui) {
+		if (ui.index == 1) preview_new_description ($('#issue_home_mainarea_new_description').val());
 	});
 
 	$('#issue_home_mainarea_new_form').dialog (

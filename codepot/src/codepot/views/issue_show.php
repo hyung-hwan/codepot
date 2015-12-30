@@ -24,6 +24,9 @@
 <?php
 $hex_issue_id = $this->converter->AsciiToHex ($issue->id);
 $issue_file_count = count ($issue->files);
+
+$creole_base = site_url() . "/wiki/show/{$project->id}/"; 
+$creole_file_base = site_url() . "/issue/file/{$project->id}/{$issue->id}/"; 
 ?>
 
 <script type="text/javascript">
@@ -165,7 +168,19 @@ function kill_edit_file (no)
 			d.prop ('disabled', true);
 		}
 	}
-	
+}
+
+
+function preview_edit_description (input_text)
+{
+	creole_render_wiki_with_input_text (
+		input_text,
+		"issue_show_mainarea_edit_description_preview", 
+		"<?php print $creole_base; ?>",
+		"<?php print $creole_file_base; ?>/"
+	);
+
+	prettyPrint ();
 }
 
 var work_in_progress = false;
@@ -194,9 +209,9 @@ var original_file_desc = [
 
 $(function () { 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
-	$("#issue_show_mainarea_edit_description_tabs").tabs ();
-	$("#issue_show_mainarea_edit_description_tabs").bind ('tabsshow', function (event, ui) {
-		if (ui.index == 1) render_wiki ($("#issue_show_mainarea_edit_description").val());
+	$('#issue_show_mainarea_edit_description_tabs').tabs ();
+	$('#issue_show_mainarea_edit_description_tabs').bind ('tabsshow', function (event, ui) {
+		if (ui.index == 1) preview_edit_description ($('#issue_show_mainarea_edit_description').val());
 	});
 
 	$('#issue_show_mainarea_edit_form').dialog (
@@ -608,14 +623,14 @@ $(function () {
 	);
 <?php endif; ?>
 
-	$("#issue_show_mainarea_change_form_open").button().click (
+	$('#issue_show_mainarea_change_form_open').button().click (
 		function () { 
 			$('#issue_show_mainarea_change_form').dialog('open'); 
 			return false;
 		}
 	);
 
-	$("#issue_show_mainarea_undo_change_confirm").dialog (
+	$('#issue_show_mainarea_undo_change_confirm').dialog (
 		{
 			title: '<?php print $this->lang->line('Undo')?>',
 			resizable: false,
@@ -635,17 +650,17 @@ $(function () {
 		} 
 	);
 
-	$("#issue_show_mainarea_undo_change").button().click (
+	$('#issue_show_mainarea_undo_change').button().click (
 		function () { 
 			$('#issue_show_mainarea_undo_change_confirm').dialog('open'); 
 			return false;
 		}
 	);
 
-
-	$("#issue_change_comment_preview_button").button().click(
+	$('#issue_change_comment_preview_button').button().click(
 		function () {
-			render_wiki_comment_preview ($("#issue_change_comment").val());
+			preview_issue_change_comment ($('#issue_change_comment').val());
+			return false;
 		}
 	);
 
@@ -925,7 +940,7 @@ $this->load->view (
 			'id="issue_show_mainarea_edit_type" disabled="disabled"'
 		);
 		?>
-		<input type='text' id='issue_show_mainarea_edit_summary' name='issue_home_new_summary' size='50' placeholder='<?php print $this->lang->line('Summary'); ?>' value='<?php print addslashes($issue->summary); ?>'/>
+		<input type='text' id='issue_show_mainarea_edit_summary' name='issue_show_edit_summary' size='50' placeholder='<?php print $this->lang->line('Summary'); ?>' value='<?php print addslashes($issue->summary); ?>'/>
 	</div>
 
 	<div id='issue_show_mainarea_edit_description_tabs' style='width:100%;'>
@@ -935,7 +950,7 @@ $this->load->view (
 		</ul>
 
 		<div id='issue_show_mainarea_edit_description_input'>
-			<textarea type='textarea' id='issue_show_mainarea_edit_description' name='issue_home_new_description' rows=24 cols=100 style='width:100%;'><?php print htmlspecialchars($issue->description); ?></textarea>
+			<textarea type='textarea' id='issue_show_mainarea_edit_description' name='issue_show_edit_description' rows=24 cols=100 style='width:100%;'><?php print htmlspecialchars($issue->description); ?></textarea>
 		</div>
 		<div id='issue_show_mainarea_edit_description_preview' class='form_input_preview'>
 		</div>
@@ -1075,10 +1090,6 @@ $this->load->view (
 <!---------------------------------------------------------------------------->
 
 
-<?php 
-	$creole_base = site_url() . "/issue/show/{$project->id}/{$issue->id}/"; 
-	$creole_attachment_base = site_url() . "/issue/file/{$project->id}/{$issue->id}/"; 
-?>
 
 <script type="text/javascript">
 function render_wiki()
@@ -1087,7 +1098,7 @@ function render_wiki()
 		"issue_show_mainarea_description_pre", 
 		"issue_show_mainarea_description", 
 		"<?php print $creole_base?>",
-		"<?php print $creole_attachment_base?>"
+		"<?php print $creole_file_base?>"
 	);
 
 	<?php
@@ -1099,7 +1110,7 @@ function render_wiki()
 				'issue_show_mainarea_changes_comment_pre_{$xxx}', 
 				'issue_show_mainarea_changes_comment_{$xxx}', 
 				'{$creole_base}',
-				'{$creole_attachment_base}');";
+				'{$creole_file_base}');";
 		}
 	}
 	?>
@@ -1107,13 +1118,13 @@ function render_wiki()
 	prettyPrint ();
 }
 
-function render_wiki_comment_preview(input_text)
+function preview_issue_change_comment(input_text)
 {
 	creole_render_wiki_with_input_text (
 		input_text,
 		"issue_change_comment_preview", 
 		"<?php print $creole_base?>",
-		"<?php print $creole_attachment_base?>"
+		"<?php print $creole_file_base?>"
 	);
 
 	prettyPrint ();

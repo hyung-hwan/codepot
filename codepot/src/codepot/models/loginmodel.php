@@ -43,7 +43,7 @@ class LoginModel extends Model
 			{
 				$settings = @unserialize ($settings);
 				if ($settings === FALSE || $settings === NULL) 
-					$settings = new stdObject();
+					$settings = new stdClass();
 
 				// Sanity check on the session/cookie data
 				// See Controller/User->settings() for required fields.

@@ -918,7 +918,100 @@ DEPRECATED
 		print $status;
 	}
 
-	private function _handle_file ($login, $projectid, $issueid, $filename)
+	////////////////////////////////////////////////////////////////////////
+	// Handling of attached files share the (almost) same code 
+	// between issue.php and wiki.php. It would be way better
+	// to put the common code into a parent class and use inheritance.
+	// Makre sure to apply changes to both files if any.
+
+	private function _handle_wiki_attachment ($login, $projectid, $wikiname, $name)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('WikiModel', 'wikis');
+
+		$data['login'] = $login;
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE)
+		{
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else if ($project === NULL)
+		{
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
+			$att = $this->wikis->getAttachment ($login['id'], $project, $wikiname, $name);
+			if ($att === FALSE)
+			{
+				$data['project'] = $project;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else if ($att === NULL)
+			{
+				$data['project'] = $project;
+				$data['message'] = sprintf (
+					$this->lang->line('MSG_NO_SUCH_FILE'), $name);
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else
+			{
+				$path = CODEPOT_ATTACHMENT_DIR . "/{$att->encname}";
+
+				$stat = @stat($path);
+				if ($stat === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = sprintf (
+						$this->lang->line('MSG_FAILED_TO_READ_FILE'), $name);
+					$this->load->view ($this->VIEW_ERROR, $data);
+					return;
+				}
+
+				$etag = sprintf ('%x-%x-%x-%x', $stat['dev'], $stat['ino'], $stat['size'], $stat['mtime']);
+				$lastmod = gmdate ('D, d M Y H:i:s', $stat['mtime']);
+
+				header ('Last-Modified: ' . $lastmod . ' GMT');
+				header ('Etag: ' . $etag);
+
+				if ((isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) ||
+				    (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $stat['mtime']))
+				{
+					header('Not Modified', true, 304);
+					flush ();
+					return;
+				}
+
+				header ('Content-Type: ' . mime_content_type($path));
+				header ('Content-Length: ' . $stat['size']);
+				header ('Content-Disposition: inline; filename=' . $name);
+				flush ();
+
+				$x = @readfile($path);
+				if ($x === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = sprintf (
+						$this->lang->line('MSG_FAILED_TO_READ_FILE'), $name);
+					$this->load->view ($this->VIEW_ERROR, $data);
+				}
+			}
+		}
+	}
+
+	private function _handle_issue_file ($login, $projectid, $issueid, $filename)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('IssueModel', 'issues');
@@ -957,7 +1050,7 @@ DEPRECATED
 			{
 				$data['project'] = $project;
 				$data['message'] = sprintf (
-					$this->lang->line('ISSUE_MSG_NO_SUCH_FILE'), $filename);
+					$this->lang->line('MSG_NO_SUCH_FILE'), $filename);
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
 			else
@@ -969,7 +1062,7 @@ DEPRECATED
 				{
 					$data['project'] = $project;
 					$data['message'] = sprintf (
-						$this->lang->line('issue_MSG_FAILED_TO_READ_FILE'), $filename);
+						$this->lang->line('MSG_FAILED_TO_READ_FILE'), $filename);
 					$this->load->view ($this->VIEW_ERROR, $data);
 					return;
 				}
@@ -998,7 +1091,7 @@ DEPRECATED
 				{
 					$data['project'] = $project;
 					$data['message'] = sprintf (
-						$this->lang->line('ISSUE_MSG_FAILED_TO_READ_FILE'), $filename);
+						$this->lang->line('MSG_FAILED_TO_READ_FILE'), $filename);
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 			}
@@ -1007,6 +1100,11 @@ DEPRECATED
 
 	function file ($projectid = '', $issueid = '', $filename = '')
 	{
+		// this function is for handling a file name for the following format:
+		//    1. filename
+		//    2. projectid:issueid:filename
+		//    3. projectid:wikiname:filename
+		//
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
@@ -1021,40 +1119,30 @@ DEPRECATED
 
 		$filename = $this->converter->HexToAscii ($filename);
 
+		$wikiname = '';
 		$part = explode (':', $filename);
 		if (count($part) == 3)
 		{
 			if ($part[0] != '') $projectid = $part[0];
-			if ($part[1] != '') $issueid = $part[1];
+			if ($part[1] != '') 
+			{
+				if ($part[1][0] == '#' && $part[1][1] == 'I')
+				{
+					$issueid = substr ($part[1],2);
+					$wikiname = '';
+				}
+				else
+				{
+					$wikiname = $part[1];
+					$issueid = '';
+				}
+			}
 			if ($part[2] != '') $filename = $part[2];
 		}
 
-		$this->_handle_file ($login, $projectid, $issueid, $filename);
-	}
-
-
-	function file0 ($projectid = '', $target = '')
-	{
-		//$target => projectid:issueid:filename
-
-		$login = $this->login->getUser ();
-		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
-
-		if ($target == '')
-		{
-			$data['login'] = $login;
-			$data['message'] = 'INVALID PARAMETERS';
-			$this->load->view ($this->VIEW_ERROR, $data);
-			return;
-		}
-
-		$target = $this->converter->HexToAscii ($target);
-		$part = explode (':', $target);
-		if (count($part) == 3)
-		{
-			if ($part[0] == '') $part[0] = $projectid;
-			$this->_handle_attachment ($login, $part[0], $part[1], $part[2]);
-		}
+		if ($wikiname != '')
+			$this->_handle_wiki_attachment ($login, $projectid, $wikiname, $filename);
+		else
+			$this->_handle_issue_file ($login, $projectid, $issueid, $filename);
 	}
 }

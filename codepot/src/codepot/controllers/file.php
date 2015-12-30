@@ -230,13 +230,15 @@ class File extends Controller
 				}
 				else
 				{
-					force_download ($name, $data); 	
+					force_download ($name, $data); 
 				}
 				*/
 			}
 		}
 	}
 
+/*
+// DEPRECATED
 	function update ($projectid = '', $name = '')
 	{
 		$this->load->helper ('form');
@@ -288,6 +290,7 @@ class File extends Controller
 
 			if ($this->input->post('file'))
 			{
+				$file = new stdClass();
 				$file->name = $this->input->post('file_name');
 				$file->tag = $this->input->post('file_tag');
 				$file->description = $this->input->post('file_description');
@@ -334,6 +337,7 @@ class File extends Controller
 			}
 		}
 	}
+*/
 
 	function xhr_import ($projectid = '')
 	{
@@ -588,6 +592,72 @@ class File extends Controller
 						$status = 'ok';
 					}
 					else if ($this->files->editFiles ($login['id'], $projectid, $name, $edit_files) === FALSE)
+					{
+						$status = 'error - ' . $this->files->getErrorMessage();
+					}
+					else
+					{
+						$status = 'ok';
+					}
+				}
+			}
+		}
+
+		print $status;
+	}
+
+	function xhr_update ($projectid = '', $name = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('FileModel', 'files');
+
+		$login = $this->login->getUser ();
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$name = $this->converter->HexToAscii ($name);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else
+			{
+				$file = new stdClass();
+				$file->name = $this->input->post('file_edit_name');
+				$file->tag = $this->input->post('file_edit_tag');
+				$file->description = $this->input->post('file_edit_description');
+
+
+				if ($file->name === FALSE || ($file->name = trim($file->name)) == '')
+				{
+					$status = 'error - no name';
+				}
+				else if ($file->tag === FALSE || ($file->tag = trim($file->tag)) == '')
+				{
+					$status = 'error - no tag';
+				}
+				else if ($file->description === FALSE || ($file->description = trim($file->description)) == '')
+				{
+					$status = 'error - no description';
+				}
+				else
+				{
+					if ($this->files->update ($login['id'], $projectid, $name, $file) === FALSE)
 					{
 						$status = 'error - ' . $this->files->getErrorMessage();
 					}
