@@ -135,7 +135,7 @@ class FileModel extends Model
 	}
 	*/
 
-	function update ($userid, $projectid, $name, $file)
+	private function _update_file ($userid, $projectid, $name, $file)
 	{
 		$this->db->trans_start ();
 
@@ -174,6 +174,15 @@ class FileModel extends Model
 
 		$this->db->trans_complete ();
 		return $this->db->trans_status();
+	}
+
+	function update ($userid, $projectid, $name, $file)
+	{
+		set_error_handler (array ($this, 'capture_error'));
+		$errmsg = '';
+		$x = $this->_update_file ($userid, $projectid, $name, $file);
+		restore_error_handler ();
+		return $x;
 	}
 
 	private function _delete_file ($userid, $projectid, $name)

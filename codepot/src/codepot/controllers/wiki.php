@@ -175,147 +175,6 @@ class Wiki extends Controller
 		$this->_show_wiki ($projectid, $name, FALSE);
 	}
 
-	function attachment0 ($projectid = '', $target = '')
-	{
-		//$target => projectid:wikiname:attachment
-
-		$login = $this->login->getUser ();
-		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
-
-		if ($target == '')
-		{
-			$data['login'] = $login;
-			$data['message'] = 'INVALID PARAMETERS';
-			$this->load->view ($this->VIEW_ERROR, $data);
-			return;
-		}
-
-		$target = $this->converter->HexToAscii ($target);
-		$part = explode (':', $target);
-		if (count($part) == 3)
-		{
-			if ($part[0] == '') $part[0] = $projectid;	
-			$this->_handle_attachment ($login, $part[0], $part[1], $part[2]);
-		}
-	}
-
-	function attachment ($projectid = '', $wikiname = '', $name = '')
-	{
-		$login = $this->login->getUser ();
-		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
-
-
-		if ($wikiname == '' || $name == '')
-		{
-			$data['login'] = $login;
-			$data['message'] = 'INVALID PARAMETERS';
-			$this->load->view ($this->VIEW_ERROR, $data);
-			return;
-		}
-
-		$wikiname = $this->converter->HexToAscii ($wikiname);
-		$name = $this->converter->HexToAscii ($name);
-
-		$part = explode (':', $name);
-		if (count($part) == 3)
-		{
-			if ($part[0] != '') $projectid = $part[0];
-			if ($part[1] != '') $wikiname = $part[1];
-			if ($part[2] != '') $name = $part[2];
-		}
-
-		$this->_handle_attachment ($login, $projectid, $wikiname, $name);
-	}
-
-	private function _handle_attachment ($login, $projectid, $wikiname, $name)
-	{
-		$this->load->model ('ProjectModel', 'projects');
-		$this->load->model ('WikiModel', 'wikis');
-
-		$data['login'] = $login;
-
-		$project = $this->projects->get ($projectid);
-		if ($project === FALSE)
-		{
-			$data['message'] = 'DATABASE ERROR';
-			$this->load->view ($this->VIEW_ERROR, $data);
-		}
-		else if ($project === NULL)
-		{
-			$data['message'] = 
-				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
-				" - {$projectid}";
-			$this->load->view ($this->VIEW_ERROR, $data);
-		}
-		else
-		{
-			if ($project->public !== 'Y' && $login['id'] == '')
-			{
-				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
-			}
-
-			$att = $this->wikis->getAttachment ($login['id'], $project, $wikiname, $name);
-			if ($att === FALSE)
-			{
-				$data['project'] = $project;
-				$data['message'] = 'DATABASE ERROR';
-				$this->load->view ($this->VIEW_ERROR, $data);
-			}
-			else if ($att === NULL)
-			{
-				$data['project'] = $project;
-				$data['message'] = sprintf (
-					$this->lang->line('WIKI_MSG_NO_SUCH_ATTACHMENT'), $name);
-				$this->load->view ($this->VIEW_ERROR, $data);
-			}
-			else
-			{
-				$path = CODEPOT_ATTACHMENT_DIR . "/{$att->encname}";
-
-				$stat = @stat($path);
-				if ($stat === FALSE)
-				{
-					$data['project'] = $project;
-					$data['message'] = sprintf (
-						$this->lang->line('WIKI_MSG_FAILED_TO_READ_ATTACHMENT'), $name);
-					$this->load->view ($this->VIEW_ERROR, $data);
-					return;
-				}
-
-				$etag = sprintf ('%x-%x-%x-%x', $stat['dev'], $stat['ino'], $stat['size'], $stat['mtime']);
-				$lastmod = gmdate ('D, d M Y H:i:s', $stat['mtime']);
-
-				header ('Last-Modified: ' . $lastmod . ' GMT');
-				header ('Etag: ' . $etag);
-
-				if ((isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) ||
-				    (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $stat['mtime']))
-				{
-					header('Not Modified', true, 304);
-					flush ();
-					return;
-				}
-
-				header ('Content-Type: ' . mime_content_type($path));
-				header ('Content-Length: ' . $stat['size']);
-				header ('Content-Disposition: inline; filename=' . $name);
-				flush ();
-
-				$x = @readfile($path);
-				if ($x === FALSE)
-				{
-					$data['project'] = $project;
-					$data['message'] = sprintf (
-						$this->lang->line('WIKI_MSG_FAILED_TO_READ_ATTACHMENT'), $name);
-					$this->load->view ($this->VIEW_ERROR, $data);
-				}
-			}
-		}
-	}
-
 	function _edit_wiki ($projectid, $name, $mode)
 	{
 		$this->load->helper ('form');
@@ -377,6 +236,7 @@ class Wiki extends Controller
 
 			if ($this->input->post('wiki'))
 			{
+				$wiki = new stdClass();
 				$wiki->projectid = $this->input->post('wiki_projectid');
 				if ($mode == 'update')
 				{
@@ -542,6 +402,7 @@ class Wiki extends Controller
 				}
 				else
 				{
+					$wiki = new stdClass();
 					$wiki->projectid = $projectid;
 					$wiki->name = $name;
 					$wiki->text = '';
@@ -623,6 +484,7 @@ class Wiki extends Controller
 
 			if($this->input->post('wiki'))
 			{
+				$wiki = new stdClass();
 				$wiki->projectid = $this->input->post('wiki_projectid');
 				$wiki->name = $this->input->post('wiki_name');
 				$data['wiki_confirm'] = $this->input->post('wiki_confirm');
@@ -738,4 +600,262 @@ class Wiki extends Controller
 
 		return array(TRUE,$attachments);
 	}
+
+	///////////////////////////////////////////////////////////////////////
+	// Handling of attached files share the (almost) same code 
+	// between issue.php and wiki.php. It would be way better
+	// to put the common code into a parent class and use inheritance.
+	// Makre sure to apply changes to both files if any.
+
+	private function _handle_wiki_attachment ($login, $projectid, $wikiname, $name)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('WikiModel', 'wikis');
+
+		$data['login'] = $login;
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE)
+		{
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else if ($project === NULL)
+		{
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
+			$att = $this->wikis->getAttachment ($login['id'], $project, $wikiname, $name);
+			if ($att === FALSE)
+			{
+				$data['project'] = $project;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else if ($att === NULL)
+			{
+				$data['project'] = $project;
+				$data['message'] = sprintf (
+					$this->lang->line('MSG_NO_SUCH_FILE'), $name);
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else
+			{
+				$path = CODEPOT_ATTACHMENT_DIR . "/{$att->encname}";
+
+				$stat = @stat($path);
+				if ($stat === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = sprintf (
+						$this->lang->line('MSG_FAILED_TO_READ_FILE'), $name);
+					$this->load->view ($this->VIEW_ERROR, $data);
+					return;
+				}
+
+				$etag = sprintf ('%x-%x-%x-%x', $stat['dev'], $stat['ino'], $stat['size'], $stat['mtime']);
+				$lastmod = gmdate ('D, d M Y H:i:s', $stat['mtime']);
+
+				header ('Last-Modified: ' . $lastmod . ' GMT');
+				header ('Etag: ' . $etag);
+
+				if ((isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) ||
+				    (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $stat['mtime']))
+				{
+					header('Not Modified', true, 304);
+					flush ();
+					return;
+				}
+
+				header ('Content-Type: ' . mime_content_type($path));
+				header ('Content-Length: ' . $stat['size']);
+				header ('Content-Disposition: inline; filename=' . $name);
+				flush ();
+
+				$x = @readfile($path);
+				if ($x === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = sprintf (
+						$this->lang->line('MSG_FAILED_TO_READ_FILE'), $name);
+					$this->load->view ($this->VIEW_ERROR, $data);
+				}
+			}
+		}
+	}
+
+	private function _handle_issue_file ($login, $projectid, $issueid, $filename)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('IssueModel', 'issues');
+
+		$data['login'] = $login;
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE)
+		{
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else if ($project === NULL)
+		{
+			$data['message'] = 
+				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
+				" - {$projectid}";
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			if ($project->public !== 'Y' && $login['id'] == '')
+			{
+				// non-public projects require sign-in.
+				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			}
+
+			$att = $this->issues->getFile ($login['id'], $project, $issueid, $filename);
+			if ($att === FALSE)
+			{
+				$data['project'] = $project;
+				$data['message'] = 'DATABASE ERROR';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else if ($att === NULL)
+			{
+				$data['project'] = $project;
+				$data['message'] = sprintf (
+					$this->lang->line('MSG_NO_SUCH_FILE'), $filename);
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
+			else
+			{
+				$path = CODEPOT_ISSUE_FILE_DIR . "/{$att->encname}";
+
+				$stat = @stat($path);
+				if ($stat === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = sprintf (
+						$this->lang->line('MSG_FAILED_TO_READ_FILE'), $filename);
+					$this->load->view ($this->VIEW_ERROR, $data);
+					return;
+				}
+
+				$etag = sprintf ('%x-%x-%x-%x', $stat['dev'], $stat['ino'], $stat['size'], $stat['mtime']);
+				$lastmod = gmdate ('D, d M Y H:i:s', $stat['mtime']);
+
+				header ('Last-Modified: ' . $lastmod . ' GMT');
+				header ('Etag: ' . $etag);
+
+				if ((isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $etag) ||
+				    (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $stat['mtime']))
+				{
+					header('Not Modified', true, 304);
+					flush ();
+					return;
+				}
+
+				header ('Content-Type: ' . mime_content_type($path));
+				header ('Content-Length: ' . $stat['size']);
+				header ('Content-Disposition: inline; filename=' . $filename);
+				flush ();
+
+				$x = @readfile($path);
+				if ($x === FALSE)
+				{
+					$data['project'] = $project;
+					$data['message'] = sprintf (
+						$this->lang->line('MSG_FAILED_TO_READ_FILE'), $filename);
+					$this->load->view ($this->VIEW_ERROR, $data);
+				}
+			}
+		}
+	}
+
+	function attachment0 ($projectid = '', $target = '')
+	{
+		//$target => projectid:wikiname:attachment
+		//$target => projectid:#I1:file
+
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+
+		if ($target == '')
+		{
+			$data['login'] = $login;
+			$data['message'] = 'INVALID PARAMETERS';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$target = $this->converter->HexToAscii ($target);
+		$part = explode (':', $target);
+		if (count($part) == 3)
+		{
+			if ($part[0] == '') $part[0] = $projectid;
+			if ($part[1][0] == '#' && $part[1][1] == 'I')
+			{
+				$issueid = substr ($part[1],2);
+				$this->_handle_issue_file ($login, $part[0], $issueid, $part[2]);
+			}
+			else
+			{
+				$this->_handle_wiki_attachment ($login, $part[0], $part[1], $part[2]);
+			}
+		}
+	}
+
+	function attachment ($projectid = '', $wikiname = '', $filename = '')
+	{
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+
+		if ($wikiname == '' || $filename == '')
+		{
+			$data['login'] = $login;
+			$data['message'] = 'INVALID PARAMETERS';
+			$this->load->view ($this->VIEW_ERROR, $data);
+			return;
+		}
+
+		$wikiname = $this->converter->HexToAscii ($wikiname);
+		$filename = $this->converter->HexToAscii ($filename);
+
+		$part = explode (':', $filename);
+		if (count($part) == 3)
+		{
+			if ($part[0] != '') $projectid = $part[0];
+			if ($part[1] != '') 
+			{
+				if ($part[1][0] == '#' && $part[1][1] == 'I')
+				{
+					$issueid = substr ($part[1],2);
+					$wikiname = '';
+				}
+				else
+				{
+					$wikiname = $part[1];
+					$issueid = '';
+				}
+			}
+			if ($part[2] != '') $filename = $part[2];
+		}
+
+		if ($wikiname != '')
+			$this->_handle_wiki_attachment ($login, $projectid, $wikiname, $filename);
+		else
+			$this->_handle_issue_file ($login, $projectid, $issueid, $filename);
+	}
+
 }
