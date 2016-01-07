@@ -900,7 +900,7 @@ class IssueModel extends Model
 		return $x;
 	}
 
-	function isCreatedBy ($projectid, $issueid, $userid)
+	function isIssueCreatedBy ($projectid, $issueid, $userid)
 	{
 		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
