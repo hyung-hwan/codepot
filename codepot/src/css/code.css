@@ -159,6 +159,21 @@
 	background-color: #AABBFF;
 }
 
+#code_history_mainarea_result_table td.commit-message-td:hover {
+	background-color: #F0F0F0;
+}
+
+#code_history_mainarea_result_table a.commit-message,
+#code_history_mainarea_result_table a.commit-message:visited,
+#code_history_mainarea_result_table a.commit-message:focus {
+	color: inherit;
+	white-space: pre-wrap; /* css-3 */    
+	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */    
+	white-space: -o-pre-wrap; /* Opera 7 */    
+	font-family: consolas, monaco, "Andale Mono", monospace;
+}
+
 /*----------------------------------------------- 
  * project source revision view 
  *-----------------------------------------------*/
