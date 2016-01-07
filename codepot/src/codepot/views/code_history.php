@@ -103,7 +103,7 @@ $this->load->view (
 
 <table id="code_history_mainarea_result_table" class="full-width-result-table">
 <tr class='full-width-result-table-header'>
-	<th colspan=2><?php print $this->lang->line('Revision')?></th>
+	<th><?php print $this->lang->line('Revision')?></th>
 	<th><?php print $this->lang->line('Committer')?></th>
 	<th><?php print $this->lang->line('Date')?></th>
 	<th><?php print $this->lang->line('Message')?></th>
@@ -121,7 +121,7 @@ $this->load->view (
 		$rowclass = $rowclasses[($history_count - $i) % 2];
 		print "<tr class='{$rowclass}'>";
 
-		print '<td>';
+		print '<td class="commit-revision-td">';
 		$xfullpath = $this->converter->AsciiToHex (
 			($fullpath == '')? '.': $fullpath);
 
@@ -136,26 +136,22 @@ $this->load->view (
 		}
 		print '</td>';
 
-		print '<td>';
-		print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", 
-			'<i class="fa fa-newspaper-o"></i>');
-		print '</td>';
-
-		print '<td>';
-		// Repository migration from googlecode reveales that it did not put 
+		print '<td class="commit-author-td">';
+		// Repository migration from googlecode revealed that it did not put 
 		// 'author' for initial project creation. So I've added the following check.
 		if (array_key_exists('author', $h)) print htmlspecialchars($h['author']);
 		print '</td>';
 
-		print '<td><code>';
+		print '<td class="commit-date-td"><code>';
 		//print date('r', strtotime($h['date']));
 		print date('Y-m-d', strtotime($h['date']));
 		print '</code></td>';
 
-		print '<td>';
-		print '<pre class="pre-wrapped">';
-		print htmlspecialchars($h['msg']);
-		print '</pre>';
+		print '<td class="commit-message-td">';
+		print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", htmlspecialchars($h['msg']), "class='commit-message'");
+		//print '<pre class="pre-wrapped">';
+		//print htmlspecialchars($h['msg']);
+		//print '</pre>';
 		print '</td>';
 
 		print '<td>';
