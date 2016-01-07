@@ -848,7 +848,8 @@ $this->load->view (
 
 	// anchor to the revision history at the root directory
 	print anchor (
-		"code/revision/{$project->id}/!/{$file['created_rev']}", 
+		//"code/revision/{$project->id}/!/{$file['created_rev']}", 
+		"code/revision/{$project->id}/${hex_headpath}/{$file['created_rev']}", 
 		sprintf("%s %s", $this->lang->line('Revision'), $file['created_rev'])
 	);
 

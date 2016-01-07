@@ -19,7 +19,7 @@ class SubversionModel extends Model
 		parent::Model ();
 	}
 
-	function _canonical_path($path) 
+	private function _canonical_path($path) 
 	{
 		$canonical = preg_replace('|/\.?(?=/)|','',$path);
 		while (($collapsed = preg_replace('|/[^/]+/\.\./|','/',$canonical,1)) !== $canonical) 
@@ -1231,19 +1231,26 @@ class SubversionModel extends Model
 	function getRevProp ($projectid, $rev, $prop)
 	{
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
-		return @svn_revprop_get ($url, $rev, $prop);
+
+		set_error_handler (array ($this, 'capture_error'));
+		$result =  @svn_revprop_get ($url, $rev, $prop);
+		restore_error_handler ();
+		return $result;
 	}
 
 	function setRevProp ($projectid, $rev, $prop, $propval, $user)
 	{
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
+		set_error_handler (array ($this, 'capture_error'));
+
 		$orguser = @svn_auth_get_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME);
 		@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $user);
 
 		$result = @svn_revprop_set ($url, $rev, $prop, $propval);
-
 		@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $orguser);
+
+		restore_error_handler ();
 		return $result;
 	}
 
@@ -1251,12 +1258,16 @@ class SubversionModel extends Model
 	{
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
+		set_error_handler (array ($this, 'capture_error'));
+
 		$orguser = @svn_auth_get_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME);
 		@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $user);
 
 		$result = @svn_revprop_delete ($url, $rev, $prop);
 
 		@svn_auth_set_parameter (SVN_AUTH_PARAM_DEFAULT_USERNAME, $orguser);
+
+		restore_error_handler ();
 		return $result;
 	}
 
@@ -1315,7 +1326,9 @@ class SubversionModel extends Model
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
+		set_error_handler (array ($this, 'capture_error'));
 		$info = @svn_info ($workurl, FALSE, $rev);
+		restore_error_handler ();
 
 		if ($info === FALSE || count($info) != 1) 
 		{
@@ -1323,11 +1336,16 @@ class SubversionModel extends Model
 
 			// rebuild the URL with a peg revision and retry it.
 			$workurl = "{$orgurl}@{$rev}";
+			set_error_handler (array ($this, 'capture_error'));
 			$info = @svn_info ($workurl, FALSE, $rev);
+			restore_error_handler ();
 			if ($info === FALSE || count($info) != 1)  return FALSE;
 		}
 
-		return @svn_proplist ($workurl, 0, $rev);
+		set_error_handler (array ($this, 'capture_error'));
+		$result = @svn_proplist ($workurl, 0, $rev);
+		restore_error_handler ();
+		return $result;
 	}
 
 	function getProp ($projectid, $path, $rev, $prop)
@@ -1335,7 +1353,9 @@ class SubversionModel extends Model
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
+		set_error_handler (array ($this, 'capture_error'));
 		$info = @svn_info ($workurl, FALSE, $rev);
+		restore_error_handler ();
 
 		if ($info === FALSE || count($info) != 1) 
 		{
@@ -1343,11 +1363,16 @@ class SubversionModel extends Model
 
 			// rebuild the URL with a peg revision and retry it.
 			$workurl = "{$orgurl}@{$rev}";
+			set_error_handler (array ($this, 'capture_error'));
 			$info = @svn_info ($workurl, FALSE, $rev);
+			restore_error_handler ();
 			if ($info === FALSE || count($info) != 1)  return FALSE;
 		}
 
-		return @svn_propget ($workurl, $prop, FALSE, $rev);
+		set_error_handler (array ($this, 'capture_error'));
+		$result =  @svn_propget ($workurl, $prop, FALSE, $rev);
+		restore_error_handler ();
+		return $result;
 	}
 
 	function _cloc_revision_by_lang ($projectid, $path, $rev)
