@@ -134,9 +134,10 @@ $(function() {
 	);
 
 	<?php
-	for ($i = $review_count; $i > 0; $i--)
+	for ($i = 0; $i < $review_count; )
 	{
-		$rc = $reviews[$i - 1];
+		$rc = $reviews[$i];
+		$i++;
 		if ($login['id'] == $rc->updatedby)
 		{
 			$edit_title = $this->lang->line('Comment') . " {$i}";
@@ -526,9 +527,10 @@ $history = $file['history'];
 
 <div id="code_revision_mainarea_review_comment" class="collapsible-box-panel">
 <?php
-	for ($i = $review_count; $i > 0; $i--)
+	for ($i = 0; $i < $review_count; )
 	{
-		$rc = $reviews[$i - 1];
+		$rc = $reviews[$i];
+		$i++;
 		print "<div id='code_revision_mainarea_review_comment_title_{$i}' class='review_comment_title'>\n";
 		printf (" <span class='review_comment_title_no'>%d</span>", $rc->sno);
 		printf (" <span class='review_comment_title_updatedby'>%s</span>", $rc->updatedby);

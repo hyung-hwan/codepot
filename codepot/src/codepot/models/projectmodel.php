@@ -581,10 +581,12 @@ class ProjectModel extends Model
 		}
 
 		$additional_headers = '';
+		$additional_headers .= "Content-Type: text/plain\r\n";
+		$additional_headers .= "Content-Transfer-Encoding: base64\r\n";
 		if (CODEPOT_EMAIL_SENDER != '') $additional_headers .= 'From: ' . CODEPOT_EMAIL_SENDER . "\r\n";
 
 		if (empty($recipients)) return FALSE;
-		mail ($recipients, $subject, $message, $additional_headers);
+		mail ($recipients, $subject, base64_encode($message), $additional_headers);
 		return TRUE;
 	}
 }
