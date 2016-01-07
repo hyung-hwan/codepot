@@ -245,7 +245,7 @@ class Code extends Controller
 		}
 	}
 
-	protected function _edit ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD, $caller = 'file')
+	private function _edit ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD, $caller = 'file')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
@@ -601,6 +601,266 @@ class Code extends Controller
 		print $status;
 	}
 
+	function xhr_edit_revision_message ($projectid = '', $rev = SVN_REVISOIN_HEAD)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else if ($login['id'] != $this->subversion->getRevProp($projectid, $rev, 'svn:author'))
+			{
+				$status = "error - not authored by {$login['id']}";
+			}
+			else
+			{
+				$logmsg = $this->input->post('code_edit_revision_message');
+				if ($logmsg != $this->subversion->getRevProp ($projectid, $rev, 'svn:log'))
+				{
+					$affected_rev = $this->subversion->setRevProp (
+						$projectid, $rev, 'svn:log', $logmsg, $login['id']);
+					if ($affected_rev === FALSE)
+					{
+						$status = 'error - ' . $this->subversion->getErrorMessage();
+					}
+					else 
+					{
+						$status = 'ok';
+					}
+				}
+				else
+				{
+					$status = 'ok';
+				}
+			}
+		}
+
+		print $status;
+	}
+
+	function xhr_edit_revision_tag ($projectid = '', $rev = SVN_REVISOIN_HEAD)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			//else if ($login['id'] != $this->subversion->getRevProp($projectid, $rev, 'svn:author'))
+			//{
+			//	$status = "error - not authored by {$login['id']}";
+			//}
+			else
+			{
+				$tag = $this->input->post('code_edit_revision_tag');
+				$tag = ($tag === FALSE)? '': trim($tag);
+				if (empty($tag)) 
+				{
+					// delete the tag if the value is empty
+					$affected_rev = $this->subversion->killRevProp (
+						$projectid, $rev, CODEPOT_SVN_TAG_PROPERTY, $login['id']);
+				}
+				else
+				{
+					$affected_rev = $this->subversion->setRevProp (
+						$projectid, $rev, CODEPOT_SVN_TAG_PROPERTY, $tag, $login['id']);
+				}
+
+				if ($affected_rev === FALSE)
+				{
+					$status = 'error - ' . $this->subversion->getErrorMessage();
+				}
+				else
+				{
+					$status = 'ok';
+				}
+			}
+		}
+
+		print $status;
+	}
+
+	function xhr_new_review_comment ($projectid = '', $rev = SVN_REVISOIN_HEAD)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+		$this->load->model ('CodeReviewModel', 'code_review');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else
+			{
+				$review_comment = $this->input->post('code_new_review_comment');
+				if ($review_comment === FALSE || ($review_comment = trim($review_comment)) == '')
+				{
+					$status = 'error - emtpy review comment';
+				}
+				else
+				{
+					$review_sno = $this->code_review->insertReview ($projectid, $rev, $login['id'], $review_comment);
+					if ($review_sno === FALSE)
+					{
+						$status = 'error - ' . $this->code_review->getErrorMessage();
+					}
+					else
+					{
+						$status = 'ok';
+
+						if (CODEPOT_COMMIT_REVIEW_NOTIFICATION)
+						{
+							// TODO: message localization
+							$email_subject =  sprintf (
+								'New review message #%d for r%d by %s in %s', 
+								$review_sno, $rev, $login['id'], $projectid
+							);
+							$email_message = current_url() . "\r\n" . $review_comment;
+							$this->projects->emailMessageToMembers (
+								$projectid, $this->login, $email_subject, $email_message
+							);
+						}
+					}
+				}
+			}
+		}
+
+		print $status;
+	}
+
+	function xhr_edit_review_comment ($projectid = '', $rev = SVN_REVISOIN_HEAD)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('SubversionModel', 'subversion');
+		$this->load->model ('CodeReviewModel', 'code_review');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else
+			{
+				$review_no = $this->input->post('code_edit_review_no');
+				$review_comment = $this->input->post('code_edit_review_comment');
+
+				if ($review_no === FALSE || !is_numeric($review_no))
+				{
+					$status = 'error - wrong review number';
+				}
+				else if ($review_comment === FALSE || ($review_comment = trim($review_comment)) == '')
+				{
+					$status = 'error - empty review comment';
+				}
+				else
+				{
+					if ($this->code_review->updateReview ($projectid, $rev, (integer)$review_no, $login['id'], $review_comment, TRUE) === FALSE)
+					{
+						$status = 'error - ' . $this->code_review->getErrorMessage();
+					}
+					else
+					{
+						$status = 'ok';
+						/*
+						if (CODEPOT_COMMIT_REVIEW_NOTIFICATION)
+						{
+							// TODO: message localization
+							$email_subject =  sprintf (
+								'Edited review message #%d for r%d by %s in %s', 
+								$review_sno, $rev, $login['id'], $projectid
+							);
+							$email_message = current_url() . "\r\n" . $review_comment;
+							$this->projects->emailMessageToMembers (
+								$projectid, $this->login, $email_subject, $email_message
+							);
+						}*/
+					}
+				}
+			}
+		}
+
+		print $status;
+	}
+
+
 	function enjson_save ($projectid = '', $path = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
@@ -771,147 +1031,6 @@ class Code extends Controller
 				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
 			}
 
-			$data['popup_error_message'] = '';
-			if ($login['id'] != '')
-			{
-				$tag = $this->input->post('tag_revision');
-				if ($tag !== FALSE)
-				{
-					$tag = trim($tag);
-					if (empty($tag)) 
-					{
-						// delete the tag if the value is empty
-						$affected_rev = $this->subversion->killRevProp (
-							$projectid, $rev, CODEPOT_SVN_TAG_PROPERTY, $login['id']);
-					}
-					else
-					{
-						$affected_rev = $this->subversion->setRevProp (
-							$projectid, $rev, CODEPOT_SVN_TAG_PROPERTY, $tag, $login['id']);
-					}
-					if ($affected_rev === FALSE)
-					{
-						$data['popup_error_message'] = 'Cannot tag revision';
-					}
-					else 
-					{
-						$this->form_validation->_field_data = array();
-					}
-				}
-				else if ($login['id'] == $this->subversion->getRevProp($projectid, $rev, 'svn:author') &&
-				         $this->input->post('edit_log_message'))
-				{
-					// the current user must be the author of the revision to be able to 
-					// change the log message.
-					$this->load->helper ('form');
-					$this->load->library ('form_validation');
-	
-					$this->form_validation->set_rules ('edit_log_message', 'Message', 'required|min_length[2]');
-					$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
-	
-					if ($this->form_validation->run())
-					{
-						$logmsg = $this->input->post('edit_log_message');
-						if ($logmsg != $this->subversion->getRevProp ($projectid, $rev, 'svn:log'))
-						{
-							$affected_rev = $this->subversion->setRevProp (
-								$projectid, $rev, 'svn:log', $logmsg, $login['id']);
-							if ($affected_rev === FALSE)
-							{
-								$data['popup_error_message'] = 'Cannot change revision log message';
-							}
-							else 
-							{
-								$this->form_validation->_field_data = array();
-							}
-						}
-					}
-					else
-					{
-						$data['popup_error_message'] = 'Invalid revision log message';
-					}
-				}
-				else if ($this->input->post('new_review_comment'))
-				{
-					$this->load->helper ('form');
-					$this->load->library ('form_validation');
-	
-					$this->form_validation->set_rules ('new_review_comment', $this->lang->line('Comment'), 'required|min_length[10]');
-					$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
-	
-					if ($this->form_validation->run())
-					{
-						$review_comment = $this->input->post('new_review_comment');
-						$review_sno = $this->code_review->insertReview ($projectid, $rev, $login['id'], $review_comment);
-						if ($review_sno === FALSE)
-						{
-							$data['popup_error_message'] = 'Cannot add code review comment';
-						}
-						else
-						{
-							// this is a hack to clear form data upon success
-							$this->form_validation->_field_data = array();
-
-							if (CODEPOT_COMMIT_REVIEW_NOTIFICATION)
-							{
-								// TODO: message localization
-								$email_subject =  sprintf (
-									'New review message #%d for r%d by %s in %s', 
-									$review_sno, $rev, $login['id'], $projectid
-								);
-								$email_message = current_url() . "\r\n" . $review_comment;
-								$this->projects->emailMessageToMembers (
-									$projectid, $this->login, $email_subject, $email_message
-								);
-							}
-						}
-					}
-					else
-					{
-						$data['popup_error_message'] = 'Invalid review comment';
-					}
-				}
-				else if ($this->input->post('edit_review_comment_no'))
-				{
-					$this->load->helper ('form');
-					$this->load->library ('form_validation');
-
-					// get the comment number without validation.
-					$comment_no = $this->input->post('edit_review_comment_no');
-					if (is_numeric($comment_no))
-					{
-						$comment_field_name = "edit_review_comment_{$comment_no}";
-						$this->form_validation->set_rules ($comment_field_name, $this->lang->line('Comment'), 'required|min_length[10]');
-						$this->form_validation->set_error_delimiters('<span class="form_field_error">','</span>');
-	
-						if ($this->form_validation->run())
-						{
-							//
-							// TODO: should let sysadmin? to change comments???
-							//
-							$review_comment = $this->input->post($comment_field_name);
-							if ($this->code_review->updateReview ($projectid, $rev, (integer)$comment_no, $login['id'], $review_comment, TRUE) === FALSE)
-							{
-								$data['popup_error_message'] = 'Cannot edit code review comment';
-							}
-							else
-							{
-								// this is a hack to clear form data upon success
-								$this->form_validation->_field_data = array();
-							}
-						}
-						else
-						{
-							$data['popup_error_message'] = 'Invalid review comment';
-						}
-					}
-					else
-					{
-						$data['popup_error_message'] = 'Invalid review comment number';
-					}
-				}
-			}
-
 			$file = $this->subversion->getRevHistory ($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
@@ -988,9 +1107,9 @@ class Code extends Controller
 										$prev_props = $p;
 									}
 								}
-							
-								$chg['props'] = $props;	
-								$chg['prev_props'] = $prev_props;	
+
+								$chg['props'] = $props;
+								$chg['prev_props'] = $prev_props;
 
 								//print_r ($props);
 								//print_r ($prev_props);
@@ -1016,7 +1135,7 @@ class Code extends Controller
 		}
 	}
 
-	function _do_diff ($projectid = '', $path = '', $rev1 = SVN_REVISION_HEAD, $rev2 = SVN_REVISION_HEAD, $full = FALSE)
+	private function _do_diff ($projectid = '', $path = '', $rev1 = SVN_REVISION_HEAD, $rev2 = SVN_REVISION_HEAD, $full = FALSE)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
@@ -1208,7 +1327,7 @@ class Code extends Controller
 		}
 	}
 
-	function _search_code ($project, $login)
+	private function _search_code ($project, $login)
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
@@ -1306,7 +1425,7 @@ class Code extends Controller
 		}
 	}
 
-	function _normalize_path ($path)
+	private function _normalize_path ($path)
 	{
 		$path = preg_replace('/[\/]+/', '/', $path);
 		if ($path == '/') $path = '';
