@@ -21,6 +21,23 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
+<?php
+	if ($revision <= 0)
+	{
+		$revreq = '';
+		$revreqroot = '';
+	}
+	else
+	{
+		$revreq = "/{$file['created_rev']}";
+		$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
+	}
+
+	$hex_headpath = $this->converter->AsciiToHex(($headpath == '')? '.': $headpath);
+	$creole_base = site_url() . "/wiki/show/{$project->id}/"; 
+	$creole_file_base = site_url() . "/wiki/attachment0/{$project->id}/"; 
+?>
+
 <script type="text/javascript">
 
 function show_alert (outputMsg, titleMsg) 
@@ -39,64 +56,202 @@ function show_alert (outputMsg, titleMsg)
 	});
 }
 
+function preview_new_review_comment (input_text)
+{
+	creole_render_wiki_with_input_text (
+		input_text,
+		"code_revision_new_review_comment_preview", 
+		"<?php print $creole_base; ?>",
+		"<?php print $creole_file_base; ?>/"
+	);
+
+	prettyPrint ();
+}
+
+function preview_edit_review_comment (input_text, no)
+{
+	creole_render_wiki_with_input_text (
+		input_text,
+		"code_revision_edit_review_comment_preview_" + no, 
+		"<?php print $creole_base; ?>",
+		"<?php print $creole_file_base; ?>/"
+	);
+
+	prettyPrint ();
+}
+
+var work_in_progress = false;
+
 <?php $review_count = count($reviews); ?>
 <?php $is_loggedin = ($login['id'] != ''); ?>
 <?php $can_edit = ($is_loggedin && $login['id'] == $file['history']['author']); ?>
 
 <?php if ($can_edit): ?>
 $(function() {
-	$("#code_revision_tag_div").dialog (
+	$('#code_revision_edit_revision_tag_form').dialog (
 		{
-			title: '<?php print $this->lang->line('Tag')?>',
+			title: '<?php print $this->lang->line('Tag');?>',
+			resizable: true,
+			autoOpen: false,
 			width: 'auto',
 			height: 'auto',
-			resizable: false,
-			autoOpen: false,
 			modal: true,
 			buttons: {
+
 				'<?php print $this->lang->line('OK')?>': function () {
-					$('#code_revision_tag_form').submit ();
-					$(this).dialog('close');
+					if (work_in_progress) return;
+
+					if (!!window.FormData)
+					{
+						// FormData is supported
+						work_in_progress = true;
+
+						var form_data = new FormData();
+
+						form_data.append ('code_edit_revision_tag', $('#code_revision_edit_revision_tag').val());
+
+						$('#code_revision_edit_revision_tag_form').dialog('disable');
+						$.ajax({
+							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/code/xhr_edit_revision_tag/{$project->id}/{$revreq}"; ?>'),
+							type: 'POST',
+							data: form_data,
+							mimeType: 'multipart/form-data',
+							contentType: false,
+							processData: false,
+							cache: false,
+
+							success: function (data, textStatus, jqXHR) { 
+								work_in_progress = false;
+								$('#code_revision_edit_revision_tag_form').dialog('enable');
+								$('#code_revision_edit_revision_tag_form').dialog('close');
+								if (data == 'ok') 
+								{
+									// refresh the page to the head revision
+									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/code/revision/{$project->id}/{$hex_headpath}{$revreq}"; ?>'));
+								}
+								else
+								{
+									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+								}
+							},
+
+							error: function (jqXHR, textStatus, errorThrown) { 
+								work_in_progress = false;
+								$('#code_revision_edit_revision_tag_form').dialog('enable');
+								$('#code_revision_edit_revision_tag_form').dialog('close');
+								var errmsg = '';
+								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+								if (errmsg == '' && textStatus != null) errmsg = textStatus;
+								if (errmsg == '') errmsg = 'Unknown error';
+								show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
+							}
+						});
+					}
+					else
+					{
+						show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
+					}
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
-					$(this).dialog('close');
+					if (work_in_progress) return;
+					$('#code_revision_edit_revision_tag_form').dialog('close');
 				}
 			},
-			close: function() { }
+
+			beforeClose: function() { 
+				// if importing is in progress, prevent dialog closing
+				return !work_in_progress;
+			}
 		}
 	);
 
-	$("#code_revision_edit_div").dialog (
+	$('#code_revision_edit_revision_message_form').dialog (
 		{
-			title: '<?php print $this->lang->line('Edit')?>',
+			title: '<?php print $this->lang->line('Message');?>',
+			resizable: true,
+			autoOpen: false,
 			width: 'auto',
 			height: 'auto',
-			resizable: false,
-			autoOpen: false,
 			modal: true,
 			buttons: {
+
 				'<?php print $this->lang->line('OK')?>': function () {
-					$('#code_revision_edit_logmsg_form').submit ();
-					$(this).dialog('close');
+					if (work_in_progress) return;
+
+					if (!!window.FormData)
+					{
+						// FormData is supported
+						work_in_progress = true;
+
+						var form_data = new FormData();
+
+						form_data.append ('code_edit_revision_message', $('#code_revision_edit_revision_message').val());
+
+						$('#code_revision_edit_revision_message_form').dialog('disable');
+						$.ajax({
+							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/code/xhr_edit_revision_message/{$project->id}/{$revreq}"; ?>'),
+							type: 'POST',
+							data: form_data,
+							mimeType: 'multipart/form-data',
+							contentType: false,
+							processData: false,
+							cache: false,
+
+							success: function (data, textStatus, jqXHR) { 
+								work_in_progress = false;
+								$('#code_revision_edit_revision_message_form').dialog('enable');
+								$('#code_revision_edit_revision_message_form').dialog('close');
+								if (data == 'ok') 
+								{
+									// refresh the page to the head revision
+									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/code/revision/{$project->id}/{$hex_headpath}{$revreq}"; ?>'));
+								}
+								else
+								{
+									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+								}
+							},
+
+							error: function (jqXHR, textStatus, errorThrown) { 
+								work_in_progress = false;
+								$('#code_revision_edit_revision_message_form').dialog('enable');
+								$('#code_revision_edit_revision_message_form').dialog('close');
+								var errmsg = '';
+								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+								if (errmsg == '' && textStatus != null) errmsg = textStatus;
+								if (errmsg == '') errmsg = 'Unknown error';
+								show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
+							}
+						});
+					}
+					else
+					{
+						show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
+					}
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
-					$(this).dialog('close');
+					if (work_in_progress) return;
+					$('#code_revision_edit_revision_message_form').dialog('close');
 				}
 			},
-			close: function() { }
+
+			beforeClose: function() { 
+				// if importing is in progress, prevent dialog closing
+				return !work_in_progress;
+			}
 		}
 	);
 
-	$("#code_revision_tag_button").button().click (
+	$('#code_revision_edit_revision_tag_button').button().click (
 		function () {
-			$("#code_revision_tag_div").dialog('open');
+			$('#code_revision_edit_revision_tag_form').dialog('open');
 			return false;
 		}
 	);
 
-	$("#code_revision_edit_logmsg_button").button().click (
+	$('#code_revision_edit_revision_message_button').button().click (
 		function () {
-			$("#code_revision_edit_div").dialog('open');
+			$('#code_revision_edit_revision_message_form').dialog('open');
 			return false;
 		}
 	);
@@ -105,33 +260,156 @@ $(function() {
 
 <?php if ($is_loggedin): ?>
 $(function() {
-	$("#code_revision_new_review_comment_div").dialog (
+
+	$('#code_revision_new_review_comment_tabs').tabs ();
+	$('#code_revision_new_review_comment_tabs').bind ('tabsshow', function (event, ui) {
+		if (ui.index == 1) preview_new_review_comment ($('#code_revision_new_review_comment').val());
+	});
+
+	$('#code_revision_new_review_comment_form').dialog (
 		{
-			title: '<?php print $this->lang->line('Comment')?>',
+			title: '<?php print $this->lang->line('Comment');?>',
+			resizable: true,
+			autoOpen: false,
 			width: 'auto',
 			height: 'auto',
-			resizable: false,
-			autoOpen: false,
 			modal: true,
 			buttons: {
 				'<?php print $this->lang->line('OK')?>': function () {
-					$('#code_revision_new_review_comment_form').submit ();
-					$(this).dialog('close');
+					if (work_in_progress) return;
+
+					if (!!window.FormData)
+					{
+						// FormData is supported
+						work_in_progress = true;
+
+						var form_data = new FormData();
+
+						form_data.append ('code_new_review_comment', $('#code_revision_new_review_comment').val());
+
+						$('#code_revision_new_review_comment_form').dialog('disable');
+						$.ajax({
+							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/code/xhr_new_review_comment/{$project->id}/{$revreq}"; ?>'),
+							type: 'POST',
+							data: form_data,
+							mimeType: 'multipart/form-data',
+							contentType: false,
+							processData: false,
+							cache: false,
+
+							success: function (data, textStatus, jqXHR) { 
+								work_in_progress = false;
+								$('#code_revision_new_review_comment_form').dialog('enable');
+								$('#code_revision_new_review_comment_form').dialog('close');
+								if (data == 'ok') 
+								{
+									// refresh the page to the head revision
+									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/code/revision/{$project->id}/{$hex_headpath}{$revreq}"; ?>'));
+								}
+								else
+								{
+									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+								}
+							},
+
+							error: function (jqXHR, textStatus, errorThrown) { 
+								work_in_progress = false;
+								$('#code_revision_new_review_comment_form').dialog('enable');
+								$('#code_revision_new_review_comment_form').dialog('close');
+								var errmsg = '';
+								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+								if (errmsg == '' && textStatus != null) errmsg = textStatus;
+								if (errmsg == '') errmsg = 'Unknown error';
+								show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
+							}
+						});
+					}
+					else
+					{
+						show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
+					}
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
-					$(this).dialog('close');
+					if (work_in_progress) return;
+					$('#code_revision_new_review_comment_form').dialog('close');
 				}
 			},
-			close: function() { }
+
+			beforeClose: function() { 
+				// if importing is in progress, prevent dialog closing
+				return !work_in_progress;
+			}
 		}
 	);
 
 	$("#code_revision_new_review_comment_button").button().click (
 		function () {
-			$("#code_revision_new_review_comment_div").dialog('open');
+			$('#code_revision_new_review_comment_form').dialog('open');
 			return false;
 		}
 	);
+
+
+	function make_edit_review_comment_ok_function (no)
+	{
+		var form_name = '#code_revision_edit_review_comment_form_' + no;
+
+		return function () {
+			if (work_in_progress) return;
+
+			if (!!window.FormData)
+			{
+				// FormData is supported
+				work_in_progress = true;
+
+				var form_data = new FormData();
+
+				form_data.append ('code_edit_review_no', no);
+				form_data.append ('code_edit_review_comment', $('#code_revision_edit_review_comment_' + no).val());
+
+				$(form_name).dialog('disable');
+				$.ajax({
+					url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/code/xhr_edit_review_comment/{$project->id}/{$revreq}"; ?>'),
+					type: 'POST',
+					data: form_data,
+					mimeType: 'multipart/form-data',
+					contentType: false,
+					processData: false,
+					cache: false,
+
+					success: function (data, textStatus, jqXHR) { 
+						work_in_progress = false;
+						$(form_name).dialog('enable');
+						$(form_name).dialog('close');
+						if (data == 'ok') 
+						{
+							// refresh the page
+							$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/code/revision/{$project->id}/{$hex_headpath}{$revreq}"; ?>'));
+						}
+						else
+						{
+							show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+						}
+					},
+
+					error: function (jqXHR, textStatus, errorThrown) { 
+						work_in_progress = false;
+						$(form_name).dialog('enable');
+						$(form_name).dialog('close');
+						var errmsg = '';
+						if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+						if (errmsg == '' && textStatus != null) errmsg = textStatus;
+						if (errmsg == '') errmsg = 'Unknown error';
+						show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
+					}
+				});
+			}
+			else
+			{
+				show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
+			}
+		};
+	}
 
 	<?php
 	for ($i = 0; $i < $review_count; )
@@ -144,8 +422,12 @@ $(function() {
 			$label_ok = $this->lang->line('OK');
 			$label_cancel = $this->lang->line('Cancel');
 			print ("
+				$('#code_revision_edit_review_comment_tabs_{$i}').tabs ();
+				$('#code_revision_edit_review_comment_tabs_{$i}').bind ('tabsshow', function (event, ui) {
+					if (ui.index == 1) preview_edit_review_comment ($('#code_revision_edit_review_comment_{$i}').val(), {$i});
+				});
 
-				$('#code_revision_edit_review_comment_div_{$i}').dialog (
+				$('#code_revision_edit_review_comment_form_{$i}').dialog (
 					{
 						title: '{$edit_title}',
 						width: 'auto',
@@ -154,23 +436,22 @@ $(function() {
 						autoOpen: false,
 						modal: true,
 						buttons: {
-							'{$label_ok}': function () {
-								// dynamically add a comment number to edit
-								var hidden_comment_no = $('<input>').attr('type', 'hidden').attr('name', 'edit_review_comment_no').val('{$i}');
-								$('#code_revision_edit_review_comment_form_{$i}').append(hidden_comment_no).submit ();
-								$(this).dialog('close');
-							},
+							'{$label_ok}': make_edit_review_comment_ok_function ({$i}),
 							'{$label_cancel}': function () {
-								$(this).dialog('close');
+								if (work_in_progress) return;
+								$('#code_revision_edit_review_comment_form_{$i}').dialog('close');
 							}
 						},
-						close: function() { }
+						beforeClose: function() { 
+							// if importing is in progress, prevent dialog closing
+							return !work_in_progress;
+						}
 					}
 				);
-			
+
 				$('#code_revision_edit_review_comment_button_{$i}').button().click (
 					function () {
-						$('#code_revision_edit_review_comment_div_{$i}').dialog('open');
+						$('#code_revision_edit_review_comment_form_{$i}').dialog('open');
 						return false;
 					}
 				)
@@ -190,8 +471,8 @@ function render_wiki()
 	creole_render_wiki (
 		"code_revision_mainarea_review_comment_text_" + (i + 1) , 
 		"code_revision_mainarea_review_comment_" + (i + 1), 
-		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		""
+		"<?php print $creole_base; ?>",
+		"<?php print $creole_file_base; ?>/"
 	);
 
 	<?php
@@ -227,10 +508,6 @@ $(function() {
 
 	hide_unneeded_divs ();
 	render_wiki ();
-
-<?php if (strlen($popup_error_message) > 0): ?>
-	show_alert (<?php print codepot_json_encode('<pre>' . htmlspecialchars($popup_error_message) . '</pre>'); ?>, "<?php print $this->lang->line('Error')?>");
-<?php endif; ?>
 });
 
 </script>
@@ -280,17 +557,6 @@ $history = $file['history'];
 
 <div class="title" id="code_revision_mainarea_title">
 <?php
-	if ($revision <= 0)
-	{
-		$revreq = '';
-		$revreqroot = '';
-	}
-	else
-	{
-		$revreq = "/{$file['created_rev']}";
-		$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
-	}
-
 	print anchor (
 		"code/revision/{$project->id}{$revreqroot}",
 		htmlspecialchars($project->name));
@@ -330,29 +596,28 @@ $history = $file['history'];
 <?php
 	$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
 
-	$xpar = $this->converter->AsciiToHex(($headpath == '')? '.': $headpath);
 	if ($revision > 0 && $revision < $next_revision)
 	{
-		print anchor ("code/revision/{$project->id}/{$xpar}", $this->lang->line('Head revision'));
+		print anchor ("code/revision/{$project->id}/{$hex_headpath}", $this->lang->line('Head revision'));
 		print ' | ';
 	}
 
 	if ($revision > 0)
 	{
-		if ($xpar == '') $revtrailer = $revreqroot;
-		else $revtrailer = "/{$xpar}{$revreq}";
+		if ($hex_headpath == '') $revtrailer = $revreqroot;
+		else $revtrailer = "/{$hex_headpath}{$revreq}";
 		print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
 	}
 	else
 	{
-		print anchor ("code/history/{$project->id}/{$xpar}", $history_anchor_text);
+		print anchor ("code/history/{$project->id}/{$hex_headpath}", $history_anchor_text);
 	}
 ?>
 </div> <!-- code_revision_mainarea_menu -->
 
 <div class="infostrip" id="code_revision_mainarea_infostrip">
 	<?php
-		print anchor ("code/revision/{$project->id}/${xpar}/{$prev_revision}", '<i class="fa fa-arrow-circle-left"></i>');
+		print anchor ("code/revision/{$project->id}/${hex_headpath}/{$prev_revision}", '<i class="fa fa-arrow-circle-left"></i>');
 		print ' ';
 
 		printf ('%s %s',  $this->lang->line('Revision'), $history['rev']);
@@ -365,13 +630,13 @@ $history = $file['history'];
 		}
 
 		print ' ';
-		print anchor ("code/revision/{$project->id}/${xpar}/{$next_revision}", '<i class="fa fa-arrow-circle-right"></i>');
+		print anchor ("code/revision/{$project->id}/${hex_headpath}/{$next_revision}", '<i class="fa fa-arrow-circle-right"></i>');
 
 		if ($can_edit)
 		{
 			print ' ';
 			print '<span class="anchor">';
-			print anchor ("#", $this->lang->line('Tag'), array ('id' => 'code_revision_tag_button'));
+			print anchor ("#", $this->lang->line('Tag'), array ('id' => 'code_revision_edit_revision_tag_button'));
 			print '</span>';
 		}
 
@@ -391,7 +656,7 @@ $history = $file['history'];
 <?php if ($can_edit): ?>
 	<span class='anchor'>
 		<?php print anchor ("#", $this->lang->line('Edit'),
-		           array ('id' => 'code_revision_edit_logmsg_button'));
+		           array ('id' => 'code_revision_edit_revision_message_button'));
 		?>
 	</span>
 <?php endif; ?>
@@ -555,12 +820,83 @@ $history = $file['history'];
 		print "</pre>\n";
 		print "</div>\n";
 	}
-
 ?>
 </div> <!-- code_revision_mainarea_review_comment -->
 </div> <!-- code_revision_mainarea_result_comments -->
 
 </div> <!-- code_revision_mainarea_result -->
+
+<?php if ($can_edit): ?>
+<div id="code_revision_edit_revision_tag_form">
+<?php print 
+	form_input (
+		array ('name' => 'code_edit_revision_tag', 
+		       'value' => $history['tag'], 
+		       'id' => 'code_revision_edit_revision_tag')
+	)
+?>
+</div>
+
+<div id='code_revision_edit_revision_message_form'>
+<?php print 
+	form_textarea (
+		array ('name' => 'code_edit_revision_message', 
+		       'value' => $history['msg'], 'rows'=> 10, 'cols' => 70,
+		       'id' => 'code_revision_edit_revision_message')
+	)
+?>
+</div>
+<?php endif; ?> <!-- $can_edit -->
+
+<?php if ($is_loggedin): ?>
+<div id="code_revision_new_review_comment_form">
+	<div id='code_revision_new_review_comment_tabs' style='width:100%;'>
+		<ul>
+			<li><a href='#code_revision_new_review_comment_input'><?php print $this->lang->line('Comment'); ?></a></li>
+			<li><a href='#code_revision_new_review_comment_preview'><?php print $this->lang->line('Preview'); ?></a></li>
+		</ul>
+
+		<div id='code_revision_new_review_comment_input'>
+			<textarea type='textarea' id='code_revision_new_review_comment' name='code_new_review_comment' rows=24 cols=100 style='width:100%;'></textarea>
+		</div>
+
+		<div id='code_revision_new_review_comment_preview' class='form_input_preview'>
+		</div>
+	</div>
+</div>
+
+<?php
+$comment_label = $this->lang->line('Comment');
+$preview_label = $this->lang->line('Preview');
+
+for ($i = 0; $i < $review_count; )
+{
+	$rc = $reviews[$i];
+	$i++;
+	if ($login['id'] == $rc->updatedby)
+	{
+		$text = htmlspecialchars ($rc->comment);
+		print "
+			<div id='code_revision_edit_review_comment_form_{$i}'>
+				<div id='code_revision_edit_review_comment_tabs_{$i}' class='code_revision_edit_review_comment_tabs' style='width:100%;'>
+					<ul>
+						<li><a href='#code_revision_edit_review_comment_input_{$i}'>{$comment_label}</a></li>
+						<li><a href='#code_revision_edit_review_comment_preview_{$i}'>{$preview_label}</a></li>
+					</ul>
+
+					<div id='code_revision_edit_review_comment_input_{$i}'>
+						<textarea type='textarea' id='code_revision_edit_review_comment_{$i}' name='code_edit_review_comment_{$i}' rows=24 cols=100 style='width:100%;'>{$text}</textarea>
+					</div>
+
+					<div id='code_revision_edit_review_comment_preview_{$i}' class='form_input_preview'>
+					</div>
+				</div>
+			</div>
+		";
+	}
+}
+?>
+<?php endif; ?> <!-- $is_loggedin -->
 
 <div id='code_revision_mainarea_alert'></div>
 
@@ -575,75 +911,6 @@ $history = $file['history'];
 <?php $this->load->view ('footer'); ?>
 
 <!---------------------------------------------------------------------------->
-
-
-<?php if ($can_edit): ?>
-<div id="code_revision_tag_div">
-	<?php print form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_tag_form"')?>
-		<?php print 
-			form_input (
-				array ('name' => 'tag_revision', 
-				       'value' => $history['tag'], 
-				       'id' => 'code_revision_tag')
-			)
-
-		?>
-	<?php print form_close()?>
-</div>
-
-<div id="code_revision_edit_div">
-	<?php print form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_edit_logmsg_form"')?>
-		<?php print 
-			form_textarea (
-				array ('name' => 'edit_log_message', 
-				       'value' => $history['msg'], 'rows'=> 10, 'cols' => 70,
-				       'id' => 'code_revision_edit_log_message')
-			)
-
-		?>
-	<?php print form_close()?>
-</div>
-<?php endif; ?> <!-- $can_edit -->
-
-<?php if ($is_loggedin): ?>
-<div id="code_revision_new_review_comment_div">
-<?php
-	print form_open("code/revision/{$project->id}${revreqroot}", 'id="code_revision_new_review_comment_form"');
-
-	print form_error('new_review_comment'); 
-	print '<br />';
-
-	print form_textarea (
-		array ('name' => 'new_review_comment', 
-		       'value' => set_value('new_review_comment', ''), 
-		       'rows'=> 20, 'cols' => 90,
-		       'id' => 'code_revision_new_review_comment')
-	);
-	print form_close();
-
-	for ($i = $review_count; $i > 0; $i--)
-	{
-		$rc = $reviews[$i - 1];
-
-		if ($login['id'] == $rc->updatedby)
-		{
-			print "<div id='code_revision_edit_review_comment_div_{$i}'>\n";
-			print form_open("code/revision/{$project->id}${revreqroot}", "id='code_revision_edit_review_comment_form_{$i}'");
-			print form_error("edit_review_comment_{$i}");
-			print '<br />';
-			print form_textarea (
-				array ('name' => "edit_review_comment_{$i}",
-				       'value' => $rc->comment, 'rows'=> 20, 'cols' => 90,
-				       'id' => "code_revision_edit_review_comment_{$i}")
-			);
-			print form_close();
-			print "</div>\n";
-		}
-	}
-?>
-</div>
-<?php endif; ?> <!-- $is_loggedin -->
-
 
 </body>
 

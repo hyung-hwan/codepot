@@ -1088,8 +1088,6 @@ $this->load->view (
 
 <!---------------------------------------------------------------------------->
 
-
-
 <script type="text/javascript">
 function render_wiki()
 {
