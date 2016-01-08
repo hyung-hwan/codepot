@@ -23,35 +23,78 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 
+<?php
+$hex_headpath = $this->converter->AsciiToHex ($headpath);
+if ($revision <= 0)
+{
+	$revreq = '';
+	$revreqroot = '';
+
+	$history_path = "/code/history/{$project->id}/{$hex_headpath}";
+}
+else
+{
+	$revreq = "/{$file['created_rev']}";
+	$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
+
+	if ($hex_headpath == '') $revtrailer = $revreqroot;
+	else $revtrailer = "/{$hex_headpath}{$revreq}";
+	$history_path = "/code/history/{$project->id}{$revtrailer}";
+}
+?>
+
 <script type="text/javascript">
 $(function () {
-	<?php
-	if ($login['settings'] != NULL && $login['settings']->code_hide_metadata == 'Y')
-		print '$("#code_blame_mainarea_result_info").hide();';
-	?>
 
-	if ($("#code_blame_mainarea_result_info").is(":visible"))
-		btn_label = "<?php print $this->lang->line('Hide metadata')?>";
-	else
-		btn_label = "<?php print $this->lang->line('Show metadata')?>";
-	
-	btn = $("#code_blame_mainarea_metadata_button").button({"label": btn_label}).click (function () {
-		
-		if ($("#code_blame_mainarea_result_info").is(":visible"))
+	$('#code_blame_mainarea_metadata').accordion({
+		collapsible: true
+	});
+
+	$("#code_blame_mainarea_loc_info").hide();
+	btn = $("#code_blame_mainarea_loc_button").button().click (function () {
+		if ($("#code_blame_mainarea_loc_info").is(":visible"))
 		{
-			$("#code_blame_mainarea_result_info").hide("blind",{},200);
-			$("#code_blame_mainarea_metadata_button").button(
-				"option", "label", "<?php print $this->lang->line('Show metadata')?>");
+			$("#code_blame_mainarea_loc_info").hide("blind",{},200);
 		}
 		else
 		{
-			$("#code_blame_mainarea_result_info").show("blind",{},200);
-			$("#code_blame_mainarea_metadata_button").button(
-				"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
+			$("#code_blame_mainarea_loc_info").show("blind",{},200);
 		}
+
+		return false; // prevent the default behavior
 	});
 
 	$("#code_blame_mainarea_edit_button").button();
+
+	<?php if ($file['created_rev'] != $file['head_rev']): ?>
+		$("#code_blame_mainarea_headrev_button").button().click (function() {
+			$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/blame/{$project->id}/${hex_headpath}"; ?>'));
+			return false;
+		});
+	<?php endif; ?>
+
+	$("#code_blame_mainarea_detail_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/file/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		return false;
+	});
+	$("#code_blame_mainarea_diff_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/diff/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		return false;
+	});
+
+	$("#code_blame_mainarea_fulldiff_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fulldiff/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		return false;
+	});
+
+	$("#code_blame_mainarea_history_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print $history_path; ?>'));
+		return false;
+	});
+	$("#code_blame_mainarea_download_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fetch/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		return false;
+	});
 	prettyPrint ();
 });
 </script>
@@ -95,95 +138,48 @@ $this->load->view (
 
 <div class="mainarea" id="code_blame_mainarea">
 
-<div class="title" id="code_blame_mainarea_title">
-<?php
-	if ($revision <= 0)
-	{
-		$revreq = '';
-		$revreqroot = '';
-	}
-	else
-	{
-		$revreq = "/{$file['created_rev']}";
-		$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
-	}
+<div class="title-band" id="code_blame_mainarea_title_band">
 
-	print anchor (
-		"code/file/{$project->id}{$revreqroot}",
-		htmlspecialchars($project->name));
+	<div class="title" id="code_blame_mainarea_title">
+	<?php
+		print anchor (
+			"code/file/{$project->id}{$revreqroot}",
+			htmlspecialchars($project->name));
 
-	$exps = explode ('/', $headpath);
-	$expsize = count($exps);
-	$par = '';
-	for ($i = 1; $i < $expsize; $i++)
-	{
-		$par .= '/' . $exps[$i];
-		$xpar = $this->converter->AsciiToHex ($par);
-
-		print '/';
-		if ($i == $expsize - 1)
+		$exps = explode ('/', $headpath);
+		$expsize = count($exps);
+		$par = '';
+		for ($i = 1; $i < $expsize; $i++)
 		{
-			print anchor (
-				"code/blame/{$project->id}/{$xpar}{$revreq}",
-				htmlspecialchars($exps[$i]));
+			$par .= '/' . $exps[$i];
+			$xpar = $this->converter->AsciiToHex ($par);
+
+			print '/';
+			if ($i == $expsize - 1)
+			{
+				print anchor (
+					"code/blame/{$project->id}/{$xpar}{$revreq}",
+					htmlspecialchars($exps[$i]));
+			}
+			else
+			{
+				print anchor (
+					"code/file/{$project->id}/{$xpar}{$revreq}",
+					htmlspecialchars($exps[$i]));
+			}
 		}
-		else
+
+		if ($headpath != $file['fullpath'])
 		{
-			print anchor (
-				"code/file/{$project->id}/{$xpar}{$revreq}",
-				htmlspecialchars($exps[$i]));
+			print ' - ';
+			print htmlspecialchars($file['fullpath']);
 		}
-	}
+	?>
+	</div> <!-- code_blame_mainarea_title -->
 
-	if ($headpath != $file['fullpath'])
-	{
-		print ' - ';
-		print htmlspecialchars($file['fullpath']);
-	}
-?>
-</div> <!-- code_blame_mainarea_title -->
-
-<div class="menu" id="code_blame_mainarea_menu">
-<?php
-
-$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
-$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
-$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
-
-$xpar = $this->converter->AsciiToHex ($headpath);
-
-if ($file['created_rev'] != $file['head_rev'])
-{
-	$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
-	print anchor ("code/blame/{$project->id}/${xpar}", $head_revision_text);
-	print ' | ';
-}
-
-print anchor ("code/file/{$project->id}/${xpar}{$revreq}", $this->lang->line('Details'));
-print ' | ';
-print anchor ("code/diff/{$project->id}/{$xpar}{$revreq}", $diff_anchor_text);
-print ' | ';
-
-if ($revision > 0)
-{
-	if ($xpar == '') $revtrailer = $revreqroot;
-	else $revtrailer = "/{$xpar}{$revreq}";
-	print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
-}
-else
-{
-	print anchor ("code/history/{$project->id}/{$xpar}", $history_anchor_text);
-}
-
-print ' | ';
-print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $download_anchor_text);
-
-?>
-</div> <!-- code_blame_mainarea_menu -->
-
-<div class="infostrip" id="code_blame_mainarea_infostrip">
-	<?php 
-		print anchor ("code/blame/{$project->id}/${xpar}/{$file['prev_rev']}", '<i class="fa fa-arrow-circle-left"></i>');
+	<div class="actions">
+		<?php 
+		print anchor ("code/blame/{$project->id}/{$hex_headpath}/{$file['prev_rev']}", '<i class="fa fa-arrow-circle-left"></i>');
 		print ' ';
 
 		// anchor to the revision history at the root directory
@@ -200,7 +196,7 @@ print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $download_anchor_tex
 			print ('</span>');
 		}
 		print ' ';
-		print anchor ("code/blame/{$project->id}/${xpar}/{$file['next_rev']}", '<i class="fa fa-arrow-circle-right"></i>');
+		print anchor ("code/blame/{$project->id}/{$hex_headpath}/{$file['next_rev']}", '<i class="fa fa-arrow-circle-right"></i>');
 
 		print ' | ';
 		printf ('%s: %s', $this->lang->line('Size'), $file['size']);
@@ -208,10 +204,77 @@ print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $download_anchor_tex
 		if ((isset($login['id']) && $login['id'] != ''))
 		{
 			print ' ';
-			print anchor ("code/bledit/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Edit'), 'id="code_blame_mainarea_edit_button"');
+			print anchor ("code/bledit/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Edit'), 'id="code_blame_mainarea_edit_button"');
 		}
+
+		print anchor ("#", "LOC", "id=code_blame_mainarea_loc_button");
+		?>
+
+	</div>
+	<div style="clear: both;"></div>
+</div>
+
+<div id='code_blame_mainarea_metadata' class='collapsible-box'>
+	<div id='code_blame_mainarea_metadata_header' class='collapsible-box-header'>
+	<?php
+		print '<div class="metadata-committer">';
+		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($file['last_author']));
+		print "<img src='{$user_icon_url}' class='metadata-committer-icon' />";
+		print htmlspecialchars ($file['last_author']);
+		print '</div>';
+
+		print '<div class="metadata-menu">';
+
+		
+		$detail_anchor_text = $this->lang->line('Details');
+		$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
+		$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+		$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
+		$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
+
+		if ($file['created_rev'] != $file['head_rev']) 
+		{
+			$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
+			print anchor ('#', $head_revision_text, 'id="code_blame_mainarea_headrev_button"');
+		}
+
+		print anchor ('#', $detail_anchor_text, 'id="code_blame_mainarea_detail_button"');
+		print anchor ('#', $diff_anchor_text, 'id="code_blame_mainarea_diff_button"');
+		print anchor ('#', $fulldiff_anchor_text, 'id="code_blame_mainarea_fulldiff_button"');
+		print anchor ('#', $history_anchor_text, 'id="code_blame_mainarea_history_button"');
+		print anchor ('#', $download_anchor_text, 'id="code_blame_mainarea_download_button"');
+		print '</div>';
+
+		print '<div class="metadata-commit-date">';
+		printf ('[%s] ', $file['created_rev']);
+		print strftime ('%Y-%m-%d %H:%M:%S %z', $file['time_t']);
+		print '</div>';
 	?>
-	<a id="code_blame_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
+		<div style='clear: both'></div>
+	</div>
+
+	<div id='code_blame_mainarea_metadata_body'>
+		<pre class='pre-wrapped'><?php print htmlspecialchars ($file['logmsg']); ?></pre>
+
+		<?php
+		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+		{
+			print '<ul id="code_blame_mainarea_loc_info_property_list">';
+			foreach ($file['properties'] as $pn => $pv)
+			{
+				print '<li>';
+				print htmlspecialchars($pn);
+				if ($pv != '')
+				{
+					print ' - ';
+					print htmlspecialchars($pv);
+				}
+				print '</li>';
+			}
+			print '</ul>';
+		}
+		?>
+	</div>
 </div>
 
 <div class="result" id="code_blame_mainarea_result">
@@ -259,7 +322,7 @@ if ($login['settings'] != NULL &&
 			$rev_to_show = $rev;
 
 			$xpar = $this->converter->AsciiTohex ($headpath);
-			$rev_to_show = anchor ("code/blame/{$project->id}/{$xpar}/{$rev}", $rev_to_show);
+			$rev_to_show = anchor ("code/blame/{$project->id}/{$hex_headpath}/{$rev}", $rev_to_show);
 		}
 		else
 		{
@@ -340,41 +403,15 @@ if ($login['settings'] != NULL &&
 ?>
 </pre>
 
-<div id="code_blame_mainarea_result_info" class="infobox">
-<div class="title"><?php print  $this->lang->line('CODE_COMMIT') ?></div>
-<ul>
-<li><?php printf ($this->lang->line('CODE_MSG_COMMITTED_BY_ON'), $file['last_author'], $file['time']); ?></li>
-</ul>
-
-
-<div class="title"><?php print  $this->lang->line('Message') ?></div>
-<pre id="code_blame_mainarea_result_info_logmsg" class="pre-wrapped">
-<?php print  $file['logmsg'] ?>
-</pre>
-
-<?php
-if (array_key_exists('properties', $file) && count($file['properties']) > 0)
-{
-	print '<div class="title">';
-	print $this->lang->line('CODE_PROPERTIES');
-	print '</div>';
-
-	print '<ul id="code_blame_mainarea_result_info_property_list">';
-	foreach ($file['properties'] as $pn => $pv)
-	{
-		print '<li>';
-		print htmlspecialchars($pn);
-		print ' - ';
-		print htmlspecialchars($pv);
-		print '</li>';
-	}
-	print '</ul>';
-}
-?>
-</pre>
-</div> <!-- code_blame_mainarea_result_info -->
-
-
+<div id="code_blame_mainarea_loc_info" class="infobox">
+	<div class="title">LOC</div>
+	<?php
+		/* TODO: show this if it's enabled in the user settings  */
+		$graph_url = codepot_merge_path (site_url(), "/code/graph/cloc-file/{$project->id}/{$hex_headpath}{$revreq}");
+		print "<img src='{$graph_url}' id='code_blame_mainarea_loc_info_locgraph' />";
+	?>
+	</div>
+</div> <!-- code_blame_mainarea_loc_info -->
 
 </div> <!-- code_blame_mainarea_result -->
 

@@ -726,34 +726,40 @@ $this->load->view (
 
 <div class="mainarea" id="code_folder_mainarea">
 
-<div class="title">
-<?php
-	// print the main anchor for the root folder. 
-	// let the anchor text be the project name.
-	print anchor (
-		"code/file/{$project->id}{$revreqroot}", 
-		htmlspecialchars($project->name));
+<div class="title-band" id="code_folder_mainarea_title_band">
 
-	// explode non-root folder parts to anchors
-	$exps = explode ('/', $headpath);
-	$expsize = count($exps);
-	$par = '';
-	for ($i = 1; $i < $expsize; $i++)
-	{
-		print '/';
-		$par .= '/' . $exps[$i];
-		$xpar = $this->converter->AsciiToHex ($par);
+	<div class="title">
+	<?php
+		// print the main anchor for the root folder. 
+		// let the anchor text be the project name.
 		print anchor (
-			"code/file/{$project->id}/{$xpar}{$revreq}",
-			htmlspecialchars($exps[$i]));
-	}
+			"code/file/{$project->id}{$revreqroot}", 
+			htmlspecialchars($project->name));
 
-	if ($headpath != $file['fullpath'])
-	{
-		print ' - ';
-		print htmlspecialchars ($file['fullpath']);
-	}
-?>
+		// explode non-root folder parts to anchors
+		$exps = explode ('/', $headpath);
+		$expsize = count($exps);
+		$par = '';
+		for ($i = 1; $i < $expsize; $i++)
+		{
+			print '/';
+			$par .= '/' . $exps[$i];
+			$xpar = $this->converter->AsciiToHex ($par);
+			print anchor (
+				"code/file/{$project->id}/{$xpar}{$revreq}",
+				htmlspecialchars($exps[$i]));
+		}
+
+		if ($headpath != $file['fullpath'])
+		{
+			print ' - ';
+			print htmlspecialchars ($file['fullpath']);
+		}
+	?>
+	</div>
+
+	<div class="actions"></div>
+	<div style="clear: both;"></div>
 </div>
 
 <div class="infostrip" id="code_folder_mainarea_infostrip">

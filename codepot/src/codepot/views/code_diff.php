@@ -64,38 +64,44 @@ $this->load->view (
 
 <div class="mainarea" id="code_diff_mainarea">
 
-<div class="title" id="code_diff_mainarea_title">
-<?php
-	if ($revision1 <= 0)
-	{
-		$revreq = '';
-		$revreqroot = '';
-	}
-	else
-	{
-		$revreq = "/{$file['created_rev']}";
-		$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
-	}
+<div class="title-band" id="code_diff_mainarea_title_band">
 
-	print anchor (
-		"code/file/{$project->id}{$revreqroot}",
-		htmlspecialchars($project->name));
+	<div class="title" id="code_diff_mainarea_title">
+	<?php
+		if ($revision1 <= 0)
+		{
+			$revreq = '';
+			$revreqroot = '';
+		}
+		else
+		{
+			$revreq = "/{$file['created_rev']}";
+			$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
+		}
 
-	$exps = explode ('/', $headpath);
-	$expsize = count($exps);
-	$par = '';
-	for ($i = 1; $i < $expsize; $i++)
-	{
-		$par .= "/{$exps[$i]}";
+		print anchor (
+			"code/file/{$project->id}{$revreqroot}",
+			htmlspecialchars($project->name));
 
-		$xpar = $this->converter->AsciiToHex ($par);
-		$xpar = "code/file/{$project->id}/{$xpar}{$revreq}";
+		$exps = explode ('/', $headpath);
+		$expsize = count($exps);
+		$par = '';
+		for ($i = 1; $i < $expsize; $i++)
+		{
+			$par .= "/{$exps[$i]}";
 
-		print '/';
-		print anchor ($xpar, htmlspecialchars($exps[$i]));
-	}
-?>
-</div> <!-- code_diff_mainarea_title -->
+			$xpar = $this->converter->AsciiToHex ($par);
+			$xpar = "code/file/{$project->id}/{$xpar}{$revreq}";
+
+			print '/';
+			print anchor ($xpar, htmlspecialchars($exps[$i]));
+		}
+	?>
+	</div> <!-- code_diff_mainarea_title -->
+
+	<div class="actions"></div>
+	<div style="clear: both;"></div>
+</div>
 
 <div class="menu" id="code_diff_mainarea_menu">
 <?php

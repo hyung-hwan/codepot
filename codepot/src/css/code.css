@@ -77,6 +77,63 @@
 	height: auto;
 }
 
+#code_file_mainarea_metadata_header,
+#code_blame_mainarea_metadata_header {
+	line-height: 2em;
+}
+
+#code_file_mainarea_metadata_header .metadata-committer-icon,
+#code_blame_mainarea_metadata_header .metadata-committer-icon {
+	height: 2em; 
+	width: auto;
+	vertical-align: middle;
+	margin-right: 2px;
+	
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+#code_file_mainarea_metadata_header .metadata-committer,
+#code_blame_mainarea_metadata_header .metadata-committer {
+	float: left;
+	color: #111111;
+}
+
+#code_file_mainarea_metadata_header .metadata-menu,
+#code_blame_mainarea_metadata_header .metadata-menu {
+	float: left;
+	margin-left: 1em;
+}
+
+#code_file_mainarea_metadata_header .metadata-commit-date,
+#code_blame_mainarea_metadata_header .metadata-commit-date {
+	float: right;
+}
+
+#code_file_mainarea_metadata_body,
+#code_blame_mainarea_metadata_body {
+	background-color: #FCFCFC;
+	padding: 0 0.5em 0 0.5em;
+	margin: 0;
+}
+
+#code_file_mainarea_metadata_body ul,
+#code_blame_mainarea_metadata_body ul {
+	padding: 0;
+	margin: 0 0 0.5em 0;
+	list-style: outside none none;
+}
+
+#code_file_mainarea_metadata_body ul li,
+#code_blame_mainarea_metadata_body ul li {
+	padding: 0.2em 0.2em 0.2em 0.2em;
+	margin: 0em 0.2em 0.4em 0.2em;
+	float: left;
+	background-color: #44AD8E;
+	color: #FFFFFF;
+}
+
 /*----------------------------------------------- 
  * project source blame view 
  *-----------------------------------------------*/

@@ -51,39 +51,45 @@ $this->load->view (
 
 <div class="mainarea" id="code_history_mainarea">
 
-<div class="title" id="code_history_mainarea_title">
-<?php
-	if ($revision <= 0)
-	{
-		$revreq = '';
-		$revreqroot = '';
-	}
-	else
-	{
-		$revreq = "/{$revision}";
-		$revreqroot = '/' . $this->converter->AsciiToHex('.') . $revreq;
-	}
+<div class="title-band" id="code_history_mainarea_title_band">
 
-	// print the anchor for the root nolder with a project name
-	print anchor (
-		"code/history/{$project->id}{$revreqroot}",
-		htmlspecialchars($project->name));
+	<div class="title" id="code_history_mainarea_title">
+	<?php
+		if ($revision <= 0)
+		{
+			$revreq = '';
+			$revreqroot = '';
+		}
+		else
+		{
+			$revreq = "/{$revision}";
+			$revreqroot = '/' . $this->converter->AsciiToHex('.') . $revreq;
+		}
 
-	// explodes part of the full path name into an array 
-	$exps = explode ('/', $fullpath);
-	$expsize = count($exps);
-	$par = '';
-	// print anchors pointing to each part
-	for ($i = 1; $i < $expsize; $i++)
-	{
-		print '/';
-		$par .= '/' . $exps[$i];
-		$xpar = $this->converter->AsciiToHex ($par);
+		// print the anchor for the root nolder with a project name
 		print anchor (
-			"code/history/{$project->id}/{$xpar}{$revreq}",
-			htmlspecialchars($exps[$i]));
-	}
-?>
+			"code/history/{$project->id}{$revreqroot}",
+			htmlspecialchars($project->name));
+
+		// explodes part of the full path name into an array 
+		$exps = explode ('/', $fullpath);
+		$expsize = count($exps);
+		$par = '';
+		// print anchors pointing to each part
+		for ($i = 1; $i < $expsize; $i++)
+		{
+			print '/';
+			$par .= '/' . $exps[$i];
+			$xpar = $this->converter->AsciiToHex ($par);
+			print anchor (
+				"code/history/{$project->id}/{$xpar}{$revreq}",
+				htmlspecialchars($exps[$i]));
+		}
+	?>
+	</div>
+
+	<div class="actions"></div>
+	<div style="clear: both;"></div>
 </div>
 
 <div class="menu" id="code_history_mainarea_menu">
