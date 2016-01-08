@@ -799,7 +799,7 @@ $history = $file['history'];
 		print "<div id='code_revision_mainarea_review_comment_title_{$i}' class='review_comment_title'>\n";
 		printf (" <span class='review_comment_title_no'>%d</span>", $rc->sno);
 		printf (" <span class='review_comment_title_updatedby'>%s</span>", $rc->updatedby);
-		printf (" <span class='review_comment_title_updatedon'>%s</span>", $rc->updatedon);
+		printf (" <span class='review_comment_title_updatedon'>%s</span>", codepot_dbdatetodispdate($rc->updatedon));
 		
 		if ($login['id'] == $rc->updatedby)
 		{

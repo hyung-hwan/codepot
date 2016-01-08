@@ -170,6 +170,10 @@ CREATE TABLE "cpot_file_list" (
 	"encname"     VARCHAR(255)  NOT NULL,
 	"md5sum"      CHAR(32)      NOT NULL,
 	"description" CLOB          NOT NULL,
+	"createdon"   TIMESTAMP      NOT NULL,
+	"updatedon"   TIMESTAMP      NOT NULL, 
+	"createdby"   VARCHAR(32)    NOT NULL,
+	"updatedby"   VARCHAR(32)    NOT NULL,
 	UNIQUE ("projectid", "filename"),
 	UNIQUE ("encname"),
 	CONSTRAINT file_list_projectid FOREIGN KEY ("projectid","name") REFERENCES "cpot_file"("projectid","name")

@@ -466,10 +466,10 @@ $this->load->view (
 <div class="collapsible-box-header">
 </div>
 <ul class="collapsible-box-list">
-<li><?php print $this->lang->line('Created on')?> <?php print $project->createdon?></li>
-<li><?php print $this->lang->line('Created by')?> <?php print $project->createdby?></li>
-<li><?php print $this->lang->line('Last updated on')?> <?php print $project->updatedon?></li>
-<li><?php print $this->lang->line('Last updated by')?> <?php print $project->updatedby?></li>
+<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($project->createdon);?></li>
+<li><?php print $this->lang->line('Created by')?> <?php print htmlspecialchars($project->createdby);?></li>
+<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($project->updatedon);?></li>
+<li><?php print $this->lang->line('Last updated by')?> <?php print htmlspecialchars($project->updatedby);?></li>
 </ul>
 </div>
 </div> --> <!-- graph_main_sidebar -->

@@ -100,7 +100,7 @@ class WikiModel extends Model
 		// TODO: check if userid can do this..
 		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
-		$now = date('Y-m-d H:i:s');
+		$now = codepot_nowtodbdate();
 
 		$this->db->set ('projectid', $wiki->projectid);
 		$this->db->set ('name', $wiki->name);
@@ -167,7 +167,7 @@ class WikiModel extends Model
 		// TODO: check if userid can do this..
 		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
-		$now = date('Y-m-d H:i:s');
+		$now = codepot_nowtodbdate();
 
 		if (!is_null($new_wiki_name) && $wiki->name != $new_wiki_name)
 		{
@@ -293,7 +293,7 @@ class WikiModel extends Model
 		$this->db->where ('name', $wiki->name);
 		$this->db->delete ('wiki');
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'wiki');
 		$this->db->set ('action',    'delete');
 		$this->db->set ('projectid', $wiki->projectid);

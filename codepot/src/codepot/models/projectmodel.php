@@ -146,9 +146,9 @@ class ProjectModel extends Model
 		$this->db->set ('description', $project->description);
 		$this->db->set ('commitable', $project->commitable);
 		$this->db->set ('public', $project->public);
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('createdby', $userid);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('project');
 
@@ -173,7 +173,7 @@ class ProjectModel extends Model
 			$this->db->insert ('project_membership');
 		}
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'project');
 		$this->db->set ('action',    'create');
 		$this->db->set ('projectid', $project->id);
@@ -262,7 +262,7 @@ class ProjectModel extends Model
 		$this->db->set ('description', $project->description);
 		$this->db->set ('commitable', $project->commitable);
 		$this->db->set ('public', $project->public);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('project');
 
@@ -288,7 +288,7 @@ class ProjectModel extends Model
 			$this->db->insert ('project_membership');
 		}
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'project');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $project->id);
@@ -356,7 +356,7 @@ class ProjectModel extends Model
 		$this->db->where ('id', $project->id);
 		$this->db->delete ('project');
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'project');
 		$this->db->set ('action',    'delete');
 		$this->db->set ('projectid', $project->id);

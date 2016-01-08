@@ -67,9 +67,9 @@ class SiteModel extends Model
 		$this->db->set ('name', $site->name);
 		$this->db->set ('summary', $site->summary);
 		$this->db->set ('text', $site->text);
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('createdby', $userid);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('site');
 
@@ -93,7 +93,7 @@ class SiteModel extends Model
 		$this->db->set ('name', $site->name);
 		$this->db->set ('summary', $site->summary);
 		$this->db->set ('text', $site->text);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('site');
 

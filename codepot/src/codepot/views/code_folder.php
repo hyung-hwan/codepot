@@ -987,7 +987,7 @@ $this->load->view (
 				print htmlspecialchars($f['last_author']);
 				print '</td>';
 				print '<td><code>';
-				print date('Y-m-d', $f['time_t']);
+				print strftime('%Y-%m-%d', $f['time_t']);
 				print '</code></td>';
 				print '<td></td>';
 				print '<td></td>';
@@ -1023,8 +1023,7 @@ $this->load->view (
 				print htmlspecialchars($f['last_author']);
 				print '</td>';
 				print '<td><code>';
-				//print date('r', $f['time_t']);
-				print date('Y-m-d', $f['time_t']);
+				print strftime('%Y-%m-%d', $f['time_t']);
 				print '</code></td>';
 
 				print '<td>';

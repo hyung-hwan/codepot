@@ -59,26 +59,8 @@ function render_wiki()
 }
 
 $(function () {
-	if ($("#wiki_show_mainarea_result_info").is(":visible"))
-		btn_label = "<?php print $this->lang->line('Hide metadata')?>";
-	else
-		btn_label = "<?php print $this->lang->line('Show metadata')?>";
-
-	btn = $("#wiki_show_mainarea_metadata_button").button({"label": btn_label}).click (function () {
-		
-		if ($("#wiki_show_mainarea_result_info").is(":visible"))
-		{
-			$("#wiki_show_mainarea_result_info").hide("blind",{},200);
-			$("#wiki_show_mainarea_metadata_button").button(
-				"option", "label", "<?php print $this->lang->line('Show metadata')?>");
-		}
-		else
-		{
-			$("#wiki_show_mainarea_result_info").show("blind",{},200);
-			$("#wiki_show_mainarea_metadata_button").button(
-				"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
-		}
-		return false;
+	$('#wiki_show_mainarea_metadata').accordion({
+		collapsible: true
 	});
 
 	render_wiki ();
@@ -121,13 +103,50 @@ $this->load->view (
 
 <div class="mainarea" id="wiki_show_mainarea">
 
-<div class="title"><?php print htmlspecialchars($wiki->name)?></div>
+<div class="title-band" id="wiki_show_mainarea_title_band">
+	<div class="title"><?php print htmlspecialchars($wiki->name)?></div>
 
-<div class="infostrip" id="wiki_show_mainarea_infostrip">
-	<a id="wiki_show_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
+	<div class="actions">
+	</div>
+
+	<div style='clear: both'></div>
 </div>
 
 <div id="wiki_show_mainarea_result" class="result">
+
+<div id='wiki_show_mainarea_metadata' class='collapsible-box'>
+	<div id='wiki_show_mainarea_metadata_header' class='collapsible-box-header'><?php print $this->lang->line('Metadata')?></div>
+	<div id='wiki_show_mainarea_metadata_body'>
+
+		<div id='wiki_show_mainarea_metadata_list_div'>
+			<ul id='wiki_show_mainarea_metadata_list'>
+			<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($wiki->createdon); ?></li>
+			<li><?php print $this->lang->line('Created by')?> <?php print htmlspecialchars($wiki->createdby); ?></li>
+			<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($wiki->updatedon); ?></li>
+			<li><?php print $this->lang->line('Last updated by')?> <?php print htmlspecialchars($wiki->updatedby); ?></li>
+			</ul>
+		</div>
+
+		<div id='wiki_show_mainarea_attachment_list_div'>
+			<ul id='wiki_show_mainarea_attachment_list'>
+			<?php
+				foreach ($wiki->attachments as $att)
+				{
+					$hexattname = $this->converter->AsciiToHex ($att->name);
+					print '<li>';
+					print anchor (
+						"wiki/attachment/{$project->id}/{$hexname}/{$hexattname}", 
+						htmlspecialchars($att->name)
+					);
+					print '</li>';
+				}
+			?>
+			</ul>
+		</div>
+
+		<div style='clear: both;'></div>
+	</div>
+</div>
 
 
 <div class="result" id="wiki_show_mainarea_wiki">
@@ -135,36 +154,6 @@ $this->load->view (
 <?php print htmlspecialchars($wiki->text); ?>
 </pre>
 </div> <!-- wiki_show_mainarea_wiki -->
-
-
-<div id="wiki_show_mainarea_result_info" class="infobox"> 
-
-<ul>
-<li><?php print $this->lang->line('Created on')?> <?php print  $wiki->createdon ?></li>
-<li><?php print $this->lang->line('Created by')?> <?php print  $wiki->createdby ?></li>
-<li><?php print $this->lang->line('Last updated on')?> <?php print  $wiki->updatedon ?></li>
-<li><?php print $this->lang->line('Last updated by')?> <?php print  $wiki->updatedby ?></li>
-</ul>
-
-<?php if (!empty($wiki->attachments)): ?>
-	<div class="title"><?php print  $this->lang->line('WIKI_ATTACHMENTS') ?></div>
-	<ul>
-	<?php
-		foreach ($wiki->attachments as $att)
-		{
-			$hexattname = $this->converter->AsciiToHex ($att->name);
-			print '<li>';
-			print anchor (
-				"wiki/attachment/{$project->id}/{$hexname}/{$hexattname}", 
-				htmlspecialchars($att->name)
-			);
-			print '</li>';
-		}
-	?>
-	</ul>
-<?php endif; ?>
-
-</div> <!-- wiki_show_mainarea_result_info -->
 
 </div> <!-- wiki_show_mainarea_result -->
 

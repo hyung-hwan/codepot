@@ -7,6 +7,8 @@
 }
 
 #wiki_show_mainarea_wiki {
+	margin-top: 0.5em;
+
 	-moz-column-rule: 1px dotted grey;
 	-webkit-column-rule: 1px dotted grey;
 	column-rule: 1px dotted grey;
@@ -14,6 +16,37 @@
 	-moz-column-gap: 2em;
 	-webkit-column-gap: 2em;
 	column-gap: 2em;
+}
+
+#wiki_show_mainarea_metadata_body {
+	background-color: #FCFCFC;
+}
+
+#wiki_show_mainarea_metadata_body ul {
+	padding: 0em 0.5em 0em 0.5em;
+	margin: 0;
+}
+#wiki_show_mainarea_metadata_list_div {
+	float: left;
+}
+#wiki_show_mainarea_attachment_list_div {
+	margin-left: 2em;
+	float: left;
+}
+
+#wiki_show_mainarea_attachment_list {
+}
+
+#wiki_show_mainarea_attachment_list a,
+#wiki_show_mainarea_attachment_list a:visited,
+#wiki_show_mainarea_attachment_list a:focus {
+	text-decoration: none;
+	color: #111111;
+}
+
+#wiki_show_mainarea_attachment_list a:hover {
+	background-color: #1C94C4;
+	color: #FFFFFF;
 }
 
 /*---------------------------------------------

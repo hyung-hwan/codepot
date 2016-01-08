@@ -225,6 +225,11 @@ CREATE TABLE file_list (
 	md5sum      CHAR(32)      NOT NULL,
 	description VARCHAR(255)  NOT NULL,
 
+	createdon  TIMESTAMP      NOT NULL,
+	updatedon  TIMESTAMP      NOT NULL, 
+	createdby  VARCHAR(32)    NOT NULL,
+	updatedby  VARCHAR(32)    NOT NULL,
+
 	UNIQUE (projectid, filename),
 	UNIQUE (encname),
 

@@ -1,13 +1,102 @@
+li.issue-type-defect {
+	background-color: #D9534F;
+	color: #FFFFFF;
+}
+
+li.issue-type-request {
+	background-color: #44AD8E;
+	color: #FFFFFF;
+}
+
+li.issue-type-other {
+	background-color: #4E8BCA;
+	color: #FFFFFF;
+}
+
+
+li.issue-status-new {
+	background-color: #44AD8E;
+	color: #FFFFFF;
+}
+
+li.issue-status-accepted {
+	background-color: #44AD8E;
+	color: #FFFFFF;
+}
+
+li.issue-status-rejected {
+	background-color: #AD448E;
+	color: #FFFFFF;
+}
+
+li.issue-status-started {
+	background-color: #44ADAD;
+	color: #FFFFFF;
+}
+
+li.issue-status-stalled {
+	background-color: #ADAD8E;
+	color: #FFFFFF;
+}
+
+li.issue-status-testing {
+	background-color: #44ADBB;
+	color: #FFFFFF;
+}
+
+li.issue-status-resolved {
+	background-color: #34AD56;
+	color: #FFFFFF;
+}
+
+li.issue-status-worked-around {
+	background-color: #65AD67;
+	color: #FFFFFF;
+}
+
+li.issue-status-other {
+	background-color: #888888;
+	color: #FFFFFF;
+}
+
+li.issue-type-other {
+	background-color: #4E8BCA;
+	color: #FFFFFF;
+}
+
+li.issue-priority-critical {
+	background-color: #D9534F;
+	color: #FFFFFF;
+}
+
+li.issue-priority-high {
+	background-color: #B9534F;
+	color: #FFFFFF;
+}
+
+li.issue-priority-medium {
+	background-color: #99534F;
+	color: #FFFFFF;
+}
+
+li.issue-priority-low {
+	background-color: #EEE39E;
+	color: #FFFFFF;
+}
+
+li.issue-priority-other {
+	background-color: #FFF39E;
+}
+
+li.issue-owner {
+	background-color: #FFF39E;
+}
 
 /*---------------------------------------------
  * issue home
  *---------------------------------------------*/
 #issue_home_mainarea_result {
 	overflow: auto;
-}
-
-#issue_home_mainarea_result_table {
-	margin-top: 1em;
 }
 
 #issue_home_mainarea_result_table tr {
@@ -82,6 +171,23 @@
 /*---------------------------------------------
  * issue show
  *---------------------------------------------*/
+#issue_show_mainarea_state_body {
+	background-color: #FCFCFC;
+	padding: 1em 1em;
+}
+
+#issue_show_mainarea_state_body ul {
+	padding: 0;
+	margin: 0;
+	list-style: outside none none;
+}
+
+#issue_show_mainarea_state_body ul li {
+	padding: 0.2em 0.2em 0.2em 0.2em;
+	margin: 0 0.2em 0 0.2em;
+	float: left;
+}
+
 #issue_show_mainarea_change_form {
 }
 

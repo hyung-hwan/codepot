@@ -258,9 +258,11 @@ $this->load->view (
 <!-- ============================================================ -->
 
 <div class="mainarea" id="file_home_mainarea">
-<div class="title"><?php print $this->lang->line('Files')?></div>
 
-<div class="infostrip">
+<div class="title-band" id="file_home_mainarea_title_band">
+	<div class="title"><?php print $this->lang->line('Files')?></div>
+
+	<div class="actions">
 	<?php 
 	$total_file_count = 0;
 	foreach ($files as $f) $total_file_count += count($f->file_list);
@@ -271,7 +273,9 @@ $this->load->view (
 	| 
 	<a id="file_home_mainarea_new_button" href='#'><?php print $this->lang->line('New')?></a>
 	<?php endif; ?>
+	</div>
 
+	<div style='clear: both'></div>
 </div>
 
 <div class="result" id="file_home_mainarea_result">

@@ -208,6 +208,11 @@ var original_file_desc = [
 ];
 
 $(function () { 
+
+	$('#issue_show_mainarea_state').accordion({
+		collapsible: true
+	});
+
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 	$('#issue_show_mainarea_edit_description_tabs').tabs ();
 	$('#issue_show_mainarea_edit_description_tabs').bind ('tabsshow', function (event, ui) {
@@ -706,46 +711,17 @@ $this->load->view (
 
 
 <div class="mainarea" id="issue_show_mainarea">
-<div class="title">
-	<?php print $this->lang->line('Issue')?> <?php print htmlspecialchars($issue->id)?>: 
-	<?php print htmlspecialchars($issue->summary)?>
-</div>
 
-<div class="infostrip" id="issue_show_mainarea_infostrip">
+
+<div class="title-band" id="issue_show_mainarea_title_band">
+	<div class="title">
+		<?php print $this->lang->line('Issue')?> <?php print htmlspecialchars($issue->id)?>: 
+		<?php print htmlspecialchars($issue->summary)?>
+	</div>
+	<div class="actions">
 	<?php
-		print $this->lang->line('Type');
-		print ': '; 
-		print htmlspecialchars(
-			array_key_exists($issue->type, $issue_type_array)? 
-				$issue_type_array[$issue->type]: $issue->type
-		);
-		print ' | ';
-
-		print $this->lang->line('Status');
-		print ': '; 
-		print htmlspecialchars(
-			array_key_exists($issue->status, $issue_status_array)? 
-				$issue_status_array[$issue->status]: $issue->status
-		);
-		print ' | ';
-
-		print $this->lang->line('Priority');
-		print ': '; 
-		print htmlspecialchars(
-			array_key_exists($issue->priority, $issue_priority_array)? 
-				$issue_priority_array[$issue->priority]: $issue->priority
-		);
-		if ($issue->owner != '')
-		{
-			print ' | ';
-			print $this->lang->line('Owner');
-			print ': '; 
-			print htmlspecialchars($issue->owner);
-		}
-
 		if (isset($login['id']) && $login['id'] != '')
 		{
-			print ' | ';
 			print '<a id="issue_show_mainarea_edit_button" href="#">';
 			print $this->lang->line('Edit');
 			print '</a>';
@@ -754,7 +730,56 @@ $this->load->view (
 			print '</a>';
 		}
 	?>
+	</div>
+	<div style='clear: both;'></div>
 </div>
+
+<div id='issue_show_mainarea_state' class='collapsible-box'>
+	<div id='issue_show_mainarea_state_header' class='collapsible-box-header'><?php print $this->lang->line('State')?></div>
+	<div id='issue_show_mainarea_state_body'>
+	<ul>
+	<?php
+
+		$type = array_key_exists($issue->type, $issue_type_array)? 
+			$issue_type_array[$issue->type]: $issue->type;
+
+		$status = array_key_exists($issue->status, $issue_status_array)? 
+				$issue_status_array[$issue->status]: $issue->status;
+
+		$priority = array_key_exists($issue->priority, $issue_priority_array)? 
+				$issue_priority_array[$issue->priority]: $issue->priority;
+
+		printf ('<li class="issue-type-%s">', $issue->type);
+		print $this->lang->line('Type');
+		print ': '; 
+		print htmlspecialchars($type);
+		print '</li>';
+
+		printf ('<li class="issue-status-%s">', $issue->status);
+		print $this->lang->line('Status');
+		print ': '; 
+		print htmlspecialchars($status);
+		print '</li>';
+
+		printf ('<li class="issue-priority-%s">', $issue->priority);
+		print $this->lang->line('Priority');
+		print ': '; 
+		print htmlspecialchars($priority);
+		print '</li>';
+
+		print '<li class="issue-owner">';
+		if ($issue->owner != '')
+		{
+			print $this->lang->line('Owner');
+			print ': '; 
+			print htmlspecialchars($issue->owner);
+			print '</li>';
+		}
+	?>
+	</ul>
+	</div>
+</div>
+
 
 <div id="issue_show_mainarea_description">
 <pre id="issue_show_mainarea_description_pre" style="visibility: hidden">
@@ -829,7 +854,7 @@ $this->load->view (
 		print '<tr>';
 		
 		print '<td class="date">'; 
-		print date ('Y-m-d H:i:s', strtotime($new->updatedon));
+		print codepot_dbdatetodispdate($new->updatedon);
 		print '</td>';
 
 		print '<td class="updater">'; 
@@ -909,7 +934,7 @@ $this->load->view (
 
 	print '<tr>';
 	print '<td class="date">'; 
-	print date ('Y-m-d H:i:s', strtotime($issue->createdon));
+	print codepot_dbdatetodispdate($issue->createdon);
 	print '</td>';
 
 	print '<td class="updater">'; 

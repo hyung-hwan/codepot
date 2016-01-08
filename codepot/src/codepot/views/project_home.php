@@ -107,9 +107,9 @@ $this->load->view (
 <div id="project_home_sidebar_info_box" class="collapsible-box">
 <div id="project_home_sidebar_info_header" class="collapsible-box-header"><?php print $this->lang->line('Summary')?></div>
 <ul id="project_home_sidebar_info_list" class="collapsible-box-list">
-<li><?php print $this->lang->line('Created on')?> <?php print $project->createdon?></li>
-<li><?php print $this->lang->line('Created by')?> <?php print $project->createdby?></li>
-<li><?php print $this->lang->line('Last updated on')?> <?php print $project->updatedon?></li>
+<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($project->createdon);?></li>
+<li><?php print $this->lang->line('Created by')?> <?php print $project->createdby;?></li>
+<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($project->updatedon);?></li>
 <li><?php print $this->lang->line('Last updated by')?> <?php print $project->updatedby?></li>
 </ul>
 </div>
@@ -191,14 +191,18 @@ foreach ($urls as $url)
 		$xdot = $this->converter->AsciiToHex ('.');
 		foreach ($log_entries as $log)
 		{
+			if (CODEPOT_DATABASE_STORE_GMT)
+				$createdon = $log['createdon'] . ' +0000';
+			else
+				$createdon = $log['createdon'];
+			
 			if ($log['type'] == 'code')
 			{
 				$x = $log['message'];
-
 				print '<tr class="odd">';
 				print '<td class="date">';
-				//print substr($x['time'], 5, 5);
-				print date ('m-d', strtotime($log['createdon']));
+				
+				print strftime ('%m-%d', strtotime($createdon));
 				print '</td>';
 				print '<td class="object">';
 				print anchor (	
@@ -240,7 +244,7 @@ foreach ($urls as $url)
 			{
 				print '<tr class="odd">';
 				print '<td class="date">';
-				print date ('m-d', strtotime($log['createdon']));
+				print strftime ('%m-%d', strtotime($createdon));
 				print '</td>';
 
 				print '<td class="object">';
