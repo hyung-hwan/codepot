@@ -41,7 +41,7 @@ class FileModel extends Model
 
 			$this->db->where ('projectid', $project->id);
 			$this->db->where ('name', $file->name);
-			$this->db->select ('filename,encname,md5sum,description');
+			$this->db->select ('filename,encname,md5sum,description,createdon,createdby');
 			$query = $this->db->get('file_list');
 			if ($this->db->trans_status() === FALSE) 
 			{
@@ -90,7 +90,7 @@ class FileModel extends Model
 		{
 			$this->db->where ('projectid', $project->id);
 			$this->db->where ('name', $f->name);
-			$this->db->select ('filename,encname,md5sum,description');
+			$this->db->select ('filename,encname,md5sum,description,createdon,createdby');
 			$query = $this->db->get('file_list');
 			if ($this->db->trans_status() === FALSE) 
 			{
@@ -116,13 +116,13 @@ class FileModel extends Model
 		$this->db->set ('tag', $file->tag);
 		$this->db->set ('md5sum', $file->md5sum);
 		$this->db->set ('description', $file->description);
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('createdby', $userid);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('file');
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'file');
 		$this->db->set ('action',    'create');
 		$this->db->set ('projectid', $file->projectid);
@@ -144,7 +144,7 @@ class FileModel extends Model
 		$this->db->set ('name', $file->name);
 		$this->db->set ('tag', $file->tag);
 		$this->db->set ('description', $file->description);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('file');
 		// file_list gets updated for the schema itself (reference/trigger)
@@ -158,13 +158,13 @@ class FileModel extends Model
 		$this->db->set ('f.name', $file->name);
 		$this->db->set ('f.tag', $file->tag);
 		$this->db->set ('f.description', $file->description);
-		$this->db->set ('f.updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('f.updatedon', codepot_nowtodbdate());
 		$this->db->set ('f.updatedby', $userid);
 		$this->db->set ('fl.name', $file->name);
 		$this->db->update ('file as f, file_list as fl');
 		*/
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'file');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $projectid);
@@ -226,7 +226,7 @@ class FileModel extends Model
 			return FALSE;
 		}
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'file');
 		$this->db->set ('action',    'delete');
 		$this->db->set ('projectid', $projectid);
@@ -287,9 +287,9 @@ class FileModel extends Model
 		$this->db->set ('name', $name);
 		$this->db->set ('tag', $tag);
 		$this->db->set ('description', $description);
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('createdby', $userid);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('file');
 		if ($this->db->trans_status() === FALSE)
@@ -335,9 +335,10 @@ class FileModel extends Model
 			$this->db->set ('name', $name);
 			$this->db->set ('filename', $f['name']);
 			$this->db->set ('encname', $ud['file_name']);
-
 			$this->db->set ('md5sum', $md5sum);
 			$this->db->set ('description', $f['desc']);
+			$this->db->set ('createdby', $userid);
+			$this->db->set ('createdon', codepot_nowtodbdate());
 			$this->db->insert ('file_list');
 			if ($this->db->trans_status() === FALSE)
 			{
@@ -348,7 +349,7 @@ class FileModel extends Model
 			}
 		}
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'file');
 		$this->db->set ('action',    'create');
 		$this->db->set ('projectid', $projectid);
@@ -417,9 +418,10 @@ class FileModel extends Model
 			$this->db->set ('name', $name);
 			$this->db->set ('filename', $f['name']);
 			$this->db->set ('encname', $ud['file_name']);
-
 			$this->db->set ('md5sum', $md5sum);
 			$this->db->set ('description', $f['desc']);
+			$this->db->set ('createdby', $userid);
+			$this->db->set ('createdon', codepot_nowtodbdate());
 			$this->db->insert ('file_list');
 			if ($this->db->trans_status() === FALSE)
 			{
@@ -430,7 +432,7 @@ class FileModel extends Model
 			}
 		}
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'file');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $projectid);
@@ -510,6 +512,8 @@ class FileModel extends Model
 				$this->db->where ('name', $name);
 				$this->db->where ('filename', $f['name']);
 				$this->db->set ('description', $f['desc']);
+				$this->db->set ('updatedby', $userid);
+				$this->db->set ('updatedon', codepot_nowtodbdate());
 				$this->db->update ('file_list');
 				if ($this->db->trans_status() === FALSE)
 				{
@@ -520,7 +524,7 @@ class FileModel extends Model
 			}
 		}
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'file');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $projectid);

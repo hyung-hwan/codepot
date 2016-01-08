@@ -147,14 +147,18 @@ foreach ($latest_projects as $project)
 	$xdot = $this->converter->AsciiToHex ('.');
 	foreach ($log_entries as $log)
 	{
+		if (CODEPOT_DATABASE_STORE_GMT)
+			$createdon = $log['createdon'] . ' +0000';
+		else
+			$createdon = $log['createdon'];
+
 		if ($log['type'] == 'code')
 		{
 			$x = $log['message'];
 
 			print '<tr class="odd">';
 			print '<td class="date">';
-			//print substr($x['time'], 5, 5);
-			print date ('m-d', strtotime($log['createdon']));
+			print strftime ('%m-%d', strtotime($createdon));
 			print '</td>';
 			print '<td class="projectid">';
 			/*
@@ -212,7 +216,7 @@ foreach ($latest_projects as $project)
 		{
 			print '<tr class="odd">';
 			print '<td class="date">';
-			print date ('m-d', strtotime($log['createdon']));
+			print strftime ('%m-%d', strtotime($createdon));
 			print '</td>';
 
 			print '<td class="project">';

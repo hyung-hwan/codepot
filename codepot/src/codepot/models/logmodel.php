@@ -159,7 +159,7 @@ class LogModel extends Model
 		$this->db->set ('action', $log->action);
 		$this->db->set ('projectid', $log->projectid);
 		$this->db->set ('message', $log->message);
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('userid', $log->userid);
 		$this->db->insert ('log');
 
@@ -200,8 +200,7 @@ class LogModel extends Model
 
 		$now = time();
 		$one_month_ago = $now - (24 * 60 * 60 * 30);
-		$this->db->where ('createdon <=', 
-			date ("Y-m-d H:i:s", $one_month_ago));
+		$this->db->where ('createdon <=', codepot_unixtimetodate($one_month_ago));
 		$this->db->delete ('log');
 
 		if ($this->db->trans_status() === FALSE)

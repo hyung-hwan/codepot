@@ -143,8 +143,7 @@ $this->load->view (
 		print '</td>';
 
 		print '<td class="commit-date-td"><code>';
-		//print date('r', strtotime($h['date']));
-		print date('Y-m-d', strtotime($h['date']));
+		print strftime('%Y-%m-%d', strtotime($h['date']));
 		print '</code></td>';
 
 		print '<td class="commit-message-td">';

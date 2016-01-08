@@ -59,8 +59,8 @@ class CodeReviewModel extends Model
 		$this->db->set ('rev', $revision);
 		$this->db->set ('sno', $newsno);
 		$this->db->set ('comment', $comment);
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('createdby', $userid);
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('code_review');
@@ -70,7 +70,7 @@ class CodeReviewModel extends Model
 			$this->db->trans_rollback ();
 			return FALSE;
 		}
-		/*$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		/*$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'code_review');
 		$this->db->set ('action',    'insert');
 		$this->db->set ('projectid', $projectid);
@@ -98,7 +98,7 @@ class CodeReviewModel extends Model
 		$this->db->where ('sno', $sno);
 		if ($strict) $this->db->where ('updatedby', $userid);
 		$this->db->set ('comment', $comment);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('code_review');
 		if ($this->db->trans_status() === FALSE) 
@@ -108,7 +108,7 @@ class CodeReviewModel extends Model
 			return FALSE;
 		}
 
-		/*$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		/*$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'code_review');
 		$this->db->set ('action',    'insert');
 		$this->db->set ('projectid', $projectid);
@@ -142,7 +142,7 @@ class CodeReviewModel extends Model
 			return FALSE;
 		}
 
-		/*$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		/*$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'delete');
 		$this->db->set ('projectid', $projectid);

@@ -375,7 +375,7 @@ textarea {
 }
 
 .content .mainarea .result {
-	min-height: 30em;
+	/*min-height: 30em;*/
 	overflow: auto;
 }
 
@@ -706,6 +706,7 @@ textarea {
 	.prettyprint .fun { color: #4271ae; }
 }
 
+
 .content .infostrip {
 	font-size: 0.9em;
 
@@ -723,6 +724,31 @@ textarea {
 
 .content .infostrip a {
 	text-decoration: none;
+}
+
+.content .title-band {
+	font-size: 0.9em;
+
+	background: #F0F0F0 none repeat scroll 0 0;
+	/*border: #D4DBE8 1px solid; */
+
+	margin: 0.3em 0em 0.5em 0em;
+	padding: 1em 0.5em 1em 0.5em;
+	text-align: right;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.content .title-band a {
+	text-decoration: none;
+}
+
+.content .title-band .title {
+	float: left;
+	text-transform: uppercase;
+	font-weight: bold;
 }
 
 .content .sidebar {

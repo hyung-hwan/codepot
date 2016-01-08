@@ -28,6 +28,50 @@ if ( ! function_exists('codepot_merge_path'))
 	}
 }
 
+if ( ! function_exists('codepot_nowtodbdate'))
+{
+	function codepot_nowtodbdate()
+	{
+		if (CODEPOT_DATABASE_STORE_GMT)
+		{
+			return gmstrftime('%Y-%m-%d %H:%M:%S');
+		}
+		else
+		{
+			return gmstrftime('%Y-%m-%d %H:%M:%S');
+		}
+	}
+}
+
+if ( ! function_exists('codepot_unixtimetodbdate'))
+{
+	function codepot_unixtimetodbdate($unixtime)
+	{
+		if (CODEPOT_DATABASE_STORE_GMT)
+		{
+			return gmstrftime('%Y-%m-%d %H:%M:%S', $unixtime);
+		}
+		else
+		{
+			return gmstrftime('%Y-%m-%d %H:%M:%S', $unixtime);
+		}
+	}
+}
+
+if ( ! function_exists('codepot_dbdatetodispdate'))
+{
+	function codepot_dbdatetodispdate($dbdate)
+	{
+		if (CODEPOT_DATABASE_STORE_GMT)
+		{
+			return strftime('%Y-%m-%d %H:%M:%S %z', strtotime($dbdate . ' +0000'));
+		}
+		else
+		{
+			return strftime('%Y-%m-%d %H:%M:%S %z', strtotime($dbdate));
+		}
+	}
+}
 
 if ( !function_exists ('codepot_json_encode'))
 {
