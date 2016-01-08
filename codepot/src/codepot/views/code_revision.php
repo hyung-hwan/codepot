@@ -555,68 +555,46 @@ $this->load->view (
 $history = $file['history'];
 ?>
 
-<div class="title" id="code_revision_mainarea_title">
-<?php
-	print anchor (
-		"code/revision/{$project->id}{$revreqroot}",
-		htmlspecialchars($project->name));
-
-	$exps = explode ('/', $headpath);
-	$expsize = count($exps);
-	$par = '';
-	for ($i = 1; $i < $expsize; $i++)
-	{
-		$par .= '/' . $exps[$i];
-		$xpar = $this->converter->AsciiToHex ($par);
-
-		print '/';
-		print anchor (
-			"code/revision/{$project->id}/{$xpar}{$revreq}",
-			htmlspecialchars($exps[$i]));
-	}
-
-	if ($headpath != $file['fullpath'])
-	{
-		// this comparsion doesn't work well for a file.
-		// $file['fullpath'] for a file doesn't include the directory.
-		// is this a bug of peclsvn? never mind. it's ok to show the file name again.
-		//
-		// [created_rev] => 322
-    		// [name] => subversionmodel.php
-    		// [type] => file
-    		// [fullpath] => subversionmodel.php
-
-		print ' - ';
-		print htmlspecialchars($file['fullpath']);
-	}
-?>
-</div>
-
-<div class="menu" id="code_revision_mainarea_menu">
-<?php
-	$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
-
-	if ($revision > 0 && $revision < $next_revision)
-	{
-		print anchor ("code/revision/{$project->id}/{$hex_headpath}", $this->lang->line('Head revision'));
-		print ' | ';
-	}
-
-	if ($revision > 0)
-	{
-		if ($hex_headpath == '') $revtrailer = $revreqroot;
-		else $revtrailer = "/{$hex_headpath}{$revreq}";
-		print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
-	}
-	else
-	{
-		print anchor ("code/history/{$project->id}/{$hex_headpath}", $history_anchor_text);
-	}
-?>
-</div> <!-- code_revision_mainarea_menu -->
-
-<div class="infostrip" id="code_revision_mainarea_infostrip">
+<div class="title-band" id="code_revision_mainarea_title_band">
+	<div class="title" id="code_revision_mainarea_title">
 	<?php
+		print anchor (
+			"code/revision/{$project->id}{$revreqroot}",
+			htmlspecialchars($project->name));
+
+		$exps = explode ('/', $headpath);
+		$expsize = count($exps);
+		$par = '';
+		for ($i = 1; $i < $expsize; $i++)
+		{
+			$par .= '/' . $exps[$i];
+			$xpar = $this->converter->AsciiToHex ($par);
+
+			print '/';
+			print anchor (
+				"code/revision/{$project->id}/{$xpar}{$revreq}",
+				htmlspecialchars($exps[$i]));
+		}
+
+		if ($headpath != $file['fullpath'])
+		{
+			// this comparsion doesn't work well for a file.
+			// $file['fullpath'] for a file doesn't include the directory.
+			// is this a bug of peclsvn? never mind. it's ok to show the file name again.
+			//
+			// [created_rev] => 322
+			// [name] => subversionmodel.php
+			// [type] => file
+			// [fullpath] => subversionmodel.php
+
+			print ' - ';
+			print htmlspecialchars($file['fullpath']);
+		}
+	?>
+	</div>
+
+	<div class="actions">
+		<?php
 		print anchor ("code/revision/{$project->id}/${hex_headpath}/{$prev_revision}", '<i class="fa fa-arrow-circle-left"></i>');
 		print ' ';
 
@@ -645,9 +623,34 @@ $history = $file['history'];
 		print ' | ';
 
 		printf ('%s: %s',  $this->lang->line('Last updated on'), date('r', strtotime($history['date'])));
-	?>
+		?>
+	</div>
+
+	<div style="clear: both;"></div>
 </div>
 
+<div class="menu" id="code_revision_mainarea_menu">
+<?php
+	$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
+
+	if ($revision > 0 && $revision < $next_revision)
+	{
+		print anchor ("code/revision/{$project->id}/{$hex_headpath}", $this->lang->line('Head revision'));
+		print ' | ';
+	}
+
+	if ($revision > 0)
+	{
+		if ($hex_headpath == '') $revtrailer = $revreqroot;
+		else $revtrailer = "/{$hex_headpath}{$revreq}";
+		print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
+	}
+	else
+	{
+		print anchor ("code/history/{$project->id}/{$hex_headpath}", $history_anchor_text);
+	}
+?>
+</div> <!-- code_revision_mainarea_menu -->
 
 <div class="result" id="code_revision_mainarea_result">
 
