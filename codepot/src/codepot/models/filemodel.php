@@ -339,6 +339,8 @@ class FileModel extends Model
 			$this->db->set ('description', $f['desc']);
 			$this->db->set ('createdby', $userid);
 			$this->db->set ('createdon', codepot_nowtodbdate());
+			$this->db->set ('updatedby', $userid);
+			$this->db->set ('updatedon', codepot_nowtodbdate());
 			$this->db->insert ('file_list');
 			if ($this->db->trans_status() === FALSE)
 			{
@@ -422,6 +424,8 @@ class FileModel extends Model
 			$this->db->set ('description', $f['desc']);
 			$this->db->set ('createdby', $userid);
 			$this->db->set ('createdon', codepot_nowtodbdate());
+			$this->db->set ('updatedby', $userid);
+			$this->db->set ('updatedon', codepot_nowtodbdate());
 			$this->db->insert ('file_list');
 			if ($this->db->trans_status() === FALSE)
 			{
