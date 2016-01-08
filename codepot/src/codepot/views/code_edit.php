@@ -37,17 +37,17 @@ var base_return_anchor = codepot_merge_path('<?php print site_url() ?>', '<?php 
 
 function resize_editor()
 {
-	var infostrip = $("#code_edit_mainarea_infostrip");
+	var titleband = $("#code_edit_mainarea_title_band");
 	var code = $("#code_edit_mainarea_result_code");
 	var footer = $("#codepot_footer");
 
-	var ioff = infostrip.offset();
+	var ioff = titleband.offset();
 	var foff = footer.offset();
 
-	ioff.top += infostrip.outerHeight() + 5;
+	ioff.top += titleband.outerHeight() + 5;
 	code.offset (ioff);
 	code.innerHeight (foff.top - ioff.top - 5);
-	code.innerWidth (infostrip.innerWidth());
+	code.innerWidth (titleband.innerWidth());
 }
 
 function show_alert (outputMsg, titleMsg) 
@@ -266,36 +266,36 @@ $this->load->view (
 
 <div class="mainarea" id="code_edit_mainarea">
 
-<div class="title" id="code_edit_mainarea_title">
-<?php
-	print anchor (
-		"code/${caller}/{$project->id}{$revreqroot}",
-		htmlspecialchars($project->name));
-
-	$exps = explode ('/', $headpath);
-	$expsize = count($exps);
-	$par = '';
-	for ($i = 1; $i < $expsize; $i++)
-	{
-		$par .= '/' . $exps[$i];
-		$xpar = $this->converter->AsciiToHex ($par);
-
-		print '/';
+<div class="title-band" id="code_edit_mainarea_title_band">
+	<div class="title" id="code_edit_mainarea_title">
+	<?php
 		print anchor (
-			"code/${caller}/{$project->id}/{$xpar}{$revreq}",
-			htmlspecialchars($exps[$i]));
-	}
+			"code/${caller}/{$project->id}{$revreqroot}",
+			htmlspecialchars($project->name));
 
-	if ($headpath != $file['fullpath'])
-	{
-		print ' - ';
-		print htmlspecialchars($file['fullpath']);
-	}
-?>
-</div> <!-- code_edit_mainarea_title -->
+		$exps = explode ('/', $headpath);
+		$expsize = count($exps);
+		$par = '';
+		for ($i = 1; $i < $expsize; $i++)
+		{
+			$par .= '/' . $exps[$i];
+			$xpar = $this->converter->AsciiToHex ($par);
 
-<div class="infostrip" id="code_edit_mainarea_infostrip">
+			print '/';
+			print anchor (
+				"code/${caller}/{$project->id}/{$xpar}{$revreq}",
+				htmlspecialchars($exps[$i]));
+		}
 
+		if ($headpath != $file['fullpath'])
+		{
+			print ' - ';
+			print htmlspecialchars($file['fullpath']);
+		}
+	?>
+	</div> <!-- code_edit_mainarea_title -->
+
+	<div class="actions">
 	<?php 
 		/* Saving file work on the head only. so the links here don't include the given revision anymore */
 		print '<select id="code_edit_mainarea_mode"></select>';
@@ -304,7 +304,8 @@ $this->load->view (
 		print ' ';
 		print anchor ("code/${caller}/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Return'), 'id="code_edit_mainarea_return_button"');
 	?>
-
+	</div>
+	<div style="clear: both;"></div>
 </div>
 
 <div class="result" id="code_edit_mainarea_result">
