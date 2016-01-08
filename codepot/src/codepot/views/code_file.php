@@ -382,6 +382,9 @@ if ($login['settings'] != NULL &&
 ?>
 </pre>
 
+
+</div> <!-- code_file_mainarea_result -->
+
 <div id="code_file_mainarea_loc_info" class="infobox">
 	<div class="title">LOC</div>
 	<?php
@@ -389,10 +392,7 @@ if ($login['settings'] != NULL &&
 		$graph_url = codepot_merge_path (site_url(), "/code/graph/cloc-file/{$project->id}/{$hex_headpath}{$revreq}");
 		print "<img src='{$graph_url}' id='code_file_mainarea_loc_info_locgraph' />";
 	?>
-	</div>
 </div> <!-- code_file_mainarea_loc_info -->
-
-</div> <!-- code_file_mainarea_result -->
 
 </div> <!-- code_file_mainarea -->
 
