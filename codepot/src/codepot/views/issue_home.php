@@ -313,7 +313,7 @@ $this->load->view (
 	<div class="title"><?php print $this->lang->line('Issues')?></div>
 
 	<div class="actions">
-		<?php printf ($this->lang->line('ISSUE_MSG_TOTAL_NUM_ISSUES'), $total_num_issues); ?> | 
+		<?php printf ($this->lang->line('ISSUE_MSG_TOTAL_NUM_ISSUES'), $total_num_issues); ?>
 		<?php if (isset($login['id']) && $login['id'] != ''): ?>
 		<a id="issue_home_mainarea_new_button" href='#'><?php print $this->lang->line('New')?></a>
 		<?php endif; ?>
