@@ -270,7 +270,6 @@ $this->load->view (
 	?> 
 
 	<?php if (isset($login['id']) && $login['id'] != ''): ?>
-	| 
 	<a id="file_home_mainarea_new_button" href='#'><?php print $this->lang->line('New')?></a>
 	<?php endif; ?>
 	</div>

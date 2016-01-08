@@ -28,60 +28,55 @@ $destyle_anchor_text = '<i class="fa fa-times"></i> ' . $this->lang->line('Desty
 ?>
 
 <script type="text/javascript">
-$(function () {
-	<?php
-	if ($login['settings'] != NULL && $login['settings']->code_hide_metadata == 'Y')
-		print '$("#code_file_mainarea_result_info").hide();';
-	?>
-
-	//if ($("#code_file_mainarea_result_info").is(":visible"))
-	//	btn_label = "<?php print $this->lang->line('Hide metadata')?>";
-	//else
-	//	btn_label = "<?php print $this->lang->line('Show metadata')?>";
-
-	btn = $("#code_file_mainarea_metadata_button").button().click (function () {
-		if ($("#code_file_mainarea_result_info").is(":visible"))
-		{
-			$("#code_file_mainarea_result_info").hide("blind",{},200);
-			//$("#code_file_mainarea_metadata_button").button(
-			//	"option", "label", "<?php print $this->lang->line('Show metadata')?>");
-		}
-		else
-		{
-			$("#code_file_mainarea_result_info").show("blind",{},200);
-			//$("#code_file_mainarea_metadata_button").button(
-			//	"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
-		}
-
-		return false; // prevent the default behavior
-	});
-
-	$("#code_file_mainarea_edit_button").button();
-
-	// for code rendering
-	$("#code_file_mainarea_result_raw").html ($("#code_file_mainarea_result_code").html())
-	prettyPrint ();
-});
-
 var showing_raw_code = false;
 
 function showRawCode()
 {
 	if (showing_raw_code)
 	{
-		
-		$("#code_file_style_anchor").html('<?php print $destyle_anchor_text; ?>');
+		$("#code_file_mainarea_style_button").button("option", "label", '<?php print $destyle_anchor_text; ?>');
 		$("#code_file_mainarea_result_code").removeClass("prettyprinted");
 		prettyPrint();
 	}
 	else
 	{
-		$("#code_file_style_anchor").html('<?php print $enstyle_anchor_text ?>');
+		$("#code_file_mainarea_style_button").button("option", "label", '<?php print $enstyle_anchor_text; ?>');
 		$("#code_file_mainarea_result_code").html($("#code_file_mainarea_result_raw").html());
 	}
 
 	showing_raw_code = !showing_raw_code;
 }
+
+$(function () {
+	<?php
+	if ($login['settings'] != NULL && $login['settings']->code_hide_metadata == 'Y')
+		print '$("#code_file_mainarea_result_info").hide();';
+	?>
+
+	btn = $("#code_file_mainarea_metadata_button").button().click (function () {
+		if ($("#code_file_mainarea_result_info").is(":visible"))
+		{
+			$("#code_file_mainarea_result_info").hide("blind",{},200);
+		}
+		else
+		{
+			$("#code_file_mainarea_result_info").show("blind",{},200);
+		}
+
+		return false; // prevent the default behavior
+	});
+
+	$("#code_file_mainarea_edit_button").button();
+	$("#code_file_mainarea_style_button").button({"label": '<?php print $destyle_anchor_text; ?>'}).click (function () {
+		showRawCode();
+		return false;
+	});
+
+	// for code rendering
+	$("#code_file_mainarea_result_raw").html ($("#code_file_mainarea_result_code").html())
+	prettyPrint ();
+});
+
 
 </script>
 
@@ -196,10 +191,11 @@ $this->load->view (
 			print ' ';
 			print anchor ("code/edit/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Edit'), 'id="code_file_mainarea_edit_button"');
 		}
-	?>
 
-	<a id="code_file_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
+		print anchor ("#", $this->lang->line('Enstyle'), 'id="code_file_mainarea_style_button"');
+?>
 
+		<a id="code_file_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
 	</div>
 
 	<div style="clear: both;"></div>
@@ -244,14 +240,6 @@ $this->load->view (
 
 	print ' | ';
 	print anchor ("code/fetch/{$project->id}/${xpar}{$revreq}", $download_anchor_text);
-
-	print ' | ';
-	print anchor (
-		"code/file/{$project->id}/${xpar}{$revreq}",
-		$destyle_anchor_text,
-		array('id'      => 'code_file_style_anchor', 
-		      'onClick' => 'showRawCode(); return false;')
-	);
 ?>
 </div> <!-- code_file_mainarea_menu -->
 
