@@ -34,23 +34,23 @@ $(function () {
 		print '$("#code_file_mainarea_result_info").hide();';
 	?>
 
-	if ($("#code_file_mainarea_result_info").is(":visible"))
-		btn_label = "<?php print $this->lang->line('Hide metadata')?>";
-	else
-		btn_label = "<?php print $this->lang->line('Show metadata')?>";
+	//if ($("#code_file_mainarea_result_info").is(":visible"))
+	//	btn_label = "<?php print $this->lang->line('Hide metadata')?>";
+	//else
+	//	btn_label = "<?php print $this->lang->line('Show metadata')?>";
 
-	btn = $("#code_file_mainarea_metadata_button").button({"label": btn_label}).click (function () {
+	btn = $("#code_file_mainarea_metadata_button").button().click (function () {
 		if ($("#code_file_mainarea_result_info").is(":visible"))
 		{
 			$("#code_file_mainarea_result_info").hide("blind",{},200);
-			$("#code_file_mainarea_metadata_button").button(
-				"option", "label", "<?php print $this->lang->line('Show metadata')?>");
+			//$("#code_file_mainarea_metadata_button").button(
+			//	"option", "label", "<?php print $this->lang->line('Show metadata')?>");
 		}
 		else
 		{
 			$("#code_file_mainarea_result_info").show("blind",{},200);
-			$("#code_file_mainarea_metadata_button").button(
-				"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
+			//$("#code_file_mainarea_metadata_button").button(
+			//	"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
 		}
 
 		return false; // prevent the default behavior
@@ -124,44 +124,86 @@ $this->load->view (
 
 <div class="mainarea" id="code_file_mainarea">
 
-<div class="title" id="code_file_mainarea_title">
-<?php
-	if ($revision <= 0)
-	{
-		$revreq = '';
-		$revreqroot = '';
-	}
-	else
-	{
-		$revreq = "/{$file['created_rev']}";
-		$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
-	}
+<div class="title-band" id="code_file_mainarea_title_band">
+	<div class="title" id="code_file_mainarea_title">
+	<?php
+		if ($revision <= 0)
+		{
+			$revreq = '';
+			$revreqroot = '';
+		}
+		else
+		{
+			$revreq = "/{$file['created_rev']}";
+			$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
+		}
 
-	print anchor (
-		"code/file/{$project->id}{$revreqroot}",
-		htmlspecialchars($project->name));
-
-	$exps = explode ('/', $headpath);
-	$expsize = count($exps);
-	$par = '';
-	for ($i = 1; $i < $expsize; $i++)
-	{
-		$par .= '/' . $exps[$i];
-		$xpar = $this->converter->AsciiToHex ($par);
-
-		print '/';
 		print anchor (
-			"code/file/{$project->id}/{$xpar}{$revreq}",
-			htmlspecialchars($exps[$i]));
-	}
+			"code/file/{$project->id}{$revreqroot}",
+			htmlspecialchars($project->name));
 
-	if ($headpath != $file['fullpath'])
-	{
-		print ' - ';
-		print htmlspecialchars($file['fullpath']);
-	}
-?>
-</div> <!-- code_file_mainarea_title -->
+		$exps = explode ('/', $headpath);
+		$expsize = count($exps);
+		$par = '';
+		for ($i = 1; $i < $expsize; $i++)
+		{
+			$par .= '/' . $exps[$i];
+			$xpar = $this->converter->AsciiToHex ($par);
+
+			print '/';
+			print anchor (
+				"code/file/{$project->id}/{$xpar}{$revreq}",
+				htmlspecialchars($exps[$i]));
+		}
+
+		if ($headpath != $file['fullpath'])
+		{
+			print ' - ';
+			print htmlspecialchars($file['fullpath']);
+		}
+	?>
+	</div> <!-- code_file_mainarea_title -->
+
+	<div class="actions">
+	<?php 
+		print anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<i class="fa fa-arrow-circle-left"></i>');
+		print ' ';
+
+		// anchor to the revision history at the root directory
+		print anchor (
+			//"code/revision/{$project->id}/!/{$file['created_rev']}",
+			"code/revision/{$project->id}/${xpar}/{$file['created_rev']}",
+			sprintf("%s %s", $this->lang->line('Revision'), $file['created_rev'])
+		);
+
+		if (!empty($file['created_tag']))
+		{
+			print ' ';
+			print ('<span class="left_arrow_indicator">');
+			print htmlspecialchars($file['created_tag']);
+			print ('</span>');
+		}
+
+		print ' ';
+		print anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '<i class="fa fa-arrow-circle-right"></i>');
+
+		print ' | ';
+		printf ('%s: %s', $this->lang->line('Size'), $file['size']);
+
+
+		if ((isset($login['id']) && $login['id'] != ''))
+		{
+			print ' ';
+			print anchor ("code/edit/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Edit'), 'id="code_file_mainarea_edit_button"');
+		}
+	?>
+
+	<a id="code_file_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
+
+	</div>
+
+	<div style="clear: both;"></div>
+</div>
 
 <div class="menu" id="code_file_mainarea_menu">
 <?php
@@ -213,44 +255,6 @@ $this->load->view (
 ?>
 </div> <!-- code_file_mainarea_menu -->
 
-<div class="infostrip" id="code_file_mainarea_infostrip">
-
-	<?php 
-		print anchor ("code/file/{$project->id}/${xpar}/{$file['prev_rev']}", '<i class="fa fa-arrow-circle-left"></i>');
-		print ' ';
-
-		// anchor to the revision history at the root directory
-		print anchor (
-			//"code/revision/{$project->id}/!/{$file['created_rev']}",
-			"code/revision/{$project->id}/${xpar}/{$file['created_rev']}",
-			sprintf("%s %s", $this->lang->line('Revision'), $file['created_rev'])
-		);
-
-		if (!empty($file['created_tag']))
-		{
-			print ' ';
-			print ('<span class="left_arrow_indicator">');
-			print htmlspecialchars($file['created_tag']);
-			print ('</span>');
-		}
-
-		print ' ';
-		print anchor ("code/file/{$project->id}/${xpar}/{$file['next_rev']}", '<i class="fa fa-arrow-circle-right"></i>');
-
-		print ' | ';
-		printf ('%s: %s', $this->lang->line('Size'), $file['size']);
-
-
-		if ((isset($login['id']) && $login['id'] != ''))
-		{
-			print ' ';
-			print anchor ("code/edit/{$project->id}/{$xpar}{$revreq}", $this->lang->line('Edit'), 'id="code_file_mainarea_edit_button"');
-		}
-	?>
-
-	<a id="code_file_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
-	
-</div>
 
 <div style="display:none">
 <pre id="code_file_mainarea_result_raw">
@@ -335,47 +339,46 @@ if ($login['settings'] != NULL &&
 </pre>
 
 <div id="code_file_mainarea_result_info" class="infobox">
-<div class="title"><?php print  $this->lang->line('CODE_COMMIT') ?></div>
-<ul>
-<li><?php printf ($this->lang->line('CODE_MSG_COMMITTED_BY_ON'), $file['last_author'], $file['time']); ?></li>
-</ul>
+	<div class="title"><?php print  $this->lang->line('CODE_COMMIT') ?></div>
+	<ul>
+	<li><?php printf ($this->lang->line('CODE_MSG_COMMITTED_BY_ON'), $file['last_author'], $file['time']); ?></li>
+	</ul>
 
-<div class="title"><?php print  $this->lang->line('Message') ?></div>
-<pre id="code_file_mainarea_result_info_logmsg" class="pre-wrapped">
-<?php print  htmlspecialchars ($file['logmsg']) ?>
-</pre>
+	<div class="title"><?php print  $this->lang->line('Message') ?></div>
+	<pre id="code_file_mainarea_result_info_logmsg" class="pre-wrapped">
+	<?php print  htmlspecialchars ($file['logmsg']) ?>
+	</pre>
 
-<?php
-if (array_key_exists('properties', $file) && count($file['properties']) > 0)
-{
-	print '<div class="title">';
-	print $this->lang->line('CODE_PROPERTIES');
-	print '</div>';
-
-	print '<ul id="code_file_mainarea_result_info_property_list">';
-	foreach ($file['properties'] as $pn => $pv)
+	<?php
+	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 	{
-		print '<li>';
-		print htmlspecialchars($pn);
-		if ($pv != '')
+		print '<div class="title">';
+		print $this->lang->line('CODE_PROPERTIES');
+		print '</div>';
+
+		print '<ul id="code_file_mainarea_result_info_property_list">';
+		foreach ($file['properties'] as $pn => $pv)
 		{
-			print ' - ';
-			print htmlspecialchars($pv);
+			print '<li>';
+			print htmlspecialchars($pn);
+			if ($pv != '')
+			{
+				print ' - ';
+				print htmlspecialchars($pv);
+			}
+			print '</li>';
 		}
-		print '</li>';
+		print '</ul>';
 	}
-	print '</ul>';
-}
-?>
-</pre>
+	?>
+	</pre>
 
-<div class="title">LOC</div>
-<?php
-	/* TODO: show this if it's enabled in the user settings  */
-	$graph_url = codepot_merge_path (site_url(), "/code/graph/cloc-file/{$project->id}/{$xpar}{$revreq}");
-	print "<img src='{$graph_url}' id='code_file_mainarea_result_info_locgraph' />";
-?>
-
+	<div class="title">LOC</div>
+	<?php
+		/* TODO: show this if it's enabled in the user settings  */
+		$graph_url = codepot_merge_path (site_url(), "/code/graph/cloc-file/{$project->id}/{$xpar}{$revreq}");
+		print "<img src='{$graph_url}' id='code_file_mainarea_result_info_locgraph' />";
+	?>
 </div> <!-- code_file_mainarea_result_info -->
 
 
