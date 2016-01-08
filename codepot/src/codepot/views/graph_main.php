@@ -479,8 +479,14 @@ $this->load->view (
 
 <div class="mainarea" id="graph_main_mainarea">
 
-<div class="title">
-<?php print htmlspecialchars($project->name)?>
+
+<div class="title-band" id="wiki_show_mainarea_title_band">
+	<div class="title"><?php print htmlspecialchars($project->name);?></div>
+
+	<div class="actions">
+	</div>
+
+	<div style='clear: both'></div>
 </div>
 
 <div>

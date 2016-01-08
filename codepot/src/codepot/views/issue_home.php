@@ -319,6 +319,7 @@ $this->load->view (
 		<?php endif; ?>
 		<a id="issue_home_mainarea_search_button" href='#'><?php print $this->lang->line('Search')?></a>
 	</div>
+	<div style='clear: both;'></div>
 </div>
 
 <div class="result" id="issue_home_mainarea_result">
