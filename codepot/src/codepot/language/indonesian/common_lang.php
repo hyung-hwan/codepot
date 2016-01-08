@@ -97,6 +97,7 @@ $lang['Site'] = 'Site';
 $lang['Sites'] = 'Sites';
 $lang['Size'] = 'Ukuran';
 $lang['Source'] = 'Sumber';
+$lang['State'] = 'State';
 $lang['Status'] = 'Status';
 $lang['Success'] = 'Success';
 $lang['Summary'] = 'Rangkuman';

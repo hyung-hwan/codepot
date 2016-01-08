@@ -206,8 +206,8 @@ class IssueModel extends Model
 		$this->db->set ('status', $issue->status);
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('priority', $issue->priority);
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('createdby', $userid);
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue');
@@ -220,11 +220,11 @@ class IssueModel extends Model
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('comment', '');
 		$this->db->set ('priority', $issue->priority);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue_change');
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'create');
 		$this->db->set ('projectid', $issue->projectid);
@@ -245,11 +245,11 @@ class IssueModel extends Model
 		$this->db->where ('id', $issue->id);
 		$this->db->set ('summary', $issue->summary);
 		$this->db->set ('description', $issue->description);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue');
 
-                $this->db->set ('createdon', date('Y-m-d H:i:s'));
+                $this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $issue->projectid);
@@ -275,7 +275,7 @@ class IssueModel extends Model
 		$this->db->set ('status', $issue->status);
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('priority', $issue->priority);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue');
 
@@ -287,11 +287,11 @@ class IssueModel extends Model
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('priority', $issue->priority);
 		$this->db->set ('comment', '');
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue_change');
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $issue->projectid);
@@ -330,7 +330,7 @@ class IssueModel extends Model
 		$this->db->set ('owner', $change->owner);
 		$this->db->set ('priority', $change->priority);
 		$this->db->set ('comment', $change->comment);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue_change');
 
@@ -340,11 +340,11 @@ class IssueModel extends Model
 		$this->db->set ('status', $change->status);
 		$this->db->set ('owner', $change->owner);
 		$this->db->set ('priority', $change->priority);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue');
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'change');
 		$this->db->set ('projectid', $project->id);
@@ -439,7 +439,7 @@ class IssueModel extends Model
 		$this->db->where ('id', $issue->id);
 		$this->db->delete ('issue');
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'delete');
 		$this->db->set ('projectid', $issue->projectid);
@@ -484,8 +484,8 @@ class IssueModel extends Model
 		$this->db->set ('status', $issue->status);
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('priority', $issue->priority);
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('createdby', $userid);
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue');
@@ -504,7 +504,7 @@ class IssueModel extends Model
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('comment', '');
 		$this->db->set ('priority', $issue->priority);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue_change');
 		if ($this->db->trans_status() === FALSE)
@@ -562,7 +562,7 @@ class IssueModel extends Model
 			}
 		}
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'create');
 		$this->db->set ('projectid', $issue->projectid);
@@ -600,7 +600,7 @@ class IssueModel extends Model
 		$this->db->where ('id', $issue->id);
 		$this->db->set ('summary', $issue->summary);
 		$this->db->set ('description', $issue->description);
-		$this->db->set ('updatedon', date('Y-m-d H:i:s'));
+		$this->db->set ('updatedon', codepot_nowtodbdate());
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue');
 		if ($this->db->trans_status() === FALSE)
@@ -610,7 +610,7 @@ class IssueModel extends Model
 			return FALSE;
 		}
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $issue->projectid);
@@ -679,7 +679,7 @@ class IssueModel extends Model
 			return FALSE;
 		}
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'delete');
 		$this->db->set ('projectid', $projectid);
@@ -781,7 +781,7 @@ class IssueModel extends Model
 			}
 		}
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $projectid);
@@ -871,7 +871,7 @@ class IssueModel extends Model
 			}
 		}
 
-		$this->db->set ('createdon', date('Y-m-d H:i:s'));
+		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $projectid);

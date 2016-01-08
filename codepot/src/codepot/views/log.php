@@ -159,25 +159,21 @@ $this->load->view (
 
 	foreach ($log_entries as $log)
 	{
-		if ($log['type'] == 'code')
-		{
-			$code = $log['message'];
+		if ($log['type'] == 'code') $code = $log['message'];
 
-			//$date = substr($code['time'], 0, 10);
-			//$time = substr($code['time'], 11, 5);
-			$date = date ('Y-m-d', strtotime($log['createdon']));
-			$time = date ('h:i', strtotime($log['createdon']));
-		}
+		if (CODEPOT_DATABASE_STORE_GMT)
+			$createdon = $log['createdon'] . ' +0000';
 		else
-		{
-			$date = date ('Y-m-d', strtotime($log['createdon']));
-			$time = date ('h:i', strtotime($log['createdon']));
-		}
+			$createdon = $log['createdon'];
+
+		$tzoff = strftime ('%z', strtotime($createdon));
+		$date = strftime ('%Y-%m-%d', strtotime($createdon));
+		$time = strftime ('%H:%M:%S', strtotime($createdon));
 
 		if ($curdate != $date)
 		{
 			print "<tr class='break'><td colspan='{$numcols}' class='break'>&nbsp;</td></tr>";
-			print "<tr class='header'><td colspan='{$numcols}' class='header'>$date</td></tr>";
+			print "<tr class='header'><td colspan='{$numcols}' class='header'>$date ($tzoff)</td></tr>";
 			$curdate = $date;
 			$rowcount = 0;
 		}

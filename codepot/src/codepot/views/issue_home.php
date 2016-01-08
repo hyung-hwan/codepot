@@ -308,17 +308,18 @@ $this->load->view (
 <!-- ============================================================ -->
 
 <div class="mainarea" id="issue_home_mainarea">
-<div class="title"><?php print $this->lang->line('Issues')?></div>
 
-<div class="infostrip">
-<?php printf ($this->lang->line('ISSUE_MSG_TOTAL_NUM_ISSUES'), $total_num_issues); ?> | 
-<?php if (isset($login['id']) && $login['id'] != ''): ?>
-<a id="issue_home_mainarea_new_button" href='#'><?php print $this->lang->line('New')?></a>
-<?php endif; ?>
-<a id="issue_home_mainarea_search_button" href='#'><?php print $this->lang->line('Search')?></a>
+<div class="title-band" id="issue_home_mainarea_title_band">
+	<div class="title"><?php print $this->lang->line('Issues')?></div>
+
+	<div class="actions">
+		<?php printf ($this->lang->line('ISSUE_MSG_TOTAL_NUM_ISSUES'), $total_num_issues); ?> | 
+		<?php if (isset($login['id']) && $login['id'] != ''): ?>
+		<a id="issue_home_mainarea_new_button" href='#'><?php print $this->lang->line('New')?></a>
+		<?php endif; ?>
+		<a id="issue_home_mainarea_search_button" href='#'><?php print $this->lang->line('Search')?></a>
+	</div>
 </div>
-
-
 
 <div class="result" id="issue_home_mainarea_result">
 <?php

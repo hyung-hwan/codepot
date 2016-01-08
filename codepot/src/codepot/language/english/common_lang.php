@@ -98,6 +98,7 @@ $lang['Site'] = 'Site';
 $lang['Sites'] = 'Sites';
 $lang['Size'] = 'Size';
 $lang['Source'] = 'Source';
+$lang['State'] = 'State';
 $lang['Status'] = 'Status';
 $lang['Summary'] = 'Summary';
 $lang['Success'] = 'Success';

@@ -166,26 +166,8 @@ var original_file_desc = [
 ];
 
 $(function () {
-	if ($("#file_show_mainarea_result_info").is(":visible"))
-		btn_label = "<?php print $this->lang->line('Hide metadata')?>";
-	else
-		btn_label = "<?php print $this->lang->line('Show metadata')?>";
-
-
-	btn = $('#file_show_mainarea_metadata_button').button({'label': btn_label}).click (function () {
-		
-		if ($('#file_show_mainarea_result_info').is(':visible'))
-		{
-			$('#file_show_mainarea_result_info').hide('blind',{},200);
-			$('#file_show_mainarea_metadata_button').button(
-				'option', 'label', "<?php print $this->lang->line('Show metadata')?>");
-		}
-		else
-		{
-			$('#file_show_mainarea_result_info').show('blind',{},200);
-			$('#file_show_mainarea_metadata_button').button(
-				'option', 'label', '<?php print $this->lang->line('Hide metadata')?>');
-		}
+	$('#file_show_mainarea_metadata').accordion({
+		collapsible: true
 	});
 
 	$('#file_show_mainarea_files').accordion({
@@ -611,17 +593,34 @@ $this->load->view (
 
 
 <div class="mainarea" id="file_show_mainarea">
-<div class="title"><?php print htmlspecialchars($file->name)?></div>
 
-<div class="infostrip" id="wiki_show_mainarea_infostrip">
+<div class="title-band" id="file_show_mainarea_title_band">
+	<div class="title"><?php print htmlspecialchars($file->name)?></div>
+
+	<div class="actions">
 	<?php if (isset($login['id']) && $login['id'] != ''): ?>
-	<a id="file_show_mainarea_edit_button" href='#'><?php print $this->lang->line('Edit')?></a>
-	<a id="file_show_mainarea_delete_button" href='#'><?php print $this->lang->line('Delete')?></a>
+		<a id="file_show_mainarea_edit_button" href='#'><?php print $this->lang->line('Edit')?></a>
+		<a id="file_show_mainarea_delete_button" href='#'><?php print $this->lang->line('Delete')?></a>
 	<?php endif; ?>
-	<a id="file_show_mainarea_metadata_button" href='#'><?php print $this->lang->line('Metadata')?></a>
+	</div>
+
+	<div style='clear: both'></div>
 </div>
 
-<div id="file_show_mainarea_result">
+
+<div id='file_show_mainarea_result'>
+
+<div id='file_show_mainarea_metadata' class='collapsible-box'>
+	<div id='file_show_mainarea_metadata_header' class='collapsible-box-header'><?php print $this->lang->line('Metadata')?></div>
+	<div id='file_show_mainarea_metadata_body'>
+	<ul>
+	<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($file->createdon); ?></li>
+	<li><?php print $this->lang->line('Created by')?> <?php print htmlspecialchars($file->createdby); ?></li>
+	<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($file->updatedon); ?></li>
+	<li><?php print $this->lang->line('Last updated by')?> <?php print htmlspecialchars($file->updatedby); ?></li>
+	</ul>
+	</div>
+</div>
 
 <div id='file_show_mainarea_files' class='collapsible-box'>
 	<div id='file_show_mainarea_files_header' class='collapsible-box-header'><?php print $this->lang->line('Files')?></div>
@@ -634,19 +633,22 @@ $this->load->view (
 	</div>
 	<?php endif; ?>
 
-	<table>
+	<table id='file_show_mainarea_files_table'>
 	<?php
 	for ($i = 0; $i < $file_count; $i++)
 	{
 		$f = $file->file_list[$i];
-	
 		$xname = $this->converter->AsciiToHex($f->filename);
 		print '<tr><td class="file-name-td">';
 		print anchor ("file/get/{$project->id}/{$xname}", '<i class="fa fa-download" /> ' . htmlspecialchars($f->filename));
 		print '</td><td class="file-description-td">';
 		print htmlspecialchars($f->description);
 		print '</td><td class="file-md5sum-td">';
-		print " <tt>{$f->md5sum}</tt>";
+		print "<tt>{$f->md5sum}</tt>";
+		print '</td><td class="file-createdon-td">';
+		print codepot_dbdatetodispdate($f->createdon);
+		print '</td><td class="file-createdby-td">';
+		print htmlspecialchars($f->createdby);
 		print '</td></tr>';
 	}
 	?>
@@ -659,15 +661,6 @@ $this->load->view (
 <?php print htmlspecialchars($file->description); ?>
 </pre>
 </div> <!-- file_show_mainarea_wiki -->
-
-<div id="file_show_mainarea_result_info" class="infobox">
-	<ul>
-	<li><?php print $this->lang->line('Created on')?> <?php print  $file->createdon ?></li>
-	<li><?php print $this->lang->line('Created by')?> <?php print  $file->createdby ?></li>
-	<li><?php print $this->lang->line('Last updated on')?> <?php print  $file->updatedon ?></li>
-	<li><?php print $this->lang->line('Last updated by')?> <?php print  $file->updatedby ?></li>
-	</ul>
-</div> <!-- file_show_mainarea_result_info -->
 
 </div> <!-- file_show_mainarea_result -->
 

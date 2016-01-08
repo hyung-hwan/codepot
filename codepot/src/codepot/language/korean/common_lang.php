@@ -97,6 +97,7 @@ $lang['Sign out'] = '로그아웃';
 $lang['Site'] = '사이트';
 $lang['Sites'] = '사이트';
 $lang['Size'] = '크기';
+$lang['State'] = '현황';
 $lang['Status'] = '상태';
 $lang['Source'] = '소스';
 $lang['Success'] = '성공';

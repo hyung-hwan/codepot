@@ -51,6 +51,7 @@ function load_ini ($file)
 		array ('database_name',                'string',     ''),
 		array ('database_driver',              'string',     ''),
 		array ('database_prefix',              'string',     ''),
+		array ('database_store_gmt',           'boolean',    FALSE),
 
 		array ('auth_mysql_hostname',          'string',     'localhost'),
 		array ('auth_mysql_port',              'string',     ''),
