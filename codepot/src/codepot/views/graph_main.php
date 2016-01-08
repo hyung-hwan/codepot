@@ -480,7 +480,7 @@ $this->load->view (
 <div class="mainarea" id="graph_main_mainarea">
 
 
-<div class="title-band" id="wiki_show_mainarea_title_band">
+<div class="title-band" id="graph_main_mainarea_title_band">
 	<div class="title"><?php print htmlspecialchars($project->name);?></div>
 
 	<div class="actions">
