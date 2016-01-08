@@ -49,7 +49,16 @@ $this->load->view (
 <!-- =================================================================== -->
 
 <div class="mainarea" id="wiki_home_mainarea">
-<div class="title"><?php print $this->lang->line('Wikis')?></div>
+
+
+<div class="title-band" id="wiki_home_mainarea_title_band">
+	<div class="title"><?php print $this->lang->line('Wikis');?></div>
+
+	<div class="actions">
+	</div>
+
+	<div style='clear: both'></div>
+</div>
 
 <div id="wiki_home_mainarea_result" class="result">
 <?php
