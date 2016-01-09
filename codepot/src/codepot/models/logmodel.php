@@ -200,7 +200,7 @@ class LogModel extends Model
 
 		$now = time();
 		$one_month_ago = $now - (24 * 60 * 60 * 30);
-		$this->db->where ('createdon <=', codepot_unixtimetodate($one_month_ago));
+		$this->db->where ('createdon <=', codepot_unixtimetodbdate($one_month_ago));
 		$this->db->delete ('log');
 
 		if ($this->db->trans_status() === FALSE)
