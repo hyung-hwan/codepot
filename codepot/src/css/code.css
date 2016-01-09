@@ -78,12 +78,14 @@
 }
 
 #code_file_mainarea_metadata_header,
-#code_blame_mainarea_metadata_header {
+#code_blame_mainarea_metadata_header,
+#code_revision_mainarea_result_message_header {
 	line-height: 2em;
 }
 
 #code_file_mainarea_metadata_header .metadata-committer-icon,
-#code_blame_mainarea_metadata_header .metadata-committer-icon {
+#code_blame_mainarea_metadata_header .metadata-committer-icon,
+#code_revision_mainarea_result_message_header .metadata-committer-icon {
 	height: 2em; 
 	width: auto;
 	vertical-align: middle;
@@ -95,24 +97,28 @@
 }
 
 #code_file_mainarea_metadata_header .metadata-committer,
-#code_blame_mainarea_metadata_header .metadata-committer {
+#code_blame_mainarea_metadata_header .metadata-committer,
+#code_revision_mainarea_result_message_header .metadata-committer {
 	float: left;
 	color: #111111;
 }
 
 #code_file_mainarea_metadata_header .metadata-menu,
-#code_blame_mainarea_metadata_header .metadata-menu {
+#code_blame_mainarea_metadata_header .metadata-menu,
+#code_revision_mainarea_result_message_header .metadata-menu {
 	float: left;
 	margin-left: 1em;
 }
 
 #code_file_mainarea_metadata_header .metadata-commit-date,
-#code_blame_mainarea_metadata_header .metadata-commit-date {
+#code_blame_mainarea_metadata_header .metadata-commit-date,
+#code_revision_mainarea_result_message_header .metadata-commit-date {
 	float: right;
 }
 
 #code_file_mainarea_metadata_body,
-#code_blame_mainarea_metadata_body {
+#code_blame_mainarea_metadata_body,
+#code_revision_mainarea_result_message_body {
 	background-color: #FCFCFC;
 	padding: 0 0.5em 0 0.5em;
 	margin: 0;
@@ -240,13 +246,10 @@
 }
 
 #code_revision_mainarea_result .collapsible-box{
-	margin-top: 0.5em;
+	margin-bottom: 0.5em;
 }
 
-#code_revision_mainarea_result_msg {
-}
-
-#code_revision_mainarea_result_msg_text {
+#code_revision_mainarea_result_message_text {
 	line-height: 1.3em;
 	padding: 0 0.2em 0 0.2em;
 }

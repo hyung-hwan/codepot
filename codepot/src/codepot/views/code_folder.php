@@ -892,10 +892,10 @@ $this->load->view (
 
 <div class="result" id="code_folder_mainarea_result">
 
-<div id="code_folder_mainarea_result_loc_by_lang_graph"></div>
-<div id="code_folder_mainarea_result_loc_by_file_graph"></div>
+	<div id="code_folder_mainarea_result_loc_by_lang_graph"></div>
+	<div id="code_folder_mainarea_result_loc_by_file_graph"></div>
 
-<?php
+	<?php
 	function comp_files ($a, $b)
 	{
 		if ($a['type'] == $b['type'])
@@ -1116,7 +1116,7 @@ $this->load->view (
 		print '</div>';
 
 	}
-?>
+	?>
 
 </div> <!-- code_folder_mainarea_result -->
 
