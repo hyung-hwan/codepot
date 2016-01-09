@@ -178,13 +178,6 @@ $(function() {
 		}
 	);
 
-	$('#code_revision_edit_revision_tag_button').button().click (
-		function () {
-			$('#code_revision_edit_revision_tag_form').dialog('open');
-			return false;
-		}
-	);
-
 	$('#code_revision_edit_revision_message_button').button().click (
 		function () {
 			$('#code_revision_edit_revision_message_form').dialog('open');
@@ -194,7 +187,7 @@ $(function() {
 <?php endif; ?>
 
 <?php if ($is_loggedin): ?>
-$('#code_revision_edit_revision_tag_form').dialog (
+	$('#code_revision_edit_revision_tag_form').dialog (
 		{
 			title: '<?php print $this->lang->line('Tag');?>',
 			resizable: true,
@@ -268,6 +261,13 @@ $('#code_revision_edit_revision_tag_form').dialog (
 				// if importing is in progress, prevent dialog closing
 				return !work_in_progress;
 			}
+		}
+	);
+
+	$('#code_revision_edit_revision_tag_button').button().click (
+		function () {
+			$('#code_revision_edit_revision_tag_form').dialog('open');
+			return false;
 		}
 	);
 
@@ -621,7 +621,7 @@ $history = $file['history'];
 		print ' ';
 		print anchor ("code/revision/{$project->id}/${hex_headpath}/{$next_revision}", '<i class="fa fa-arrow-circle-right"></i>');
 
-		if ($can_edit)
+		if ($is_loggedin)
 		{
 			print ' ';
 			print '<span class="anchor">';
@@ -835,7 +835,8 @@ $history = $file['history'];
 
 </div> <!-- code_revision_mainarea_result -->
 
-<?php if ($can_edit): ?>
+
+<?php if ($is_loggedin): ?>
 <div id="code_revision_edit_revision_tag_form">
 <?php print 
 	form_input (
@@ -845,7 +846,9 @@ $history = $file['history'];
 	)
 ?>
 </div>
+<?php endif; ?> 
 
+<?php if ($can_edit): ?>
 <div id='code_revision_edit_revision_message_form'>
 <?php print 
 	form_textarea (
