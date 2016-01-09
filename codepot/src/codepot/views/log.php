@@ -122,27 +122,33 @@ $this->load->view (
 
 <div class="mainarea" id="log_mainarea">
 
-<div class="title" id="log_mainarea_title">
-<?php print  anchor ("site/log", $this->lang->line ('Change log')) ?>
+<div class="title-band" id="code_blame_mainarea_title_band">
+
+	<div class="title" id="log_mainarea_title">
+	<?php print  anchor ("site/log", $this->lang->line ('Change log')) ?>
+	</div>
+
+	<div class="actions">
+	<?php if ($login['sysadmin?'] && isset($site)): ?>
+		<?php print form_open("site/log", 'id="purge_form"')?>
+			<input type='hidden' name='purge_log' id='purge_log' value='' />
+		<?php print form_close()?>
+
+		<div id="purge_confirm" title="<?php print  $this->lang->line('Purge') ?>">
+		<p>
+			<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+			Are you sure?
+		</p>
+		</div>
+
+		<a id="log_mainarea_purge" href="#"><?php print  $this->lang->line('Purge') ?></a>
+	<?php endif; ?>
+	</div>
+
+	<div style="clear: both;"></div>
 </div>
 
-<?php if ($login['sysadmin?'] && isset($site)): ?>
-	<?php print form_open("site/log", 'id="purge_form"')?>
-		<input type='hidden' name='purge_log' id='purge_log' value='' />
-	<?php print form_close()?>
 
-	<div id="purge_confirm" title="<?php print  $this->lang->line('Purge') ?>">
-	<p>
-		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
-		Are you sure?
-	</p>
-	</div>
-
-	<div class="infostrip">
-	<a id="log_mainarea_purge" href="#"><?php print  $this->lang->line('Purge') ?></a>
-	</div>
-
-<?php endif; ?>
 
 <div id="log_mainarea_result" class="result">
 
