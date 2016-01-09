@@ -239,7 +239,7 @@ $this->load->view (
 
 <div id='code_file_mainarea_metadata' class='collapsible-box'>
 	<div id='code_file_mainarea_metadata_header' class='collapsible-box-header'>
-	<?php
+		<?php
 		print '<div class="metadata-committer">';
 		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($file['last_author']));
 		print "<img src='{$user_icon_url}' class='metadata-committer-icon' />";
@@ -272,7 +272,7 @@ $this->load->view (
 		printf ('[%s] ', $file['created_rev']);
 		print strftime ('%Y-%m-%d %H:%M:%S %z', $file['time_t']);
 		print '</div>';
-	?>
+		?>
 		<div style='clear: both'></div>
 	</div>
 
@@ -383,8 +383,6 @@ if ($login['settings'] != NULL &&
 </pre>
 
 
-</div> <!-- code_file_mainarea_result -->
-
 <div id="code_file_mainarea_loc_info" class="infobox">
 	<div class="title">LOC</div>
 	<?php
@@ -393,6 +391,8 @@ if ($login['settings'] != NULL &&
 		print "<img src='{$graph_url}' id='code_file_mainarea_loc_info_locgraph' />";
 	?>
 </div> <!-- code_file_mainarea_loc_info -->
+
+</div> <!-- code_file_mainarea_result -->
 
 </div> <!-- code_file_mainarea -->
 
