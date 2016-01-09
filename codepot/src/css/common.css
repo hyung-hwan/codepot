@@ -751,15 +751,15 @@ textarea {
 	font-weight: bold;
 	font-size: 1.2em !important;
 	line-height: 1.5em;
-	margin: 0;
-	padding: 0;
+	margin: 0 !important;
+	padding: 0 !important;
 }
 
 .content .title-band .actions {
 	float: right;
 	line-height: 1.5em;
-	margin: 0;
-	padding: 0;
+	margin: 0 !important;
+	padding: 0 !important;
 }
 
 .content .sidebar {
