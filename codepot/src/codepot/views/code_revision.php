@@ -22,18 +22,25 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <?php
+	$hex_headpath = $this->converter->AsciiToHex(($headpath == '')? '.': $headpath);
+
 	if ($revision <= 0)
 	{
 		$revreq = '';
 		$revreqroot = '';
+
+		$history_path = "/code/history/{$project->id}/{$hex_headpath}";
 	}
 	else
 	{
 		$revreq = "/{$file['created_rev']}";
 		$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
+
+		if ($hex_headpath == '') $revtrailer = $revreqroot;
+		else $revtrailer = "/{$hex_headpath}{$revreq}";
+		$history_path = "/code/history/{$project->id}{$revtrailer}";
 	}
 
-	$hex_headpath = $this->converter->AsciiToHex(($headpath == '')? '.': $headpath);
 	$creole_base = site_url() . "/wiki/show/{$project->id}/"; 
 	$creole_file_base = site_url() . "/wiki/attachment0/{$project->id}/"; 
 ?>
@@ -86,8 +93,15 @@ var work_in_progress = false;
 <?php $is_loggedin = ($login['id'] != ''); ?>
 <?php $can_edit = ($is_loggedin && $login['id'] == $file['history']['author']); ?>
 
-<?php if ($can_edit): ?>
+
 $(function() {
+
+	$("#code_revision_history_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print $history_path; ?>'));
+		return false;
+	});
+
+<?php if ($can_edit): ?>
 	$('#code_revision_edit_revision_tag_form').dialog (
 		{
 			title: '<?php print $this->lang->line('Tag');?>',
@@ -255,12 +269,9 @@ $(function() {
 			return false;
 		}
 	);
-});
 <?php endif; ?>
 
 <?php if ($is_loggedin): ?>
-$(function() {
-
 	$('#code_revision_new_review_comment_tabs').tabs ();
 	$('#code_revision_new_review_comment_tabs').bind ('tabsshow', function (event, ui) {
 		if (ui.index == 1) preview_new_review_comment ($('#code_revision_new_review_comment').val());
@@ -459,8 +470,9 @@ $(function() {
 		}
 	}
 	?>
-});
 <?php endif; ?>
+});
+
 
 function render_wiki()
 {
@@ -490,7 +502,7 @@ function hide_unneeded_divs()
 }
 
 $(function() {
-	$("#code_revision_mainarea_result_msg_container").accordion ({
+	$("#code_revision_mainarea_result_message").accordion ({
 		collapsible: true
 	});
 
@@ -617,12 +629,6 @@ $history = $file['history'];
 			print anchor ("#", $this->lang->line('Tag'), array ('id' => 'code_revision_edit_revision_tag_button'));
 			print '</span>';
 		}
-
-		print ' | ';
-		printf ('%s: %s',  $this->lang->line('Committer'), htmlspecialchars($history['author']));
-		print ' | ';
-
-		printf ('%s: %s',  $this->lang->line('Last updated on'), date('r', strtotime($history['date'])));
 		?>
 	</div>
 
@@ -631,45 +637,46 @@ $history = $file['history'];
 
 <div class="menu" id="code_revision_mainarea_menu">
 <?php
-	$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
 
-	if ($revision > 0 && $revision < $next_revision)
-	{
-		print anchor ("code/revision/{$project->id}/{$hex_headpath}", $this->lang->line('Head revision'));
-		print ' | ';
-	}
-
-	if ($revision > 0)
-	{
-		if ($hex_headpath == '') $revtrailer = $revreqroot;
-		else $revtrailer = "/{$hex_headpath}{$revreq}";
-		print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
-	}
-	else
-	{
-		print anchor ("code/history/{$project->id}/{$hex_headpath}", $history_anchor_text);
-	}
 ?>
 </div> <!-- code_revision_mainarea_menu -->
 
 <div class="result" id="code_revision_mainarea_result">
 
-<div id="code_revision_mainarea_result_msg_container" class="collapsible-box">
-<div class="collapsible-box-header" ><?php print $this->lang->line('Message')?>&nbsp;
-<?php if ($can_edit): ?>
-	<span class='anchor'>
-		<?php print anchor ("#", $this->lang->line('Edit'),
-		           array ('id' => 'code_revision_edit_revision_message_button'));
-		?>
-	</span>
-<?php endif; ?>
-</div>
+<div id="code_revision_mainarea_result_message" class="collapsible-box">
+	<div id="code_revision_mainarea_result_message_header" class="collapsible-box-header" >
+		<?php
+		print '<div class="metadata-committer">';
+		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($history['author']));
+		print "<img src='{$user_icon_url}' class='metadata-committer-icon' />";
+		print htmlspecialchars ($history['author']);
+		print '</div>';
 
-<div id="code_revision_mainarea_result_msg" class="collapsible-box-panel">
-<pre id="code_revision_mainarea_result_msg_text" class="pre-wrapped">
-<?php print htmlspecialchars($history['msg']); ?>
-</pre>
-</div>
+		print '<div class="metadata-menu">';
+		if ($can_edit) 
+		{
+			print '<span class="anchor">';
+			print anchor ("#", $this->lang->line('Edit'),
+					 array ('id' => 'code_revision_edit_revision_message_button'));
+			print '</span>';
+		}
+
+		$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
+		print anchor ("#", $history_anchor_text, 'id="code_revision_history_button"');
+		print '</div>';
+
+		print '<div class="metadata-commit-date">';
+		printf ('[%s] ', $history['rev']);
+		print strftime ('%Y-%m-%d %H:%M:%S %z', strtotime($history['date']));
+		print '</div>';
+		?>
+		
+		<div style='clear: both'></div>
+	</div>
+
+	<div id="code_revision_mainarea_result_message_body">
+		<pre id="code_revision_mainarea_result_message_text" class="pre-wrapped"><?php print htmlspecialchars($history['msg']); ?></pre>
+	</div>
 </div>
 
 <div id="code_revision_mainarea_result_files" class="collapsible-box">
