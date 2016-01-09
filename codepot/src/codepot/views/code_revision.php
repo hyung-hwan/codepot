@@ -93,7 +93,6 @@ var work_in_progress = false;
 <?php $is_loggedin = ($login['id'] != ''); ?>
 <?php $can_edit = ($is_loggedin && $login['id'] == $file['history']['author']); ?>
 
-
 $(function() {
 
 	$("#code_revision_history_button").button().click (function() {
@@ -102,83 +101,6 @@ $(function() {
 	});
 
 <?php if ($can_edit): ?>
-	$('#code_revision_edit_revision_tag_form').dialog (
-		{
-			title: '<?php print $this->lang->line('Tag');?>',
-			resizable: true,
-			autoOpen: false,
-			width: 'auto',
-			height: 'auto',
-			modal: true,
-			buttons: {
-
-				'<?php print $this->lang->line('OK')?>': function () {
-					if (work_in_progress) return;
-
-					if (!!window.FormData)
-					{
-						// FormData is supported
-						work_in_progress = true;
-
-						var form_data = new FormData();
-
-						form_data.append ('code_edit_revision_tag', $('#code_revision_edit_revision_tag').val());
-
-						$('#code_revision_edit_revision_tag_form').dialog('disable');
-						$.ajax({
-							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/code/xhr_edit_revision_tag/{$project->id}/{$revreq}"; ?>'),
-							type: 'POST',
-							data: form_data,
-							mimeType: 'multipart/form-data',
-							contentType: false,
-							processData: false,
-							cache: false,
-
-							success: function (data, textStatus, jqXHR) { 
-								work_in_progress = false;
-								$('#code_revision_edit_revision_tag_form').dialog('enable');
-								$('#code_revision_edit_revision_tag_form').dialog('close');
-								if (data == 'ok') 
-								{
-									// refresh the page to the head revision
-									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/code/revision/{$project->id}/{$hex_headpath}{$revreq}"; ?>'));
-								}
-								else
-								{
-									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
-								}
-							},
-
-							error: function (jqXHR, textStatus, errorThrown) { 
-								work_in_progress = false;
-								$('#code_revision_edit_revision_tag_form').dialog('enable');
-								$('#code_revision_edit_revision_tag_form').dialog('close');
-								var errmsg = '';
-								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
-								if (errmsg == '' && textStatus != null) errmsg = textStatus;
-								if (errmsg == '') errmsg = 'Unknown error';
-								show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
-							}
-						});
-					}
-					else
-					{
-						show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
-					}
-				},
-				'<?php print $this->lang->line('Cancel')?>': function () {
-					if (work_in_progress) return;
-					$('#code_revision_edit_revision_tag_form').dialog('close');
-				}
-			},
-
-			beforeClose: function() { 
-				// if importing is in progress, prevent dialog closing
-				return !work_in_progress;
-			}
-		}
-	);
-
 	$('#code_revision_edit_revision_message_form').dialog (
 		{
 			title: '<?php print $this->lang->line('Message');?>',
@@ -272,6 +194,83 @@ $(function() {
 <?php endif; ?>
 
 <?php if ($is_loggedin): ?>
+$('#code_revision_edit_revision_tag_form').dialog (
+		{
+			title: '<?php print $this->lang->line('Tag');?>',
+			resizable: true,
+			autoOpen: false,
+			width: 'auto',
+			height: 'auto',
+			modal: true,
+			buttons: {
+
+				'<?php print $this->lang->line('OK')?>': function () {
+					if (work_in_progress) return;
+
+					if (!!window.FormData)
+					{
+						// FormData is supported
+						work_in_progress = true;
+
+						var form_data = new FormData();
+
+						form_data.append ('code_edit_revision_tag', $('#code_revision_edit_revision_tag').val());
+
+						$('#code_revision_edit_revision_tag_form').dialog('disable');
+						$.ajax({
+							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/code/xhr_edit_revision_tag/{$project->id}/{$revreq}"; ?>'),
+							type: 'POST',
+							data: form_data,
+							mimeType: 'multipart/form-data',
+							contentType: false,
+							processData: false,
+							cache: false,
+
+							success: function (data, textStatus, jqXHR) { 
+								work_in_progress = false;
+								$('#code_revision_edit_revision_tag_form').dialog('enable');
+								$('#code_revision_edit_revision_tag_form').dialog('close');
+								if (data == 'ok') 
+								{
+									// refresh the page to the head revision
+									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/code/revision/{$project->id}/{$hex_headpath}{$revreq}"; ?>'));
+								}
+								else
+								{
+									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+								}
+							},
+
+							error: function (jqXHR, textStatus, errorThrown) { 
+								work_in_progress = false;
+								$('#code_revision_edit_revision_tag_form').dialog('enable');
+								$('#code_revision_edit_revision_tag_form').dialog('close');
+								var errmsg = '';
+								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+								if (errmsg == '' && textStatus != null) errmsg = textStatus;
+								if (errmsg == '') errmsg = 'Unknown error';
+								show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
+							}
+						});
+					}
+					else
+					{
+						show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
+					}
+				},
+				'<?php print $this->lang->line('Cancel')?>': function () {
+					if (work_in_progress) return;
+					$('#code_revision_edit_revision_tag_form').dialog('close');
+				}
+			},
+
+			beforeClose: function() { 
+				// if importing is in progress, prevent dialog closing
+				return !work_in_progress;
+			}
+		}
+	);
+
 	$('#code_revision_new_review_comment_tabs').tabs ();
 	$('#code_revision_new_review_comment_tabs').bind ('tabsshow', function (event, ui) {
 		if (ui.index == 1) preview_new_review_comment ($('#code_revision_new_review_comment').val());
