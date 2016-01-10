@@ -99,7 +99,6 @@ class Code extends Controller
 						$file['head_tag'] = $this->subversion->getRevProp ($projectid, $file['head_rev'], CODEPOT_SVN_TAG_PROPERTY);
 						if ($file['head_tag'] === FALSE) $file['head_tag'] = '';
 
-
 						$data['project'] = $project;
 						$data['headpath'] = $path;
 						$data['file'] = $file; 
@@ -1071,7 +1070,6 @@ class Code extends Controller
 						}
 						else $h['tag'] = '';
 
-
 						foreach ($h['paths'] as &$chg)
 						{
 							if ($chg['action'] == 'A' || $chg['action'] == 'M' || $chg['action'] == 'R')
@@ -1085,7 +1083,7 @@ class Code extends Controller
 										$props = array();
 									}
 									else
-									{	
+									{
 										// get the first element in the associative array.
 										foreach ($props as &$p) break; 
 										$props = $p;
@@ -1101,7 +1099,7 @@ class Code extends Controller
 										$prev_props = array();
 									}
 									else
-									{	
+									{
 										// get the first element in the associative array.
 										foreach ($prev_props as &$p) break;
 										$prev_props = $p;

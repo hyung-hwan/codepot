@@ -594,7 +594,7 @@ $this->load->view (
 
 <div class="mainarea" id="file_show_mainarea">
 
-<div class="title-band" id="file_show_mainarea_title_band">
+<div class="title-band" id="file_show_title_band">
 	<div class="title"><?php print htmlspecialchars($file->name)?></div>
 
 	<div class="actions">

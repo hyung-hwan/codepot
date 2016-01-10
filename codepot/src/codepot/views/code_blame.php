@@ -1,4 +1,6 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -46,7 +48,7 @@ else
 <script type="text/javascript">
 $(function () {
 
-	$('#code_blame_mainarea_metadata').accordion({
+	$('#code_blame_metadata').accordion({
 		collapsible: true
 	});
 
@@ -67,31 +69,31 @@ $(function () {
 	$("#code_blame_mainarea_edit_button").button();
 
 	<?php if ($file['created_rev'] != $file['head_rev']): ?>
-		$("#code_blame_mainarea_headrev_button").button().click (function() {
+		$("#code_blame_headrev_button").button().click (function() {
 			$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/blame/{$project->id}/${hex_headpath}"; ?>'));
 			return false;
 		});
 	<?php endif; ?>
 
-	$("#code_blame_mainarea_detail_button").button().click (function() {
+	$("#code_blame_detail_button").button().click (function() {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/file/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
 		return false;
 	});
-	$("#code_blame_mainarea_diff_button").button().click (function() {
+	$("#code_blame_diff_button").button().click (function() {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/diff/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
 		return false;
 	});
 
-	$("#code_blame_mainarea_fulldiff_button").button().click (function() {
+	$("#code_blame_fulldiff_button").button().click (function() {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fulldiff/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
 		return false;
 	});
 
-	$("#code_blame_mainarea_history_button").button().click (function() {
+	$("#code_blame_history_button").button().click (function() {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print $history_path; ?>'));
 		return false;
 	});
-	$("#code_blame_mainarea_download_button").button().click (function() {
+	$("#code_blame_download_button").button().click (function() {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fetch/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
 		return false;
 	});
@@ -138,9 +140,9 @@ $this->load->view (
 
 <div class="mainarea" id="code_blame_mainarea">
 
-<div class="title-band" id="code_blame_mainarea_title_band">
+<div class="title-band" id="code_blame_title_band">
 
-	<div class="title" id="code_blame_mainarea_title">
+	<div class="title">
 	<?php
 		print anchor (
 			"code/file/{$project->id}{$revreqroot}",
@@ -175,7 +177,7 @@ $this->load->view (
 			print htmlspecialchars($file['fullpath']);
 		}
 	?>
-	</div> <!-- code_blame_mainarea_title -->
+	</div>
 
 	<div class="actions">
 		<?php 
@@ -214,8 +216,8 @@ $this->load->view (
 	<div style="clear: both;"></div>
 </div>
 
-<div id='code_blame_mainarea_metadata' class='collapsible-box'>
-	<div id='code_blame_mainarea_metadata_header' class='collapsible-box-header'>
+<div id='code_blame_metadata' class='collapsible-box'>
+	<div id='code_blame_metadata_header' class='collapsible-box-header'>
 	<?php
 		print '<div class="metadata-committer">';
 		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($file['last_author']));
@@ -235,14 +237,14 @@ $this->load->view (
 		if ($file['created_rev'] != $file['head_rev']) 
 		{
 			$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
-			print anchor ('#', $head_revision_text, 'id="code_blame_mainarea_headrev_button"');
+			print anchor ('#', $head_revision_text, 'id="code_blame_headrev_button"');
 		}
 
-		print anchor ('#', $detail_anchor_text, 'id="code_blame_mainarea_detail_button"');
-		print anchor ('#', $diff_anchor_text, 'id="code_blame_mainarea_diff_button"');
-		print anchor ('#', $fulldiff_anchor_text, 'id="code_blame_mainarea_fulldiff_button"');
-		print anchor ('#', $history_anchor_text, 'id="code_blame_mainarea_history_button"');
-		print anchor ('#', $download_anchor_text, 'id="code_blame_mainarea_download_button"');
+		print anchor ('#', $detail_anchor_text, 'id="code_blame_detail_button"');
+		print anchor ('#', $diff_anchor_text, 'id="code_blame_diff_button"');
+		print anchor ('#', $fulldiff_anchor_text, 'id="code_blame_fulldiff_button"');
+		print anchor ('#', $history_anchor_text, 'id="code_blame_history_button"');
+		print anchor ('#', $download_anchor_text, 'id="code_blame_download_button"');
 		print '</div>';
 
 		print '<div class="metadata-commit-date">';
@@ -253,13 +255,13 @@ $this->load->view (
 		<div style='clear: both'></div>
 	</div>
 
-	<div id='code_blame_mainarea_metadata_body'>
-		<pre class='pre-wrapped'><?php print htmlspecialchars ($file['logmsg']); ?></pre>
+	<div id='code_blame_metadata_body'>
+		<div><pre class='pre-wrapped'><?php print htmlspecialchars ($file['logmsg']); ?></pre></div>
 
 		<?php
 		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 		{
-			print '<ul id="code_blame_mainarea_loc_info_property_list">';
+			print '<ul id="code_blame_property_list">';
 			foreach ($file['properties'] as $pn => $pv)
 			{
 				print '<li>';
@@ -277,7 +279,7 @@ $this->load->view (
 	</div>
 </div>
 
-<div class="result" id="code_blame_mainarea_result">
+<div class="result" id="code_blame_result">
 
 <?php 
 $fileext = substr(strrchr($file['name'], '.'), 1);
@@ -292,7 +294,7 @@ if ($login['settings'] != NULL &&
     $login['settings']->code_hide_line_num == 'Y') $prettyprint_linenums = '';
 ?>
 
-<pre id="code_blame_mainarea_result_code_container" class="line-numbered">
+<pre id="code_blame_result_code_container" class="line-numbered">
 <?php
 // when producing line-numbered code, make sure to produce proper
 // line terminators.
@@ -309,7 +311,7 @@ if ($login['settings'] != NULL &&
 	$content = &$file['content'];
 	$len = count($content);
 
-	print '<span class="line-number-block" id="code_blame_mainarea_result_code_revision">';
+	print '<span class="line-number-block" id="code_blame_result_code_revision">';
 	$rev = '';
 	for ($i = 0; $i < $len; $i++)
 	{
@@ -334,7 +336,7 @@ if ($login['settings'] != NULL &&
 	}
 	print '</span>';
 
-	print '<span class="line-number-block" id="code_blame_mainarea_result_code_author">';
+	print '<span class="line-number-block" id="code_blame_result_code_author">';
 	$rev = '';
 	$author = '';
 	for ($i = 0; $i < $len; $i++)
@@ -359,9 +361,7 @@ if ($login['settings'] != NULL &&
 	}
 	print '</span>';
 
-	printf ('<code class="line-numbered-code prettyprint %s %s" id="code_blame_mainarea_result_code">', $prettyprint_linenums, $prettyprint_lang);
-
-
+	printf ('<code class="line-numbered-code prettyprint %s %s" id="code_blame_result_code">', $prettyprint_linenums, $prettyprint_lang);
 
 	$charset = '';
 	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
@@ -412,7 +412,7 @@ if ($login['settings'] != NULL &&
 	?>
 </div> <!-- code_blame_mainarea_loc_info -->
 
-</div> <!-- code_blame_mainarea_result -->
+</div> <!-- code_blame_result -->
 
 </div> <!-- code_blame_mainarea -->
 

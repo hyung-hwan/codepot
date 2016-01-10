@@ -1,4 +1,6 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -52,14 +54,14 @@ function showRawCode()
 {
 	if (showing_raw_code)
 	{
-		$("#code_file_mainarea_style_button").button("option", "label", '<?php print $destyle_anchor_text; ?>');
-		$("#code_file_mainarea_result_code").removeClass("prettyprinted");
+		$("#code_file_style_button").button("option", "label", '<?php print $destyle_anchor_text; ?>');
+		$("#code_file_result_code").removeClass("prettyprinted");
 		prettyPrint();
 	}
 	else
 	{
-		$("#code_file_mainarea_style_button").button("option", "label", '<?php print $enstyle_anchor_text; ?>');
-		$("#code_file_mainarea_result_code").html($("#code_file_mainarea_result_raw").html());
+		$("#code_file_style_button").button("option", "label", '<?php print $enstyle_anchor_text; ?>');
+		$("#code_file_result_code").html($("#code_file_result_raw").html());
 	}
 
 	showing_raw_code = !showing_raw_code;
@@ -67,7 +69,7 @@ function showRawCode()
 
 $(function () {
 
-	$('#code_file_mainarea_metadata').accordion({
+	$('#code_file_metadata').accordion({
 		collapsible: true
 	});
 
@@ -88,42 +90,42 @@ $(function () {
 	$("#code_file_mainarea_edit_button").button();
 
 	<?php if ($file['created_rev'] != $file['head_rev']): ?>
-		$("#code_file_mainarea_headrev_button").button().click (function() {
+		$("#code_file_headrev_button").button().click (function() {
 			$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/file/{$project->id}/${hex_headpath}"; ?>'));
 			return false;
 		});
 	<?php endif; ?>
 
-	$("#code_file_mainarea_blame_button").button().click (function() {
+	$("#code_file_blame_button").button().click (function() {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/blame/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
 		return false;
 	});
-	$("#code_file_mainarea_diff_button").button().click (function() {
+	$("#code_file_diff_button").button().click (function() {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/diff/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
 		return false;
 	});
 
-	$("#code_file_mainarea_fulldiff_button").button().click (function() {
+	$("#code_file_fulldiff_button").button().click (function() {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fulldiff/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
 		return false;
 	});
 
-	$("#code_file_mainarea_history_button").button().click (function() {
+	$("#code_file_history_button").button().click (function() {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print $history_path; ?>'));
 		return false;
 	});
-	$("#code_file_mainarea_download_button").button().click (function() {
+	$("#code_file_download_button").button().click (function() {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fetch/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
 		return false;
 	});
 
-	$("#code_file_mainarea_style_button").button({"label": '<?php print $destyle_anchor_text; ?>'}).click (function () {
+	$("#code_file_style_button").button({"label": '<?php print $destyle_anchor_text; ?>'}).click (function () {
 		showRawCode();
 		return false;
 	});
 
 	// for code rendering
-	$("#code_file_mainarea_result_raw").html ($("#code_file_mainarea_result_code").html())
+	$("#code_file_result_raw").html ($("#code_file_result_code").html())
 	prettyPrint ();
 });
 
@@ -169,8 +171,9 @@ $this->load->view (
 
 <div class="mainarea" id="code_file_mainarea">
 
-<div class="title-band" id="code_file_mainarea_title_band">
-	<div class="title" id="code_file_mainarea_title">
+<div class="title-band" id="code_file_title_band">
+
+	<div class="title">
 		<?php
 		print anchor (
 			"code/file/{$project->id}{$revreqroot}",
@@ -196,7 +199,7 @@ $this->load->view (
 			print htmlspecialchars($file['fullpath']);
 		}
 		?>
-	</div> <!-- code_file_mainarea_title -->
+	</div>
 
 	<div class="actions">
 		<?php 
@@ -237,8 +240,8 @@ $this->load->view (
 	<div style="clear: both;"></div>
 </div>
 
-<div id='code_file_mainarea_metadata' class='collapsible-box'>
-	<div id='code_file_mainarea_metadata_header' class='collapsible-box-header'>
+<div id='code_file_metadata' class='collapsible-box'>
+	<div id='code_file_metadata_header' class='collapsible-box-header'>
 		<?php
 		print '<div class="metadata-committer">';
 		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($file['last_author']));
@@ -257,15 +260,15 @@ $this->load->view (
 		if ($file['created_rev'] != $file['head_rev']) 
 		{
 			$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
-			print anchor ('#', $head_revision_text, 'id="code_file_mainarea_headrev_button"');
+			print anchor ('#', $head_revision_text, 'id="code_file_headrev_button"');
 		}
 
-		print anchor ('#', $blame_anchor_text, 'id="code_file_mainarea_blame_button"');
-		print anchor ('#', $diff_anchor_text, 'id="code_file_mainarea_diff_button"');
-		print anchor ('#', $fulldiff_anchor_text, 'id="code_file_mainarea_fulldiff_button"');
-		print anchor ('#', $history_anchor_text, 'id="code_file_mainarea_history_button"');
-		print anchor ('#', $download_anchor_text, 'id="code_file_mainarea_download_button"');
-		print anchor ('#', $this->lang->line('Enstyle'), 'id="code_file_mainarea_style_button"');
+		print anchor ('#', $blame_anchor_text, 'id="code_file_blame_button"');
+		print anchor ('#', $diff_anchor_text, 'id="code_file_diff_button"');
+		print anchor ('#', $fulldiff_anchor_text, 'id="code_file_fulldiff_button"');
+		print anchor ('#', $history_anchor_text, 'id="code_file_history_button"');
+		print anchor ('#', $download_anchor_text, 'id="code_file_download_button"');
+		print anchor ('#', $this->lang->line('Enstyle'), 'id="code_file_style_button"');
 		print '</div>';
 
 		print '<div class="metadata-commit-date">';
@@ -276,13 +279,13 @@ $this->load->view (
 		<div style='clear: both'></div>
 	</div>
 
-	<div id='code_file_mainarea_metadata_body'>
+	<div id='code_file_metadata_body'>
 		<pre class='pre-wrapped'><?php print htmlspecialchars ($file['logmsg']); ?></pre>
 
 		<?php
 		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 		{
-			print '<ul id="code_file_mainarea_loc_info_property_list">';
+			print '<ul id="code_file_property_list">';
 			foreach ($file['properties'] as $pn => $pv)
 			{
 				print '<li>';
@@ -301,11 +304,11 @@ $this->load->view (
 </div>
 
 <div style="display:none">
-<pre id="code_file_mainarea_result_raw">
+<pre id="code_file_result_raw">
 </pre>
 </div>
 
-<div class="result" id="code_file_mainarea_result">
+<div class="result" id="code_file_result">
 
 <?php 
 $fileext = substr(strrchr($file['name'], '.'), 1);
@@ -320,7 +323,7 @@ if ($login['settings'] != NULL &&
     $login['settings']->code_hide_line_num == 'Y') $prettyprint_linenums = '';
 ?>
 
-<pre class="prettyprint <?php print $prettyprint_linenums?> <?php print $prettyprint_lang?>" id="code_file_mainarea_result_code">
+<pre class="prettyprint <?php print $prettyprint_linenums?> <?php print $prettyprint_lang?>" id="code_file_result_code">
 <?php 
 	$is_octet_stream = FALSE;
 	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
@@ -382,7 +385,6 @@ if ($login['settings'] != NULL &&
 ?>
 </pre>
 
-
 <div id="code_file_mainarea_loc_info" class="infobox">
 	<div class="title">LOC</div>
 	<?php
@@ -392,7 +394,7 @@ if ($login['settings'] != NULL &&
 	?>
 </div> <!-- code_file_mainarea_loc_info -->
 
-</div> <!-- code_file_mainarea_result -->
+</div> <!-- code_file_result -->
 
 </div> <!-- code_file_mainarea -->
 

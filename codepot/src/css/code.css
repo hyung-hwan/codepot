@@ -1,91 +1,51 @@
-/*----------------------------------------------- 
- * project source folder view 
- *-----------------------------------------------*/
-#code_folder_mainarea_result {
-	overflow: auto;
-	position: relative;
-}
-
-#code_folder_mainarea_result_table tr {
-	vertical-align: middle;
-}
-
-#code_folder_mainarea_result_table tr.executable {
-	background-color: #F0FAF0;
-}
-
-#code_folder_mainarea_result_readme {
-	padding: 0.2em 0.2em 0.2em 0.2em;
-}
-
-#code_folder_mainarea_result_readme_text {
-	white-space: pre-wrap;
-	padding: 0.3em;
-	line-height: 1.2em;
-	background-color: #F8F8FA;
-
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-}
-
-#code_folder_mainarea_result_loc_by_file_graph {
-	overflow: auto;
-}
-
-#code_folder_mainarea_result_loc_by_file_graph circle.node {
-	cursor: pointer;
-	stroke: #000;
-	stroke-width: .5px;
-}
-
-#code_folder_mainarea_result_loc_by_file_graph circle.node.directory {
-	stroke: #9ecae1;
-	stroke-width: 2px;
-}
-
-#code_folder_mainarea_result_loc_by_file_graph circle.node.collapsed {
-	stroke: #555;
-}
-
-#code_folder_mainarea_result_loc_by_file_graph .nodetext {
-	fill: #252929;
-	font-weight: bold;
-	text-shadow: 0 0 0.2em white;
-	font-size: 0.9em;
-}
-
-#code_folder_mainarea_result_loc_by_file_graph line.link {
-	fill: none;
-	stroke: #9ecae1;
-	stroke-width: 1.5px;
-}
 
 /*----------------------------------------------- 
- * project source file view 
+ * project source file view  & blame view
  *-----------------------------------------------*/
-#code_file_mainarea_result {
+#code_folder_result,
+#code_file_result,
+#code_blame_result,
+#code_revision_result,
+#code_history_result,
+#code_diff_result {
 	position: relative;
+	overflow: auto;
+	margin: 0.2em 0 0.2em 0;
 }
 
-#code_file_mainarea_result_code {
-	line-height: 1.4em;
+#code_file_result_code,
+#code_blame_result_code_container {
+	border: none;
+	line-height: 1.3em;
 }
 
-#code_file_mainarea_result_info_locgraph {
+#code_blame_result_code_author {
+	background: #FEF8F8;
+}
+
+#code_blame_result_code ol {
+	/* pre-wrap can't be used for the actual line number in the blame view.
+	 * because the revision span and the author span floating on the left
+	 * doesn't wrap lines when the code part wraps. so reset it to 'pre' */
+	white-space: pre;
+}
+
+#code_file_result_info_locgraph {
 	width: 21em; 
 	height: auto;
 }
 
-#code_file_mainarea_metadata_header,
-#code_blame_mainarea_metadata_header,
-#code_revision_mainarea_result_message_header {
+#code_folder_metadata_header,
+#code_file_metadata_header,
+#code_blame_metadata_header,
+#code_revision_result_message_header {
 	line-height: 2em;
 }
 
-#code_file_mainarea_metadata_header .metadata-committer-icon,
-#code_blame_mainarea_metadata_header .metadata-committer-icon,
-#code_revision_mainarea_result_message_header .metadata-committer-icon {
+#code_folder_metadata_header .metadata-committer-icon,
+#code_file_metadata_header .metadata-committer-icon,
+#code_blame_metadata_header .metadata-committer-icon,
+#code_revision_result_message_header .metadata-committer-icon {
 	height: 2em; 
 	width: auto;
 	vertical-align: middle;
@@ -96,72 +56,116 @@
 	border-radius: 3px;
 }
 
-#code_file_mainarea_metadata_header .metadata-committer,
-#code_blame_mainarea_metadata_header .metadata-committer,
-#code_revision_mainarea_result_message_header .metadata-committer {
+#code_folder_metadata_header .metadata-committer,
+#code_file_metadata_header .metadata-committer,
+#code_blame_metadata_header .metadata-committer,
+#code_revision_result_message_header .metadata-committer {
 	float: left;
 	color: #111111;
 }
 
-#code_file_mainarea_metadata_header .metadata-menu,
-#code_blame_mainarea_metadata_header .metadata-menu,
-#code_revision_mainarea_result_message_header .metadata-menu {
+#code_folder_metadata_header .metadata-menu,
+#code_file_metadata_header .metadata-menu,
+#code_blame_metadata_header .metadata-menu,
+#code_revision_result_message_header .metadata-menu {
 	float: left;
 	margin-left: 1em;
 }
 
-#code_file_mainarea_metadata_header .metadata-commit-date,
-#code_blame_mainarea_metadata_header .metadata-commit-date,
-#code_revision_mainarea_result_message_header .metadata-commit-date {
+#code_folder_metadata_header .metadata-commit-date,
+#code_file_metadata_header .metadata-commit-date,
+#code_blame_metadata_header .metadata-commit-date,
+#code_revision_result_message_header .metadata-commit-date {
 	float: right;
 }
 
-#code_file_mainarea_metadata_body,
-#code_blame_mainarea_metadata_body,
-#code_revision_mainarea_result_message_body {
+#code_folder_metadata_body,
+#code_file_metadata_body,
+#code_blame_metadata_body,
+#code_revision_result_message_body {
 	background-color: #FCFCFC;
-	padding: 0 0.5em 0 0.5em;
+	padding: 0.2em 0.2em 0.2em 0.2em;
 	margin: 0;
 }
 
-#code_file_mainarea_metadata_body ul,
-#code_blame_mainarea_metadata_body ul {
-	padding: 0;
-	margin: 0 0 0.5em 0;
-	list-style: outside none none;
+#code_folder_metadata_body ul,
+#code_file_metadata_body ul,
+#code_blame_metadata_body ul {
+	padding: 0 !important;
+	margin: 0 0 0.5em 0 !important;
+	list-style: outside none none !important;
 }
 
-#code_file_mainarea_metadata_body ul li,
-#code_blame_mainarea_metadata_body ul li {
-	padding: 0.2em 0.2em 0.2em 0.2em;
-	margin: 0em 0.2em 0.4em 0.2em;
-	float: left;
-	background-color: #44AD8E;
-	color: #FFFFFF;
+#code_folder_metadata_body ul li,
+#code_file_metadata_body ul li,
+#code_blame_metadata_body ul li {
+	padding: 0.2em 0.2em 0.2em 0.2em !important;
+	margin: 0em 0.2em 0.4em 0.2em !important;
+	float: left !important;
+	background-color: #44AD8E !important;
+	color: #FFFFFF !important;
 }
 
 /*----------------------------------------------- 
- * project source blame view 
+ * project source folder view 
  *-----------------------------------------------*/
-
-#code_blame_mainarea_result {
-	position: relative; /* required for infobox positioning */
+#code_folder_search {
+	padding: 0.2em 0.2em 0.2em 0.2em;
+}
+	
+#code_folder_result_table tr {
+	vertical-align: middle;
 }
 
-#code_blame_mainarea_result_code_container {
-	border: none;
-	line-height: 1.4em;
+#code_folder_result_table tr.executable {
+	background-color: #F0FAF0;
 }
 
-#code_blame_mainarea_result_code_author {
-	background: #FEF8F8;
+#code_folder_result_readme {
+	padding: 0.2em 0.2em 0.2em 0.2em;
 }
 
-#code_blame_mainarea_result_code ol {
-	/* pre-wrap can't be used for the actual line number in the blame view.
-	 * because the revision span and the author span floating on the left
-	 * doesn't wrap lines when the code part wraps. so reset it to 'pre' */
-	white-space: pre;
+#code_folder_result_readme_text {
+	white-space: pre-wrap;
+	padding: 0.3em;
+	line-height: 1.2em;
+	background-color: #F8F8FA;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+#code_folder_result_loc_by_file_graph {
+	overflow: auto;
+}
+
+#code_folder_result_loc_by_file_graph circle.node {
+	cursor: pointer;
+	stroke: #000;
+	stroke-width: .5px;
+}
+
+#code_folder_result_loc_by_file_graph circle.node.directory {
+	stroke: #9ecae1;
+	stroke-width: 2px;
+}
+
+#code_folder_result_loc_by_file_graph circle.node.collapsed {
+	stroke: #555;
+}
+
+#code_folder_result_loc_by_file_graph .nodetext {
+	fill: #252929;
+	font-weight: bold;
+	text-shadow: 0 0 0.2em white;
+	font-size: 0.9em;
+}
+
+#code_folder_result_loc_by_file_graph line.link {
+	fill: none;
+	stroke: #9ecae1;
+	stroke-width: 1.5px;
 }
 
 /*----------------------------------------------- 
@@ -178,7 +182,7 @@
 	-o-tab-size: 5;
 
 	font-size: 1em;
-	line-height: 1.4em;
+	line-height: 1.3em;
 
 	position: absolute !important;
 	/*top: 300;
@@ -190,15 +194,7 @@
 /*----------------------------------------------- 
  * project source history view 
  *-----------------------------------------------*/
-#code_history_mainarea_result {
-	overflow: auto;
-}
-
-#code_history_mainarea_result_table {
-	margin-top: 1em;
-}
-
-#code_history_mainarea_result_table_path_list {
+#code_history_result_table_path_list {
 	/* the list in the 'paths' column */
 	margin: 0;
 	padding: 0;
@@ -206,15 +202,7 @@
 	white-space: nowrap;
 }
 
-#code_history_mainarea_result_table pre {
-	border: 0;
-	background-color: inherit;
-	padding: 0;
-	margin: 0;
-	color: #333333;
-}
-
-#code_history_mainarea_result_table .title {
+#code_history_result_table .title {
 	font-size: inherit;
 	font-weight: inherit;
 	font-style: italic;
@@ -222,13 +210,13 @@
 	background-color: #AABBFF;
 }
 
-#code_history_mainarea_result_table td.commit-message-td:hover {
+#code_history_result_table td.commit-message-td:hover {
 	background-color: #F0F0F0;
 }
 
-#code_history_mainarea_result_table a.commit-message,
-#code_history_mainarea_result_table a.commit-message:visited,
-#code_history_mainarea_result_table a.commit-message:focus {
+#code_history_result_table a.commit-message,
+#code_history_result_table a.commit-message:visited,
+#code_history_result_table a.commit-message:focus {
 	color: inherit;
 	white-space: pre-wrap; /* css-3 */    
 	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
@@ -240,34 +228,29 @@
 /*----------------------------------------------- 
  * project source revision view 
  *-----------------------------------------------*/
-
-#code_revision_mainarea_result {
-	overflow: auto;
-}
-
-#code_revision_mainarea_result .collapsible-box{
+#code_revision_result .collapsible-box {
 	margin-bottom: 0.5em;
 }
 
-#code_revision_mainarea_result_message_text {
+#code_revision_result_message_text {
 	line-height: 1.3em;
 	padding: 0 0.2em 0 0.2em;
 }
 
-#code_revision_mainarea_result_files_table,
-#code_revision_mainarea_result_properties_table {
+#code_revision_result_files_table,
+#code_revision_result_properties_table {
 	padding: 0.5em 0 0.5em 0;
 	background: inherit;
 	line-height: 1.5em;
 }
 
-#code_revision_mainarea_result_files_table td,
-#code_revision_mainarea_result_properties_table td {
+#code_revision_result_files_table td,
+#code_revision_result_properties_table td {
 	white-space: nowrap;
 }
 
-#code_revision_mainarea_result_files_table td.M,
-#code_revision_mainarea_result_properties_table td.M {
+#code_revision_result_files_table td.M,
+#code_revision_result_properties_table td.M {
 	white-space: nowrap;
 	background-image:url(images/page_white_edit.png);
 	background-position:2px 50%;
@@ -275,8 +258,8 @@
 	padding-left: 22px;
 }
 
-#code_revision_mainarea_result_files_table td.D,
-#code_revision_mainarea_result_properties_table td.D {
+#code_revision_result_files_table td.D,
+#code_revision_result_properties_table td.D {
 	white-space: nowrap;
 	background-image:url(images/page_white_delete.png);
 	background-position:2px 50%;
@@ -284,8 +267,8 @@
 	padding-left: 22px;
 }
 
-#code_revision_mainarea_result_files_table td.A,
-#code_revision_mainarea_result_properties_table td.A {
+#code_revision_result_files_table td.A,
+#code_revision_result_properties_table td.A {
 	white-space: nowrap;
 	background-image:url(images/page_white_add.png);
 	background-position:2px 50%;
@@ -293,8 +276,8 @@
 	padding-left: 22px;
 }
 
-#code_revision_mainarea_result_files_table td.R,
-#code_revision_mainarea_result_properties_table td.R {
+#code_revision_result_files_table td.R,
+#code_revision_result_properties_table td.R {
 	white-space: nowrap;
 	background-image:url(images/page_white_add.png);
 	background-position:2px 50%;
@@ -331,33 +314,29 @@
 /*----------------------------------------------- 
  * project source diff view 
  *-----------------------------------------------*/
-#code_diff_mainarea_result {
-	overflow: auto;
-}
-
-#code_diff_mainarea_result_table {
+#code_diff_result_table {
 	border: 0;
 }
 
-#code_diff_mainarea_result_table tr.diff td pre {
+#code_diff_result_table tr.diff td pre {
 	background-color: inherit;
 	border: 0;
 	margin: 0;
 	padding: 0;
 }
 
-#code_diff_mainarea_result_table tr.diff td.diff {
+#code_diff_result_table tr.diff td.diff {
 	padding: 0;
 	padding-left:22px;
 	margin: 0;
 }
 
-#code_diff_mainarea_result_table tr.diff td.diffrow {
+#code_diff_result_table tr.diff td.diffrow {
 	font-style: italic;
 	font-weight: bold;
 }
 
-#code_diff_mainarea_result_table tr.diff td.diffadded {
+#code_diff_result_table tr.diff td.diffadded {
 	border:1px solid #cdf0cd;
 	background-color:#ddffdd;
 	background-image:url(images/bullet_add.png);
@@ -368,7 +347,7 @@
 	margin: 0;
 }
 
-#code_diff_mainarea_result_table tr.diff td.diffdeleted {
+#code_diff_result_table tr.diff td.diffdeleted {
 	border:1px solid #e8d4bc;
 	background-color:#f8e4cc;
 	background-image:url(images/bullet_delete.png);
@@ -379,7 +358,7 @@
 	margin: 0;
 }
 
-#code_diff_mainarea_result_table tr.diff td.diffchanged {
+#code_diff_result_table tr.diff td.diffchanged {
 	border:1px solid #f0f0bc;
 	background-color:#ffffcc;
 	background-image:url(images/bullet_yellow.png);
@@ -390,23 +369,23 @@
 	margin: 0;
 }
 
-#code_diff_mainarea_result_fulldiffold {
+#code_diff_result_fulldiffold {
 	border: none;
 	/*padding-left: 10px;
 	background: #F8F8FA;*/
 	padding-left: 1px;
-	line-height: 1.4em;
+	line-height: 1.3em;
 }
 
-#code_diff_mainarea_result_fulldiffnew {
+#code_diff_result_fulldiffnew {
 	border: none;
 	/*padding-left: 10px;*/
 	background: #FEF8F8;
 	padding-left: 1px;
-	line-height: 1.4em;
+	line-height: 1.3em;
 }
 
-#code_diff_mainarea_result_fullview .navigator {
+#code_diff_result_fullview .navigator {
 	padding: 0.5em 0.8em 0.5em 0.8em;
 	font-weight: bold;
 	text-align: left;
@@ -415,7 +394,7 @@
 	white-space: nowrap;
 }
 
-#code_diff_mainarea_result_fullview .diff {
+#code_diff_result_fullview .diff {
 	background-position: 2px 50%;
 	padding: 0;
 	padding-left:15px;
@@ -423,7 +402,7 @@
 }
 
 
-#code_diff_mainarea_result_fullview .diffadded {
+#code_diff_result_fullview .diffadded {
 	border:1px solid #cdf0cd;
 	background-color:#ddffdd;
 	background-image:url(images/bullet_add.png);
@@ -435,7 +414,7 @@
 	margin: 0;
 }
 
-#code_diff_mainarea_result_fullview .diffdeleted {
+#code_diff_result_fullview .diffdeleted {
 	border:1px solid #e8d4bc;
 	background-color:#f8e4cc;
 	background-image:url(images/bullet_delete.png);
@@ -447,7 +426,7 @@
 	margin: 0;
 }
 
-#code_diff_mainarea_result_fullview .diffchanged {
+#code_diff_result_fullview .diffchanged {
 	border:1px solid #f0f0bc;
 	background-color:#ffffcc;
 	background-image:url(images/bullet_yellow.png);
@@ -459,16 +438,16 @@
 	margin: 0;
 }
 
-#code_diff_mainarea_result_fullview .diffchangedold {
+#code_diff_result_fullview .diffchangedold {
 	text-decoration: line-through;
 }
 
-#code_diff_mainarea_result_fullview .diffchangednew {
+#code_diff_result_fullview .diffchangednew {
 	/*background-color:#ffff00;*/
 	text-decoration: underline;
 }
 
-#code_diff_mainarea_result_fullview .diffrow {
+#code_diff_result_fullview .diffrow {
 	font-size: 1.2em;
 	padding: 0.2em 0.2em 0.2em 0.2em;
 	font-weight: bold;
@@ -478,7 +457,7 @@
 /*----------------------------------------------- 
  * project source search view (including folder view)
  *-----------------------------------------------*/
- 
+
 #code_search_invertedly_label .ui-button-text,
 #code_search_case_insensitively_label .ui-button-text,
 #code_search_recursively_label .ui-button-text,

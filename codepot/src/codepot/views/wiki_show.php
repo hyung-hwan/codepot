@@ -103,7 +103,7 @@ $this->load->view (
 
 <div class="mainarea" id="wiki_show_mainarea">
 
-<div class="title-band" id="wiki_show_mainarea_title_band">
+<div class="title-band" id="wiki_show_title_band">
 	<div class="title"><?php print htmlspecialchars($wiki->name)?></div>
 
 	<div class="actions">
