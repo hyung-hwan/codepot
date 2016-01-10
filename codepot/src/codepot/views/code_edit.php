@@ -1,4 +1,6 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -37,7 +39,7 @@ var base_return_anchor = codepot_merge_path('<?php print site_url() ?>', '<?php 
 
 function resize_editor()
 {
-	var titleband = $("#code_edit_mainarea_title_band");
+	var titleband = $("#code_edit_title_band");
 	var code = $("#code_edit_mainarea_result_code");
 	var footer = $("#codepot_footer");
 
@@ -266,8 +268,8 @@ $this->load->view (
 
 <div class="mainarea" id="code_edit_mainarea">
 
-<div class="title-band" id="code_edit_mainarea_title_band">
-	<div class="title" id="code_edit_mainarea_title">
+<div class="title-band" id="code_edit_title_band">
+	<div class="title">
 	<?php
 		print anchor (
 			"code/${caller}/{$project->id}{$revreqroot}",
@@ -293,7 +295,7 @@ $this->load->view (
 			print htmlspecialchars($file['fullpath']);
 		}
 	?>
-	</div> <!-- code_edit_mainarea_title -->
+	</div>
 
 	<div class="actions">
 	<?php 

@@ -27,6 +27,12 @@ class SubversionModel extends Model
 			$canonical = $collapsed;
 		}
 		$canonical = preg_replace('|^/\.\./|','/',$canonical);
+
+		if ($canonical != '/' && substr($canonical, -1) == '/') 
+		{
+			// if the last character is / and it's not the only character, remove it
+			$canonical = substr ($canonical, 0, -1);
+		}
 		return $canonical;
 	}
 

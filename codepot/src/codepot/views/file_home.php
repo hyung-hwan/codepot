@@ -259,7 +259,7 @@ $this->load->view (
 
 <div class="mainarea" id="file_home_mainarea">
 
-<div class="title-band" id="file_home_mainarea_title_band">
+<div class="title-band" id="file_home_title_band">
 	<div class="title"><?php print $this->lang->line('Files')?></div>
 
 	<div class="actions">

@@ -309,7 +309,7 @@ $this->load->view (
 
 <div class="mainarea" id="issue_home_mainarea">
 
-<div class="title-band" id="issue_home_mainarea_title_band">
+<div class="title-band" id="issue_home_title_band">
 	<div class="title"><?php print $this->lang->line('Issues')?></div>
 
 	<div class="actions">
