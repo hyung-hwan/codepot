@@ -1000,6 +1000,13 @@ textarea {
 	line-height: 1em;
 }
 
+#taskbar_signin_error {
+	color: #AA3344;
+	font-weight: bold;
+	text-align: center;
+	margin-bottom: 0.5em;
+}
+
 /* ================ login page =================== */
 
 #login_user_name {
