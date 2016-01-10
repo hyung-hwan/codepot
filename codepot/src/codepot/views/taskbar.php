@@ -39,65 +39,30 @@ function show_taskbar ($con, $login)
 
 
 		print '&nbsp;';
-		//print form_submit (
-		//	'login', 
-		//	$con->lang->line('Sign out'), 
-		//	'class="button" id="taskbar_signinout_button"'
-		//);
 		printf ('<a href="#" id="taskbar_signinout_button">%s</a>', $con->lang->line('Sign out'));
 		print form_close();
 	}
 	else
 	{
-		print form_open('main/signin', array('id' => 'taskbar_signinout_form'));
+		print '<div id="taskbar_signin_container">';
 
-		print form_fieldset();
+		print '<div id="taskbar_signin_error"></div>';
 
-		$user_name = "";
-		$user_pass = "";
+		print '<div id="taskbar_signin_form">';
 
-		print form_hidden (
-			'user_url', 
-			set_value ('user_url', current_url())
-		);
-
-		/*
-		print form_label(
-			$con->lang->line('Username'), 
-			'taskbar_user_name'
-		);
-		print '&nbsp;';
-		*/
 		print form_input (
-			'user_name', 
-			set_value ('user_name', $user_name), 
+			'user_name', set_value ('user_name', ''), 
 			"size='16' id='taskbar_user_name' placeholder={$con->lang->line('Username')}"
 		);
 
-		print '&nbsp;';
-		/*
-		print form_label (
-			$con->lang->line('Password'),
-			'taskbar_user_pass'
-		);
-		print '&nbsp;';
-		*/
 		print form_password (
-			'user_pass',
-			set_value ('user_pass', $user_pass),
+			'user_pass', set_value ('user_pass', ''),
 			"size='16' id='taskbar_user_pass' placeholder={$con->lang->line('Password')}"
 		);
+		print '</div>';
+		print '</div>';
 
-		print '&nbsp;';
-		//print form_submit (
-		//	'login', 
-		//	$con->lang->line('Sign in'), 
-		//	'class="button" id="taskbar_signinout_button"'
-		//);
 		printf ('<a href="#" id="taskbar_signinout_button">%s</a>', $con->lang->line('Sign in'));
-
-		print form_fieldset_close();
-		print form_close();
 	}
 	print '</div>'; // boxb
 
@@ -120,7 +85,7 @@ function show_taskbar ($con, $login)
 	}
 	print '</ul>';
 
-	print '</div>';
+	print '</div>'; // boxa
 
 	print '</div>';
 }
@@ -140,20 +105,106 @@ function ready_to_signinout()
 <?php endif; ?>
 }
 
+var taskbar_signin_in_progress = 0;
+
 $(function () {
+	$('#taskbar_signin_container').dialog ({
+		title: '<?php print $this->lang->line('Sign in'); ?>',
+		resizable: true,
+		autoOpen: false,
+		modal: true,
+		width: 'auto',
+		height: 'auto',
+		buttons: {
+			'<?php print $this->lang->line('OK')?>': function () {
+				if (taskbar_signin_in_progress) return;
+
+				if (!!window.FormData)
+				{
+					// FormData is supported
+					taskbar_signin_in_progress = true;
+
+					var form_data = new FormData();
+					form_data.append ('user_name', $('#taskbar_user_name').val());
+					form_data.append ('user_pass', $('#taskbar_user_pass').val());
+
+					$('#taskbar_signin_container').dialog('disable');
+					$.ajax({
+						url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/main/xhr_signin"; ?>'),
+						type: 'POST',
+						data: form_data,
+						mimeType: 'multipart/form-data',
+						contentType: false,
+						processData: false,
+						cache: false,
+
+						success: function (data, textStatus, jqXHR) { 
+							taskbar_signin_in_progress = false;
+
+							$('#taskbar_signin_container').dialog('enable');
+							if (data == 'ok') 
+							{
+								$('#taskbar_signin_container').dialog('close');
+								// refresh the page to the head revision
+								$(location).attr ('href', '<?php print current_url(); ?>');
+							}
+							else
+							{
+								$('#taskbar_signin_error').text(codepot_htmlspecialchars('<?php print $this->lang->line('MSG_SIGNIN_FAILURE')?>'));
+							}
+						},
+
+						error: function (jqXHR, textStatus, errorThrown) { 
+							taskbar_signin_in_progress = false;
+							$('#taskbar_signin_container').dialog('enable');
+							var errmsg = '';
+							if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+							if (errmsg == '' && textStatus != null) errmsg = textStatus;
+							if (errmsg == '') errmsg = 'Unknown error';
+							$('#taskbar_signin_error').text(codepot_htmlspecialchars(errmsg));
+						}
+					});
+				}
+				else
+				{
+					$('#taskbar_signin_error').text('NOT SUPPORTED');
+				}
+
+			},
+			'<?php print $this->lang->line('Cancel')?>': function () {
+				if (taskbar_signin_in_progress) return;
+				$('#taskbar_signin_container').dialog('close');
+			}
+		},
+
+		beforeClose: function() { 
+			// if importing is in progress, prevent dialog closing
+			return !taskbar_signin_in_progress;
+		}
+	});
+
 	$("#taskbar_user_name").button().bind ('keyup', function(e) {
-		if (e.keyCode == 13) {
-			if (ready_to_signinout()) $("#taskbar_signinout_form").submit();
+		if (e.keyCode == 13) 
+		{
+			var buttons = $("#taskbar_signin_container").dialog("option", "buttons");
+			buttons[Object.keys(buttons)[0]](); // trigger the first button
 		}
 	});
 	$("#taskbar_user_pass").button().bind ('keyup', function(e) {
-		if (e.keyCode == 13) {
-			if (ready_to_signinout()) $("#taskbar_signinout_form").submit();
+		if (e.keyCode == 13) 
+		{
+			var buttons = $("#taskbar_signin_container").dialog("option", "buttons");
+			buttons[Object.keys(buttons)[0]](); // trigger the first button
 		}
 	});
 
 	$("#taskbar_signinout_button").button().click (function() {
+		<?php if (isset($login['id']) && $login['id'] != ''): ?>
 		if (ready_to_signinout()) $("#taskbar_signinout_form").submit();
+		<?php else: ?>
+		$('#taskbar_signin_container').dialog('open');
+		<?php endif; ?>
+		return false;
 	});
 
 	$("#taskbar_project_to_find").button().autocomplete({

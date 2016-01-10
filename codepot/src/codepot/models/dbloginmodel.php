@@ -36,7 +36,7 @@ class DbLoginModel extends LoginModel
 
 	function authenticate ($userid, $passwd)
 	{
-		$this->db->trans_start ();
+		$this->db->trans_begin ();
 		
 		$this->db->select ('userid,passwd,email');
 		$this->db->where ('userid', $userid);
@@ -45,27 +45,36 @@ class DbLoginModel extends LoginModel
 
 		if ($this->db->trans_status() == FALSE)
 		{
-			$this->db->trans_complete ();
+			$this->setErrorMessage ($this->db->_error_message());
+			$this->db->trans_rollback ();
 			return FALSE;
 		}
 
 		$result = $query->result ();
 		if (empty($result))
 		{
-			$this->db->trans_complete ();
+			$this->setErrorMessage ('invalid credential'); // no such user name
+			$this->db->trans_rollback ();
 			return FALSE;
 		}
 
-		$this->db->trans_complete ();
-		if ($this->db->trans_status() == FALSE) return FALSE;
+		$this->db->trans_commit();
 
 		$user = $result[0];
-		if (strlen($user->passwd) < 10) return FALSE;
+		if (strlen($user->passwd) < 10) 
+		{
+			$this->setErrorMessage ('wrongly formatted password');
+			return FALSE;
+		}
 		// the last 10 characters are the salt.
 		$hexsalt = substr ($user->passwd, -10);
 		$binsalt = pack('H*' , $hexsalt);
 
-		if (strcmp ($this->format_password_with_salt($passwd,$binsalt),$user->passwd) != 0) return FALSE;
+		if (strcmp ($this->format_password_with_salt($passwd,$binsalt),$user->passwd) != 0) 
+		{
+			$this->setErrorMessage ('invalid credential'); // invalid password
+			return FALSE;
+		}
 
 		return parent::authenticate ($userid, $user->passwd, $user->email);
 	}
@@ -80,6 +89,7 @@ class DbLoginModel extends LoginModel
 
 		if ($this->db->trans_status() === FALSE)
 		{
+			$this->setErrorMessage ($this->db->_error_message());
 			$this->db->trans_rollback ();
 			return FALSE;
 		}
@@ -98,6 +108,7 @@ class DbLoginModel extends LoginModel
 
 		if ($this->db->trans_status() == FALSE)
 		{
+			$this->setErrorMessage ($this->db->_error_message());
 			$this->db->trans_complete ();
 			return FALSE;
 		}
