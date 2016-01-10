@@ -122,11 +122,16 @@ $(function () {
 				if (!!window.FormData)
 				{
 					// FormData is supported
+
+					var user_name = $('#taskbar_user_name').val();
+					var user_pass = $('#taskbar_user_pass').val();
+					if (user_name == '' || user_pass == '') return;
+
 					taskbar_signin_in_progress = true;
 
 					var form_data = new FormData();
-					form_data.append ('user_name', $('#taskbar_user_name').val());
-					form_data.append ('user_pass', $('#taskbar_user_pass').val());
+					form_data.append ('user_name', user_name);
+					form_data.append ('user_pass', user_pass);
 
 					$('#taskbar_signin_container').dialog('disable');
 					$.ajax({
