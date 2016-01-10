@@ -123,7 +123,7 @@ textarea {
 }
 
 .content .collapsible-box-panel {
-	line-height: 2em;
+	line-height: 1.5em;
 	margin: 1px 0 0 0;
 	padding: 0.2em 0.2em 0.2em 0.2em !important; /* !important so that jquery-ui.css doesn't override this */
 }

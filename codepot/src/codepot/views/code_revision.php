@@ -501,7 +501,7 @@ function hide_unneeded_divs()
 }
 
 $(function() {
-	$("#code_revision_result_message").accordion ({
+	$("#code_revision_metadata").accordion ({
 		collapsible: true
 	});
 
@@ -634,16 +634,11 @@ $history = $file['history'];
 	<div style="clear: both;"></div>
 </div>
 
-<div class="menu" id="code_revision_mainarea_menu">
-<?php
 
-?>
-</div> <!-- code_revision_mainarea_menu -->
 
-<div class="result" id="code_revision_result">
 
-<div id="code_revision_result_message" class="collapsible-box">
-	<div id="code_revision_result_message_header" class="collapsible-box-header" >
+<div id="code_revision_metadata" class="collapsible-box">
+	<div id="code_revision_metadata_header" class="collapsible-box-header" >
 		<?php
 		print '<div class="metadata-committer">';
 		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($history['author']));
@@ -673,10 +668,12 @@ $history = $file['history'];
 		<div style='clear: both'></div>
 	</div>
 
-	<div id="code_revision_result_message_body">
-		<pre id="code_revision_result_message_text" class="pre-wrapped"><?php print htmlspecialchars($history['msg']); ?></pre>
+	<div id="code_revision_metadata_body">
+		<pre id="code_revision_metadata_text" class="pre-wrapped"><?php print htmlspecialchars($history['msg']); ?></pre>
 	</div>
 </div>
+
+<div class="result" id="code_revision_result">
 
 <div id="code_revision_result_files" class="collapsible-box">
 <div class="collapsible-box-header"><?php print $this->lang->line('Files')?></div>

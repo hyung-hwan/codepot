@@ -915,7 +915,6 @@ class Code extends Controller
 		print codepot_json_encode ($result);
 	}
 
-
 	function history ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
@@ -1175,8 +1174,15 @@ class Code extends Controller
 				$data['message'] = 'Failed to get diff';
 				$this->load->view ($this->VIEW_ERROR, $data);
 			}
+			else if (($head_rev = $this->subversion->getHeadRev ($projectid, $path, $rev1)) === FALSE)
+			{
+				$data['project'] = $project;
+				$data['message'] = 'Failed to get head revision';
+				$this->load->view ($this->VIEW_ERROR, $data);
+			}
 			else
 			{
+				$file['head_rev'] = $head_rev;
 				$file['prev_rev'] =
 					$this->subversion->getPrevRev ($projectid, $path, $file['created_rev']);
 				$file['next_rev'] =

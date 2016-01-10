@@ -65,6 +65,7 @@
 	$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
 	$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'); 
 
+	$show_search = (CODEPOT_SIGNIN_FOR_CODE_SEARCH === FALSE || (isset($login['id']) && $login['id'] != ''));
 ?>
 
 <script type="text/javascript">
@@ -78,7 +79,7 @@ function show_alert (outputMsg, titleMsg)
 		width: 'auto',
 		height: 'auto',
 		buttons: {
-			"OK": function () {
+			"<?php print $this->lang->line('OK')?>": function () {
 				$(this).dialog("close");
 			}
 		}
@@ -613,33 +614,24 @@ $(function () {
 	});
 <?php endif; ?>
 
-	$('#code_search_submit').button().click (function () {
-		if ($.trim($("#code_search_string").val()) != "")
-		{
-			$('#code_search_submit').button ('disable');
-			$('#code_search_string_icon').addClass("fa-cog fa-spin");
-			$('#code_search_form').submit ();
-		}
-
-		return false; // prevent the default behavior
+	$('#code_folder_metadata').accordion({
+		collapsible: true
 	});
 
-	$('#code_search_invertedly').button();
-	$('#code_search_case_insensitively').button();
-	$('#code_search_recursively').button();
-	$('#code_search_in_name').button();
-	$('#code_search_is_regex').button();
-	$('.code_search_option').tooltip();
+	<?php if ($revision > 0 && $revision < $next_revision): ?>
+		$("#code_folder_headrev_button").button().click (function() {
+			$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/file/{$project->id}/${hex_headpath}"; ?>'));
+			return false;
+		});
+	<?php endif; ?>
 
-	$('#code_search_wildcard').text($('input[name=search_wildcard_pattern]').val());
-
-	$('#code_search_wildcard').editable({
-		type: 'text', 
-		title: '<?php print $this->lang->line('CODE_SEARCH_WILDCARD') ?>',
-		placement: 'bottom',
-		success: function(response, newValue) {
-			$('input[name=search_wildcard_pattern]').val(newValue);
-		}
+	$("#code_folder_history_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print $history_path; ?>'));
+		return false;
+	});
+	$("#code_folder_download_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fetch/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		return false;
 	});
 
 	$("#code_folder_loc_by_lang_button").button().click (function () {
@@ -671,41 +663,53 @@ $(function () {
 		return false;
 	});
 
+<?php if ($show_search): ?>
+	$('#code_search_invertedly').button();
+	$('#code_search_case_insensitively').button();
+	$('#code_search_recursively').button();
+	$('#code_search_in_name').button();
+	$('#code_search_is_regex').button();
+	$('.code_search_option').tooltip();
 
-	$("#code_folder_search").hide();
-	btn = $("#code_folder_search_button").button().click (function () {
-		if ($("#code_folder_search").is(":visible"))
-		{
-			$("#code_folder_search").hide("blind",{},200);
+	$('#code_search_wildcard').text($('input[name=search_wildcard_pattern]').val());
+
+	$('#code_search_wildcard').editable({
+		type: 'text', 
+		title: '<?php print $this->lang->line('CODE_SEARCH_WILDCARD') ?>',
+		placement: 'bottom',
+		success: function(response, newValue) {
+			$('input[name=search_wildcard_pattern]').val(newValue);
 		}
-		else
-		{
-			$("#code_folder_search").show("blind",{},200);
+	});
+
+	$('#code_folder_search').dialog({
+		title: '<?php print $this->lang->line('Search'); ?>',
+		resizable: true,
+		autoOpen: false,
+		modal: true,
+		width: 'auto',
+		height: 'auto',
+		buttons: {
+			'<?php print $this->lang->line('OK')?>': function () {
+				if ($.trim($('#code_search_string').val()) != "")
+				{
+					$('#code_search_string_icon').addClass("fa-cog fa-spin");
+					$('#code_folder_search').dialog ('disable');
+					$('#code_search_form').submit ();
+				}
+			},
+			'<?php print $this->lang->line('Cancel')?>': function () {
+				if (import_in_progress) return;
+				$('#code_folder_search').dialog('close');
+			}
 		}
+	});
 
+	$("#code_folder_search_button").button().click (function () {
+		$('#code_folder_search').dialog('open');
 		return false;
 	});
-
-	$('#code_folder_metadata').accordion({
-		collapsible: true
-	});
-
-	<?php if ($revision > 0 && $revision < $next_revision): ?>
-		$("#code_folder_headrev_button").button().click (function() {
-			$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/file/{$project->id}/${hex_headpath}"; ?>'));
-			return false;
-		});
-	<?php endif; ?>
-
-	$("#code_folder_history_button").button().click (function() {
-		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print $history_path; ?>'));
-		return false;
-	});
-	$("#code_folder_download_button").button().click (function() {
-		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fetch/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
-		return false;
-	});
-
+<?php endif; ?>
 
 	render_readme ();
 });
@@ -846,15 +850,18 @@ $this->load->view (
 		print $this->lang->line('File'); 
 		print '</a>';
 
-		print '<a id="code_folder_search_button" href="#">';
-		print $this->lang->line('Search'); 
-		print '</a>';
+		if ($show_search)
+		{
+			print '<a id="code_folder_search_button" href="#">';
+			print $this->lang->line('Search'); 
+			print '</a>';
+		}
 
 		print '</div>';
 
 		print '<div class="metadata-commit-date">';
 		printf ('[%s] ', $file['created_rev']);
-		print strftime ('%Y-%m-%d %H:%M:%S %z', 0 /*$file['time_t']*/);
+		print strftime ('%Y-%m-%d %H:%M:%S %z', strtotime($file['last_changed_date']));
 		print '</div>';
 		?>
 		<div style='clear: both;'></div>
@@ -889,96 +896,95 @@ $this->load->view (
 	<div id="code_folder_result_loc_by_file_graph"></div>
 </div>
 
+<div id="code_folder_search">
+	<?php
+	print form_open("code/search/{$project->id}/", 'id="code_search_form"');
+	if ($show_search)
+	{
+		print form_hidden('search_folder', set_value('search_folder', $file['fullpath']));
+		print form_hidden('search_revision', set_value('search_revision', $revision));
+
+		print '<div id="code_folder_search_string_div">';
+		print form_input(array(
+			'name' => 'search_string', 
+			'value' => set_value('search_string', ''), 
+			'id' =>'code_search_string',
+			'placeholder' => $this->lang->line('CODE_SEARCH_STRING')
+		));
+		print '<i id="code_search_string_icon" class="fa"></i> ';
+		print '</div>';
+
+		print '<div id="code_folder_search_option_div">';
+		print form_checkbox(array(
+			'name'    => 'search_invertedly', 
+			'id'      => 'code_search_invertedly',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => FALSE,
+			'title'   => $this->lang->line('CODE_SEARCH_INVERTEDLY')
+		));
+		print form_label('v', 'code_search_invertedly', 
+			array('class'=>'code_search_option', 'id'=>'code_search_invertedly_label')
+		);
+
+		print form_checkbox(array(
+			'name'    => 'search_case_insensitively', 
+			'id'      => 'code_search_case_insensitively',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => FALSE,
+			'title'   => $this->lang->line('CODE_SEARCH_CASE_INSENSITIVELY')
+		));
+		print form_label('i', 'code_search_case_insensitively', 
+			array('class'=>'code_search_option', 'id'=>'code_search_case_insensitively_label')
+		);
+
+		print form_checkbox(array(
+			'name'    => 'search_recursively', 
+			'id'      => 'code_search_recursively',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => TRUE,
+			'title'   => $this->lang->line('CODE_SEARCH_RECURSIVELY')
+		));
+		print form_label('r', 'code_search_recursively', 
+			array('class'=>'code_search_option', 'id'=>'code_search_recursively_label')
+		);
+
+		print form_checkbox(array(
+			'name'    => 'search_in_name', 
+			'id'      => 'code_search_in_name',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => FALSE,
+			'title'   => $this->lang->line('CODE_SEARCH_IN_NAME')
+		));
+		print form_label('n', 'code_search_in_name',
+			array('class'=>'code_search_option', 'id'=>'code_search_in_name_label')
+		);
+
+		print form_checkbox(array(
+			'name'    => 'search_is_regex', 
+			'id'      => 'code_search_is_regex',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => FALSE,
+			'title'   => $this->lang->line('CODE_SEARCH_IS_REGEX')
+		));
+		print form_label('x', 'code_search_is_regex',
+			array('class'=>'code_search_option', 'id'=>'code_search_is_regex_label')
+		);
+
+		print '<a id="code_search_wildcard" href="#"></a>';
+		print form_hidden('search_wildcard_pattern', set_value('search_wildcard_pattern', $wildcard_pattern));
+
+		print '</div>';
+	} 
+	print form_close();
+	?>
+</div>
 
 <div class="result" id="code_folder_result">
-
-	<div id="code_folder_search" class="infobox">
-		<?php
-		print form_open("code/search/{$project->id}/", 'id="code_search_form"');
-		if (CODEPOT_SIGNIN_FOR_CODE_SEARCH === FALSE || (isset($login['id']) && $login['id'] != ''))
-		{
-			print form_hidden('search_folder', set_value('search_folder', $file['fullpath']));
-			print form_hidden('search_revision', set_value('search_revision', $revision));
-
-			print '<i id="code_search_string_icon" class="fa"></i> ';
-			print form_input(array(
-				'name' => 'search_string', 
-				'value' => set_value('search_string', ''), 
-				'id' =>'code_search_string',
-				'placeholder' => $this->lang->line('CODE_SEARCH_STRING')
-			));
-			print ' ';
-
-			print form_checkbox(array(
-				'name'    => 'search_invertedly', 
-				'id'      => 'code_search_invertedly',
-				'class'   => 'code_search_option',
-				'value'   => 'Y',
-				'checked' => FALSE,
-				'title'   => $this->lang->line('CODE_SEARCH_INVERTEDLY')
-			));
-			print form_label('v', 'code_search_invertedly', 
-				array('class'=>'code_search_option', 'id'=>'code_search_invertedly_label')
-			);
-
-			print form_checkbox(array(
-				'name'    => 'search_case_insensitively', 
-				'id'      => 'code_search_case_insensitively',
-				'class'   => 'code_search_option',
-				'value'   => 'Y',
-				'checked' => FALSE,
-				'title'   => $this->lang->line('CODE_SEARCH_CASE_INSENSITIVELY')
-			));
-			print form_label('i', 'code_search_case_insensitively', 
-				array('class'=>'code_search_option', 'id'=>'code_search_case_insensitively_label')
-			);
-
-			print form_checkbox(array(
-				'name'    => 'search_recursively', 
-				'id'      => 'code_search_recursively',
-				'class'   => 'code_search_option',
-				'value'   => 'Y',
-				'checked' => TRUE,
-				'title'   => $this->lang->line('CODE_SEARCH_RECURSIVELY')
-			));
-			print form_label('r', 'code_search_recursively', 
-				array('class'=>'code_search_option', 'id'=>'code_search_recursively_label')
-			);
-
-			print form_checkbox(array(
-				'name'    => 'search_in_name', 
-				'id'      => 'code_search_in_name',
-				'class'   => 'code_search_option',
-				'value'   => 'Y',
-				'checked' => FALSE,
-				'title'   => $this->lang->line('CODE_SEARCH_IN_NAME')
-			));
-			print form_label('n', 'code_search_in_name',
-				array('class'=>'code_search_option', 'id'=>'code_search_in_name_label')
-			);
-
-			print form_checkbox(array(
-				'name'    => 'search_is_regex', 
-				'id'      => 'code_search_is_regex',
-				'class'   => 'code_search_option',
-				'value'   => 'Y',
-				'checked' => FALSE,
-				'title'   => $this->lang->line('CODE_SEARCH_IS_REGEX')
-			));
-			print form_label('x', 'code_search_is_regex',
-				array('class'=>'code_search_option', 'id'=>'code_search_is_regex_label')
-			);
-
-			print '<a id="code_search_wildcard" href="#"></a>';
-			print form_hidden('search_wildcard_pattern', set_value('search_wildcard_pattern', $wildcard_pattern));
-
-			print ' ';
-			printf ('<a id="code_search_submit" href="#">%s</a>', $this->lang->line('Search'));
-		} 
-		print form_close();
-		?>
-	</div>
-
 	<?php
 	function comp_files ($a, $b)
 	{

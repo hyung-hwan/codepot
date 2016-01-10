@@ -227,7 +227,6 @@ $this->load->view (
 
 		print '<div class="metadata-menu">';
 
-		
 		$detail_anchor_text = $this->lang->line('Details');
 		$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
 		$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');

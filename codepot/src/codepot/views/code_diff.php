@@ -21,8 +21,115 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
+<?php
+$hex_headpath = $this->converter->AsciiTohex ($headpath);
+
+if ($revision1 <= 0)
+{
+	$revreq = '';
+	$revreqroot = '';
+	$history_path = "/code/history/{$project->id}/{$hex_headpath}";
+}
+else
+{
+	$revreq = "/{$file['created_rev']}";
+	$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
+	if ($hex_headpath == '') $revtrailer = $revreqroot;
+	else $revtrailer = "/{$hex_headpath}{$revreq}";
+	$history_path = "/code/history/{$project->id}{$revtrailer}";
+}
+
+$revreq_against = "/{$file['against']['created_rev']}";
+$revreqroot_against = '/' . $this->converter->AsciiToHex ('.') . $revreq_against;
+if ($hex_headpath == '') $revtrailer_against = $revreqroot_against;
+else $revtrailer_against = "/{$hex_headpath}{$revreq_against}";
+$history_against_path = "/code/history/{$project->id}{$revtrailer_against}";
+
+$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
+$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
+
+$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame');
+$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+
+if ($fullview)
+{
+	$diff_view = 'fulldiff';
+	$altdiff_view = 'diff';
+
+	$diff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
+	$altdiff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
+}
+else
+{
+	$diff_view = 'diff';
+	$altdiff_view = 'fulldiff';
+
+	$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
+	$altdiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
+}
+?>
+
 <script type="text/javascript">
 $(function() {
+	$('#code_diff_metadata').accordion({
+		collapsible: true
+	});
+
+	$('#code_diff_metadata_against').accordion({
+		collapsible: true
+	});
+
+
+	<?php if ($file['created_rev'] != $file['head_rev']): ?>
+		$("#code_diff_headrev_button").button().click (function() {
+			$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/{$diff_view}/{$project->id}/${hex_headpath}"; ?>'));
+			return false;
+		});
+	<?php endif; ?>
+
+	$("#code_diff_detail_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/file/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		return false;
+	});
+	$("#code_diff_blame_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/blame/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		return false;
+	});
+	$("#code_diff_diff_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/{$altdiff_view}/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		return false;
+	});
+	$("#code_diff_history_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print $history_path; ?>'));
+		return false;
+	});
+	$("#code_diff_download_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fetch/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		return false;
+	});
+
+
+	$("#code_diff_detail_against_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/file/{$project->id}/${hex_headpath}{$revreq_against}"; ?>'));
+		return false;
+	});
+	$("#code_diff_blame_against_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/blame/{$project->id}/${hex_headpath}{$revreq_against}"; ?>'));
+		return false;
+	});
+	$("#code_diff_diff_against_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/{$altdiff_view}/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		return false;
+	});
+	$("#code_diff_history_against_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print $history_against_path; ?>'));
+		return false;
+	});
+	$("#code_diff_download_against_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fetch/{$project->id}/${hex_headpath}{$revreq_against}"; ?>'));
+		return false;
+	});
+
 	prettyPrint();
 });
 </script>
@@ -105,45 +212,77 @@ $this->load->view (
 	<div style="clear: both;"></div>
 </div>
 
-<div class="menu" id="code_diff_mainarea_menu">
-<?php
-	$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
-	$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
-	$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
-	$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame');
+<div id='code_diff_metadata_container'>
 
-	$xpar = $this->converter->AsciiTohex ($headpath);
-	print anchor (
-		"code/file/{$project->id}/{$xpar}{$revreq}",
-		$this->lang->line('Details'));
-	print ' | ';
-	print anchor ("code/blame/{$project->id}/{$xpar}{$revreq}", $blame_anchor_text);
-		
-	print ' | ';
+	<div id='code_diff_metadata_against' class='collapsible-box'>
+		<div id='code_diff_metadata_against_header' class='collapsible-box-header'>
+			<?php
+			print '<div class="metadata-committer">';
+			$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($file['against']['last_author']));
+			print "<img src='{$user_icon_url}' class='metadata-committer-icon' />";
+			print htmlspecialchars ($file['against']['last_author']);
+			print '</div>';
 
-	if (!$fullview)
-	{
-		print anchor ("code/fulldiff/{$project->id}/{$xpar}{$revreq}", $fulldiff_anchor_text);
-	}
-	else
-	{
-		print anchor ("code/diff/{$project->id}/{$xpar}{$revreq}", $diff_anchor_text);
-	}
+			print '<div class="metadata-menu">';
+			print anchor ("#", $this->lang->line('Details'), 'id="code_diff_detail_against_button"');
+			print anchor ("#", $blame_anchor_text, 'id="code_diff_blame_against_button"');
+			print anchor ("#", $altdiff_anchor_text, 'id="code_diff_diff_against_button"');
+			print anchor ("#", $history_anchor_text, 'id="code_diff_history_against_button"');
+			print anchor ("#", $download_anchor_text, 'id="code_diff_download_against_button"');
+			print '</div>';
 
-	print ' | ';
+			print '<div class="metadata-commit-date">';
+			printf ('[%s] ', $file['against']['created_rev']);
+			print strftime ('%Y-%m-%d %H:%M:%S %z', $file['time_t']);
+			print '</div>'
+			?>
 
-	if ($revision1 > 0)
-	{
-		if ($xpar == '') $revtrailer = $revreqroot;
-		else $revtrailer = "/{$xpar}{$revreq}";
-		print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
-	}
-	else
-	{
-		print anchor ("code/history/{$project->id}/{$xpar}", $history_anchor_text);
-	}
-?>
-</div> <!-- code_diff_mainarea_menu -->
+			<div style='clear: both'></div>
+		</div>
+
+		<div id='code_diff_metadata_against_body'>
+			<pre class='pre-wrapped'><?php print htmlspecialchars ($file['against']['logmsg']); ?></pre>
+		</div>
+	</div>
+
+	<div id='code_diff_metadata' class='collapsible-box'>
+		<div id='code_diff_metadata_header' class='collapsible-box-header'>
+			<?php
+			print '<div class="metadata-committer">';
+			$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($file['last_author']));
+			print "<img src='{$user_icon_url}' class='metadata-committer-icon' />";
+			print htmlspecialchars ($file['last_author']);
+			print '</div>';
+
+			print '<div class="metadata-menu">';
+			if ($file['created_rev'] != $file['head_rev']) 
+			{
+				print anchor ('#', $head_revision_text, 'id="code_diff_headrev_button"');
+			}
+
+			print anchor ("#", $this->lang->line('Details'), 'id="code_diff_detail_button"');
+			print anchor ("#", $blame_anchor_text, 'id="code_diff_blame_button"');
+			print anchor ("#", $altdiff_anchor_text, 'id="code_diff_diff_button"');
+			print anchor ("#", $history_anchor_text, 'id="code_diff_history_button"');
+			print anchor ("#", $download_anchor_text, 'id="code_diff_download_button"');
+			print '</div>';
+
+			print '<div class="metadata-commit-date">';
+			printf ('[%s] ', $file['created_rev']);
+			print strftime ('%Y-%m-%d %H:%M:%S %z', $file['time_t']);
+			print '</div>'
+			?>
+
+			<div style='clear: both'></div>
+		</div>
+
+		<div id='code_diff_metadata_body'>
+			<pre class='pre-wrapped'><?php print htmlspecialchars ($file['logmsg']); ?></pre>
+		</div>
+	</div>
+
+	<div style='clear: both;'></div>
+</div>
 
 <?php 
 	$fileext = substr(strrchr($file['name'], '.'), 1);
@@ -151,249 +290,66 @@ $this->load->view (
 ?>
 
 <div class="result" id="code_diff_result">
-<?php
-
-function format_diff2 ($a, $b, $css_class)
-{
-	$ms = codepot_find_matching_sequences ($a, $b);
-	$ms_count = count($ms);
-
-	$k = 0;
-	$cc = ''; 
-
-	if ($css_class == 'diffchangedold')
+	<?php
+	function format_diff2 ($a, $b, $css_class)
 	{
-		for ($i = 0; $i < $ms_count; $i++)
+		$ms = codepot_find_matching_sequences ($a, $b);
+		$ms_count = count($ms);
+
+		$k = 0;
+		$cc = ''; 
+
+		if ($css_class == 'diffchangedold')
 		{
-			list($mp1, $mp2, $ml) = $ms[$i];
-			if ($mp1 > $k)
+			for ($i = 0; $i < $ms_count; $i++)
+			{
+				list($mp1, $mp2, $ml) = $ms[$i];
+				if ($mp1 > $k)
+				{
+					$cc .= sprintf ('<span class="%s">', $css_class);
+					$cc .= htmlspecialchars(substr($a, $k, $mp1 - $k));
+					$cc .= '</span>';
+				}
+				$cc .= htmlspecialchars(substr($a, $mp1, $ml));
+				$k = $mp1 + $ml;
+			}
+			if ($k < strlen($a)) 
 			{
 				$cc .= sprintf ('<span class="%s">', $css_class);
-				$cc .= htmlspecialchars(substr($a, $k, $mp1 - $k));
+				$cc .= htmlspecialchars(substr($a, $k));
 				$cc .= '</span>';
 			}
-			$cc .= htmlspecialchars(substr($a, $mp1, $ml));
-			$k = $mp1 + $ml;
-		}
-		if ($k < strlen($a)) 
-		{
-			$cc .= sprintf ('<span class="%s">', $css_class);
-			$cc .= htmlspecialchars(substr($a, $k));
-			$cc .= '</span>';
-		}
-	}
-	else
-	{
-		for ($i = 0; $i < $ms_count; $i++)
-		{
-			list($mp1, $mp2, $ml) = $ms[$i];
-			if ($mp2 > $k)
-			{
-				$cc .= sprintf ('<span class="%s">', $css_class);
-				$cc .= htmlspecialchars(substr($b, $k, $mp2 - $k));
-				$cc .= '</span>';
-			}
-			$cc .= htmlspecialchars(substr($b, $mp2, $ml));
-			$k = $mp2 + $ml;
-		}
-		if ($k < strlen($b)) 
-		{
-			$cc .= sprintf ('<span class="%s">', $css_class);
-			$cc .= htmlspecialchars(substr($b, $k));
-			$cc .= '</span>';
-		}
-	}
-
-
-	return $cc;
-}
-
-/*
-function format_diff ($a, $b, $css_class)
-{
-	if ($b == '') return htmlspecialchars($a);
-
-	// TODO: word by word comparison to be less position dependent 
-	$cc = '';
-	$diffstart = -1;
-	$alen = strlen($a);
-	$blen = strlen($b);
-
-	for ($i = 0; $i < $alen && $i < $blen; $i++)
-	{
-		if ($a[$i] == $b[$i])
-		{
-			if ($diffstart >= 0)
-			{
-				$cc .= sprintf ('<span class="%s">', $css_class);
-				$cc .= htmlspecialchars(substr($a, $diffstart, $i - $diffstart));
-				$cc .= '</span>';
-				$diffstart = -1;
-			}
-			$cc .= htmlspecialchars($a[$i]);
 		}
 		else
 		{
-			if ($diffstart < 0) $diffstart = $i;
+			for ($i = 0; $i < $ms_count; $i++)
+			{
+				list($mp1, $mp2, $ml) = $ms[$i];
+				if ($mp2 > $k)
+				{
+					$cc .= sprintf ('<span class="%s">', $css_class);
+					$cc .= htmlspecialchars(substr($b, $k, $mp2 - $k));
+					$cc .= '</span>';
+				}
+				$cc .= htmlspecialchars(substr($b, $mp2, $ml));
+				$k = $mp2 + $ml;
+			}
+			if ($k < strlen($b)) 
+			{
+				$cc .= sprintf ('<span class="%s">', $css_class);
+				$cc .= htmlspecialchars(substr($b, $k));
+				$cc .= '</span>';
+			}
 		}
+
+
+		return $cc;
 	}
 
-	if ($diffstart >= 0)
-	{
-		$cc .= sprintf ('<span class="%s">', $css_class);
-		$cc .= htmlspecialchars(substr($a, $diffstart, $alen - $diffstart));
-		$cc .= '</span>';
-	}	
-	else
-	{
-		if ($alen > $blen)
-		{
-			$cc .= sprintf ('<span class="%s">', $css_class);
-			$cc .= htmlspecialchars(substr ($a, $blen, $alen - $blen));
-			$cc .= '</span>';
-		}
-	}
-
-	return $cc;
-}
-*/
-
-//if (!$fullview)
-if (FALSE) // don't want to delete code for the original diff view. 
-{
-	print '<table id="code_diff_result_table">';
-	/*
-	print '<pre>';
-	print_r ($file['content']);
-	print '</pre>';
-	*/
-
-	print '<tr class="heading">';
-	print '<th>';
-	print ' ';
-
-	$currev = $file['created_rev'];
-	$prevrev = $file['against']['prev_rev'];
-	$prevanc = "code/diff/{$project->id}/{$xpar}/{$currev}/{$prevrev}";
-	print anchor ($prevanc, '<i class="fa fa-arrow-circle-left"></i>');
-	print ' ';
-
-	print $this->lang->line('Revision');
-	print ' ';
-	print $file['against']['created_rev'];
-
-	$currev = $file['created_rev'];
-	$nextrev = $file['against']['next_rev'];
-	$nextanc = "code/diff/{$project->id}/{$xpar}/{$currev}/{$nextrev}";
-	print ' ';
-	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
-
-	print '</th>';
-
-	print '<th>';
-	print ' ';
-
-	$currev = $file['against']['created_rev'];
-	$prevrev = $file['prev_rev'];
-	$prevanc = "code/diff/{$project->id}/{$xpar}/{$prevrev}/{$currev}";
-	print anchor ($prevanc, '<i class="fa fa-arrow-circle-left"></i>');
-	print ' ';
-
-	print $this->lang->line('Revision');
-	print ' ';
-	print $file['created_rev'];
-
-	$currev = $file['against']['created_rev'];
-	$nextrev = $file['next_rev'];
-	$nextanc = "code/diff/{$project->id}/{$xpar}/{$nextrev}/{$currev}";
-	print ' ';
-	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
-
-	print '</th>';
-	print '</tr>';
-
-	if ($headpath != $file['fullpath'] ||
-	    $headpath != $file['against']['fullpath'])
-	{
-		print '<tr>';
-
-		print '<th>';
-		print anchor (
-			"code/file/{$project->id}/{$xpar}/{$file['against']['created_rev']}",
-			htmlspecialchars ($file['against']['fullpath']));
-		print '</th>';
-
-		print '<th>';
-		print anchor (
-			"code/file/{$project->id}/{$xpar}/{$file['created_rev']}",
-			htmlspecialchars ($file['fullpath']));
-		print '</th>';
-
-		print '</tr>';
-	}
-
-	if (empty($file['content']))
-	{
-		print '<tr>';
-		print '<td colspan="2">';
-		print htmlspecialchars ($this->lang->line('MSG_NO_DIFF'));
-		print '</td>';
-		print '</tr>';
-	}
-	else
-	{
-		foreach ($file['content'] as $x)
-		{
-			print '<tr class="diff">';
-
-			if (array_key_exists('rev1line', $x)) 
-			{
-				$diffclass = array_key_exists('rev1diffclass', $x)? $x['rev1diffclass']: 'diff';
-				print "<td class='{$diffclass}'>";
-				print "<pre class='prettyprint lang-{$fileext}'>";
-				if ($x['rev1line'] == '') print '&nbsp;';
-				else print htmlspecialchars($x['rev1line']);
-				print '</pre>';
-				print '</td>';
-			}
-			else
-			{
-				print '<td class="diffrow">';
-				print $x['rev1lineno'];
-				print '</td>';
-			}
-
-			if (array_key_exists('rev2line', $x)) 
-			{
-				$diffclass = array_key_exists('rev2diffclass', $x)? $x['rev2diffclass']: 'diff';
-				print "<td class='{$diffclass}'>";
-				print "<pre class='prettyprint lang-{$fileext}'>";
-				if ($x['rev2line'] == '') print '&nbsp;';
-				else print htmlspecialchars($x['rev2line']);
-				print '</pre>';
-				print '</td>';
-			}
-			else
-			{
-				print '<td class="diffrow">';
-				print $x['rev2lineno'];
-				print '</td>';
-			}
-	
-			print '</tr>';
-		}
-	}
-
-	print '</table>';
-}
-else
-{
 	$http_user_agent = $_SERVER['HTTP_USER_AGENT']; 
 	$is_msie = (stristr($http_user_agent, 'MSIE') !== FALSE && 
-	            stristr($http_user_agent, 'Opera') === FALSE);
+			  stristr($http_user_agent, 'Opera') === FALSE);
 	if (!$is_msie) $is_msie = (preg_match ("/^Mozilla.+\(Windows.+\) like Gecko$/", $http_user_agent) !== FALSE);
-
-	$diff_view = $fullview? 'fulldiff': 'diff';
 
 	print '<div style="width: 100%; overflow: hidden;" id="code_diff_result_fullview">';
 
@@ -406,21 +362,21 @@ else
 
 	$currev = $file['created_rev'];
 	$prevrev = $file['against']['prev_rev'];
-	$prevanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$currev}/{$prevrev}";
+	$prevanc = "code/{$diff_view}/{$project->id}/{$hex_headpath}/{$currev}/{$prevrev}";
 
 	print anchor ($prevanc, '<i class="fa fa-arrow-circle-left"></i>');
 	print ' ';
 
 	// show the history details of the previous revision at the root directory
 	$revanc = "code/revision/{$project->id}/!/{$file['against']['created_rev']}";
-	$codeanc = "code/file/{$project->id}/{$xpar}/{$file['against']['created_rev']}";
+	$codeanc = "code/file/{$project->id}/{$hex_headpath}/{$file['against']['created_rev']}";
 	print anchor ($revanc, $this->lang->line('Revision'));
 	print ' ';
 	print anchor ($codeanc, $file['against']['created_rev']);
 
 	$currev = $file['created_rev'];
 	$nextrev = $file['against']['next_rev'];
-	$nextanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$currev}/{$nextrev}";
+	$nextanc = "code/{$diff_view}/{$project->id}/{$hex_headpath}/{$currev}/{$nextrev}";
 	print ' ';
 	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
 	print "</div>"; // navigator
@@ -511,20 +467,20 @@ else
 
 	$currev = $file['against']['created_rev'];
 	$prevrev = $file['prev_rev'];
-	$prevanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$prevrev}/{$currev}";
+	$prevanc = "code/{$diff_view}/{$project->id}/{$hex_headpath}/{$prevrev}/{$currev}";
 	print anchor ($prevanc, '<i class="fa fa-arrow-circle-left"></i>');
 	print ' ';
 
 	// show the history details of the current revision at the root directory
 	$revanc = "code/revision/{$project->id}/!/{$file['created_rev']}";
-	$codeanc = "code/file/{$project->id}/${xpar}/{$file['created_rev']}";
+	$codeanc = "code/file/{$project->id}/{$hex_headpath}/{$file['created_rev']}";
 	print anchor ($revanc, $this->lang->line('Revision'));
 	print ' ';
 	print anchor ($codeanc, $file['created_rev']);
 
 	$currev = $file['against']['created_rev'];
 	$nextrev = $file['next_rev'];
-	$nextanc = "code/{$diff_view}/{$project->id}/{$xpar}/{$nextrev}/{$currev}";
+	$nextanc = "code/{$diff_view}/{$project->id}/{$hex_headpath}/{$nextrev}/{$currev}";
 	print ' ';
 	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
 	print "</div>"; // navigator
@@ -558,7 +514,7 @@ else
 		}
 	}
 	print '</span>';
-	
+
 	print '<code class="line-numbered-code prettyprint lang-{$fileext}" id="new-code" class="line-numbered-code">';
 	$actual_line_no = 1;
 	foreach ($file['content'] as $x)
@@ -611,8 +567,8 @@ else
 
 
 	print '</div>';
-}
-?>
+
+	?>
 
 </div>
 

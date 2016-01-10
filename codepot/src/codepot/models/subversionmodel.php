@@ -146,6 +146,12 @@ class SubversionModel extends Model
 				$fileinfo['last_author'] = '';
 			else
 				$fileinfo['last_author'] = $info0['last_changed_author'];
+
+			if (array_key_exists ('last_changed_date', $info0) === FALSE)
+				$fileinfo['last_changed_date'] = '';
+			else
+				$fileinfo['last_changed_date'] = $info0['last_changed_date'];
+
 			$fileinfo['content'] = $list;
 			return $fileinfo;
 		}
@@ -309,7 +315,6 @@ class SubversionModel extends Model
 		@unlink ($tfname);
 		return TRUE;
 	}
-
 
 	function importFiles ($projectid, $path, $committer, $commit_message, $files, $uploader)
 	{
@@ -1089,6 +1094,16 @@ class SubversionModel extends Model
 			$fileinfo['content'] = $this->_get_diff ($diff, '', '', FALSE, FALSE);
 		}
 		fclose ($diff);
+
+		$log = @svn_log ($info1[0]['url'], $fileinfo['created_rev'], $fileinfo['created_rev'], 1, SVN_DISCOVER_CHANGED_PATHS);
+		if ($log === FALSE) $log = @svn_log ($workurl1, $fileinfo['created_rev'], $fileinfo['created_rev'], 1, SVN_DISCOVER_CHANGED_PATHS);
+		if ($log === FALSE) $fileinfo['logmsg'] = '';
+		else $fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
+
+		$log = @svn_log ($info2[0]['url'], $fileinfo['against']['created_rev'], $fileinfo['against']['created_rev'], 1, SVN_DISCOVER_CHANGED_PATHS);
+		if ($log === FALSE)  $log = @svn_log ($workurl2, $fileinfo['against']['created_rev'], $fileinfo['against']['created_rev'], 1, SVN_DISCOVER_CHANGED_PATHS);
+		if ($log === FALSE) $fileinfo['logmsg'] = '';
+		else $fileinfo['against']['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
 
 		return $fileinfo;
 	}
