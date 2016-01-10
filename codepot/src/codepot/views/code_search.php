@@ -110,136 +110,141 @@ $this->load->view (
 
 <div class="mainarea" id="code_search_mainarea">
 
-<div class="title">
-<?php
-	if ($revision <= 0)
-	{
-		$revreq = '';
-		$revreqroot = '';
-	}
-	else
-	{
-		$revreq = "/{$revision}";
-		$revreqroot = '/' . $this->converter->AsciiToHex('.') . $revreq;
-	}
+<div class="title-band" id="code_search_title_band">
 
-	// print the main anchor for the root folder. 
-	// let the anchor text be the project name.
-	print anchor (
-		"code/file/{$project->id}{$revreqroot}", 
-		htmlspecialchars($project->name));
+	<div class="title">
+		<?php
+		if ($revision <= 0)
+		{
+			$revreq = '';
+			$revreqroot = '';
+		}
+		else
+		{
+			$revreq = "/{$revision}";
+			$revreqroot = '/' . $this->converter->AsciiToHex('.') . $revreq;
+		}
 
-	// explode non-root folder parts to anchors
-	$exps = explode ('/', $headpath);
-	$expsize = count($exps);
-	$par = '';
-	for ($i = 1; $i < $expsize; $i++)
-	{
-		print '/';
-		$par .= '/' . $exps[$i];
-		$xpar = $this->converter->AsciiToHex ($par);
+		// print the main anchor for the root folder. 
+		// let the anchor text be the project name.
 		print anchor (
-			"code/file/{$project->id}/{$xpar}{$revreq}",
-			htmlspecialchars($exps[$i]));
-	}
+			"code/file/{$project->id}{$revreqroot}", 
+			htmlspecialchars($project->name));
 
-	if ($headpath != $file['fullpath'])
-	{
-		print ' - ';
-		print htmlspecialchars ($file['fullpath']);
-	}
-?>
-</div>
+		// explode non-root folder parts to anchors
+		$exps = explode ('/', $headpath);
+		$expsize = count($exps);
+		$par = '';
+		for ($i = 1; $i < $expsize; $i++)
+		{
+			print '/';
+			$par .= '/' . $exps[$i];
+			$xpar = $this->converter->AsciiToHex ($par);
+			print anchor (
+				"code/file/{$project->id}/{$xpar}{$revreq}",
+				htmlspecialchars($exps[$i]));
+		}
 
-<div class="infostrip" id="code_search_mainarea_infostrip">
-	<?php
-	print form_open("code/search/{$project->id}/", 'id="code_search_form"');
-	print form_hidden ('search_folder', set_value('search_folder', $file['fullpath']));
-	print form_hidden ('search_revision', set_value('search_revision', $revision));
-	
-	print '<i id="code_search_string_icon" class="fa"></i> ';
-	print form_input(array(
-		'name' => 'search_string', 
-		'value' => set_value('search_string', ''), 
-		'id' =>'code_search_string',
-		'placeholder' => $this->lang->line('CODE_SEARCH_STRING')
-	));
-	print ' ';
+		if ($headpath != $file['fullpath'])
+		{
+			print ' - ';
+			print htmlspecialchars ($file['fullpath']);
+		}
+		?>
+	</div>
 
-	print form_checkbox(array(
-		'name'    => 'search_invertedly', 
-		'id'      => 'code_search_invertedly',
-		'class'   => 'code_search_option',
-		'value'   => 'Y',
-		'checked' => ($invertedly == 'Y'),
-		'title'   => $this->lang->line('CODE_SEARCH_INVERTEDLY')
-	));
-	print form_label('v', 'code_search_invertedly',
-		array('class'=>'code_search_option', 'id'=>'code_search_invertedly_label')
-	);
+	<div class="actions">
+		<?php
+		print form_open("code/search/{$project->id}/", 'id="code_search_form"');
+		print form_hidden ('search_folder', set_value('search_folder', $file['fullpath']));
+		print form_hidden ('search_revision', set_value('search_revision', $revision));
+		
+		print '<i id="code_search_string_icon" class="fa"></i> ';
+		print form_input(array(
+			'name' => 'search_string', 
+			'value' => set_value('search_string', ''), 
+			'id' =>'code_search_string',
+			'placeholder' => $this->lang->line('CODE_SEARCH_STRING')
+		));
+		print ' ';
 
-	print form_checkbox(array(
-		'name'    => 'search_case_insensitively', 
-		'id'      => 'code_search_case_insensitively',
-		'class'   => 'code_search_option',
-		'value'   => 'Y',
-		'checked' => ($case_insensitively == 'Y'),
-		'title'   => $this->lang->line('CODE_SEARCH_CASE_INSENSITIVELY')
-	));
-	print form_label('i', 'code_search_case_insensitively', 
-		array('class'=>'code_search_option', 'id'=>'code_search_case_insensitively_label')
-	);
+		print form_checkbox(array(
+			'name'    => 'search_invertedly', 
+			'id'      => 'code_search_invertedly',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => ($invertedly == 'Y'),
+			'title'   => $this->lang->line('CODE_SEARCH_INVERTEDLY')
+		));
+		print form_label('v', 'code_search_invertedly',
+			array('class'=>'code_search_option', 'id'=>'code_search_invertedly_label')
+		);
 
-	print form_checkbox(array(
-		'name'    => 'search_recursively', 
-		'id'      => 'code_search_recursively',
-		'class'   => 'code_search_option',
-		'value'   => 'Y',
-		'checked' => ($recursively == 'Y'),
-		'title'   => $this->lang->line('CODE_SEARCH_RECURSIVELY')
-	));
-	print form_label('r', 'code_search_recursively', 
-		array('class'=>'code_search_option', 'id'=>'code_search_recursively_label')
-	);
+		print form_checkbox(array(
+			'name'    => 'search_case_insensitively', 
+			'id'      => 'code_search_case_insensitively',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => ($case_insensitively == 'Y'),
+			'title'   => $this->lang->line('CODE_SEARCH_CASE_INSENSITIVELY')
+		));
+		print form_label('i', 'code_search_case_insensitively', 
+			array('class'=>'code_search_option', 'id'=>'code_search_case_insensitively_label')
+		);
 
-	print form_checkbox(array(
-		'name'    => 'search_in_name', 
-		'id'      => 'code_search_in_name',
-		'class'   => 'code_search_option',
-		'value'   => 'Y',
-		'checked' => ($in_name == 'Y'),
-		'title'   => $this->lang->line('CODE_SEARCH_IN_NAME')
-	));
-	print form_label('n', 'code_search_in_name', 
-		array('class'=>'code_search_option', 'id'=>'code_search_in_name_label')
-	);
+		print form_checkbox(array(
+			'name'    => 'search_recursively', 
+			'id'      => 'code_search_recursively',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => ($recursively == 'Y'),
+			'title'   => $this->lang->line('CODE_SEARCH_RECURSIVELY')
+		));
+		print form_label('r', 'code_search_recursively', 
+			array('class'=>'code_search_option', 'id'=>'code_search_recursively_label')
+		);
 
-	print form_checkbox(array(
-		'name'    => 'search_is_regex', 
-		'id'      => 'code_search_is_regex',
-		'class'   => 'code_search_option',
-		'value'   => 'Y',
-		'checked' => ($is_regex == 'Y'),
-		'title'   => $this->lang->line('CODE_SEARCH_IS_REGEX')
-	));
-	print form_label('x', 'code_search_is_regex', 
-		array('class'=>'code_search_option', 'id'=>'code_search_is_regex_label')
-	);
+		print form_checkbox(array(
+			'name'    => 'search_in_name', 
+			'id'      => 'code_search_in_name',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => ($in_name == 'Y'),
+			'title'   => $this->lang->line('CODE_SEARCH_IN_NAME')
+		));
+		print form_label('n', 'code_search_in_name', 
+			array('class'=>'code_search_option', 'id'=>'code_search_in_name_label')
+		);
 
-	print '<a id="code_search_wildcard" href="#"></a>';
-	print form_hidden('search_wildcard_pattern', set_value('search_wildcard_pattern', $wildcard_pattern));
+		print form_checkbox(array(
+			'name'    => 'search_is_regex', 
+			'id'      => 'code_search_is_regex',
+			'class'   => 'code_search_option',
+			'value'   => 'Y',
+			'checked' => ($is_regex == 'Y'),
+			'title'   => $this->lang->line('CODE_SEARCH_IS_REGEX')
+		));
+		print form_label('x', 'code_search_is_regex', 
+			array('class'=>'code_search_option', 'id'=>'code_search_is_regex_label')
+		);
 
-	print ' ';
-	printf ('<a id="code_search_submit" href="#">%s</a>', $this->lang->line('Search'));
-	//print form_submit ('search_submit', $this->lang->line('Search'), 'id="code_search_submit"');
-	print ' | ';
-	print anchor (
-		"code/revision/{$project->id}/!/{$file['created_rev']}",
-		sprintf("%s %s", $this->lang->line('Revision'), $file['created_rev'])
-	);
+		print '<a id="code_search_wildcard" href="#"></a>';
+		print form_hidden('search_wildcard_pattern', set_value('search_wildcard_pattern', $wildcard_pattern));
 
-	print form_close();
-	?>
+		print ' ';
+		printf ('<a id="code_search_submit" href="#">%s</a>', $this->lang->line('Search'));
+		//print form_submit ('search_submit', $this->lang->line('Search'), 'id="code_search_submit"');
+		print ' | ';
+		print anchor (
+			"code/revision/{$project->id}/!/{$file['created_rev']}",
+			sprintf("%s %s", $this->lang->line('Revision'), $file['created_rev'])
+		);
+
+		print form_close();
+		?>
+	</div>
+
+	<div style="clear: both;"></div>
 </div>
 
 <div id="code_search_mainarea_result" class="result">
