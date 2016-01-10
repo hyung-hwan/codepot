@@ -699,7 +699,6 @@ $(function () {
 				}
 			},
 			'<?php print $this->lang->line('Cancel')?>': function () {
-				if (import_in_progress) return;
 				$('#code_folder_search').dialog('close');
 			}
 		}

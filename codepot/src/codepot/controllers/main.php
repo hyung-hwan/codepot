@@ -20,6 +20,33 @@ class Main extends Controller
 		redirect ("main/signin/$xurl");
 	}
 
+	function xhr_signin ()
+	{
+		$this->load->model ('UserModel', 'users');
+
+		if($this->input->post('user_name'))
+		{
+			$user_name = $this->input->post('user_name');
+			$user_pass = $this->input->post('user_pass');
+
+			if ($this->login->authenticate ($user_name, $user_pass) === FALSE)
+			{
+				print 'error - ' . $this->login->getErrorMessage();
+			}
+			else
+			{
+				$settings = $this->users->fetchSettings ($user_name);
+				if ($settings !== FALSE) $this->login->setUserSettings ($settings);
+				print 'ok';
+			}
+		}
+		else
+		{
+			$this->login->deauthenticate ();
+			print 'ok';
+		}
+	}
+
 	function signin ($xurl = '')
 	{
 		$this->load->model ('UserModel', 'users');

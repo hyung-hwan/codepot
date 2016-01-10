@@ -127,6 +127,7 @@ $lang['MSG_NO_SUCH_PROJECT'] = 'No such project';
 $lang['MSG_SURE_TO_DELETE_THIS'] = "Saya yakin untuk menghapus";
 $lang['MSG_FAILED_TO_READ_FILE'] = 'Failed to read file - %s';
 $lang['MSG_NO_SUCH_FILE'] = 'No such file - %s';
+$lang['MSG_SIGNIN_FAILURE'] = 'Cannot sign in';
 
 $lang['MSG_PROJECT_MEMBERSHIP_REQUIRED'] = 'You have to be a member of the %s project to perform this task';
 $lang['MSG_FORM_INPUT_INCOMPLETE'] = 'Your input is incomplete';
