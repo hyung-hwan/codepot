@@ -1,4 +1,6 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -64,9 +66,9 @@ $this->load->view (
 
 <div class="mainarea" id="code_diff_mainarea">
 
-<div class="title-band" id="code_diff_mainarea_title_band">
+<div class="title-band" id="code_diff_title_band">
 
-	<div class="title" id="code_diff_mainarea_title">
+	<div class="title">
 	<?php
 		if ($revision1 <= 0)
 		{
@@ -97,7 +99,7 @@ $this->load->view (
 			print anchor ($xpar, htmlspecialchars($exps[$i]));
 		}
 	?>
-	</div> <!-- code_diff_mainarea_title -->
+	</div>
 
 	<div class="actions"></div>
 	<div style="clear: both;"></div>
@@ -148,7 +150,7 @@ $this->load->view (
 	if ($fileext == "") $fileext = "html"
 ?>
 
-<div class="result" id="code_diff_mainarea_result">
+<div class="result" id="code_diff_result">
 <?php
 
 function format_diff2 ($a, $b, $css_class)
@@ -259,7 +261,7 @@ function format_diff ($a, $b, $css_class)
 //if (!$fullview)
 if (FALSE) // don't want to delete code for the original diff view. 
 {
-	print '<table id="code_diff_mainarea_result_table">';
+	print '<table id="code_diff_result_table">';
 	/*
 	print '<pre>';
 	print_r ($file['content']);
@@ -393,7 +395,7 @@ else
 
 	$diff_view = $fullview? 'fulldiff': 'diff';
 
-	print '<div style="width: 100%; overflow: hidden;" id="code_diff_mainarea_result_fullview">';
+	print '<div style="width: 100%; overflow: hidden;" id="code_diff_result_fullview">';
 
 	//
 	// SHOW THE OLD FILE
@@ -423,8 +425,8 @@ else
 	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
 	print "</div>"; // navigator
 
-	//print "<pre class='prettyprint lang-{$fileext}' style='width: 100%;' id='code_diff_mainarea_result_fulldiffold'>";
-	print '<pre style="width: 100%;" id="code_diff_mainarea_result_fulldiffold" class="line-numbered">';
+	//print "<pre class='prettyprint lang-{$fileext}' style='width: 100%;' id='code_diff_result_fulldiffold'>";
+	print '<pre style="width: 100%;" id="code_diff_result_fulldiffold" class="line-numbered">';
 
 	print '<span class="line-number-block">';
 	$actual_line_no = 1;
@@ -527,8 +529,8 @@ else
 	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
 	print "</div>"; // navigator
 
-	//print "<pre class='prettyprint lang-{$fileext}' style='width: 100%;' id='code_diff_mainarea_result_fulldiffnew'>";
-	print '<pre style="width: 100%;" id="code_diff_mainarea_result_fulldiffnew" class="line-numbered">';
+	//print "<pre class='prettyprint lang-{$fileext}' style='width: 100%;' id='code_diff_result_fulldiffnew'>";
+	print '<pre style="width: 100%;" id="code_diff_result_fulldiffnew" class="line-numbered">';
 
 	print '<span class="line-number-block">';
 	$actual_line_no = 1;

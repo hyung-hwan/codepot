@@ -713,7 +713,7 @@ $this->load->view (
 <div class="mainarea" id="issue_show_mainarea">
 
 
-<div class="title-band" id="issue_show_mainarea_title_band">
+<div class="title-band" id="issue_show_title_band">
 	<div class="title">
 		<?php print $this->lang->line('Issue')?> <?php print htmlspecialchars($issue->id)?>: 
 		<?php print htmlspecialchars($issue->summary)?>

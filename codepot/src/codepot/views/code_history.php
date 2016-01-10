@@ -51,9 +51,9 @@ $this->load->view (
 
 <div class="mainarea" id="code_history_mainarea">
 
-<div class="title-band" id="code_history_mainarea_title_band">
+<div class="title-band" id="code_history_title_band">
 
-	<div class="title" id="code_history_mainarea_title">
+	<div class="title">
 	<?php
 		if ($revision <= 0)
 		{
@@ -92,11 +92,7 @@ $this->load->view (
 	<div style="clear: both;"></div>
 </div>
 
-<div class="menu" id="code_history_mainarea_menu">
-</div> <!-- code_history_mainarea_menu -->
-
-<div class="result" id="code_history_mainarea_result">
-
+<div class="graph" id="code_history_mainarea_graph">
 <?php
 	$xfullpath = $this->converter->AsciiToHex (($fullpath == '')? '.': $fullpath);
 
@@ -106,8 +102,12 @@ $this->load->view (
 	$graph_url = codepot_merge_path (site_url(), "/code/graph/commit-share-by-users/{$project->id}/{$xfullpath}{$revreq}");
 	print "<img src='{$graph_url}' />";
 ?>
+</div> <!-- code_history_mainarea_graph -->
 
-<table id="code_history_mainarea_result_table" class="full-width-result-table">
+<div class="result" id="code_history_result">
+
+
+<table id="code_history_result_table" class="full-width-result-table">
 <tr class='full-width-result-table-header'>
 	<th><?php print $this->lang->line('Revision')?></th>
 	<th><?php print $this->lang->line('Committer')?></th>

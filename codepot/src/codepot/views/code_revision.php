@@ -496,24 +496,24 @@ function render_wiki()
 function hide_unneeded_divs()
 {
 	// hide the properties division if its table contains no rows
-	var nrows = $('#code_revision_mainarea_result_properties_table tr').length;
-	if (nrows <= 0) $('#code_revision_mainarea_result_properties').hide();
+	var nrows = $('#code_revision_result_properties_table tr').length;
+	if (nrows <= 0) $('#code_revision_result_properties').hide();
 }
 
 $(function() {
-	$("#code_revision_mainarea_result_message").accordion ({
+	$("#code_revision_result_message").accordion ({
 		collapsible: true
 	});
 
-	$("#code_revision_mainarea_result_files").accordion ({
+	$("#code_revision_result_files").accordion ({
 		collapsible: true
 	});
 
-	$("#code_revision_mainarea_result_properties").accordion ({
+	$("#code_revision_result_properties").accordion ({
 		collapsible: true
 	});
 
-	$("#code_revision_mainarea_result_comments").accordion ({
+	$("#code_revision_result_comments").accordion ({
 		collapsible: true
 	});
 
@@ -566,8 +566,8 @@ $this->load->view (
 $history = $file['history'];
 ?>
 
-<div class="title-band" id="code_revision_mainarea_title_band">
-	<div class="title" id="code_revision_mainarea_title">
+<div class="title-band" id="code_revision_title_band">
+	<div class="title">
 	<?php
 		print anchor (
 			"code/revision/{$project->id}{$revreqroot}",
@@ -640,10 +640,10 @@ $history = $file['history'];
 ?>
 </div> <!-- code_revision_mainarea_menu -->
 
-<div class="result" id="code_revision_mainarea_result">
+<div class="result" id="code_revision_result">
 
-<div id="code_revision_mainarea_result_message" class="collapsible-box">
-	<div id="code_revision_mainarea_result_message_header" class="collapsible-box-header" >
+<div id="code_revision_result_message" class="collapsible-box">
+	<div id="code_revision_result_message_header" class="collapsible-box-header" >
 		<?php
 		print '<div class="metadata-committer">';
 		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($history['author']));
@@ -673,15 +673,15 @@ $history = $file['history'];
 		<div style='clear: both'></div>
 	</div>
 
-	<div id="code_revision_mainarea_result_message_body">
-		<pre id="code_revision_mainarea_result_message_text" class="pre-wrapped"><?php print htmlspecialchars($history['msg']); ?></pre>
+	<div id="code_revision_result_message_body">
+		<pre id="code_revision_result_message_text" class="pre-wrapped"><?php print htmlspecialchars($history['msg']); ?></pre>
 	</div>
 </div>
 
-<div id="code_revision_mainarea_result_files" class="collapsible-box">
+<div id="code_revision_result_files" class="collapsible-box">
 <div class="collapsible-box-header"><?php print $this->lang->line('Files')?></div>
-<div id="code_revision_mainarea_result_files_table_container" class="collapsible-box-panel">
-<table id="code_revision_mainarea_result_files_table" class="fit-width-result-table">
+<div id="code_revision_result_files_table_container" class="collapsible-box-panel">
+<table id="code_revision_result_files_table" class="fit-width-result-table">
 <?php 
 	/*
 	print '<tr class="heading">';
@@ -722,10 +722,10 @@ $history = $file['history'];
 </div>
 </div>
 
-<div id="code_revision_mainarea_result_properties" class="collapsible-box">
+<div id="code_revision_result_properties" class="collapsible-box">
 <div class="collapsible-box-header"><?php print $this->lang->line('CODE_PROPERTIES');?></div>
-<div id="code_revision_mainarea_result_properties_table_container" class="collapsible-box-panel">
-<table id="code_revision_mainarea_result_properties_table" class="fit-width-result-table">
+<div id="code_revision_result_properties_table_container" class="collapsible-box-panel">
+<table id="code_revision_result_properties_table" class="fit-width-result-table">
 <?php
 	$rowclasses = array ('odd', 'even');
 	$rowcount = 0;
@@ -788,7 +788,7 @@ $history = $file['history'];
 </div>
 </div>
 
-<div id="code_revision_mainarea_result_comments" class="collapsible-box">
+<div id="code_revision_result_comments" class="collapsible-box">
 <div class="collapsible-box-header"><?php print $this->lang->line('Comment')?>&nbsp;
 <?php if ($is_loggedin): ?>
 <span class='anchor'>
@@ -831,9 +831,9 @@ $history = $file['history'];
 	}
 ?>
 </div> <!-- code_revision_mainarea_review_comment -->
-</div> <!-- code_revision_mainarea_result_comments -->
+</div> <!-- code_revision_result_comments -->
 
-</div> <!-- code_revision_mainarea_result -->
+</div> <!-- code_revision_result -->
 
 
 <?php if ($is_loggedin): ?>

@@ -39,18 +39,32 @@
 <?php
 	$file_count = count($file['content']);
 
+	$hex_headpath = $this->converter->AsciiToHex($headpath);
+
 	if ($revision <= 0)
 	{
 		$revreq = '';
 		$revreqroot = '';
+
+		$history_path = "/code/history/{$project->id}/{$hex_headpath}";
+
 	}
 	else
 	{
 		$revreq = "/{$revision}";
 		$revreqroot = '/' . $this->converter->AsciiToHex('.') . $revreq;
+
+		if ($hex_headpath == '') $revtrailer = $revreqroot;
+		else $revtrailer = "/{$hex_headpath}{$revreq}";
+		$history_path = "/code/history/{$project->id}{$revtrailer}";
 	}
 
-	$hex_headpath = $this->converter->AsciiToHex($headpath);
+	$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
+	$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
+	$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
+	$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
+	$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'); 
+
 ?>
 
 <script type="text/javascript">
@@ -138,31 +152,31 @@ function show_loc_by_lang_graph (response)
 			yaxes: { }
 		};
 
-		$("#code_folder_mainarea_result_loc_by_lang_graph").width(550).height(400);
-		$.plot($("#code_folder_mainarea_result_loc_by_lang_graph"), dataset, options);
+		$("#code_folder_result_loc_by_lang_graph").width(550).height(400);
+		$.plot($("#code_folder_result_loc_by_lang_graph"), dataset, options);
 
-		var code_folder_mainarea_result_loc_by_lang_graph_previous_point = null;
+		var code_folder_result_loc_by_lang_graph_previous_point = null;
 
-		$("#code_folder_mainarea_result_loc_by_lang_graph").bind("plothover", function (event, pos, item) {
+		$("#code_folder_result_loc_by_lang_graph").bind("plothover", function (event, pos, item) {
 			if (item) 
 			{
-				if (code_folder_mainarea_result_loc_by_lang_graph_previous_point != item.datapoint) 
+				if (code_folder_result_loc_by_lang_graph_previous_point != item.datapoint) 
 				{
-					code_folder_mainarea_result_loc_by_lang_graph_previous_point = item.datapoint;
-					$("#code_folder_mainarea_result_loc_by_lang_graph_tooltip").remove();
-					show_tooltip("code_folder_mainarea_result_loc_by_lang_graph_tooltip", item.pageX, item.pageY - 20, item.datapoint[1]);
+					code_folder_result_loc_by_lang_graph_previous_point = item.datapoint;
+					$("#code_folder_result_loc_by_lang_graph_tooltip").remove();
+					show_tooltip("code_folder_result_loc_by_lang_graph_tooltip", item.pageX, item.pageY - 20, item.datapoint[1]);
 				}
 			} 
 			else 
 			{
-				$("#code_folder_mainarea_result_loc_by_lang_graph_tooltip").remove();
-				code_folder_mainarea_result_loc_by_lang_graph_previous_point = null;
+				$("#code_folder_result_loc_by_lang_graph_tooltip").remove();
+				code_folder_result_loc_by_lang_graph_previous_point = null;
 			}
 		});
 	}
 
-	$("#code_folder_mainarea_result_info_loc_by_lang_button").button("enable");
-	$("#code_folder_mainarea_result_info_loc_by_lang_spin" ).removeClass ("fa-cog fa-spin");
+	$("#code_folder_loc_by_lang_button").button("enable");
+	$("#code_folder_loc_by_lang_spin" ).removeClass ("fa-cog fa-spin");
 }
 
 function show_loc_by_file_graph (response)
@@ -174,12 +188,12 @@ function show_loc_by_file_graph (response)
 	}
 	else
 	{
-		var f = new CodeFlower("#code_folder_mainarea_result_loc_by_file_graph", 550, 400);
+		var f = new CodeFlower("#code_folder_result_loc_by_file_graph", 550, 400);
 		f.update (loc);
 	}
 
-	$("#code_folder_mainarea_result_info_loc_by_file_button").button("enable");
-	$("#code_folder_mainarea_result_info_loc_by_file_spin" ).removeClass ("fa-cog fa-spin");
+	$("#code_folder_loc_by_file_button").button("enable");
+	$("#code_folder_loc_by_file_spin" ).removeClass ("fa-cog fa-spin");
 }
 
 function render_readme()
@@ -189,8 +203,8 @@ function render_readme()
 	if (strlen($readme_text) > 0 && substr_compare($readme_file, '.wiki', -5) === 0):
 	?>
 	creole_render_wiki (
-		"code_folder_mainarea_result_readme_text",
-		"code_folder_mainarea_result_readme",
+		"code_folder_result_readme_text",
+		"code_folder_result_readme",
 		codepot_merge_path("<?php print site_url(); ?>", "/wiki/show/<?php print $project->id?>/"),
 		codepot_merge_path("<?php print site_url(); ?>", "/wiki/attachment0/<?php print $project->id?>/")
 	);
@@ -369,7 +383,7 @@ $(function () {
 						var xi = 0;
 						for (var i = 1; i <= <?php print $file_count; ?>; i++)
 						{
-							var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
+							var f = $('#code_folder_result_table_file_selector_' + i);
 							if (f != null && f.is(':checked'))
 							{
 								form_data.append ('code_delete_file_' + xi, f.val());
@@ -458,7 +472,7 @@ $(function () {
 						var xi = 0;
 						for (var i = 1; i <= <?php print $file_count; ?>; i++)
 						{
-							var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
+							var f = $('#code_folder_result_table_file_selector_' + i);
 							if (f != null && f.is(':checked'))
 							{
 								form_data.append ('code_rename_file_old_' + xi, f.val());
@@ -529,7 +543,7 @@ $(function () {
 				var xi = 0;
 				for (var i = 1; i <= <?php print $file_count; ?>; i++)
 				{
-					var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
+					var f = $('#code_folder_result_table_file_selector_' + i);
 					if (f != null && f.is(':checked'))
 					{
 						var fx = $('#code_folder_mainarea_rename_file_' + xi);
@@ -554,7 +568,7 @@ $(function () {
 		var xi = 0;
 		for (var i = 1; i <= <?php print $file_count; ?>; i++)
 		{
-			var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
+			var f = $('#code_folder_result_table_file_selector_' + i);
 			if (f != null && f.is(':checked')) xi++;
 		}
 		$('#code_folder_mainarea_delete_form_div').dialog ('option', 'title', 
@@ -571,7 +585,7 @@ $(function () {
 		$('#code_folder_mainarea_rename_file_table').empty();
 		for (var i = 1; i <= <?php print $file_count; ?>; i++)
 		{
-			var f = $('#code_folder_mainarea_result_table_file_selector_' + i);
+			var f = $('#code_folder_result_table_file_selector_' + i);
 			if (f != null && f.is(':checked')) 
 			{
 				var li = rename_last_input[f.val()];
@@ -593,63 +607,9 @@ $(function () {
 	});
 <?php endif; ?>
 
-<?php if ($file_count > 0): ?>
-	<?php
-	if ($login['settings'] != NULL && $login['settings']->code_hide_metadata == 'Y')
-		print '$("#code_folder_mainarea_result_info").hide();';
-	?>
-
-	if ($("#code_folder_mainarea_result_info").is(":visible"))
-		btn_label = "<?php print $this->lang->line('Hide metadata')?>";
-	else
-		btn_label = "<?php print $this->lang->line('Show metadata')?>";
-
-	btn = $("#code_folder_mainarea_metadata_button").button({"label": btn_label}).click (function () {
-		if ($("#code_folder_mainarea_result_info").is(":visible"))
-		{
-			$("#code_folder_mainarea_result_info").hide("blind",{},200);
-			$("#code_folder_mainarea_metadata_button").button(
-				"option", "label", "<?php print $this->lang->line('Show metadata')?>");
-		}
-		else
-		{
-			$("#code_folder_mainarea_result_info").show("blind",{},200);
-			$("#code_folder_mainarea_metadata_button").button(
-				"option", "label", "<?php print $this->lang->line('Hide metadata')?>");
-		}
-
-		return false;
-	});
-
-	btn = $("#code_folder_mainarea_result_info_loc_by_lang_button").button().click (function () {
-		$("#code_folder_mainarea_result_info_loc_by_lang_button").button("disable");
-		$("#code_folder_mainarea_result_info_loc_by_lang_spin").addClass ("fa-cog fa-spin");
-
-		var ajax_req = $.ajax ({
-			url: codepot_merge_path (
-				"<?php print site_url(); ?>", 
-				"/graph/enjson_loc_by_lang/<?php print $project->id; ?>/<?php print $this->converter->AsciiToHex($headpath)?><?php print $revreq?>"),
-			context: document.body,
-			success: show_loc_by_lang_graph
-		});
-	});
-
-	btn = $("#code_folder_mainarea_result_info_loc_by_file_button").button().click (function () {
-		$("#code_folder_mainarea_result_info_loc_by_file_button").button("disable");
-		$("#code_folder_mainarea_result_info_loc_by_file_spin").addClass ("fa-cog fa-spin");
-		var ajax_req = $.ajax ({
-			url: codepot_merge_path (
-				"<?php print site_url(); ?>", 
-				"/graph/enjson_loc_by_file/<?php print $project->id; ?>/<?php print $this->converter->AsciiToHex($headpath)?><?php print $revreq?>"),
-			context: document.body,
-			success: show_loc_by_file_graph
-		});
-	});
-<?php endif; ?>
-
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
-	$('#code_folder_mainarea_result_table_select_all').button().click (function() {
-		$('.file_selector').prop('checked', $('#code_folder_mainarea_result_table_select_all').is(':checked'));
+	$('#code_folder_result_table_select_all').button().click (function() {
+		$('.file_selector').prop('checked', $('#code_folder_result_table_select_all').is(':checked'));
 	});
 <?php endif; ?>
 
@@ -681,6 +641,71 @@ $(function () {
 			$('input[name=search_wildcard_pattern]').val(newValue);
 		}
 	});
+
+	$("#code_folder_loc_by_lang_button").button().click (function () {
+		$("#code_folder_loc_by_lang_button").button("disable");
+		$("#code_folder_loc_by_lang_spin").addClass ("fa-cog fa-spin");
+
+		var ajax_req = $.ajax ({
+			url: codepot_merge_path (
+				"<?php print site_url(); ?>", 
+				"/graph/enjson_loc_by_lang/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
+			context: document.body,
+			success: show_loc_by_lang_graph
+		});
+
+		return false;
+	});
+
+	$("#code_folder_loc_by_file_button").button().click (function () {
+		$("#code_folder_loc_by_file_button").button("disable");
+		$("#code_folder_loc_by_file_spin").addClass ("fa-cog fa-spin");
+		var ajax_req = $.ajax ({
+			url: codepot_merge_path (
+				"<?php print site_url(); ?>", 
+				"/graph/enjson_loc_by_file/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
+			context: document.body,
+			success: show_loc_by_file_graph
+		});
+
+		return false;
+	});
+
+
+	$("#code_folder_search").hide();
+	btn = $("#code_folder_search_button").button().click (function () {
+		if ($("#code_folder_search").is(":visible"))
+		{
+			$("#code_folder_search").hide("blind",{},200);
+		}
+		else
+		{
+			$("#code_folder_search").show("blind",{},200);
+		}
+
+		return false;
+	});
+
+	$('#code_folder_metadata').accordion({
+		collapsible: true
+	});
+
+	<?php if ($revision > 0 && $revision < $next_revision): ?>
+		$("#code_folder_headrev_button").button().click (function() {
+			$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/file/{$project->id}/${hex_headpath}"; ?>'));
+			return false;
+		});
+	<?php endif; ?>
+
+	$("#code_folder_history_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print $history_path; ?>'));
+		return false;
+	});
+	$("#code_folder_download_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fetch/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		return false;
+	});
+
 
 	render_readme ();
 });
@@ -726,7 +751,7 @@ $this->load->view (
 
 <div class="mainarea" id="code_folder_mainarea">
 
-<div class="title-band" id="code_folder_mainarea_title_band">
+<div class="title-band" id="code_folder_title_band">
 
 	<div class="title">
 	<?php
@@ -758,142 +783,201 @@ $this->load->view (
 	?>
 	</div>
 
-	<div class="actions"></div>
-	<div style="clear: both;"></div>
-</div>
-
-<div class="infostrip" id="code_folder_mainarea_infostrip">
-
-	<?php 
-	print form_open("code/search/{$project->id}/", 'id="code_search_form"');
-
-	if (CODEPOT_SIGNIN_FOR_CODE_SEARCH === FALSE || (isset($login['id']) && $login['id'] != ''))
-	{
-		print form_hidden('search_folder', set_value('search_folder', $file['fullpath']));
-		print form_hidden('search_revision', set_value('search_revision', $revision));
-		
-		print '<i id="code_search_string_icon" class="fa"></i> ';
-		print form_input(array(
-			'name' => 'search_string', 
-			'value' => set_value('search_string', ''), 
-			'id' =>'code_search_string',
-			'placeholder' => $this->lang->line('CODE_SEARCH_STRING')
-		));
+	<div class="actions">
+		<?php
+		print anchor ("code/file/{$project->id}/${hex_headpath}/{$prev_revision}", '<i class="fa fa-arrow-circle-left"></i>');
 		print ' ';
 
-		print form_checkbox(array(
-			'name'    => 'search_invertedly', 
-			'id'      => 'code_search_invertedly',
-			'class'   => 'code_search_option',
-			'value'   => 'Y',
-			'checked' => FALSE,
-			'title'   => $this->lang->line('CODE_SEARCH_INVERTEDLY')
-		));
-		print form_label('v', 'code_search_invertedly', 
-			array('class'=>'code_search_option', 'id'=>'code_search_invertedly_label')
+		// anchor to the revision history at the root directory
+		print anchor (
+			//"code/revision/{$project->id}/!/{$file['created_rev']}", 
+			"code/revision/{$project->id}/${hex_headpath}/{$file['created_rev']}", 
+			sprintf("%s %s", $this->lang->line('Revision'), $file['created_rev'])
 		);
 
-		print form_checkbox(array(
-			'name'    => 'search_case_insensitively', 
-			'id'      => 'code_search_case_insensitively',
-			'class'   => 'code_search_option',
-			'value'   => 'Y',
-			'checked' => FALSE,
-			'title'   => $this->lang->line('CODE_SEARCH_CASE_INSENSITIVELY')
-		));
-		print form_label('i', 'code_search_case_insensitively', 
-			array('class'=>'code_search_option', 'id'=>'code_search_case_insensitively_label')
-		);
-
-		print form_checkbox(array(
-			'name'    => 'search_recursively', 
-			'id'      => 'code_search_recursively',
-			'class'   => 'code_search_option',
-			'value'   => 'Y',
-			'checked' => TRUE,
-			'title'   => $this->lang->line('CODE_SEARCH_RECURSIVELY')
-		));
-		print form_label('r', 'code_search_recursively', 
-			array('class'=>'code_search_option', 'id'=>'code_search_recursively_label')
-		);
-
-		print form_checkbox(array(
-			'name'    => 'search_in_name', 
-			'id'      => 'code_search_in_name',
-			'class'   => 'code_search_option',
-			'value'   => 'Y',
-			'checked' => FALSE,
-			'title'   => $this->lang->line('CODE_SEARCH_IN_NAME')
-		));
-		print form_label('n', 'code_search_in_name',
-			array('class'=>'code_search_option', 'id'=>'code_search_in_name_label')
-		);
-
-		print form_checkbox(array(
-			'name'    => 'search_is_regex', 
-			'id'      => 'code_search_is_regex',
-			'class'   => 'code_search_option',
-			'value'   => 'Y',
-			'checked' => FALSE,
-			'title'   => $this->lang->line('CODE_SEARCH_IS_REGEX')
-		));
-		print form_label('x', 'code_search_is_regex',
-			array('class'=>'code_search_option', 'id'=>'code_search_is_regex_label')
-		);
-
-		print '<a id="code_search_wildcard" href="#"></a>';
-		print form_hidden('search_wildcard_pattern', set_value('search_wildcard_pattern', $wildcard_pattern));
+		if (!empty($file['created_tag']))
+		{
+			print ' ';
+			printf ('<span class="left_arrow_indicator">%s</span>', htmlspecialchars($file['created_tag']));
+		}
 
 		print ' ';
-		printf ('<a id="code_search_submit" href="#">%s</a>', $this->lang->line('Search'));
-		print ' | ';
-	} 
-
-	print anchor ("code/file/{$project->id}/${hex_headpath}/{$prev_revision}", '<i class="fa fa-arrow-circle-left"></i>');
-	print ' ';
-
-	// anchor to the revision history at the root directory
-	print anchor (
-		//"code/revision/{$project->id}/!/{$file['created_rev']}", 
-		"code/revision/{$project->id}/${hex_headpath}/{$file['created_rev']}", 
-		sprintf("%s %s", $this->lang->line('Revision'), $file['created_rev'])
-	);
-
-	if (!empty($file['created_tag']))
-	{
-		print ' ';
-		printf ('<span class="left_arrow_indicator">%s</span>', htmlspecialchars($file['created_tag']));
-	}
-
-	print ' ';
-	print anchor ("code/file/{$project->id}/${hex_headpath}/{$next_revision}", '<i class="fa fa-arrow-circle-right"></i>');
-
-
-	if ((isset($login['id']) && $login['id'] != '') || $file_count > 0)
-	{
-		print ' | ';
+		print anchor ("code/file/{$project->id}/${hex_headpath}/{$next_revision}", '<i class="fa fa-arrow-circle-right"></i>');
 
 		if (isset($login['id']) && $login['id'] != '')
 		{
+			print ' ';
 			printf ('<a id="code_folder_mainarea_new_button" href="#">%s</a>', $this->lang->line('New'));
 			printf ('<a id="code_folder_mainarea_delete_button" href="#">%s</a>', $this->lang->line('Delete'));
 			printf ('<a id="code_folder_mainarea_rename_button" href="#">%s</a>', $this->lang->line('Rename'));
 		}
 
-		if ($file_count > 0)
-		{
-			printf ('<a id="code_folder_mainarea_metadata_button" href="#">%s</a>', $this->lang->line('Metadata'));
-		}
-	}
-
-	print form_close();
-	?>
+		?>
+	</div>
+	<div style="clear: both;"></div>
 </div>
 
-<div class="result" id="code_folder_mainarea_result">
+<div id='code_folder_metadata' class='collapsible-box'>
+	<div id='code_folder_metadata_header' class='collapsible-box-header'>
+		<?php
+		print '<div class="metadata-committer">';
+		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($file['last_author']));
+		print "<img src='{$user_icon_url}' class='metadata-committer-icon' />";
+		print htmlspecialchars ($file['last_author']);
+		print '</div>';
 
-	<div id="code_folder_mainarea_result_loc_by_lang_graph"></div>
-	<div id="code_folder_mainarea_result_loc_by_file_graph"></div>
+		print '<div class="metadata-menu">';
+		if ($revision > 0 && $revision < $next_revision)
+		{
+			$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
+			print anchor ('#', $head_revision_text, 'id="code_folder_headrev_button"');
+		}
+
+		print anchor ('#', $history_anchor_text, 'id="code_folder_history_button"');
+		print anchor ('#', $download_anchor_text, 'id="code_folder_download_button"');
+
+		print '<a id="code_folder_loc_by_lang_button" href="#">';
+		print '<i id="code_folder_loc_by_lang_spin" class="fa"></i>LOC-';
+		print $this->lang->line('Language');
+		print '</a>';
+
+		print '<a id="code_folder_loc_by_file_button" href="#">';
+		print '<i id="code_folder_loc_by_file_spin" class="fa"></i>LOC-';
+		print $this->lang->line('File'); 
+		print '</a>';
+
+		print '<a id="code_folder_search_button" href="#">';
+		print $this->lang->line('Search'); 
+		print '</a>';
+
+		print '</div>';
+
+		print '<div class="metadata-commit-date">';
+		printf ('[%s] ', $file['created_rev']);
+		print strftime ('%Y-%m-%d %H:%M:%S %z', 0 /*$file['time_t']*/);
+		print '</div>';
+		?>
+		<div style='clear: both;'></div>
+	</div>
+
+	<div id='code_folder_metadata_body'>
+		<div><pre class='pre-wrapped'><?php print htmlspecialchars ($file['logmsg']); ?></pre></div>
+
+		<?php
+		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+		{
+			print '<div><ul id="code_folder_property_list">';
+			foreach ($file['properties'] as $pn => $pv)
+			{
+				print '<li>';
+				print htmlspecialchars($pn);
+				if ($pv != '')
+				{
+					print ' - ';
+					print htmlspecialchars($pv);
+				}
+				print '</li>';
+			}
+			print '</ul></div>';
+		}
+		?>
+	</div>
+</div>
+
+<div id="code_folder_graph" class="graph">
+	<div id="code_folder_result_loc_by_lang_graph"></div>
+	<div id="code_folder_result_loc_by_file_graph"></div>
+</div>
+
+
+<div class="result" id="code_folder_result">
+
+	<div id="code_folder_search" class="infobox">
+		<?php
+		print form_open("code/search/{$project->id}/", 'id="code_search_form"');
+		if (CODEPOT_SIGNIN_FOR_CODE_SEARCH === FALSE || (isset($login['id']) && $login['id'] != ''))
+		{
+			print form_hidden('search_folder', set_value('search_folder', $file['fullpath']));
+			print form_hidden('search_revision', set_value('search_revision', $revision));
+
+			print '<i id="code_search_string_icon" class="fa"></i> ';
+			print form_input(array(
+				'name' => 'search_string', 
+				'value' => set_value('search_string', ''), 
+				'id' =>'code_search_string',
+				'placeholder' => $this->lang->line('CODE_SEARCH_STRING')
+			));
+			print ' ';
+
+			print form_checkbox(array(
+				'name'    => 'search_invertedly', 
+				'id'      => 'code_search_invertedly',
+				'class'   => 'code_search_option',
+				'value'   => 'Y',
+				'checked' => FALSE,
+				'title'   => $this->lang->line('CODE_SEARCH_INVERTEDLY')
+			));
+			print form_label('v', 'code_search_invertedly', 
+				array('class'=>'code_search_option', 'id'=>'code_search_invertedly_label')
+			);
+
+			print form_checkbox(array(
+				'name'    => 'search_case_insensitively', 
+				'id'      => 'code_search_case_insensitively',
+				'class'   => 'code_search_option',
+				'value'   => 'Y',
+				'checked' => FALSE,
+				'title'   => $this->lang->line('CODE_SEARCH_CASE_INSENSITIVELY')
+			));
+			print form_label('i', 'code_search_case_insensitively', 
+				array('class'=>'code_search_option', 'id'=>'code_search_case_insensitively_label')
+			);
+
+			print form_checkbox(array(
+				'name'    => 'search_recursively', 
+				'id'      => 'code_search_recursively',
+				'class'   => 'code_search_option',
+				'value'   => 'Y',
+				'checked' => TRUE,
+				'title'   => $this->lang->line('CODE_SEARCH_RECURSIVELY')
+			));
+			print form_label('r', 'code_search_recursively', 
+				array('class'=>'code_search_option', 'id'=>'code_search_recursively_label')
+			);
+
+			print form_checkbox(array(
+				'name'    => 'search_in_name', 
+				'id'      => 'code_search_in_name',
+				'class'   => 'code_search_option',
+				'value'   => 'Y',
+				'checked' => FALSE,
+				'title'   => $this->lang->line('CODE_SEARCH_IN_NAME')
+			));
+			print form_label('n', 'code_search_in_name',
+				array('class'=>'code_search_option', 'id'=>'code_search_in_name_label')
+			);
+
+			print form_checkbox(array(
+				'name'    => 'search_is_regex', 
+				'id'      => 'code_search_is_regex',
+				'class'   => 'code_search_option',
+				'value'   => 'Y',
+				'checked' => FALSE,
+				'title'   => $this->lang->line('CODE_SEARCH_IS_REGEX')
+			));
+			print form_label('x', 'code_search_is_regex',
+				array('class'=>'code_search_option', 'id'=>'code_search_is_regex_label')
+			);
+
+			print '<a id="code_search_wildcard" href="#"></a>';
+			print form_hidden('search_wildcard_pattern', set_value('search_wildcard_pattern', $wildcard_pattern));
+
+			print ' ';
+			printf ('<a id="code_search_submit" href="#">%s</a>', $this->lang->line('Search'));
+		} 
+		print form_close();
+		?>
+	</div>
 
 	<?php
 	function comp_files ($a, $b)
@@ -912,43 +996,13 @@ $this->load->view (
 	}
 	else 
 	{
-		print '<div class="menu" id="code_folder_mainarea_menu">';
-		if ($revision > 0 && $revision < $next_revision)
-		{
-			$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
-			print anchor ("code/file/{$project->id}/{$hex_headpath}", $head_revision_text);
-			print ' | ';
-		}
-
-		$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
-		$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
-		$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
-		$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
-		$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'); 
-
-		if ($revision > 0)
-		{
-			if ($hex_headpath == '') $revtrailer = $revreqroot;
-			else $revtrailer = "/{$hex_headpath}{$revreq}";
-			print anchor ("code/history/{$project->id}{$revtrailer}", $history_anchor_text);
-		}
-		else
-		{
-			print anchor ("code/history/{$project->id}/{$hex_headpath}", $history_anchor_text);
-		}
-
-		print ' | ';
-		print anchor ("code/fetch/{$project->id}/${hex_headpath}{$revreq}", $download_anchor_text);
-		
-		print '</div>';
-
 		usort ($file['content'], 'comp_files');
 
-		print '<table id="code_folder_mainarea_result_table" class="fit-width-result-table">';
+		print '<table id="code_folder_result_table" class="fit-width-result-table">';
 		print '<tr class="heading">';
 		if (isset($login['id']) && $login['id'] != '')
 		{
-			print '<th align="middle"><input type="checkbox" id="code_folder_mainarea_result_table_select_all", "select_all" /><label for="code_folder_mainarea_result_table_select_all"><i class="fa fa-check"></i></label></th>';
+			print '<th align="middle"><input type="checkbox" id="code_folder_result_table_select_all", "select_all" /><label for="code_folder_result_table_select_all"><i class="fa fa-check"></i></label></th>';
 		}
 		print '<th>' . $this->lang->line('Name') . '</th>';
 		print '<th>' . $this->lang->line('Revision') . '</th>';
@@ -976,7 +1030,7 @@ $this->load->view (
 				if (isset($login['id']) && $login['id'] != '')
 				{
 					print '<td align="middle">';
-					printf ('<input type="checkbox" name="code_folder_file_%d" value="%s" class="file_selector" id="code_folder_mainarea_result_table_file_selector_%d" />', $rownum, addslashes($f['name']), $rownum);
+					printf ('<input type="checkbox" name="code_folder_file_%d" value="%s" class="file_selector" id="code_folder_result_table_file_selector_%d" />', $rownum, addslashes($f['name']), $rownum);
 					print '</td>';
 				}
 				print '<td>';
@@ -1009,7 +1063,7 @@ $this->load->view (
 				if (isset($login['id']) && $login['id'] != '')
 				{
 					print '<td align="middle">';
-					printf ('<input type="checkbox" name="code_folder_file_%d", value="%s" class="file_selector" id="code_folder_mainarea_result_table_file_selector_%d" />', $rownum, addslashes($f['name']), $rownum);
+					printf ('<input type="checkbox" name="code_folder_file_%d", value="%s" class="file_selector" id="code_folder_result_table_file_selector_%d" />', $rownum, addslashes($f['name']), $rownum);
 					print '</td>';
 				}
 				print '<td>';
@@ -1048,77 +1102,21 @@ $this->load->view (
 
 		if (strlen($readme_text) > 0)
 		{
-			print '<div id="code_folder_mainarea_result_readme">';
+			print '<div id="code_folder_result_readme">';
 			// the pre division is gone when rendered as a wiki text.
 			// so is the pre-wrapped class. so let me put the class 
 			// regardless of the text type.
-			print '<pre id="code_folder_mainarea_result_readme_text" class="pre-wrapped">';
+			print '<pre id="code_folder_result_readme_text" class="pre-wrapped">';
 			print "\n";
 			print htmlspecialchars($readme_text);
 			print "\n";
 			print '</pre>';
 			print '</div>';
 		}
-
-		print '<div id="code_folder_mainarea_result_info" class="infobox">';
-
-		print '<div class="title">';
-		print $this->lang->line('CODE_COMMIT');
-		print '</div>';
-		print '<ul>';
-		print '<li>';
-		printf ($this->lang->line('CODE_MSG_COMMITTED_BY'), $file['last_author']);
-		print '</li>';
-		print '</ul>';
-
-		print '<div class="title">';
-		print $this->lang->line('Message');
-		print '</div>';
-		print '<pre id="code_folder_mainarea_result_info_logmsg" class="pre-wrapped">';
-		print htmlspecialchars ($file['logmsg']);
-		print '</pre>';
-
-		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
-		{
-			print '<div class="title">';
-			print $this->lang->line('CODE_PROPERTIES');
-			print '</div>';
-
-			print '<ul id="code_folder_mainarea_result_info_property_list">';
-			foreach ($file['properties'] as $pn => $pv)
-			{
-				print '<li>';
-				print htmlspecialchars($pn);
-				if ($pv != '')
-				{
-					print ' - ';
-					print htmlspecialchars($pv);
-				}
-				print '</li>';
-			}
-			print '</ul>';
-		}
-
-
-		print '<div class="title">LOC</div>';
-		print '<a id="code_folder_mainarea_result_info_loc_by_lang_button" href="#">';
-		print '<i id="code_folder_mainarea_result_info_loc_by_lang_spin" class="fa"></i>';
-		print $this->lang->line('Language');
-		print '</a>';
-
-		print ' ';
-
-		print '<a id="code_folder_mainarea_result_info_loc_by_file_button" href="#">';
-		print '<i id="code_folder_mainarea_result_info_loc_by_file_spin" class="fa"></i>';
-		print $this->lang->line('File'); 
-		print '</a>';
-
-		print '</div>';
-
 	}
 	?>
 
-</div> <!-- code_folder_mainarea_result -->
+</div> <!-- code_folder_result -->
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 

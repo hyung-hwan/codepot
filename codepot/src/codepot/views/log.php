@@ -122,9 +122,9 @@ $this->load->view (
 
 <div class="mainarea" id="log_mainarea">
 
-<div class="title-band" id="code_blame_mainarea_title_band">
+<div class="title-band" id="log_title_band">
 
-	<div class="title" id="log_mainarea_title">
+	<div class="title">
 	<?php print  anchor ("site/log", $this->lang->line ('Change log')) ?>
 	</div>
 
