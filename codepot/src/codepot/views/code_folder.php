@@ -833,7 +833,7 @@ $this->load->view (
 		print '<div class="metadata-menu">';
 		if ($revision > 0 && $revision < $next_revision)
 		{
-			$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
+			$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head');
 			print anchor ('#', $head_revision_text, 'id="code_folder_headrev_button"');
 		}
 

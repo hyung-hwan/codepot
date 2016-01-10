@@ -259,7 +259,7 @@ $this->load->view (
 
 		if ($file['created_rev'] != $file['head_rev']) 
 		{
-			$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
+			$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head');
 			print anchor ('#', $head_revision_text, 'id="code_file_headrev_button"');
 		}
 

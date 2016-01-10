@@ -45,7 +45,7 @@ if ($hex_headpath == '') $revtrailer_against = $revreqroot_against;
 else $revtrailer_against = "/{$hex_headpath}{$revreq_against}";
 $history_against_path = "/code/history/{$project->id}{$revtrailer_against}";
 
-$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head revision');
+$head_revision_text = '<i class="fa fa-exclamation-triangle" style="color:#CC2222"></i> ' . $this->lang->line('Head');
 $history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
 
 $blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame');
