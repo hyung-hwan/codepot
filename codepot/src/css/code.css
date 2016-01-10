@@ -7,7 +7,8 @@
 #code_blame_result,
 #code_revision_result,
 #code_history_result,
-#code_diff_result {
+#code_diff_result,
+#code_search_result {
 	position: relative;
 	overflow: auto;
 	margin: 0.2em 0 0.2em 0;
@@ -35,22 +36,39 @@
 	height: auto;
 }
 
+#code_diff_metadata_container {
+	margin: 0;
+	padding: 0;
+}
+
+#code_diff_metadata,
+#code_diff_metadata_against {
+	width: 50%;
+	float: left;
+	margin: 0;
+	padding: 0;
+}
+
 #code_folder_metadata_header,
 #code_file_metadata_header,
 #code_blame_metadata_header,
-#code_revision_result_message_header {
+#code_revision_metadata_header,
+#code_diff_metadata_header,
+#code_diff_metadata_against_header {
 	line-height: 2em;
 }
 
 #code_folder_metadata_header .metadata-committer-icon,
 #code_file_metadata_header .metadata-committer-icon,
 #code_blame_metadata_header .metadata-committer-icon,
-#code_revision_result_message_header .metadata-committer-icon {
+#code_revision_metadata_header .metadata-committer-icon,
+#code_diff_metadata_header .metadata-committer-icon,
+#code_diff_metadata_against_header .metadata-committer-icon {
 	height: 2em; 
 	width: auto;
 	vertical-align: middle;
 	margin-right: 2px;
-	
+
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
@@ -59,7 +77,9 @@
 #code_folder_metadata_header .metadata-committer,
 #code_file_metadata_header .metadata-committer,
 #code_blame_metadata_header .metadata-committer,
-#code_revision_result_message_header .metadata-committer {
+#code_revision_metadata_header .metadata-committer,
+#code_diff_metadata_header .metadata-committer,
+#code_diff_metadata_against_header .metadata-committer {
 	float: left;
 	color: #111111;
 }
@@ -67,7 +87,9 @@
 #code_folder_metadata_header .metadata-menu,
 #code_file_metadata_header .metadata-menu,
 #code_blame_metadata_header .metadata-menu,
-#code_revision_result_message_header .metadata-menu {
+#code_revision_metadata_header .metadata-menu,
+#code_diff_metadata_header .metadata-menu,
+#code_diff_metadata_against_header .metadata-menu {
 	float: left;
 	margin-left: 1em;
 }
@@ -75,14 +97,18 @@
 #code_folder_metadata_header .metadata-commit-date,
 #code_file_metadata_header .metadata-commit-date,
 #code_blame_metadata_header .metadata-commit-date,
-#code_revision_result_message_header .metadata-commit-date {
+#code_revision_metadata_header .metadata-commit-date,
+#code_diff_metadata_header .metadata-commit-date,
+#code_diff_metadata_against_header .metadata-commit-date {
 	float: right;
 }
 
 #code_folder_metadata_body,
 #code_file_metadata_body,
 #code_blame_metadata_body,
-#code_revision_result_message_body {
+#code_revision_metadata_body,
+#code_diff_metadata_body, 
+#code_diff_metadata_against_body {
 	background-color: #FCFCFC;
 	padding: 0.2em 0.2em 0.2em 0.2em;
 	margin: 0;
@@ -109,10 +135,6 @@
 /*----------------------------------------------- 
  * project source folder view 
  *-----------------------------------------------*/
-#code_folder_search {
-	padding: 0.2em 0.2em 0.2em 0.2em;
-}
-	
 #code_folder_result_table tr {
 	vertical-align: middle;
 }
@@ -228,11 +250,7 @@
 /*----------------------------------------------- 
  * project source revision view 
  *-----------------------------------------------*/
-#code_revision_result .collapsible-box {
-	margin-bottom: 0.5em;
-}
-
-#code_revision_result_message_text {
+#code_revision_metadata_text {
 	line-height: 1.3em;
 	padding: 0 0.2em 0 0.2em;
 }
