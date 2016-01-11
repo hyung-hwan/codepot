@@ -10,6 +10,9 @@ www_DATA =  \
 	jquery-ui.css \
 	jqueryui-editable.css \
 	log.css \
+	medium-editor.min.css \
+	medium-editor-tables.min.css \
+	medium-editor-theme.min.css \
 	project.css \
 	site.css \
 	user.css \
