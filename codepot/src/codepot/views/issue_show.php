@@ -210,7 +210,8 @@ var original_file_desc = [
 $(function () { 
 
 	$('#issue_show_mainarea_state').accordion({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>

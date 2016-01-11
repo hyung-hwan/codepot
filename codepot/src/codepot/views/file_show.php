@@ -167,11 +167,13 @@ var original_file_desc = [
 
 $(function () {
 	$('#file_show_mainarea_metadata').accordion({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 	$('#file_show_mainarea_files').accordion({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 

@@ -72,11 +72,13 @@ else
 <script type="text/javascript">
 $(function() {
 	$('#code_diff_metadata').accordion({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 	$('#code_diff_metadata_against').accordion({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 

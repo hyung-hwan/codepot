@@ -502,19 +502,23 @@ function hide_unneeded_divs()
 
 $(function() {
 	$("#code_revision_metadata").accordion ({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 	$("#code_revision_result_files").accordion ({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 	$("#code_revision_result_properties").accordion ({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 	$("#code_revision_result_comments").accordion ({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 	hide_unneeded_divs ();
