@@ -40,7 +40,7 @@ var base_return_anchor = codepot_merge_path('<?php print site_url() ?>', '<?php 
 function resize_editor()
 {
 	var titleband = $("#code_edit_title_band");
-	var code = $("#code_edit_mainarea_result_code");
+	var code = $("#code_edit_result_code");
 	var footer = $("#codepot_footer");
 
 	var ioff = titleband.offset();
@@ -54,7 +54,7 @@ function resize_editor()
 
 function show_alert (outputMsg, titleMsg) 
 {
-	$("#code_edit_mainarea_alert").html(outputMsg).dialog({
+	$("#code_edit_alert").html(outputMsg).dialog({
 		title: titleMsg,
 		resizable: true,
 		modal: true,
@@ -93,10 +93,10 @@ function set_editor_changed (changed)
 }
 
 $(function () {
-	save_button = $("#code_edit_mainarea_save_button").button();
-	return_button = $("#code_edit_mainarea_return_button").button();
+	save_button = $("#code_edit_save_button").button();
+	return_button = $("#code_edit_return_button").button();
 
-	var mode_menu = $("#code_edit_mainarea_mode");
+	var mode_menu = $("#code_edit_mode");
 
 	ace_modes = codepot_get_ace_modes();
 	var detected_mode = null;
@@ -132,7 +132,7 @@ $(function () {
 		detected_mode = text_mode;
 	}
 
-	var editor = ace.edit("code_edit_mainarea_result_code");
+	var editor = ace.edit("code_edit_result_code");
 	//editor.setTheme("ace/theme/chrome");
 	if (detected_mode) editor.getSession().setMode (detected_mode.mode);
 	editor.getSession().setUseSoftTabs(false);
@@ -150,7 +150,7 @@ $(function () {
 		editor.getSession().setMode ($(this).val());
 	});
 
-	$('#code_edit_mainarea_save_form').dialog ({
+	$('#code_edit_save_form').dialog ({
 		title: '<?php print $this->lang->line('Save')?>',
 		autoOpen: false,
 		modal: true,
@@ -159,7 +159,7 @@ $(function () {
 			'<?php print $this->lang->line('OK')?>': function () { 
 				if (saving_in_progress) return;
 
-				var save_message = $("#code_edit_mainarea_save_message").val();
+				var save_message = $("#code_edit_save_message").val();
 				if (save_message == '') return false;
 
 				editor.setReadOnly (true);
@@ -173,8 +173,8 @@ $(function () {
 
 					success: function(json, textStatus, jqXHR) { 
 						saving_in_progress = false;
-						$('#code_edit_mainarea_save_form').dialog('enable'); 
-						$('#code_edit_mainarea_save_form').dialog('close'); 
+						$('#code_edit_save_form').dialog('enable'); 
+						$('#code_edit_save_form').dialog('close'); 
 						if (json.status == "ok")
 						{
 							set_editor_changed (false);
@@ -194,15 +194,15 @@ $(function () {
 
 					error: function(jqXHR, textStatus, errorThrown) { 
 						saving_in_progress = false;
-						$('#code_edit_mainarea_save_form').dialog('enable'); 
-						$('#code_edit_mainarea_save_form').dialog('close'); 
+						$('#code_edit_save_form').dialog('enable'); 
+						$('#code_edit_save_form').dialog('close'); 
 						show_alert ('Not saved - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
 						editor.setReadOnly (false);
 						save_button.button ("enable");
 					}
 				});
 
-				$('#code_edit_mainarea_save_form').dialog('disable'); 
+				$('#code_edit_save_form').dialog('disable'); 
 			},
 
 			'<?php print $this->lang->line('Cancel')?>': function () { 
@@ -219,7 +219,7 @@ $(function () {
 
 
 	save_button.click (function() {
-		if (editor_changed) $("#code_edit_mainarea_save_form").dialog('open');
+		if (editor_changed) $("#code_edit_save_form").dialog('open');
 		return false;
 	});
 
@@ -300,17 +300,17 @@ $this->load->view (
 	<div class="actions">
 	<?php 
 		/* Saving file work on the head only. so the links here don't include the given revision anymore */
-		print '<select id="code_edit_mainarea_mode"></select>';
+		print '<select id="code_edit_mode"></select>';
 		print ' ';
-		print anchor ("code/${caller}/{$project->id}/{$hex_headpath}", $this->lang->line('Save'), 'id="code_edit_mainarea_save_button"');
+		print anchor ("code/${caller}/{$project->id}/{$hex_headpath}", $this->lang->line('Save'), 'id="code_edit_save_button"');
 		print ' ';
-		print anchor ("code/${caller}/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Return'), 'id="code_edit_mainarea_return_button"');
+		print anchor ("code/${caller}/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Return'), 'id="code_edit_return_button"');
 	?>
 	</div>
 	<div style="clear: both;"></div>
 </div>
 
-<div class="result" id="code_edit_mainarea_result">
+<div class="result" id="code_edit_result">
 
 <?php 
 /*
@@ -321,7 +321,7 @@ else if ($fileext == 'bas') $fileext = 'basic';
 */
 ?>
 
-<div id="code_edit_mainarea_result_code"><?php 
+<div id="code_edit_result_code"><?php 
 /*
 	$is_octet_stream = FALSE;
 	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
@@ -352,18 +352,18 @@ else if ($fileext == 'bas') $fileext = 'basic';
 	if (!$is_image_stream)*/ print htmlspecialchars($file['content']); 
 ?></div>
 
-</div> <!-- code_edit_mainarea_result -->
+</div> <!-- code_edit_result -->
 
-<div id="code_edit_mainarea_save_form">
+<div id="code_edit_save_form">
 	<div>
 		<?php print $this->lang->line('Message'); ?>
 	</div>
 	<div>
-		<textarea id='code_edit_mainarea_save_message' rows=10 cols=60 style="width: 100%;"></textarea>
+		<textarea id='code_edit_save_message' rows=10 cols=60 style="width: 100%;"></textarea>
 	</div>
 </div>
 
-<div id="code_edit_mainarea_alert">
+<div id="code_edit_alert">
 </div>
 
 </div> <!-- code_edit_mainarea -->

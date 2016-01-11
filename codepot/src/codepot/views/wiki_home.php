@@ -15,6 +15,42 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <title><?php print htmlspecialchars($project->name)?></title>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+function show_alert (outputMsg, titleMsg) 
+{
+	$('#wiki_home_alert').html(outputMsg).dialog({
+		title: titleMsg,
+		resizable: true,
+		modal: true,
+		width: 'auto',
+		height: 'auto',
+		buttons: {
+			"OK": function () {
+				$(this).dialog("close");
+			}
+		}
+	});
+}
+
+$(function () { 
+
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+	$("#wiki_home_new_button").button().click (
+		function () { 
+			//$('#wiki_home_new_form').dialog('open'); 
+			$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/createx/{$project->id}"; ?>'));
+			return false;
+		}
+	);
+<?php endif; ?>
+
+});
+
+/* ]]> */
+</script>
+
 </head>
 
 <body>
@@ -55,6 +91,10 @@ $this->load->view (
 	<div class="title"><?php print $this->lang->line('Wikis');?></div>
 
 	<div class="actions">
+		<?php if (isset($login['id']) && $login['id'] != ''): ?>
+		<a id="wiki_home_new_button" href='#'><?php print $this->lang->line('New')?></a>
+		<?php endif; ?>
+		<!-- <a id="wiki_home_search_button" href='#'><?php print $this->lang->line('Search')?></a> -->
 	</div>
 
 	<div style='clear: both'></div>
@@ -78,6 +118,9 @@ else
 }
 ?>
 </div>
+
+<div id='wiki_home_alert'></div>
+
 </div> <!-- wiki_home_mainarea -->
 
 <div class='footer-pusher'></div> <!-- for sticky footer -->

@@ -193,7 +193,7 @@
 /*----------------------------------------------- 
  * project source edit view 
  *-----------------------------------------------*/
-#code_edit_mainarea_result_code {
+#code_edit_result_code {
 	font-family: consolas, monaco, "Andale Mono", monospace;
 	overflow: auto;
 	border: none;

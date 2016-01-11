@@ -160,8 +160,6 @@ www_DATA = \
 	footer.php \
 	graph_main.php \
 	index.html \
-	issue_delete.php \
-	issue_edit.php \
 	issue_home.php \
 	issue_show.php \
 	log.php \
@@ -181,6 +179,7 @@ www_DATA = \
 	user_settings.php \
 	wiki_delete.php \
 	wiki_edit.php \
+	wiki_editx.php \
 	wiki_home.php \
 	wiki_show.php
 
