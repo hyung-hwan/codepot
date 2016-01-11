@@ -296,6 +296,7 @@ $(function() {
 						var form_data = new FormData();
 
 						form_data.append ('code_new_review_comment', $('#code_revision_new_review_comment').val());
+						form_data.append ('code_new_review_url', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/code/revision/{$project->id}/{$hex_headpath}{$revreq}"; ?>'));
 
 						$('#code_revision_new_review_comment_form').dialog('disable');
 						$.ajax({
