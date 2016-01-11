@@ -35,7 +35,7 @@ $creole_file_base = site_url() . "/wiki/attachment0/{$project->id}/";
 /* <![CDATA[ */
 function show_alert (outputMsg, titleMsg) 
 {
-	$('#issue_home_mainarea_alert').html(outputMsg).dialog({
+	$('#issue_home_alert').html(outputMsg).dialog({
 		title: titleMsg,
 		resizable: true,
 		modal: true,
@@ -65,7 +65,7 @@ function preview_new_description(input_text)
 {
 	creole_render_wiki_with_input_text (
 		input_text,
-		"issue_home_mainarea_new_description_preview", 
+		"issue_home_new_description_preview", 
 		"<?php print $creole_base; ?>",
 		"<?php print $creole_file_base; ?>"
 	);
@@ -85,15 +85,15 @@ function populate_selected_files ()
 		var f = populated_file_obj[n];
 		if (f != null)
 		{
-			var d = $('#issue_home_mainarea_new_file_desc_' + n);
+			var d = $('#issue_home_new_file_desc_' + n);
 			if (d != null) issue_file_desc[f.name] = d.val();
 		}
 	}
 
-	$('#issue_home_mainarea_new_file_table').empty();
+	$('#issue_home_new_file_table').empty();
 	populated_file_obj = [];
 
-	var f = $('#issue_home_mainarea_new_files').get(0);
+	var f = $('#issue_home_new_files').get(0);
 	var f_no = 0;
 	for (var n = 0; n < f.files.length; n++)
 	{
@@ -102,9 +102,9 @@ function populate_selected_files ()
 			var desc = issue_file_desc[f.files[n].name];
 			if (desc == null) desc = '';
 
-			$('#issue_home_mainarea_new_file_table').append (
+			$('#issue_home_new_file_table').append (
 				codepot_sprintf (
-					'<tr id="issue_home_mainarea_new_file_row_%d"><td><a href="#" id="issue_home_mainarea_new_file_cancel_%d" onClick="cancel_out_new_file(%d); return false;"><i class="fa fa-trash"></i></a></td><td>%s</td><td><input type="text" id="issue_home_mainarea_new_file_desc_%d" size="40" value="%s" /></td></tr>', 
+					'<tr id="issue_home_new_file_row_%d"><td><a href="#" id="issue_home_new_file_cancel_%d" onClick="cancel_out_new_file(%d); return false;"><i class="fa fa-trash"></i></a></td><td>%s</td><td><input type="text" id="issue_home_new_file_desc_%d" size="40" value="%s" /></td></tr>', 
 					f_no, f_no, f_no, codepot_htmlspecialchars(f.files[n].name), f_no, codepot_addslashes(desc)
 				)
 			);
@@ -119,22 +119,22 @@ function populate_selected_files ()
 
 function cancel_out_new_file (no)
 {
-	$('#issue_home_mainarea_new_file_row_' + no).remove ();
+	$('#issue_home_new_file_row_' + no).remove ();
 	populated_file_obj[no] = null;
 }
 
 $(function () { 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
-	$('#issue_home_mainarea_new_files').change (function () {
+	$('#issue_home_new_files').change (function () {
 		populate_selected_files ();
 	});
 
-	$('#issue_home_mainarea_new_description_tabs').tabs ();
-	$('#issue_home_mainarea_new_description_tabs').bind ('tabsshow', function (event, ui) {
-		if (ui.index == 1) preview_new_description ($('#issue_home_mainarea_new_description').val());
+	$('#issue_home_new_description_tabs').tabs ();
+	$('#issue_home_new_description_tabs').bind ('tabsshow', function (event, ui) {
+		if (ui.index == 1) preview_new_description ($('#issue_home_new_description').val());
 	});
 
-	$('#issue_home_mainarea_new_form').dialog (
+	$('#issue_home_new_form').dialog (
 		{
 			title: '<?php print $this->lang->line('New');?>',
 			resizable: true,
@@ -163,7 +163,7 @@ $(function () {
 							{
 								form_data.append ('issue_new_file_' + f_no, f);
 
-								var d = $('#issue_home_mainarea_new_file_desc_' + i);
+								var d = $('#issue_home_new_file_desc_' + i);
 								if (d != null) form_data.append('issue_new_file_desc_' + f_no, d.val());
 
 								f_no++;
@@ -171,11 +171,11 @@ $(function () {
 						}
 
 						form_data.append ('issue_new_file_count', f_no);
-						form_data.append ('issue_new_type', $('#issue_home_mainarea_new_type').val());
-						form_data.append ('issue_new_summary', $('#issue_home_mainarea_new_summary').val());
-						form_data.append ('issue_new_description', $('#issue_home_mainarea_new_description').val());
+						form_data.append ('issue_new_type', $('#issue_home_new_type').val());
+						form_data.append ('issue_new_summary', $('#issue_home_new_summary').val());
+						form_data.append ('issue_new_description', $('#issue_home_new_description').val());
 
-						$('#issue_home_mainarea_new_form').dialog('disable');
+						$('#issue_home_new_form').dialog('disable');
 						$.ajax({
 							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/issue/xhr_create/{$project->id}"; ?>'),
 							type: 'POST',
@@ -187,8 +187,8 @@ $(function () {
 
 							success: function (data, textStatus, jqXHR) { 
 								work_in_progress = false;
-								$('#issue_home_mainarea_new_form').dialog('enable');
-								$('#issue_home_mainarea_new_form').dialog('close');
+								$('#issue_home_new_form').dialog('enable');
+								$('#issue_home_new_form').dialog('close');
 								if (data == 'ok') 
 								{
 									// refresh the page to the head revision
@@ -202,8 +202,8 @@ $(function () {
 
 							error: function (jqXHR, textStatus, errorThrown) { 
 								work_in_progress = false;
-								$('#issue_home_mainarea_new_form').dialog('enable');
-								$('#issue_home_mainarea_new_form').dialog('close');
+								$('#issue_home_new_form').dialog('enable');
+								$('#issue_home_new_form').dialog('close');
 								var errmsg = '';
 								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
 								if (errmsg == '' && textStatus != null) errmsg = textStatus;
@@ -219,7 +219,7 @@ $(function () {
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
 					if (work_in_progress) return;
-					$('#issue_home_mainarea_new_form').dialog('close');
+					$('#issue_home_new_form').dialog('close');
 				}
 			},
 
@@ -231,7 +231,7 @@ $(function () {
 	);
 <?php endif; ?>
 
-	$("#issue_home_mainarea_search_form").dialog ({
+	$("#issue_home_search_form").dialog ({
 		title: '<?php print $this->lang->line('Search')?>',
 		autoOpen: false,
 		modal: true,
@@ -254,17 +254,17 @@ $(function () {
 
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
-	$("#issue_home_mainarea_new_button").button().click (
+	$("#issue_home_new_button").button().click (
 		function () { 
-			$('#issue_home_mainarea_new_form').dialog('open'); 
+			$('#issue_home_new_form').dialog('open'); 
 			return false; // prevent the default behavior
 		}
 	);
 <?php endif; ?>
 
-	$("#issue_home_mainarea_search_button").button().click (
+	$("#issue_home_search_button").button().click (
 		function () { 
-			$('#issue_home_mainarea_search_form').dialog('open'); 
+			$('#issue_home_search_form').dialog('open'); 
 			return false; // prevent the default behavior
 		}
 	);
@@ -315,14 +315,14 @@ $this->load->view (
 	<div class="actions">
 		<?php printf ($this->lang->line('ISSUE_MSG_TOTAL_NUM_ISSUES'), $total_num_issues); ?>
 		<?php if (isset($login['id']) && $login['id'] != ''): ?>
-		<a id="issue_home_mainarea_new_button" href='#'><?php print $this->lang->line('New')?></a>
+		<a id="issue_home_new_button" href='#'><?php print $this->lang->line('New')?></a>
 		<?php endif; ?>
-		<a id="issue_home_mainarea_search_button" href='#'><?php print $this->lang->line('Search')?></a>
+		<a id="issue_home_search_button" href='#'><?php print $this->lang->line('Search')?></a>
 	</div>
 	<div style='clear: both;'></div>
 </div>
 
-<div class="result" id="issue_home_mainarea_result">
+<div class="result" id="issue_home_result">
 <?php
 if (empty($issues))
 {
@@ -330,7 +330,7 @@ if (empty($issues))
 }
 else
 {
-	print '<table id="issue_home_mainarea_result_table" class="full-width-result-table">';
+	print '<table id="issue_home_result_table" class="full-width-result-table">';
 	print '<tr class="heading">';
 	print '<th class="id">' . $this->lang->line('ID') . '</th>';
 	print '<th class="type">' . $this->lang->line('Type') . '</th>';
@@ -381,50 +381,50 @@ else
 
 	print '</table>';
 
-	print '<div id="issue_home_mainarea_result_pages">';
+	print '<div id="issue_home_result_pages">';
 	print $page_links;
 	print '</div>';
 }
 ?>
-</div> <!-- issue_home_mainarea_result -->
+</div> <!-- issue_home_result -->
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
-<div id='issue_home_mainarea_new_form'>
+<div id='issue_home_new_form'>
 	<div style='line-height: 2em;'>
 		<?php
 		print form_dropdown (
 			'issue_home_new_type', 
 			$issue_type_array,
 			set_value('issue_home_new_type', ''),
-			'id="issue_home_mainarea_new_type"'
+			'id="issue_home_new_type"'
 		);
 		?>
 
-		<input type='text' id='issue_home_mainarea_new_summary' name='issue_home_new_summary' size='50' placeholder='<?php print $this->lang->line('Summary'); ?>'/>
+		<input type='text' id='issue_home_new_summary' name='issue_home_new_summary' size='50' placeholder='<?php print $this->lang->line('Summary'); ?>'/>
 	</div>
 
-	<div id='issue_home_mainarea_new_description_tabs' style='width:100%;'>
+	<div id='issue_home_new_description_tabs' style='width:100%;'>
 		<ul>
-			<li><a href='#issue_home_mainarea_new_description_input'><?php print $this->lang->line('Description'); ?></a></li>
-			<li><a href='#issue_home_mainarea_new_description_preview'><?php print $this->lang->line('Preview'); ?></a></li>
+			<li><a href='#issue_home_new_description_input'><?php print $this->lang->line('Description'); ?></a></li>
+			<li><a href='#issue_home_new_description_preview'><?php print $this->lang->line('Preview'); ?></a></li>
 		</ul>
 
-		<div id='issue_home_mainarea_new_description_input'>
-			<textarea type='textarea' id='issue_home_mainarea_new_description' name='issue_home_new_description' rows=24 cols=100 style='width:100%;'></textarea>
+		<div id='issue_home_new_description_input'>
+			<textarea type='textarea' id='issue_home_new_description' name='issue_home_new_description' rows=24 cols=100 style='width:100%;'></textarea>
 
 			<div style='margin-top: 0.1em;'>
 			<?php print $this->lang->line('Attachments'); ?>
-			<input type='file' id='issue_home_mainarea_new_files' name='issue_home_new_files' multiple='' autocomplete='off' style='color: transparent;' />
-			<table id='issue_home_mainarea_new_file_table'></table>
+			<input type='file' id='issue_home_new_files' name='issue_home_new_files' multiple='' autocomplete='off' style='color: transparent;' />
+			<table id='issue_home_new_file_table'></table>
 			</div>
 		</div>
-		<div id='issue_home_mainarea_new_description_preview' class='form_input_preview'>
+		<div id='issue_home_new_description_preview' class='form_input_preview'>
 		</div>
 	</div>
 </div>
 <?php endif; ?>
 
-<div id="issue_home_mainarea_search_form">
+<div id="issue_home_search_form">
 	<?php
 		$issue_type_array[''] = $this->lang->line('All');
 		$issue_status_array[''] = $this->lang->line('All');
@@ -478,7 +478,7 @@ else
 	</form>
 </div>
 
-<div id='issue_home_mainarea_alert'></div>
+<div id='issue_home_alert'></div>
 
 </div> <!-- issue_home_mainarea -->
 

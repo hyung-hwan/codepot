@@ -23,7 +23,7 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <?php
-$hexname = $this->converter->AsciiToHex ($wiki->name);
+$hex_wikiname = $this->converter->AsciiToHex ($wiki->name);
 ?>
 
 <script type="text/javascript">
@@ -48,7 +48,7 @@ function render_wiki(input_text)
 		input_text,
 		"wiki_edit_mainarea_text_preview", 
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		"<?php print site_url()?>/wiki/attachment/<?php print $project->id?>/<?php print $hexname?>/"
+		"<?php print site_url()?>/wiki/attachment/<?php print $project->id?>/<?php print $hex_wikiname?>/"
 	);
 
 	prettyPrint ();
@@ -72,6 +72,7 @@ $(function () {
 	$("#wiki_edit_mainarea_text_preview_button").button().click(
 		function () {
 			render_wiki ($("#wiki_edit_mainarea_text").val());
+			return false;
 		}
 	);
 });
@@ -219,6 +220,7 @@ $this->load->view (
 
 <?php print form_close();?>
 </div> <!-- form_container -->
+
 
 </div> <!-- wiki_edit_mainarea -->
 

@@ -6,6 +6,7 @@ class Wiki extends Controller
 	var $VIEW_HOME = 'wiki_home';
 	var $VIEW_SHOW = 'wiki_show';
 	var $VIEW_EDIT = 'wiki_edit';
+	var $VIEW_EDITX = 'wiki_editx';
 	var $VIEW_DELETE = 'wiki_delete';
 
 	function Wiki ()
@@ -70,7 +71,7 @@ class Wiki extends Controller
 		}
 	}
 
-	function _show_wiki ($projectid, $name, $create)
+	private function _show_wiki ($projectid, $name, $create)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('WikiModel', 'wikis');
@@ -175,7 +176,7 @@ class Wiki extends Controller
 		$this->_show_wiki ($projectid, $name, FALSE);
 	}
 
-	function _edit_wiki ($projectid, $name, $mode)
+	private function _edit_wiki ($projectid, $name, $mode, $view_edit)
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
@@ -284,7 +285,7 @@ class Wiki extends Controller
 					{
 						$data['wiki'] = $wiki;
 						$data['message'] = 'DATABASE ERROR';
-						$this->load->view ($this->VIEW_EDIT, $data);
+						$this->load->view ($view_edit, $data);
 						return;
 					}
 					$wiki->attachments = $atts;
@@ -295,7 +296,7 @@ class Wiki extends Controller
 					{
 						$data['message'] = $this->lang->line('WIKI_MSG_NAME_DISALLOWED_CHARS');
 						$data['wiki'] = $wiki;
-						$this->load->view ($this->VIEW_EDIT, $data);
+						$this->load->view ($view_edit, $data);
 						return;
 					}
 
@@ -307,7 +308,7 @@ class Wiki extends Controller
 							$wiki->name
 						);
 						$data['wiki'] = $wiki;
-						$this->load->view ($this->VIEW_EDIT, $data);
+						$this->load->view ($view_edit, $data);
 					}
 					else
 					{
@@ -317,7 +318,7 @@ class Wiki extends Controller
 						{
 							$data['wiki'] = $wiki;
 							$data['message'] = $extra;
-							$this->load->view ($this->VIEW_EDIT, $data);
+							$this->load->view ($view_edit, $data);
 							return;
 						}
 
@@ -333,7 +334,7 @@ class Wiki extends Controller
 
 							$data['message'] = 'DATABASE ERROR';
 							$data['wiki'] = $wiki;
-							$this->load->view ($this->VIEW_EDIT, $data);
+							$this->load->view ($view_edit, $data);
 						}
 						else
 						{
@@ -366,7 +367,7 @@ class Wiki extends Controller
 						{
 							$data['wiki'] = $wiki;
 							$data['message'] = 'DATABASE ERROR';
-							$this->load->view ($this->VIEW_EDIT, $data);
+							$this->load->view ($view_edit, $data);
 							return;
 						}
 						$wiki->attachments = $atts;
@@ -374,7 +375,7 @@ class Wiki extends Controller
 
 					$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
 					$data['wiki'] = $wiki;
-					$this->load->view ($this->VIEW_EDIT, $data);
+					$this->load->view ($view_edit, $data);
 				}
 			}
 			else
@@ -397,7 +398,7 @@ class Wiki extends Controller
 					else
 					{
 						$data['wiki'] = $wiki;
-						$this->load->view ($this->VIEW_EDIT, $data);
+						$this->load->view ($view_edit, $data);
 					}
 				}
 				else
@@ -409,7 +410,7 @@ class Wiki extends Controller
 					$wiki->columns = '1';
 
 					$data['wiki'] = $wiki;
-					$this->load->view ($this->VIEW_EDIT, $data);
+					$this->load->view ($view_edit, $data);
 				}
 			}
 
@@ -418,12 +419,22 @@ class Wiki extends Controller
 
 	function create ($projectid = '', $name = '')
 	{
-		return $this->_edit_wiki ($projectid, $name, 'create');
+		return $this->_edit_wiki ($projectid, $name, 'create', $this->VIEW_EDIT);
 	}
 
 	function update ($projectid = '', $name = '')
 	{
-		return $this->_edit_wiki ($projectid, $name, 'update');
+		return $this->_edit_wiki ($projectid, $name, 'update', $this->VIEW_EDIT);
+	}
+
+	function createx ($projectid = '', $name = '')
+	{
+		return $this->_edit_wiki ($projectid, $name, 'create', $this->VIEW_EDITX);
+	}
+
+	function updatex ($projectid = '', $name = '')
+	{
+		return $this->_edit_wiki ($projectid, $name, 'update', $this->VIEW_EDITX);
 	}
 
 	function delete ($projectid = '', $name = '')

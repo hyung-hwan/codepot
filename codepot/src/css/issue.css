@@ -95,107 +95,107 @@ li.issue-owner {
 /*---------------------------------------------
  * issue home
  *---------------------------------------------*/
-#issue_home_mainarea_result {
+#issue_home_result {
 	overflow: auto;
 }
 
-#issue_home_mainarea_result_table tr {
+#issue_home_result_table tr {
 	vertical-align: text-top;
 }
 
-#issue_home_mainarea_result_table tr.new td.status,
-#issue_home_mainarea_result_table tr.new td.summary {
+#issue_home_result_table tr.new td.status,
+#issue_home_result_table tr.new td.summary {
 	background-color: #ffccbb;
 	background-color: rgba(255, 204, 187, 0.5);
 }
 
-#issue_home_mainarea_result_table tr.accepted td.status,
-#issue_home_mainarea_result_table tr.accepted td.summary {
+#issue_home_result_table tr.accepted td.status,
+#issue_home_result_table tr.accepted td.summary {
 }
 
-#issue_home_mainarea_result_table tr.rejected td.status,
-#issue_home_mainarea_result_table tr.rejected td.summary {
+#issue_home_result_table tr.rejected td.status,
+#issue_home_result_table tr.rejected td.summary {
 	background-color: #ffeedd;
 	background-color: rgba(255, 238, 221, 0.5);
 }
 
-#issue_home_mainarea_result_table tr.started td.status,
-#issue_home_mainarea_result_table tr.started td.summary {
+#issue_home_result_table tr.started td.status,
+#issue_home_result_table tr.started td.summary {
 	background-color: #ddeeff;
 	background-color: rgba(221, 238, 255, 0.5);
 }
 
-#issue_home_mainarea_result_table tr.stalled td.status,
-#issue_home_mainarea_result_table tr.stalled td.summary {
+#issue_home_result_table tr.stalled td.status,
+#issue_home_result_table tr.stalled td.summary {
 	background-color: #bbccff;
 	background-color: rgba(187, 204, 255, 0.5);
 }
 
-#issue_home_mainarea_result_table tr.resolved td.status,
-#issue_home_mainarea_result_table tr.resolved td.summary {
+#issue_home_result_table tr.resolved td.status,
+#issue_home_result_table tr.resolved td.summary {
 	background-color: #ddffdd;
 	background-color: rgba(221, 255, 221, 0.5);
 }
 
-#issue_home_mainarea_result_table tr.other td.status,
-#issue_home_mainarea_result_table tr.other td.summary {
+#issue_home_result_table tr.other td.status,
+#issue_home_result_table tr.other td.summary {
 	background-color: #ddeeff;
 	background-color: rgba(221, 238, 255, 0.5);
 }
 
-#issue_home_mainarea_result_table td.id,
-#issue_home_mainarea_result_table td.type,
-#issue_home_mainarea_result_table td.status,
-#issue_home_mainarea_result_table td.priority,
-#issue_home_mainarea_result_table td.owner {
+#issue_home_result_table td.id,
+#issue_home_result_table td.type,
+#issue_home_result_table td.status,
+#issue_home_result_table td.priority,
+#issue_home_result_table td.owner {
 	width: 1px;
 }
 
-#issue_home_mainarea_result_table td.summary {
+#issue_home_result_table td.summary {
 	white-space: normal;
 }
 
-#issue_home_mainarea_result_pages {
+#issue_home_result_pages {
 	margin-top: 1em;
 	text-align: center;
 	width: 100%;
 }
 
-#issue_home_mainarea_search_form {
+#issue_home_search_form {
 }
 
-#issue_home_mainarea_search_form div {
+#issue_home_search_form div {
 	padding: 0.2em;
 }
 
 /*---------------------------------------------
  * issue show
  *---------------------------------------------*/
-#issue_show_mainarea_state_body {
+#issue_show_state_body {
 	background-color: #FCFCFC;
 	padding: 1em 1em;
 }
 
-#issue_show_mainarea_state_body ul {
+#issue_show_state_body ul {
 	padding: 0;
 	margin: 0;
 	list-style: outside none none;
 }
 
-#issue_show_mainarea_state_body ul li {
+#issue_show_state_body ul li {
 	padding: 0.2em 0.2em 0.2em 0.2em;
 	margin: 0 0.2em 0 0.2em;
 	float: left;
 }
 
-#issue_show_mainarea_change_form {
+#issue_show_change_form {
 }
 
-#issue_show_mainarea_change_form div {
+#issue_show_change_form div {
 	padding: 0.2em;
 }
 
-#issue_show_mainarea_change_form textarea {
+#issue_show_change_form textarea {
 	-moz-box-shadow: 0 2px 4px #bbb inset;
 	-webkit-box-shadow: 0 2px 4px #BBB inset;
 	box-shadow: 0 2px 4px #BBB inset;
@@ -208,47 +208,47 @@ li.issue-owner {
 	font-size: 0.9em;
 }
 
-#issue_show_mainarea_files {
+#issue_show_files {
 	padding-top: 0.5em;
 }
 
-#issue_show_mainarea_changes {
+#issue_show_changes {
 	margin-top: 1em;
 	padding-top: 0.5em;
 	padding-bottom: 0.5em;
 	overflow: auto;
 }
 
-#issue_show_mainarea_changes .infostrip {
+#issue_show_changes .infostrip {
 	margin-bottom: 0.5em;
 }
 
-#issue_show_mainarea_changes .infostrip .title {
+#issue_show_changes .infostrip .title {
 	float: left;
 }
 
-#issue_show_mainarea_changes_table td.date {
+#issue_show_changes_table td.date {
 	min-width: 5em;
 	width: 1px;
 }
 
-#issue_show_mainarea_changes_table td.updater {
+#issue_show_changes_table td.updater {
 	width: 1px;
 }
 
-#issue_show_mainarea_changes_table td.details {
+#issue_show_changes_table td.details {
 	overflow: auto;
 }
 
-#issue_show_mainarea_changes_table td.details .list {
+#issue_show_changes_table td.details .list {
 	background-color: #F1F1FF;
 }
 
-#issue_show_mainarea_changes_table td.details .list ul li {
+#issue_show_changes_table td.details .list ul li {
 	padding-bottom: 0.3em;
 }
 
-#issue_show_mainarea_changes_table .issue_changes_comment .prettyprint {
+#issue_show_changes_table .issue_changes_comment .prettyprint {
 	/* special pre-wrap rule to make the pretty-printed text to wrap 
 	 * in the issue comment listing. i didn't manage to get oveflow: auto 
 	 * or overflow: scroll to make make a scroll bar show up. */
@@ -293,51 +293,28 @@ li.issue-owner {
 	font-size: 0.8em;
 }
 
-/*---------------------------------------------
- * issue edit
- *---------------------------------------------*/
-#issue_edit_mainarea_type {
-	padding-bottom: 0.3em;
-}
-
-#issue_edit_mainarea form textarea {
-	display: block;
-	padding: 1px;
-	font-size: inherit;
-	width: 100%;
-}
-
-#project_issue_summary {
-	width: 100%;
-}
-
-#issue_edit_mainarea_buttons {
-	padding-top: 0.5em;
-}
-
-
 /*-----------------------------------------------
  * issue home view - new issue dialog
  *-----------------------------------------------*/
-#issue_home_mainarea_new_description_tabs {
+#issue_home_new_description_tabs {
 	border: none !important;
 }
 
-#issue_home_mainarea_new_description_tabs .ui-tabs-panel {
+#issue_home_new_description_tabs .ui-tabs-panel {
 	padding: 0.2em 0em 0em 0em !important;
 }
 
-#issue_home_mainarea_new_description_tabs .ui-widget-header {
+#issue_home_new_description_tabs .ui-widget-header {
 	border: none !important;
 	background: none !important;
 	padding: 0em !important;
 }
 
-#issue_home_mainarea_new_description_tabs .ui-tabs-nav {
+#issue_home_new_description_tabs .ui-tabs-nav {
 	padding: 0em !important;
 }
 
-/* #issue_home_mainarea_new_description_tabs .ui-tabs-nav li { */
+/* #issue_home_new_description_tabs .ui-tabs-nav li { */
 .ui-tabs .ui-tabs-nav li.ui-state-default {
 	border-bottom: 1px solid #cccccc !important;
 }
@@ -349,25 +326,25 @@ li.issue-owner {
 /*-----------------------------------------------
  * issue home show - edit issue dialog
  *-----------------------------------------------*/
-#issue_show_mainarea_edit_description_tabs {
+#issue_show_edit_description_tabs {
 	border: none !important;
 }
 
-#issue_show_mainarea_edit_description_tabs .ui-tabs-panel {
+#issue_show_edit_description_tabs .ui-tabs-panel {
 	padding: 0.2em 0em 0em 0em !important;
 }
 
-#issue_show_mainarea_edit_description_tabs .ui-widget-header {
+#issue_show_edit_description_tabs .ui-widget-header {
 	border: none !important;
 	background: none !important;
 	padding: 0em !important;
 }
 
-#issue_show_mainarea_edit_description_tabs .ui-tabs-nav {
+#issue_show_edit_description_tabs .ui-tabs-nav {
 	padding: 0em !important;
 }
 
-/* #issue_show_mainarea_edit_description_tabs .ui-tabs-nav li { */
+/* #issue_show_edit_description_tabs .ui-tabs-nav li { */
 .ui-tabs .ui-tabs-nav li.ui-state-default {
 	border-bottom: 1px solid #cccccc !important;
 }

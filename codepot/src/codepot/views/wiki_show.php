@@ -41,7 +41,7 @@ function render_wiki()
 	if (x_column_count > 1)
 	{
 		column_count = x_column_count.toString();
-		$("#wiki_show_mainarea_wiki").css ({
+		$("#wiki_show_wiki").css ({
 			"-moz-column-count":    column_count,
 			"-webkit-column-count": column_count,
 			"column-count":         column_count
@@ -49,8 +49,8 @@ function render_wiki()
 	}
 
 	creole_render_wiki (
-		"wiki_show_mainarea_wiki_text", 
-		"wiki_show_mainarea_wiki", 
+		"wiki_show_wiki_text", 
+		"wiki_show_wiki", 
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
 		"<?php print site_url()?>/wiki/attachment/<?php print $project->id?>/<?php print $hexname?>/"
 	);
@@ -59,7 +59,7 @@ function render_wiki()
 }
 
 $(function () {
-	$('#wiki_show_mainarea_metadata').accordion({
+	$('#wiki_show_metadata').accordion({
 		collapsible: true,
 		heightStyle: "content"
 	});
@@ -113,14 +113,14 @@ $this->load->view (
 	<div style='clear: both'></div>
 </div>
 
-<div id="wiki_show_mainarea_result" class="result">
+<div id="wiki_show_result" class="result">
 
-<div id='wiki_show_mainarea_metadata' class='collapsible-box'>
-	<div id='wiki_show_mainarea_metadata_header' class='collapsible-box-header'><?php print $this->lang->line('Metadata')?></div>
-	<div id='wiki_show_mainarea_metadata_body'>
+<div id='wiki_show_metadata' class='collapsible-box'>
+	<div id='wiki_show_metadata_header' class='collapsible-box-header'><?php print $this->lang->line('Metadata')?></div>
+	<div id='wiki_show_metadata_body'>
 
-		<div id='wiki_show_mainarea_metadata_list_div'>
-			<ul id='wiki_show_mainarea_metadata_list'>
+		<div id='wiki_show_metadata_list_div'>
+			<ul id='wiki_show_metadata_list'>
 			<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($wiki->createdon); ?></li>
 			<li><?php print $this->lang->line('Created by')?> <?php print htmlspecialchars($wiki->createdby); ?></li>
 			<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($wiki->updatedon); ?></li>
@@ -128,8 +128,8 @@ $this->load->view (
 			</ul>
 		</div>
 
-		<div id='wiki_show_mainarea_attachment_list_div'>
-			<ul id='wiki_show_mainarea_attachment_list'>
+		<div id='wiki_show_attachment_list_div'>
+			<ul id='wiki_show_attachment_list'>
 			<?php
 				foreach ($wiki->attachments as $att)
 				{
@@ -150,13 +150,13 @@ $this->load->view (
 </div>
 
 
-<div class="result" id="wiki_show_mainarea_wiki">
-<pre id="wiki_show_mainarea_wiki_text" style="visibility: hidden">
+<div class="result" id="wiki_show_wiki">
+<pre id="wiki_show_wiki_text" style="visibility: hidden">
 <?php print htmlspecialchars($wiki->text); ?>
 </pre>
-</div> <!-- wiki_show_mainarea_wiki -->
+</div> <!-- wiki_show_wiki -->
 
-</div> <!-- wiki_show_mainarea_result -->
+</div> <!-- wiki_show_result -->
 
 </div> <!-- wiki_show_mainarea -->
 
