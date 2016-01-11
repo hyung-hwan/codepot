@@ -70,7 +70,8 @@ function showRawCode()
 $(function () {
 
 	$('#code_file_metadata').accordion({
-		collapsible: true
+		collapsible: true,
+                heightStyle: "content"
 	});
 
 	$("#code_file_mainarea_loc_info").hide();

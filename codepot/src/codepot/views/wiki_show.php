@@ -60,7 +60,8 @@ function render_wiki()
 
 $(function () {
 	$('#wiki_show_mainarea_metadata').accordion({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 	render_wiki ();

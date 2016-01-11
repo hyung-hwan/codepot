@@ -49,7 +49,8 @@ else
 $(function () {
 
 	$('#code_blame_metadata').accordion({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 	$("#code_blame_mainarea_loc_info").hide();

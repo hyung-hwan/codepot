@@ -157,7 +157,8 @@ $(function () {
 	render_project_pages (total_num_avail, total_num_shown, req_page_offset, req_page_size);
 
 	$("#project_catalog_mainarea_search_form").accordion({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 });
