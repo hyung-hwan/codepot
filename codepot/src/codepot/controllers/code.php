@@ -751,6 +751,7 @@ class Code extends Controller
 			}
 			else
 			{
+				$review_url = $this->input->post('code_new_review_url');
 				$review_comment = $this->input->post('code_new_review_comment');
 				if ($review_comment === FALSE || ($review_comment = trim($review_comment)) == '')
 				{
@@ -774,7 +775,7 @@ class Code extends Controller
 								'New review message #%d for r%d by %s in %s', 
 								$review_sno, $rev, $login['id'], $projectid
 							);
-							$email_message = current_url() . "\r\n" . $review_comment;
+							$email_message = $review_url . "\r\n" . $review_comment;
 							$this->projects->emailMessageToMembers (
 								$projectid, $this->login, $email_subject, $email_message
 							);
