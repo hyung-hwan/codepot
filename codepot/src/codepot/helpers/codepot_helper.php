@@ -34,11 +34,11 @@ if ( ! function_exists('codepot_nowtodbdate'))
 	{
 		if (CODEPOT_DATABASE_STORE_GMT)
 		{
-			return gmstrftime('%Y-%m-%d %H:%M:%S');
+			return gmstrftime('%Y-%m-%d %H:%M:%S', time());
 		}
 		else
 		{
-			return gmstrftime('%Y-%m-%d %H:%M:%S');
+			return strftime('%Y-%m-%d %H:%M:%S', time());
 		}
 	}
 }
@@ -53,7 +53,7 @@ if ( ! function_exists('codepot_unixtimetodbdate'))
 		}
 		else
 		{
-			return gmstrftime('%Y-%m-%d %H:%M:%S', $unixtime);
+			return strftime('%Y-%m-%d %H:%M:%S', $unixtime);
 		}
 	}
 }
@@ -62,6 +62,7 @@ if ( ! function_exists('codepot_dbdatetodispdate'))
 {
 	function codepot_dbdatetodispdate($dbdate)
 	{
+		// display time is in the local time zone.
 		if (CODEPOT_DATABASE_STORE_GMT)
 		{
 			return strftime('%Y-%m-%d %H:%M:%S %z', strtotime($dbdate . ' +0000'));
