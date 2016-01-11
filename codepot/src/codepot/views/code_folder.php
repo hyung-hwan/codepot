@@ -615,7 +615,9 @@ $(function () {
 <?php endif; ?>
 
 	$('#code_folder_metadata').accordion({
-		collapsible: true
+		collapsible: true,
+		heightStyle: "content"
+
 	});
 
 	<?php if ($revision > 0 && $revision < $next_revision): ?>
