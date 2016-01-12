@@ -33,6 +33,7 @@ $lang['Edit'] = '수정';
 $lang['Empty file'] = '빈파일';
 $lang['Enstyle'] = '모양새내기';
 $lang['Error'] = '오류';
+$lang['Exit'] = '종료';
 $lang['Failure'] = '실패';
 $lang['File'] = '파일';
 $lang['Files'] = '파일';

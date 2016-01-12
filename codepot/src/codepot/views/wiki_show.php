@@ -24,13 +24,40 @@
 <title><?php 
 	printf ('%s - %s', htmlspecialchars($project->name), htmlspecialchars($wiki->name));
 ?></title>
-</head>
+
 
 <?php
-$hexname = $this->converter->AsciiToHex ($wiki->name);
+$hex_wikiname = $this->converter->AsciiToHex ($wiki->name);
+
+if ($wiki->type == 'H')
+{
+	$is_html = TRUE;
+	$update_command = 'updatex';
+}
+else
+{
+	$is_html = FALSE;
+	$update_command = 'update';
+}
 ?>
 
 <script type="text/javascript">
+function show_alert (outputMsg, titleMsg) 
+{
+	$('#wiki_show_alert').html(outputMsg).dialog({
+		title: titleMsg,
+		resizable: true,
+		modal: true,
+		width: 'auto',
+		height: 'auto',
+		buttons: {
+			"OK": function () {
+				$(this).dialog("close");
+			}
+		}
+	});
+}
+
 function render_wiki()
 {
 	var column_count = '<?php print  $wiki->columns ?>';
@@ -52,11 +79,13 @@ function render_wiki()
 		"wiki_show_wiki_text", 
 		"wiki_show_wiki", 
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		"<?php print site_url()?>/wiki/attachment/<?php print $project->id?>/<?php print $hexname?>/"
+		"<?php print site_url()?>/wiki/attachment/<?php print $project->id?>/<?php print $hex_wikiname?>/"
 	);
 
 	prettyPrint ();
 }
+
+var work_in_progress = false;
 
 $(function () {
 	$('#wiki_show_metadata').accordion({
@@ -64,9 +93,109 @@ $(function () {
 		heightStyle: "content"
 	});
 
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+	$('#wiki_show_delete_form').dialog (
+		{
+			title: '<?php print $this->lang->line('Delete');?>',
+			resizable: true,
+			autoOpen: false,
+			width: 'auto',
+			height: 'auto',
+			modal: true,
+			buttons: {
+				'<?php print $this->lang->line('OK')?>': function () {
+					if (work_in_progress) return;
+
+					if (!!window.FormData)
+					{
+						// FormData is supported
+						work_in_progress = true;
+
+						var form_data = new FormData();
+
+						var f = $('#wiki_show_delete_confirm');
+						if (f != null && f.is(':checked')) form_data.append ('wiki_delete_confirm', 'Y');
+
+						$('#wiki_show_delete_form').dialog('disable');
+						$.ajax({
+							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/wiki/xhr_delete/{$project->id}/{$hex_wikiname}"; ?>'),
+							type: 'POST',
+							data: form_data,
+							mimeType: 'multipart/form-data',
+							contentType: false,
+							processData: false,
+							cache: false,
+
+							success: function (data, textStatus, jqXHR) { 
+								work_in_progress = false;
+								$('#wiki_show_delete_form').dialog('enable');
+								$('#wiki_show_delete_form').dialog('close');
+								if (data == 'ok') 
+								{
+									// refresh the page to the head revision
+									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/home/{$project->id}"; ?>'));
+								}
+								else
+								{
+									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+								}
+							},
+
+							error: function (jqXHR, textStatus, errorThrown) { 
+								work_in_progress = false;
+								$('#wiki_show_delete_form').dialog('enable');
+								$('#wiki_show_delete_form').dialog('close');
+								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
+							}
+						});
+					}
+					else
+					{
+						show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
+					}
+				},
+				'<?php print $this->lang->line('Cancel')?>': function () {
+					if (work_in_progress) return;
+					$('#wiki_show_delete_form').dialog('close');
+				}
+			},
+
+			beforeClose: function() { 
+				// if importing is in progress, prevent dialog closing
+				return !work_in_progress;
+			}
+		}
+	);
+
+	$("#wiki_show_new_button").button().click (
+		function () { 
+			$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/createx/{$project->id}"; ?>'));
+			return false;
+		}
+	);
+	$("#wiki_show_edit_button").button().click (
+		function () { 
+			$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/{$update_command}/{$project->id}/{$hex_wikiname}"; ?>'));
+			return false;
+		}
+	);
+	$('#wiki_show_delete_button').button().click (
+		function () { 
+			$('#wiki_show_delete_form').dialog('open'); 
+			return false; // prevent the default behavior
+		}
+	);
+<?php endif; ?>
+
+<?php if ($is_html): ?>
+	/* nothing */
+<?php else: ?>
 	render_wiki ();
+<?php endif; ?>
 });
 </script>
+
+</head>
 
 <body>
 
@@ -92,8 +221,6 @@ $this->load->view (
 
 		'ctxmenuitems' => array (
 			array ("wiki/create/{$project->id}", '<i class="fa fa-plus"></i> ' . $this->lang->line('New')),
-			array ("wiki/update/{$project->id}/{$hexname}", '<i class="fa fa-edit"></i> ' .$this->lang->line('Edit')),
-			array ("wiki/delete/{$project->id}/{$hexname}", '<i class="fa fa-trash"></i> ' .$this->lang->line('Delete'))
 		)
 	)
 );
@@ -108,6 +235,11 @@ $this->load->view (
 	<div class="title"><?php print htmlspecialchars($wiki->name)?></div>
 
 	<div class="actions">
+		<?php if (isset($login['id']) && $login['id'] != ''): ?>
+		<a id="wiki_show_new_button" href='#'><?php print $this->lang->line('New')?></a>
+		<a id="wiki_show_edit_button" href='#'><?php print $this->lang->line('Edit')?></a>
+		<a id="wiki_show_delete_button" href='#'><?php print $this->lang->line('Delete')?></a>
+		<?php endif; ?>
 	</div>
 
 	<div style='clear: both'></div>
@@ -136,7 +268,7 @@ $this->load->view (
 					$hexattname = $this->converter->AsciiToHex ($att->name);
 					print '<li>';
 					print anchor (
-						"wiki/attachment/{$project->id}/{$hexname}/{$hexattname}", 
+						"wiki/attachment/{$project->id}/{$hex_wikiname}/{$hexattname}", 
 						htmlspecialchars($att->name)
 					);
 					print '</li>';
@@ -149,14 +281,33 @@ $this->load->view (
 	</div>
 </div>
 
+<?php 
+	if ($is_html)
+	{
+		print $wiki->text;
+	}
+	else
+	{
+		print '<div class="result" id="wiki_show_wiki">';
+		print '<pre id="wiki_show_wiki_text" style="visibility: hidden">';
+		print htmlspecialchars($wiki->text);
+		print '</pre>';
+		print '</div>';
+	}
 
-<div class="result" id="wiki_show_wiki">
-<pre id="wiki_show_wiki_text" style="visibility: hidden">
-<?php print htmlspecialchars($wiki->text); ?>
-</pre>
-</div> <!-- wiki_show_wiki -->
+?>
 
 </div> <!-- wiki_show_result -->
+
+
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+<div id='wiki_show_delete_form'>
+	<input type='checkbox' id='wiki_show_delete_confirm' />
+	<?php print $this->lang->line('MSG_SURE_TO_DELETE_THIS') . ' - ' . htmlspecialchars($wiki->name); ?>
+</div>
+<?php endif; ?>
+
+<div id='wiki_show_alert'></div>
 
 </div> <!-- wiki_show_mainarea -->
 

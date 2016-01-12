@@ -227,7 +227,7 @@ $(function () {
 								if (data == 'ok') 
 								{
 									// refresh the page to the head revision
-									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/file/show/{$project->id}/"; ?>' + codepot_ascii_to_hex(new_name)));
+									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/file/show/{$project->id}/"; ?>' + codepot_string_to_hex(new_name)));
 								}
 								else
 								{

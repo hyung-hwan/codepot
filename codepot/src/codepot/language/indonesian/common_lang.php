@@ -33,6 +33,7 @@ $lang['Edit'] = 'Rubah';
 $lang['Empty file'] = 'Empty file';
 $lang['Enstyle'] = 'Enstyle';
 $lang['Error'] = 'Error';
+$lang['Exit'] = 'Exit';
 $lang['Failure'] = 'Failure';
 $lang['File'] = 'File';
 $lang['Files'] = 'File';

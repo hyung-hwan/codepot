@@ -62,6 +62,7 @@ CREATE TABLE "cpot_wiki" (
 	"projectid"  VARCHAR(32)   NOT NULL,
 	"name"       VARCHAR(255)  NOT NULL,
 	"text"       CLOB          NOT NULL,
+	"type"       CHAR(1)       DEFAULT 'C' NOT NULL,
 	"columns"    INT           DEFAULT 1 NOT NULL,
 	"createdon"  TIMESTAMP     NOT NULL,
 	"updatedon"  TIMESTAMP     NOT NULL,
@@ -111,11 +112,13 @@ CREATE TABLE "cpot_issue_file_list" (
 	"md5sum"      CHAR(32)      NOT NULL,
 	"description" CLOB          NOT NULL,
 	"createdon"   TIMESTAMP     NOT NULL,
+	"updatedon"   TIMESTAMP     NOT NULL,
 	"createdby"   VARCHAR(32)   NOT NULL,
+	"updatedby"   VARCHAR(32)   NOT NULL,
 	UNIQUE ("projectid", "issueid", "filename"),
 	UNIQUE ("encname"),
-	CONSTRAINT issue_attachment_projectid FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id"),
-	CONSTRAINT issue_attachment_issueid FOREIGN KEY ("projectid","issueid") REFERENCES "cpot_issue"("projectid","id")
+	CONSTRAINT issue_file_list_projectid FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id"),
+	CONSTRAINT issue_file_list_issueid FOREIGN KEY ("projectid","issueid") REFERENCES "cpot_issue"("projectid","id")
 );
 
 CREATE TABLE "cpot_issue_change" (
@@ -135,17 +138,19 @@ CREATE TABLE "cpot_issue_change" (
 
 CREATE INDEX cpot_issue_change_index_1 ON "cpot_issue_change"("projectid", "id", "updatedon");
 
-CREATE TABLE "cpot_issue_change_attachment" (
+CREATE TABLE "cpot_issue_change_file_list" (
 	"projectid"  VARCHAR(32)   NOT NULL,
 	"issueid"    NUMBER(20,0)  NOT NULL,
 	"issuesno"   NUMBER(20,0)  NOT NULL,
-	"name"       VARCHAR(255)  NOT NULL,
+	"filename"   VARCHAR(255)  NOT NULL,
 	"encname"    VARCHAR(255)  NOT NULL,
 	"createdon"  TIMESTAMP     NOT NULL,
+	"updatedon"  TIMESTAMP     NOT NULL,
 	"createdby"  VARCHAR(32)   NOT NULL,
+	"updatedby"  VARCHAR(32)   NOT NULL,
 	UNIQUE ("projectid", "issueid", "name"),
-	CONSTRAINT issue_change_attachment_c1 FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id"),
-	CONSTRAINT issue_change_attachment_c2 FOREIGN KEY ("projectid","issueid","issuesno") REFERENCES "cpot_issue_change"("projectid","id","sno")
+	CONSTRAINT issue_change_file_list_c1 FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id"),
+	CONSTRAINT issue_change_file_list_c2 FOREIGN KEY ("projectid","issueid","issuesno") REFERENCES "cpot_issue_change"("projectid","id","sno")
 );
 
 CREATE TABLE "cpot_file" (
