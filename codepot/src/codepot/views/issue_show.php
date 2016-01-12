@@ -713,7 +713,6 @@ $this->load->view (
 
 <div class="mainarea" id="issue_show_mainarea">
 
-
 <div class="title-band" id="issue_show_title_band">
 	<div class="title">
 		<?php print $this->lang->line('Issue')?> <?php print htmlspecialchars($issue->id)?>: 
@@ -781,48 +780,45 @@ $this->load->view (
 	</div>
 </div>
 
+<div id="issue_show_result" class="result">
 
-<div id="issue_show_description">
-<pre id="issue_show_description_pre" style="visibility: hidden">
-<?php print htmlspecialchars($issue->description); ?>
-</pre>
-</div> <!-- issue_show_description -->
+	<div id="issue_show_description">
+	<pre id="issue_show_description_pre" style="visibility: hidden"><?php print htmlspecialchars($issue->description); ?></pre>
+	</div> <!-- issue_show_description -->
 
-<div id="issue_show_files">
+	<div id="issue_show_files">
+		<?php if (isset($login['id']) && $login['id'] != ''): ?>
+		<i class='fa fa-plug'></i> <?php print $this->lang->line('Attachments'); ?>
+		<a id="issue_show_add_file_button" href='#'><?php print $this->lang->line('Add')?></a>
+		<a id="issue_show_edit_file_button" href='#'><?php print $this->lang->line('Edit')?></a>
+		<?php elseif (!empty($issue->files)): ?>
+		<i class='fa fa-plug'></i> <?php print $this->lang->line('Attachments'); ?>
+		<?php endif; ?>
 
+		<?php if (!empty($issue->files)): ?>
+		<ul>
+		<?php
+			for ($i = 0; $i < $issue_file_count; $i++)
+			{
+				$f = $issue->files[$i];
+				$hexname = $this->converter->AsciiToHex ($f->filename);
+				print '<li>';
+				print anchor (
+					"issue/file/{$project->id}/{$issue->id}/{$hexname}", 
+					htmlspecialchars($f->filename)
+				);
 
-<?php if (isset($login['id']) && $login['id'] != ''): ?>
-	<i class='fa fa-plug'></i> <?php print $this->lang->line('Attachments'); ?>
-	<a id="issue_show_add_file_button" href='#'><?php print $this->lang->line('Add')?></a>
-	<a id="issue_show_edit_file_button" href='#'><?php print $this->lang->line('Edit')?></a>
-<?php elseif (!empty($issue->files)): ?>
-	<i class='fa fa-plug'></i> <?php print $this->lang->line('Attachments'); ?>
-<?php endif; ?>
-
-<?php if (!empty($issue->files)): ?>
-<ul>
-<?php
-	for ($i = 0; $i < $issue_file_count; $i++)
-	{
-		$f = $issue->files[$i];
-		$hexname = $this->converter->AsciiToHex ($f->filename);
-		print '<li>';
-		print anchor (
-			"issue/file/{$project->id}/{$issue->id}/{$hexname}", 
-			htmlspecialchars($f->filename)
-		);
-
-		if (!empty($f->description)) printf (' - %s', htmlspecialchars($f->description));
-		print '</li>';
-	}
-?>
-</ul>
-<?php endif; ?>
-
+				if (!empty($f->description)) printf (' - %s', htmlspecialchars($f->description));
+				print '</li>';
+			}
+		?>
+		</ul>
+		<?php endif; ?>
+	</div>
 </div>
 
 <div id="issue_show_changes">
-<?php
+	<?php
 	$commentno = 0;
 
 	$msgfmt_changed_from_to = $this->lang->line ('ISSUE_MSG_CHANGED_X_FROM_Y_TO_Z');
@@ -949,10 +945,8 @@ $this->load->view (
 	print '</tr>';
 
 	print '</table>';
-?>
-
-
-</div>
+	?>
+</div> <!-- issue_show_changes -->
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 <div id='issue_show_edit_form'>

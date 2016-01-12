@@ -92,7 +92,7 @@ $this->load->view (
 	<div style="clear: both;"></div>
 </div>
 
-<div class="graph" id="code_history_mainarea_graph">
+<div class="graph" id="code_history_graph">
 <?php
 	$xfullpath = $this->converter->AsciiToHex (($fullpath == '')? '.': $fullpath);
 
@@ -102,108 +102,107 @@ $this->load->view (
 	$graph_url = codepot_merge_path (site_url(), "/code/graph/commit-share-by-users/{$project->id}/{$xfullpath}{$revreq}");
 	print "<img src='{$graph_url}' />";
 ?>
-</div> <!-- code_history_mainarea_graph -->
-
-<div class="result" id="code_history_result">
+</div> <!-- code_history_graph -->
 
 
-<table id="code_history_result_table" class="full-width-result-table">
-<tr class='full-width-result-table-header'>
-	<th><?php print $this->lang->line('Revision')?></th>
-	<th><?php print $this->lang->line('Committer')?></th>
-	<th><?php print $this->lang->line('Date')?></th>
-	<th><?php print $this->lang->line('Message')?></th>
-	<?php if ($file['type'] == 'file' || $file['type'] == 'dir') print '<th></th>'; ?>
-</tr>
-<?php 
-	$rowclasses = array ('even', 'odd');
-	$history = $file['history'];
-	$history_count = count($history);
-	$curfullpath = $fullpath;
-	for ($i = $history_count; $i > 0; )
-	{
-		$h = $history[--$i];
-
-		$rowclass = $rowclasses[($history_count - $i) % 2];
-		print "<tr class='{$rowclass}'>";
-
-		print '<td class="commit-revision-td">';
-		$xfullpath = $this->converter->AsciiToHex (
-			($fullpath == '')? '.': $fullpath);
-
-		print anchor ("code/file/{$project->id}/{$xfullpath}/{$h['rev']}", $h['rev']);
-
-		if (!empty($h['tag']))
+<div id="code_history_result" class="result">
+	<table id="code_history_result_table" class="full-width-result-table">
+	<tr class='full-width-result-table-header'>
+		<th><?php print $this->lang->line('Revision')?></th>
+		<th><?php print $this->lang->line('Committer')?></th>
+		<th><?php print $this->lang->line('Date')?></th>
+		<th><?php print $this->lang->line('Message')?></th>
+		<?php if ($file['type'] == 'file' || $file['type'] == 'dir') print '<th></th>'; ?>
+	</tr>
+	<?php 
+		$rowclasses = array ('even', 'odd');
+		$history = $file['history'];
+		$history_count = count($history);
+		$curfullpath = $fullpath;
+		for ($i = $history_count; $i > 0; )
 		{
-			print ' ';
-			print '<span class="left_arrow_indicator">';
-			print htmlspecialchars($h['tag']);
-			print '</span>';
-		}
-		print '</td>';
+			$h = $history[--$i];
 
-		print '<td class="commit-author-td">';
-		// Repository migration from googlecode revealed that it did not put 
-		// 'author' for initial project creation. So I've added the following check.
-		if (array_key_exists('author', $h)) print htmlspecialchars($h['author']);
-		print '</td>';
+			$rowclass = $rowclasses[($history_count - $i) % 2];
+			print "<tr class='{$rowclass}'>";
 
-		print '<td class="commit-date-td"><code>';
-		print strftime('%Y-%m-%d', strtotime($h['date']));
-		print '</code></td>';
+			print '<td class="commit-revision-td">';
+			$xfullpath = $this->converter->AsciiToHex (
+				($fullpath == '')? '.': $fullpath);
 
-		print '<td class="commit-message-td">';
-		print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", htmlspecialchars($h['msg']), "class='commit-message'");
-		//print '<pre class="pre-wrapped">';
-		//print htmlspecialchars($h['msg']);
-		//print '</pre>';
-		print '</td>';
+			print anchor ("code/file/{$project->id}/{$xfullpath}/{$h['rev']}", $h['rev']);
 
-		print '<td>';
-		if ($file['type'] == 'file')
-		{
-			print anchor ("code/blame/{$project->id}/{$xfullpath}/{$h['rev']}", 
-				'<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'));
-			print ' | ';
-			print anchor ("code/diff/{$project->id}/{$xfullpath}/{$h['rev']}",
-				'<i class="fa fa-server"></i> ' . $this->lang->line('Difference')); 
-		}
-		print '</td>';
-
-		print '</tr>';
-
-		//
-		// let's track the copy path.
-		//
-		$paths = $h['paths'];
-		$colspan = 6;
-		foreach ($paths as $p)
-		{
-			if (array_key_exists ('copyfrom', $p) && 
-			    $p['action'] == 'A')
+			if (!empty($h['tag']))
 			{
-				$d = $curfullpath;
-				$f = '';
+				print ' ';
+				print '<span class="left_arrow_indicator">';
+				print htmlspecialchars($h['tag']);
+				print '</span>';
+			}
+			print '</td>';
 
-				while ($d != '/' && $d != '')
+			print '<td class="commit-author-td">';
+			// Repository migration from googlecode revealed that it did not put 
+			// 'author' for initial project creation. So I've added the following check.
+			if (array_key_exists('author', $h)) print htmlspecialchars($h['author']);
+			print '</td>';
+
+			print '<td class="commit-date-td"><code>';
+			print strftime('%Y-%m-%d', strtotime($h['date']));
+			print '</code></td>';
+
+			print '<td class="commit-message-td">';
+			print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", htmlspecialchars($h['msg']), "class='commit-message'");
+			//print '<pre class="pre-wrapped">';
+			//print htmlspecialchars($h['msg']);
+			//print '</pre>';
+			print '</td>';
+
+			print '<td>';
+			if ($file['type'] == 'file')
+			{
+				print anchor ("code/blame/{$project->id}/{$xfullpath}/{$h['rev']}", 
+					'<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame'));
+				print ' | ';
+				print anchor ("code/diff/{$project->id}/{$xfullpath}/{$h['rev']}",
+					'<i class="fa fa-server"></i> ' . $this->lang->line('Difference')); 
+			}
+			print '</td>';
+
+			print '</tr>';
+
+			//
+			// let's track the copy path.
+			//
+			$paths = $h['paths'];
+			$colspan = 6;
+			foreach ($paths as $p)
+			{
+				if (array_key_exists ('copyfrom', $p) && 
+				    $p['action'] == 'A')
 				{
-					if ($d == $p['path'])
-					{
-						$curfullpath = $p['copyfrom'] . $f;
-						print "<tr class='title'><td colspan='{$colspan}'>{$curfullpath}</td></tr>";
-						break;
-					}
+					$d = $curfullpath;
+					$f = '';
 
-					$d = dirname ($d);
-					$f = substr ($curfullpath, strlen($d));
+					while ($d != '/' && $d != '')
+					{
+						if ($d == $p['path'])
+						{
+							$curfullpath = $p['copyfrom'] . $f;
+							print "<tr class='title'><td colspan='{$colspan}'>{$curfullpath}</td></tr>";
+							break;
+						}
+
+						$d = dirname ($d);
+						$f = substr ($curfullpath, strlen($d));
+					}
 				}
 			}
-		}
 
-	}
-?>
-</table>
-</div> <!-- code_history_mainarea_body -->
+		}
+	?>
+	</table>
+</div> <!-- code_history_result -->
 
 </div> <!-- code_history_mainarea -->
 

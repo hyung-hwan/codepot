@@ -281,33 +281,33 @@ $this->load->view (
 
 <div class="result" id="code_blame_result">
 
-<?php 
-$fileext = substr(strrchr($file['name'], '.'), 1);
-if ($fileext == 'adb' || $fileext == 'ads') $fileext = 'ada';
-else if ($fileext == 'pas') $fileext = 'pascal';
-else if ($fileext == 'bas') $fileext = 'basic';
+	<?php 
+	$fileext = substr(strrchr($file['name'], '.'), 1);
+	if ($fileext == 'adb' || $fileext == 'ads') $fileext = 'ada';
+	else if ($fileext == 'pas') $fileext = 'pascal';
+	else if ($fileext == 'bas') $fileext = 'basic';
 
-$prettyprint_lang = ($fileext != '')?  "lang-$fileext": '';
+	$prettyprint_lang = ($fileext != '')?  "lang-$fileext": '';
 
-$prettyprint_linenums = 'linenums';
-if ($login['settings'] != NULL &&
-    $login['settings']->code_hide_line_num == 'Y') $prettyprint_linenums = '';
-?>
+	$prettyprint_linenums = 'linenums';
+	if ($login['settings'] != NULL &&
+	    $login['settings']->code_hide_line_num == 'Y') $prettyprint_linenums = '';
+	?>
 
-<pre id="code_blame_result_code_container" class="line-numbered">
-<?php
-// when producing line-numbered code, make sure to produce proper
-// line terminators.
-//
-// the <code> </code> block requires \n after every line.
-// while the <span></span> block to contain revision numbers and authors
-// doesn't require \n. It is because the css file sets the line-number span
-// to display: block.
-//
-// If you have new lines between <span></span> and <code></code>, there will
-// be some positioning problems as thouse new lines are rendered at the top
-// of the actual code.
-//
+	<pre id="code_blame_result_code_container" class="line-numbered">
+	<?php
+	// when producing line-numbered code, make sure to produce proper
+	// line terminators.
+	//
+	// the <code> </code> block requires \n after every line.
+	// while the <span></span> block to contain revision numbers and authors
+	// doesn't require \n. It is because the css file sets the line-number span
+	// to display: block.
+	//
+	// If you have new lines between <span></span> and <code></code>, there will
+	// be some positioning problems as thouse new lines are rendered at the top
+	// of the actual code.
+	//
 	$content = &$file['content'];
 	$len = count($content);
 
@@ -400,17 +400,17 @@ if ($login['settings'] != NULL &&
 	}
 
 	print '</code>';
-?>
-</pre>
+	?>
+	</pre>
 
-<div id="code_blame_mainarea_loc_info" class="infobox">
-	<div class="title">LOC</div>
-	<?php
+	<div id="code_blame_mainarea_loc_info" class="infobox">
+		<div class="title">LOC</div>
+		<?php
 		/* TODO: show this if it's enabled in the user settings  */
 		$graph_url = codepot_merge_path (site_url(), "/code/graph/cloc-file/{$project->id}/{$hex_headpath}{$revreq}");
 		print "<img src='{$graph_url}' id='code_blame_mainarea_loc_info_locgraph' />";
-	?>
-</div> <!-- code_blame_mainarea_loc_info -->
+		?>
+	</div> <!-- code_blame_mainarea_loc_info -->
 
 </div> <!-- code_blame_result -->
 

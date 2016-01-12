@@ -215,7 +215,6 @@ $this->load->view (
 </div>
 
 <div id='code_diff_metadata_container'>
-
 	<div id='code_diff_metadata_against' class='collapsible-box'>
 		<div id='code_diff_metadata_against_header' class='collapsible-box-header'>
 			<?php
@@ -291,7 +290,7 @@ $this->load->view (
 	if ($fileext == "") $fileext = "html"
 ?>
 
-<div class="result" id="code_diff_result">
+<div id="code_diff_result" class="result">
 	<?php
 	function format_diff2 ($a, $b, $css_class)
 	{

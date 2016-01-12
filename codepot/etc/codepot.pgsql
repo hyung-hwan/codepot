@@ -60,7 +60,7 @@ CREATE TABLE wiki (
 	projectid  VARCHAR(32)   NOT NULL,
 	name       VARCHAR(255)  NOT NULL,
 	text       TEXT          NOT NULL,
-	type       CHAR(1)       NOT NULL DEFAULT 'C',
+	doctype    CHAR(1)       NOT NULL DEFAULT 'C',
 	columns    INT           NOT NULL DEFAULT 1,
 
 	createdon  TIMESTAMP     NOT NULL,

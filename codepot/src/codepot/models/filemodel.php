@@ -29,6 +29,7 @@ class FileModel extends Model
 
 		if ($this->db->trans_status() === FALSE) 
 		{
+			$this->errmsg = $this->db->_error_message(); 
 			$this->db->trans_rollback();
 			return FALSE;
 		}
@@ -45,6 +46,7 @@ class FileModel extends Model
 			$query = $this->db->get('file_list');
 			if ($this->db->trans_status() === FALSE) 
 			{
+				$this->errmsg = $this->db->_error_message(); 
 				$this->db->trans_rollback();
 				return FALSE;
 			}
@@ -79,6 +81,7 @@ class FileModel extends Model
 		$query = $this->db->get ('file');
 		if ($this->db->trans_status() === FALSE) 
 		{
+			$this->errmsg = $this->db->_error_message(); 
 			$this->db->trans_rollback();
 			return FALSE;
 		}
@@ -94,6 +97,7 @@ class FileModel extends Model
 			$query = $this->db->get('file_list');
 			if ($this->db->trans_status() === FALSE) 
 			{
+				$this->errmsg = $this->db->_error_message(); 
 				$this->db->trans_rollback();
 				return FALSE;
 			}
