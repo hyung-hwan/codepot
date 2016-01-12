@@ -27,7 +27,7 @@
 
 function show_alert (outputMsg, titleMsg) 
 {
-	$('#file_home_mainarea_alert').html(outputMsg).dialog({
+	$('#file_home_alert').html(outputMsg).dialog({
 		title: titleMsg,
 		resizable: true,
 		modal: true,
@@ -45,7 +45,7 @@ function render_wiki(input_text)
 {
 	creole_render_wiki_with_input_text (
 		input_text,
-		"file_home_mainarea_new_description_preview", 
+		"file_home_new_description_preview", 
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
 		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
 	);
@@ -65,15 +65,15 @@ function populate_selected_files ()
 		var f = populated_file_obj[n];
 		if (f != null)
 		{
-			var d = $('#file_home_mainarea_new_file_desc_' + n);
+			var d = $('#file_home_new_file_desc_' + n);
 			if (d != null) file_desc[f.name] = d.val();
 		}
 	}
 
-	$('#file_home_mainarea_new_file_table').empty();
+	$('#file_home_new_file_table').empty();
 	populated_file_obj = [];
 
-	var f = $('#file_home_mainarea_new_files').get(0);
+	var f = $('#file_home_new_files').get(0);
 	var f_no = 0;
 	for (var n = 0; n < f.files.length; n++)
 	{
@@ -82,9 +82,9 @@ function populate_selected_files ()
 			var desc = file_desc[f.files[n].name];
 			if (desc == null) desc = '';
 
-			$('#file_home_mainarea_new_file_table').append (
+			$('#file_home_new_file_table').append (
 				codepot_sprintf (
-					'<tr id="file_home_mainarea_new_file_row_%d"><td><a href="#" id="file_home_mainarea_new_file_cancel_%d" onClick="cancel_out_new_file(%d); return false;"><i class="fa fa-trash"></i></a></td><td>%s</td><td><input type="text" id="file_home_mainarea_new_file_desc_%d" size="40" value="%s" /></td></tr>', 
+					'<tr id="file_home_new_file_row_%d"><td><a href="#" id="file_home_new_file_cancel_%d" onClick="cancel_out_new_file(%d); return false;"><i class="fa fa-trash"></i></a></td><td>%s</td><td><input type="text" id="file_home_new_file_desc_%d" size="40" value="%s" /></td></tr>', 
 					f_no, f_no, f_no, codepot_htmlspecialchars(f.files[n].name), f_no, codepot_addslashes(desc)
 				)
 			);
@@ -99,7 +99,7 @@ function populate_selected_files ()
 
 function cancel_out_new_file (no)
 {
-	$('#file_home_mainarea_new_file_row_' + no).remove ();
+	$('#file_home_new_file_row_' + no).remove ();
 	populated_file_obj[no] = null;
 }
 
@@ -107,16 +107,16 @@ $(function () {
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 
-	$('#file_home_mainarea_new_files').change (function () {
+	$('#file_home_new_files').change (function () {
 		populate_selected_files ();
 	});
 
-	$("#file_home_mainarea_new_description_tabs").tabs ();
-	$("#file_home_mainarea_new_description_tabs").bind ('tabsshow', function (event, ui) {
-		if (ui.index == 2) render_wiki ($("#file_home_mainarea_new_description").val());
+	$("#file_home_new_description_tabs").tabs ();
+	$("#file_home_new_description_tabs").bind ('tabsshow', function (event, ui) {
+		if (ui.index == 2) render_wiki ($("#file_home_new_description").val());
 	});
 
-	$('#file_home_mainarea_new_form_div').dialog (
+	$('#file_home_new_form_div').dialog (
 		{
 			title: '<?php print $this->lang->line('New');?>',
 			resizable: true,
@@ -145,7 +145,7 @@ $(function () {
 							{
 								form_data.append ('file_new_file_' + f_no, f);
 
-								var d = $('#file_home_mainarea_new_file_desc_' + i);
+								var d = $('#file_home_new_file_desc_' + i);
 								if (d != null) form_data.append('file_new_file_desc_' + f_no, d.val());
 
 								f_no++;
@@ -153,11 +153,11 @@ $(function () {
 						}
 
 						form_data.append ('file_new_file_count', f_no);
-						form_data.append ('file_new_tag', $('#file_home_mainarea_new_tag').val());
-						form_data.append ('file_new_name', $('#file_home_mainarea_new_name').val());
-						form_data.append ('file_new_description', $('#file_home_mainarea_new_description').val());
+						form_data.append ('file_new_tag', $('#file_home_new_tag').val());
+						form_data.append ('file_new_name', $('#file_home_new_name').val());
+						form_data.append ('file_new_description', $('#file_home_new_description').val());
 
-						$('#file_home_mainarea_new_form_div').dialog('disable');
+						$('#file_home_new_form_div').dialog('disable');
 						$.ajax({
 							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/file/xhr_import/{$project->id}"; ?>'),
 							type: 'POST',
@@ -169,8 +169,8 @@ $(function () {
 
 							success: function (data, textStatus, jqXHR) { 
 								import_in_progress = false;
-								$('#file_home_mainarea_new_form_div').dialog('enable');
-								$('#file_home_mainarea_new_form_div').dialog('close');
+								$('#file_home_new_form_div').dialog('enable');
+								$('#file_home_new_form_div').dialog('close');
 								if (data == 'ok') 
 								{
 									// refresh the page to the head revision
@@ -184,8 +184,8 @@ $(function () {
 
 							error: function (jqXHR, textStatus, errorThrown) { 
 								import_in_progress = false;
-								$('#file_home_mainarea_new_form_div').dialog('enable');
-								$('#file_home_mainarea_new_form_div').dialog('close');
+								$('#file_home_new_form_div').dialog('enable');
+								$('#file_home_new_form_div').dialog('close');
 								var errmsg = '';
 								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
 								if (errmsg == '' && textStatus != null) errmsg = textStatus;
@@ -201,7 +201,7 @@ $(function () {
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
 					if (import_in_progress) return;
-					$('#file_home_mainarea_new_form_div').dialog('close');
+					$('#file_home_new_form_div').dialog('close');
 				}
 			},
 
@@ -212,9 +212,9 @@ $(function () {
 		}
 	);
 
-	$("#file_home_mainarea_new_button").button().click (
+	$("#file_home_new_button").button().click (
 		function () { 
-			$('#file_home_mainarea_new_form_div').dialog('open'); 
+			$('#file_home_new_form_div').dialog('open'); 
 			return false; // prevent the default behavior
 		}
 	);
@@ -270,113 +270,86 @@ $this->load->view (
 	?> 
 
 	<?php if (isset($login['id']) && $login['id'] != ''): ?>
-	<a id="file_home_mainarea_new_button" href='#'><?php print $this->lang->line('New')?></a>
+	<a id="file_home_new_button" href='#'><?php print $this->lang->line('New')?></a>
 	<?php endif; ?>
 	</div>
 
 	<div style='clear: both'></div>
 </div>
 
-<div class="result" id="file_home_mainarea_result">
-<?php
-if (empty($files))
-{
-	print htmlspecialchars($this->lang->line('FILE_MSG_NO_FILES_AVAILABLE'));
-}
-else
-{
-	function comp_tag ($a, $b)
+<div id="file_home_result" class="result">
+	<?php
+	if (empty($files))
 	{
-		//$x = explode ('.', $a);
-		//$y = explode ('.', $b);
-		$x = explode ('.', str_replace('-', '.', $a));
-		$y = explode ('.', str_replace('-', '.', $b));
-		$cx = count($x);
-		$cy = count($y);
-		$min = min($cx, $cy);
-
-		for ($i = 0; $i < $min; $i++)
-		{
-			if (is_numeric($x[$i]) && is_numeric($y[$i]))
-			{
-				$q = (int)$x[$i] - (int)$y[$i];
-			}
-			else
-			{
-				$q = strcmp($x[$i], $y[$i]);
-			}
-			if ($q != 0) return $q;
-		}
-
-		return ($cx > $cy)? -1:
-		       ($cx < $cy)? 1: 0;
+		print htmlspecialchars($this->lang->line('FILE_MSG_NO_FILES_AVAILABLE'));
 	}
-
-	function comp_files ($a, $b)
+	else
 	{
-		//$cmp = version_compare ($b->tag, $a->tag);
-		$cmp = comp_tag ($b->tag, $a->tag);
-		if ($cmp == 0)
+		function comp_tag ($a, $b)
 		{
-			$cmp = strcmp ($a->name, $b->name);
-		}
-		return $cmp;
-	}
+			//$x = explode ('.', $a);
+			//$y = explode ('.', $b);
+			$x = explode ('.', str_replace('-', '.', $a));
+			$y = explode ('.', str_replace('-', '.', $b));
+			$cx = count($x);
+			$cy = count($y);
+			$min = min($cx, $cy);
 
-	usort ($files, 'comp_files');
-
-	print '<table id="file_home_mainarea_result_table" class="fit-width-result-table">';
-	print '<tr class="heading">';
-	print '<th>' . $this->lang->line('Tag') . '</th>';
-	print '<th>' . $this->lang->line('Name') . '</th>';
-	print '<th>' . $this->lang->line('File') . '</th>';
-	print '<th>' . $this->lang->line('Summary') . '</th>';
-	print '<th>' . $this->lang->line('MD5') . '</th>';
-	print '</tr>';
-	
-	$oldtag = '';
-	$rownum = 0;
-	$rowclasses = array ('odd', 'even');
-	foreach ($files as $file) 
-	{
-		$hexname = $this->converter->AsciiToHex ($file->name);
-		$rowclass = $rowclasses[$rownum++ % 2];
-
-		$file_list_count = count($file->file_list);
-
-		if ($file_list_count <= 0)
-		{
-			print "<tr class='{$rowclass}'>";
-
-			print '<td>';
-			if ($file->tag != $oldtag)
+			for ($i = 0; $i < $min; $i++)
 			{
-				print htmlspecialchars($file->tag);
-				$oldtag = $file->tag;
+				if (is_numeric($x[$i]) && is_numeric($y[$i]))
+				{
+					$q = (int)$x[$i] - (int)$y[$i];
+				}
+				else
+				{
+					$q = strcmp($x[$i], $y[$i]);
+				}
+				if ($q != 0) return $q;
 			}
-			print '</td>';
 
-			print '<td>';
-			print anchor ("file/show/{$project->id}/{$hexname}", htmlspecialchars($file->name));
-			print '</td>';
-
-			print '<td></td>';
-			print '<td></td>';
-			print '<td></td>';
-
-			print '</tr>';
+			return ($cx > $cy)? -1:
+				  ($cx < $cy)? 1: 0;
 		}
-		else
+
+		function comp_files ($a, $b)
 		{
-			for ($i = 0; $i < $file_list_count; $i++)
+			//$cmp = version_compare ($b->tag, $a->tag);
+			$cmp = comp_tag ($b->tag, $a->tag);
+			if ($cmp == 0)
+			{
+				$cmp = strcmp ($a->name, $b->name);
+			}
+			return $cmp;
+		}
+
+		usort ($files, 'comp_files');
+
+		print '<table id="file_home_result_table" class="fit-width-result-table">';
+		print '<tr class="heading">';
+		print '<th>' . $this->lang->line('Tag') . '</th>';
+		print '<th>' . $this->lang->line('Name') . '</th>';
+		print '<th>' . $this->lang->line('File') . '</th>';
+		print '<th>' . $this->lang->line('Summary') . '</th>';
+		print '<th>' . $this->lang->line('MD5') . '</th>';
+		print '</tr>';
+		
+		$oldtag = '';
+		$rownum = 0;
+		$rowclasses = array ('odd', 'even');
+		foreach ($files as $file) 
+		{
+			$hexname = $this->converter->AsciiToHex ($file->name);
+			$rowclass = $rowclasses[$rownum++ % 2];
+
+			$file_list_count = count($file->file_list);
+
+			if ($file_list_count <= 0)
 			{
 				print "<tr class='{$rowclass}'>";
 
-				$f = $file->file_list[$i];
-				$xname = $this->converter->AsciiToHex ($f->filename);
-
 				print '<td>';
-				if ($i == 0 && $file->tag != $oldtag)
+				if ($file->tag != $oldtag)
 				{
 					print htmlspecialchars($file->tag);
 					$oldtag = $file->tag;
@@ -384,59 +357,84 @@ else
 				print '</td>';
 
 				print '<td>';
-				if ($i == 0) print anchor ("file/show/{$project->id}/{$hexname}", htmlspecialchars($file->name));
+				print anchor ("file/show/{$project->id}/{$hexname}", htmlspecialchars($file->name));
 				print '</td>';
 
-				print '<td>';
-				print anchor ("file/get/{$project->id}/{$xname}", htmlspecialchars($f->filename));
-				print '</td>';
-
-				print '<td>';
-				print htmlspecialchars($f->description);
-				print '</td>';
-
-				print '<td><tt>';
-				print $f->md5sum;
-				print '</tt></td>';
+				print '<td></td>';
+				print '<td></td>';
+				print '<td></td>';
 
 				print '</tr>';
 			}
-		}
-	}
-	print '</table>';
-}
-?>
+			else
+			{
+				for ($i = 0; $i < $file_list_count; $i++)
+				{
+					print "<tr class='{$rowclass}'>";
 
-</div> <!-- file_home_mainarea_result -->
+					$f = $file->file_list[$i];
+					$xname = $this->converter->AsciiToHex ($f->filename);
+
+					print '<td>';
+					if ($i == 0 && $file->tag != $oldtag)
+					{
+						print htmlspecialchars($file->tag);
+						$oldtag = $file->tag;
+					}
+					print '</td>';
+
+					print '<td>';
+					if ($i == 0) print anchor ("file/show/{$project->id}/{$hexname}", htmlspecialchars($file->name));
+					print '</td>';
+
+					print '<td>';
+					print anchor ("file/get/{$project->id}/{$xname}", htmlspecialchars($f->filename));
+					print '</td>';
+
+					print '<td>';
+					print htmlspecialchars($f->description);
+					print '</td>';
+
+					print '<td><tt>';
+					print $f->md5sum;
+					print '</tt></td>';
+
+					print '</tr>';
+				}
+			}
+		}
+		print '</table>';
+	}
+	?>
+</div> <!-- file_home_result -->
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
+<div id='file_home_new_form_div'>
+	<div style='line-height: 2em;'><?php print $this->lang->line('Tag'); ?>: <input type='text' id='file_home_new_tag' name='file_home_new_tag' /></div>
+	<div style='line-height: 2em;'><?php print $this->lang->line('Name'); ?>: <input type='text' id='file_home_new_name' name='file_home_new_name' size='50'/></div>
 
-<div id='file_home_mainarea_new_form_div'>
-	<div style='line-height: 2em;'><?php print $this->lang->line('Tag'); ?>: <input type='text' id='file_home_mainarea_new_tag' name='file_home_new_tag' /></div>
-	<div style='line-height: 2em;'><?php print $this->lang->line('Name'); ?>: <input type='text' id='file_home_mainarea_new_name' name='file_home_new_name' size='50'/></div>
-
-	<div id='file_home_mainarea_new_description_tabs' style='width:100%;'>
+	<div id='file_home_new_description_tabs' style='width:100%;'>
 		<ul>
-			<li><a href='#file_home_mainarea_new_file_input'><?php print $this->lang->line('Files'); ?></a></li>
-			<li><a href='#file_home_mainarea_new_description_input'><?php print $this->lang->line('Description'); ?></a></li>
-			<li><a href='#file_home_mainarea_new_description_preview'><?php print $this->lang->line('Preview'); ?></a></li>
+			<li><a href='#file_home_new_file_input'><?php print $this->lang->line('Files'); ?></a></li>
+			<li><a href='#file_home_new_description_input'><?php print $this->lang->line('Description'); ?></a></li>
+			<li><a href='#file_home_new_description_preview'><?php print $this->lang->line('Preview'); ?></a></li>
 		</ul>
 
-		<div id='file_home_mainarea_new_file_input'>
-			<input type='file' id='file_home_mainarea_new_files' name='file_home_new_files' multiple='' autocomplete='off' style='color: transparent;' />
-			<table id='file_home_mainarea_new_file_table'></table>
+		<div id='file_home_new_file_input'>
+			<input type='file' id='file_home_new_files' name='file_home_new_files' multiple='' autocomplete='off' style='color: transparent;' />
+			<table id='file_home_new_file_table'></table>
 		</div>
-		<div id='file_home_mainarea_new_description_input'>
-			<textarea type='textarea' id='file_home_mainarea_new_description' name='file_home_new_description' rows=10 cols=80 style='width:100%;'></textarea>
+		<div id='file_home_new_description_input'>
+			<textarea type='textarea' id='file_home_new_description' name='file_home_new_description' rows=10 cols=80 style='width:100%;'></textarea>
 		</div>
-		<div id='file_home_mainarea_new_description_preview' class='form_input_preview'>
+		<div id='file_home_new_description_preview' class='form_input_preview'>
 		</div>
 	</div>
 </div>
 
 <?php endif; ?>
 
-<div id='file_home_mainarea_alert'></div>
+<div id='file_home_alert'></div>
 
 </div> <!-- file_home_mainarea -->
 

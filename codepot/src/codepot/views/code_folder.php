@@ -985,7 +985,7 @@ $this->load->view (
 	?>
 </div>
 
-<div class="result" id="code_folder_result">
+<div id="code_folder_result" class="result" >
 	<?php
 	function comp_files ($a, $b)
 	{

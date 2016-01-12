@@ -297,6 +297,20 @@ class WikiModel extends Model
 		// TODO: check if userid can do this..
 		$this->db->trans_begin ();
 
+
+		$this->db->where ('projectid', $wiki->projectid);;
+		$this->db->where ('wikiname', $wiki->name);
+		$this->db->select ('encname');
+		$query = $this->db->get ('wiki_attachment');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			$this->delete_all_files ($ok_files);
+			return FALSE;
+		}
+		$file_result = $query->result ();
+
 		$this->db->where ('projectid', $wiki->projectid);
 		$this->db->where ('wikiname', $wiki->name);
 		$this->db->delete ('wiki_attachment');
@@ -331,6 +345,11 @@ class WikiModel extends Model
 			return FALSE;
 		}
 
+		foreach ($file_result as $r)
+		{
+			@unlink (CODEPOT_ATTACHMENT_DIR . '/' . $r->encname);
+		}
+
 		$this->db->trans_commit ();
 		return TRUE;
 	}
@@ -344,8 +363,12 @@ class WikiModel extends Model
 		return $x;
 	}
 	///////////////////////////////////////////////////////////////////
+	private function delete_all_files ($files)
+	{
+		foreach ($files as $f) @unlink ($f);
+	}
 
-	private function _edit_wiki ($userid, $wiki, $attached_files, $uploader)
+	private function _edit_wiki ($userid, $wiki, $attached_files, $kill_files, $uploader)
 	{
 		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
@@ -357,7 +380,7 @@ class WikiModel extends Model
 			$this->db->set ('projectid', $wiki->projectid);;
 			$this->db->set ('name', $wiki->name);
 			$this->db->set ('text', $wiki->text);
-			$this->db->set ('type', $wiki->type);
+			$this->db->set ('doctype', $wiki->doctype);
 			$this->db->set ('createdon', $now);
 			$this->db->set ('updatedon', $now);
 			$this->db->set ('createdby', $userid);
@@ -370,7 +393,7 @@ class WikiModel extends Model
 			$this->db->where ('name', $wiki->original_name);
 			$this->db->set ('name', $wiki->name);
 			$this->db->set ('text', $wiki->text);
-			$this->db->set ('type', $wiki->type);
+			$this->db->set ('doctype', $wiki->doctype);
 			$this->db->set ('updatedon', $now);
 			$this->db->set ('updatedby', $userid);
 			$this->db->update ('wiki');
@@ -447,15 +470,51 @@ class WikiModel extends Model
 			return FALSE;
 		}
 
+		if (!empty($kill_files))
+		{
+			$this->db->where ('projectid', $wiki->projectid);;
+			$this->db->where ('wikiname', $wiki->name);
+			$this->db->where_in ('name', $kill_files);
+			$this->db->select ('encname');
+			
+			$query = $this->db->get ('wiki_attachment');
+			if ($this->db->trans_status() === FALSE)
+			{
+				$this->errmsg = $this->db->_error_message(); 
+				$this->db->trans_rollback ();
+				$this->delete_all_files ($ok_files);
+				return FALSE;
+			}
+			
+			$result = $query->result ();
+
+			$this->db->where ('projectid', $wiki->projectid);;
+			$this->db->where ('wikiname', $wiki->name);
+			$this->db->where_in ('name', $kill_files);
+			$this->db->delete ('wiki_attachment');
+			if ($this->db->trans_status() === FALSE)
+			{
+				$this->errmsg = $this->db->_error_message(); 
+				$this->db->trans_rollback ();
+				$this->delete_all_files ($ok_files);
+				return FALSE;
+			}
+
+			foreach ($result as $r)
+			{
+				@unlink (CODEPOT_ATTACHMENT_DIR . '/' . $r->encname);
+			}
+		}
+
 		$this->db->trans_commit ();
-		return $newid;
+		return TRUE;
 	}
 
-	function editWithFiles ($userid, $wiki, $attached_files, $uploader)
+	function editWithFiles ($userid, $wiki, $attached_files, $kill_files, $uploader)
 	{
 		set_error_handler (array ($this, 'capture_error'));
 		$errmsg = '';
-		$x = $this->_edit_wiki ($userid, $wiki, $attached_files, $uploader);
+		$x = $this->_edit_wiki ($userid, $wiki, $attached_files, $kill_files, $uploader);
 		restore_error_handler ();
 		return $x;
 	}

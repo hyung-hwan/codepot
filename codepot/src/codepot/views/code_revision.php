@@ -639,9 +639,6 @@ $history = $file['history'];
 	<div style="clear: both;"></div>
 </div>
 
-
-
-
 <div id="code_revision_metadata" class="collapsible-box">
 	<div id="code_revision_metadata_header" class="collapsible-box-header" >
 		<?php
@@ -678,161 +675,160 @@ $history = $file['history'];
 	</div>
 </div>
 
-<div class="result" id="code_revision_result">
+<div id="code_revision_result" class="result">
+	<div id="code_revision_result_files" class="collapsible-box">
+		<div class="collapsible-box-header"><?php print $this->lang->line('Files')?></div>
+		<div id="code_revision_result_files_table_container" class="collapsible-box-panel">
+			<table id="code_revision_result_files_table" class="fit-width-result-table">
+				<?php 
+				/*
+				print '<tr class="heading">';
+				print '<th>' .  $this->lang->line('Path') . '</th>';
+				print '<th></th>';
+				print '</tr>';
+				*/
+				$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
+				$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
 
-<div id="code_revision_result_files" class="collapsible-box">
-<div class="collapsible-box-header"><?php print $this->lang->line('Files')?></div>
-<div id="code_revision_result_files_table_container" class="collapsible-box-panel">
-<table id="code_revision_result_files_table" class="fit-width-result-table">
-<?php 
-	/*
-	print '<tr class="heading">';
-	print '<th>' .  $this->lang->line('Path') . '</th>';
-	print '<th></th>';
-	print '</tr>';
-	*/
-	$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
-	$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
+				$rowclasses = array ('odd', 'even');
+				$rowcount = 0;
+				foreach ($history['paths'] as &$p)
+				{
+					$rowclass = $rowclasses[++$rowcount % 2];
+					print "<tr class='{$rowclass}'>";
 
-	$rowclasses = array ('odd', 'even');
-	$rowcount = 0;
-	foreach ($history['paths'] as &$p)
-	{
-		$rowclass = $rowclasses[++$rowcount % 2];
-		print "<tr class='{$rowclass}'>";
+					$xpar = $this->converter->AsciiToHex ($p['path']);
 
-		$xpar = $this->converter->AsciiToHex ($p['path']);
+					print "<td class='{$p['action']}'>";
+					print anchor ("code/file/{$project->id}/{$xpar}/{$history['rev']}", htmlspecialchars($p['path']));
+					print '</td>';
 
-		print "<td class='{$p['action']}'>";
-		print anchor ("code/file/{$project->id}/{$xpar}/{$history['rev']}", htmlspecialchars($p['path']));
-		print '</td>';
+					print '<td>';
+					//print anchor ("code/blame/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Blame'));
+					//print ' ';
+					print anchor ("code/diff/{$project->id}/{$xpar}/{$history['rev']}", $diff_anchor_text);
+					print '</td>';
 
-		print '<td>';
-		//print anchor ("code/blame/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Blame'));
-		//print ' ';
-		print anchor ("code/diff/{$project->id}/{$xpar}/{$history['rev']}", $diff_anchor_text);
-		print '</td>';
+					print '<td>';
+					print anchor ("code/fulldiff/{$project->id}/{$xpar}/{$history['rev']}", $fulldiff_anchor_text);
+					print '</td>';
 
-		print '<td>';
-		print anchor ("code/fulldiff/{$project->id}/{$xpar}/{$history['rev']}", $fulldiff_anchor_text);
-		print '</td>';
-
-		print '</tr>';
-	}
-?>
-</table>
-</div>
-</div>
+					print '</tr>';
+				}
+				?>
+			</table>
+		</div>
+	</div>
 
 <div id="code_revision_result_properties" class="collapsible-box">
-<div class="collapsible-box-header"><?php print $this->lang->line('CODE_PROPERTIES');?></div>
-<div id="code_revision_result_properties_table_container" class="collapsible-box-panel">
-<table id="code_revision_result_properties_table" class="fit-width-result-table">
-<?php
-	$rowclasses = array ('odd', 'even');
-	$rowcount = 0;
-	foreach ($history['paths'] as &$p)
-	{
-		if (array_key_exists('props', $p) && array_key_exists('prev_props', $p))
-		{
-			$common_props = array_intersect_assoc ($p['props'], $p['prev_props']);
-			$added_props = array_diff_assoc ($p['props'], $common_props);
-			$deleted_props = array_diff_assoc ($p['prev_props'], $common_props);
-
-			if (count($added_props) > 0 || count($deleted_props) > 0)
+	<div class="collapsible-box-header"><?php print $this->lang->line('CODE_PROPERTIES');?></div>
+	<div id="code_revision_result_properties_table_container" class="collapsible-box-panel">
+		<table id="code_revision_result_properties_table" class="fit-width-result-table">
+			<?php
+			$rowclasses = array ('odd', 'even');
+			$rowcount = 0;
+			foreach ($history['paths'] as &$p)
 			{
-				$rowclass = $rowclasses[++$rowcount % 2];
-				$first = TRUE;
-
-				foreach ($added_props as $k => $v)
+				if (array_key_exists('props', $p) && array_key_exists('prev_props', $p))
 				{
-					print "<tr class='{$rowclass}'>";
-					if ($first)
+					$common_props = array_intersect_assoc ($p['props'], $p['prev_props']);
+					$added_props = array_diff_assoc ($p['props'], $common_props);
+					$deleted_props = array_diff_assoc ($p['prev_props'], $common_props);
+
+					if (count($added_props) > 0 || count($deleted_props) > 0)
 					{
-						print "<td class='{$p['action']}'>";
-						$xpar = $this->converter->AsciiToHex ($p['path']);
-						print anchor ("code/file/{$project->id}/{$xpar}/{$history['rev']}", htmlspecialchars($p['path']));
-						$first = FALSE;
+						$rowclass = $rowclasses[++$rowcount % 2];
+						$first = TRUE;
+
+						foreach ($added_props as $k => $v)
+						{
+							print "<tr class='{$rowclass}'>";
+							if ($first)
+							{
+								print "<td class='{$p['action']}'>";
+								$xpar = $this->converter->AsciiToHex ($p['path']);
+								print anchor ("code/file/{$project->id}/{$xpar}/{$history['rev']}", htmlspecialchars($p['path']));
+								$first = FALSE;
+							}
+							else print "<td>";
+							print '</td>';
+
+							print '<td class="A">';
+							printf ('%s - %s', htmlspecialchars($k), htmlspecialchars($v));
+							print '</td>';
+							print '</tr>';
+						}
+
+						foreach ($deleted_props as $k => $v)
+						{
+							print "<tr class='{$rowclass}'>";
+							if ($first)
+							{
+								print "<td class='{$p['action']}'>";
+								$xpar = $this->converter->AsciiToHex ($p['path']);
+								print anchor ("code/file/{$project->id}/{$xpar}/{$history['rev']}", htmlspecialchars($p['path']));
+								$first = FALSE;
+							}
+							else print "<td>";
+							print '</td>';
+
+							print '<td class="D">';
+							printf ('%s - %s', htmlspecialchars($k), htmlspecialchars($v));
+							print '</td>';
+							print '</tr>';
+						}
+
 					}
-					else print "<td>";
-					print '</td>';
-
-					print '<td class="A">';
-					printf ('%s - %s', htmlspecialchars($k), htmlspecialchars($v));
-					print '</td>';
-					print '</tr>';
 				}
-
-				foreach ($deleted_props as $k => $v)
-				{
-					print "<tr class='{$rowclass}'>";
-					if ($first)
-					{
-						print "<td class='{$p['action']}'>";
-						$xpar = $this->converter->AsciiToHex ($p['path']);
-						print anchor ("code/file/{$project->id}/{$xpar}/{$history['rev']}", htmlspecialchars($p['path']));
-						$first = FALSE;
-					}
-					else print "<td>";
-					print '</td>';
-
-					print '<td class="D">';
-					printf ('%s - %s', htmlspecialchars($k), htmlspecialchars($v));
-					print '</td>';
-					print '</tr>';
-				}
-
 			}
-		}
-	}
-?>
-</table>
-</div>
+			?>
+		</table>
+	</div>
 </div>
 
 <div id="code_revision_result_comments" class="collapsible-box">
-<div class="collapsible-box-header"><?php print $this->lang->line('Comment')?>&nbsp;
-<?php if ($is_loggedin): ?>
-<span class='anchor'>
-	<?php print anchor ("#", $this->lang->line('New'),
-	           array ('id' => 'code_revision_new_review_comment_button'));
-	?>
-</span>
-<?php endif; ?>
-</div>
+	<div class="collapsible-box-header"><?php print $this->lang->line('Comment')?>&nbsp;
+	<?php if ($is_loggedin): ?>
+	<span class='anchor'>
+		<?php print anchor ("#", $this->lang->line('New'),
+				 array ('id' => 'code_revision_new_review_comment_button'));
+		?>
+	</span>
+	<?php endif; ?>
+	</div>
 
-<div id="code_revision_mainarea_review_comment" class="collapsible-box-panel">
-<?php
-	for ($i = 0; $i < $review_count; )
-	{
-		$rc = $reviews[$i];
-		$i++;
-		print "<div id='code_revision_mainarea_review_comment_title_{$i}' class='review_comment_title'>\n";
-		printf (" <span class='review_comment_title_no'>%d</span>", $rc->sno);
-		printf (" <span class='review_comment_title_updatedby'>%s</span>", $rc->updatedby);
-		printf (" <span class='review_comment_title_updatedon'>%s</span>", codepot_dbdatetodispdate($rc->updatedon));
-		
-		if ($login['id'] == $rc->updatedby)
+	<div id="code_revision_mainarea_review_comment" class="collapsible-box-panel">
+	<?php
+		for ($i = 0; $i < $review_count; )
 		{
-			print '&nbsp;';
-			print anchor (
-				"#", $this->lang->line('Edit'), 
-				array ('id' => 'code_revision_edit_review_comment_button_' . $i)
-			);
+			$rc = $reviews[$i];
+			$i++;
+			print "<div id='code_revision_mainarea_review_comment_title_{$i}' class='review_comment_title'>\n";
+			printf (" <span class='review_comment_title_no'>%d</span>", $rc->sno);
+			printf (" <span class='review_comment_title_updatedby'>%s</span>", $rc->updatedby);
+			printf (" <span class='review_comment_title_updatedon'>%s</span>", codepot_dbdatetodispdate($rc->updatedon));
+			
+			if ($login['id'] == $rc->updatedby)
+			{
+				print '&nbsp;';
+				print anchor (
+					"#", $this->lang->line('Edit'), 
+					array ('id' => 'code_revision_edit_review_comment_button_' . $i)
+				);
+			}
+
+			print ("</div>\n");
+
+			print "<div id='code_revision_mainarea_review_comment_{$i}' class='review_comment_text'>\n";
+			print "<pre id='code_revision_mainarea_review_comment_text_{$i}' style='visibility: hidden'>\n";
+
+			print htmlspecialchars($rc->comment);
+
+			print "</pre>\n";
+			print "</div>\n";
 		}
-
-		print ("</div>\n");
-
-		print "<div id='code_revision_mainarea_review_comment_{$i}' class='review_comment_text'>\n";
-		print "<pre id='code_revision_mainarea_review_comment_text_{$i}' style='visibility: hidden'>\n";
-
-		print htmlspecialchars($rc->comment);
-
-		print "</pre>\n";
-		print "</div>\n";
-	}
-?>
-</div> <!-- code_revision_mainarea_review_comment -->
+	?>
+	</div>
 </div> <!-- code_revision_result_comments -->
 
 </div> <!-- code_revision_result -->

@@ -37,9 +37,15 @@ function show_alert (outputMsg, titleMsg)
 $(function () { 
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
-	$("#wiki_home_new_button").button().click (
+	$("#wiki_home_new_h_button").button().click (
 		function () { 
 			$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/createx/{$project->id}"; ?>'));
+			return false;
+		}
+	);
+	$("#wiki_home_new_c_button").button().click (
+		function () { 
+			$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/create/{$project->id}"; ?>'));
 			return false;
 		}
 	);
@@ -74,9 +80,7 @@ $this->load->view (
 			'project' => $project,
 		),
 
-		'ctxmenuitems' => array (
-			array ("wiki/create/{$project->id}", '<i class="fa fa-plus"></i> ' . $this->lang->line('New')) 
-		)
+		'ctxmenuitems' => array ()
 	)
 ); 
 ?>
@@ -91,7 +95,8 @@ $this->load->view (
 
 	<div class="actions">
 		<?php if (isset($login['id']) && $login['id'] != ''): ?>
-		<a id="wiki_home_new_button" href='#'><?php print $this->lang->line('New')?></a>
+		<a id="wiki_home_new_h_button" href='#'><?php print $this->lang->line('New')?> [H]</a>
+		<a id="wiki_home_new_c_button" href='#'><?php print $this->lang->line('New')?> [C]</a>
 		<?php endif; ?>
 		<!-- <a id="wiki_home_search_button" href='#'><?php print $this->lang->line('Search')?></a> -->
 	</div>
@@ -99,7 +104,7 @@ $this->load->view (
 	<div style='clear: both'></div>
 </div>
 
-<div id="wiki_home_mainarea_result" class="result">
+<div id="wiki_home_result" class="result">
 <?php
 if (empty($wikis))
 {

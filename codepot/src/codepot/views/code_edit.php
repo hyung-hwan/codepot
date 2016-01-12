@@ -310,47 +310,47 @@ $this->load->view (
 	<div style="clear: both;"></div>
 </div>
 
-<div class="result" id="code_edit_result">
+<div  id="code_edit_result" class="result">
 
-<?php 
-/*
-$fileext = substr(strrchr($file['name'], '.'), 1);
-if ($fileext == 'adb' || $fileext == 'ads') $fileext = 'ada';
-else if ($fileext == 'pas') $fileext = 'pascal';
-else if ($fileext == 'bas') $fileext = 'basic';
-*/
-?>
+	<?php 
+	/*
+	$fileext = substr(strrchr($file['name'], '.'), 1);
+	if ($fileext == 'adb' || $fileext == 'ads') $fileext = 'ada';
+	else if ($fileext == 'pas') $fileext = 'pascal';
+	else if ($fileext == 'bas') $fileext = 'basic';
+	*/
+	?>
 
-<div id="code_edit_result_code"><?php 
-/*
-	$is_octet_stream = FALSE;
-	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
-	{
-		foreach ($file['properties'] as $pn => $pv)
+	<div id="code_edit_result_code"><?php 
+	/*
+		$is_octet_stream = FALSE;
+		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 		{
-			if ($pn == 'svn:mime-type' && $pv == 'application/octet-stream')
+			foreach ($file['properties'] as $pn => $pv)
 			{
-				$is_octet_stream = TRUE;
-				break;
+				if ($pn == 'svn:mime-type' && $pv == 'application/octet-stream')
+				{
+					$is_octet_stream = TRUE;
+					break;
+				}
 			}
 		}
-	}
 
-	$is_image_stream = FALSE;
-	if ($is_octet_stream || 
-	    in_array (strtolower($fileext), array ('png', 'jpg', 'gif', 'tif', 'bmp', 'ico')))
-	{
-		$img = @imagecreatefromstring ($file['content']);
-		if ($img !== FALSE)
+		$is_image_stream = FALSE;
+		if ($is_octet_stream || 
+		    in_array (strtolower($fileext), array ('png', 'jpg', 'gif', 'tif', 'bmp', 'ico')))
 		{
-			@imagedestroy ($img);
-			print ('<img src="data:image;base64,' . base64_encode ($file['content']) . '" alt="[image]" />');
-			$is_image_stream = TRUE;
+			$img = @imagecreatefromstring ($file['content']);
+			if ($img !== FALSE)
+			{
+				@imagedestroy ($img);
+				print ('<img src="data:image;base64,' . base64_encode ($file['content']) . '" alt="[image]" />');
+				$is_image_stream = TRUE;
+			}
 		}
-	}
 
-	if (!$is_image_stream)*/ print htmlspecialchars($file['content']); 
-?></div>
+		if (!$is_image_stream)*/ print htmlspecialchars($file['content']); 
+	?></div>
 
 </div> <!-- code_edit_result -->
 
