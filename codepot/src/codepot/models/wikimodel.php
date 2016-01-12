@@ -2,6 +2,18 @@
 
 class WikiModel extends Model
 {
+	protected $errmsg = '';
+
+	function capture_error ($errno, $errmsg)
+	{
+		$this->errmsg = $errmsg;
+	}
+
+	function getErrorMessage ()
+	{
+		return $this->errmsg;
+	}
+
 	function WikiModel ()
 	{
 		parent::Model ();
@@ -280,18 +292,30 @@ class WikiModel extends Model
 		return TRUE;
 	}
 
-	function delete ($userid, $wiki)
+	private function _delete_wiki ($userid, $wiki)
 	{
 		// TODO: check if userid can do this..
-		$this->db->trans_start ();
+		$this->db->trans_begin ();
 
 		$this->db->where ('projectid', $wiki->projectid);
 		$this->db->where ('wikiname', $wiki->name);
 		$this->db->delete ('wiki_attachment');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
 
 		$this->db->where ('projectid', $wiki->projectid);
 		$this->db->where ('name', $wiki->name);
 		$this->db->delete ('wiki');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
 
 		$this->db->set ('createdon', codepot_nowtodbdate());
 		$this->db->set ('type',      'wiki');
@@ -299,12 +323,142 @@ class WikiModel extends Model
 		$this->db->set ('projectid', $wiki->projectid);
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   $wiki->name);
-
 		$this->db->insert ('log');
-		$this->db->trans_complete ();
-		return $this->db->trans_status();
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$this->db->trans_commit ();
+		return TRUE;
 	}
 
+	function delete ($userid, $wiki)
+	{
+		set_error_handler (array ($this, 'capture_error'));
+		$errmsg = '';
+		$x = $this->_delete_wiki ($userid, $wiki);
+		restore_error_handler ();
+		return $x;
+	}
+	///////////////////////////////////////////////////////////////////
+
+	private function _edit_wiki ($userid, $wiki, $attached_files, $uploader)
+	{
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
+
+		$now = codepot_dbdatetodispdate();
+		$is_create = empty($wiki->original_name);
+
+		if ($is_create)
+		{
+			$this->db->set ('projectid', $wiki->projectid);;
+			$this->db->set ('name', $wiki->name);
+			$this->db->set ('text', $wiki->text);
+			$this->db->set ('type', $wiki->type);
+			$this->db->set ('createdon', $now);
+			$this->db->set ('updatedon', $now);
+			$this->db->set ('createdby', $userid);
+			$this->db->set ('updatedby', $userid);
+			$this->db->insert ('wiki');
+		}
+		else
+		{
+			$this->db->where ('projectid', $wiki->projectid);;
+			$this->db->where ('name', $wiki->original_name);
+			$this->db->set ('name', $wiki->name);
+			$this->db->set ('text', $wiki->text);
+			$this->db->set ('type', $wiki->type);
+			$this->db->set ('updatedon', $now);
+			$this->db->set ('updatedby', $userid);
+			$this->db->update ('wiki');
+		}
+
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$config['allowed_types'] = '*';
+		$config['upload_path'] = CODEPOT_ATTACHMENT_DIR;
+		$config['max_size'] = CODEPOT_MAX_UPLOAD_SIZE;
+		$config['encrypt_name'] = TRUE;
+		$config['overwrite'] = FALSE;
+		$config['remove_spaces'] = FALSE;
+		$uploader->initialize ($config);
+
+		$ok_files = array();
+		$file_count = count($attached_files);
+		for ($i = 0; $i < $file_count; $i++)
+		{
+			$f = $attached_files[$i];
+			if (!$uploader->do_upload($f['fid']))
+			{
+				$this->errmsg = "Failed to upload {$f['name']}";
+				$this->db->trans_rollback ();
+				$this->delete_all_files ($ok_files);
+				return FALSE;
+			}
+
+			$ud = $uploader->data();
+			array_push ($ok_files, $ud['full_path']);
+
+			/*$md5sum = @md5_file ($ud['full_path']);
+			if ($md5sum === FALSE)
+			{
+				$this->db->trans_rollback ();
+				$this->delete_all_files ($ok_files);
+				return FALSE;
+			}*/
+
+			$this->db->set ('projectid', $wiki->projectid);
+			$this->db->set ('wikiname', $wiki->name);
+			$this->db->set ('name', $f['name']);
+			$this->db->set ('encname', $ud['file_name']);
+			/*$this->db->set ('md5sum', $md5sum);*/
+			$this->db->set ('createdon', $now);
+			$this->db->set ('createdby', $userid);
+			$this->db->insert ('wiki_attachment');
+			if ($this->db->trans_status() === FALSE)
+			{
+				$this->errmsg = $this->db->_error_message(); 
+				$this->db->trans_rollback ();
+				$this->delete_all_files ($ok_files);
+				return FALSE;
+			}
+		}
+
+		$this->db->set ('createdon', $now);
+		$this->db->set ('type',      'wiki');
+		$this->db->set ('action',    ($is_create? 'create': 'update'));
+		$this->db->set ('projectid', $wiki->projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $wiki->name);
+		$this->db->insert ('log');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			$this->delete_all_files ($ok_files);
+			return FALSE;
+		}
+
+		$this->db->trans_commit ();
+		return $newid;
+	}
+
+	function editWithFiles ($userid, $wiki, $attached_files, $uploader)
+	{
+		set_error_handler (array ($this, 'capture_error'));
+		$errmsg = '';
+		$x = $this->_edit_wiki ($userid, $wiki, $attached_files, $uploader);
+		restore_error_handler ();
+		return $x;
+	}
 }
 
 ?>

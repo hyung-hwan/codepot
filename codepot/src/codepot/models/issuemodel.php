@@ -475,6 +475,7 @@ class IssueModel extends Model
 		$maxid = (empty($result) || $result[0] == NULL)? 0: $result[0]->maxid;
 
 		$newid = $maxid + 1;
+		$now = codepot_nowtodbdate();
 
 		$this->db->set ('projectid', $issue->projectid);
 		$this->db->set ('id', $newid);
@@ -484,8 +485,8 @@ class IssueModel extends Model
 		$this->db->set ('status', $issue->status);
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('priority', $issue->priority);
-		$this->db->set ('createdon', codepot_nowtodbdate());
-		$this->db->set ('updatedon', codepot_nowtodbdate());
+		$this->db->set ('createdon', $now);
+		$this->db->set ('updatedon', $now);
 		$this->db->set ('createdby', $userid);
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue');
@@ -504,7 +505,7 @@ class IssueModel extends Model
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('comment', '');
 		$this->db->set ('priority', $issue->priority);
-		$this->db->set ('updatedon', codepot_nowtodbdate());
+		$this->db->set ('updatedon', $now);
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue_change');
 		if ($this->db->trans_status() === FALSE)
@@ -552,6 +553,10 @@ class IssueModel extends Model
 			$this->db->set ('encname', $ud['file_name']);
 			$this->db->set ('description', $f['desc']);
 			$this->db->set ('md5sum', $md5sum);
+			$this->db->set ('createdon', $now);
+			$this->db->set ('createdby', $userid);
+			$this->db->set ('updatedon', $now);
+			$this->db->set ('updatedby', $userid);
 			$this->db->insert ('issue_file_list');
 			if ($this->db->trans_status() === FALSE)
 			{
@@ -562,7 +567,7 @@ class IssueModel extends Model
 			}
 		}
 
-		$this->db->set ('createdon', codepot_nowtodbdate());
+		$this->db->set ('createdon', $now);
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'create');
 		$this->db->set ('projectid', $issue->projectid);
@@ -732,6 +737,8 @@ class IssueModel extends Model
 	{
 		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
+		$now = codepot_nowtodbdate();
+
 		$config['allowed_types'] = '*';
 		$config['upload_path'] = CODEPOT_ISSUE_FILE_DIR;
 		$config['max_size'] = CODEPOT_MAX_UPLOAD_SIZE;
@@ -771,6 +778,12 @@ class IssueModel extends Model
 
 			$this->db->set ('md5sum', $md5sum);
 			$this->db->set ('description', $f['desc']);
+
+			$this->db->set ('createdon', $now);
+			$this->db->set ('createdby', $userid);
+			$this->db->set ('updatedon', $now);
+			$this->db->set ('updatedby', $userid);
+
 			$this->db->insert ('issue_file_list');
 			if ($this->db->trans_status() === FALSE)
 			{
@@ -781,7 +794,7 @@ class IssueModel extends Model
 			}
 		}
 
-		$this->db->set ('createdon', codepot_nowtodbdate());
+		$this->db->set ('createdon', $now);
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $projectid);
@@ -813,6 +826,8 @@ class IssueModel extends Model
 	private function _edit_files ($userid, $projectid, $issueid, $edit_files)
 	{
 		$this->db->trans_begin (); // manual transaction. not using trans_start().
+
+		$now = codepot_nowtodbdate();
 
 		$kill_files = array();
 		$file_count = count($edit_files);
@@ -861,6 +876,8 @@ class IssueModel extends Model
 				$this->db->where ('issueid', $issueid);
 				$this->db->where ('filename', $f['name']);
 				$this->db->set ('description', $f['desc']);
+				$this->db->set ('updatedon', $now);
+				$this->db->set ('updatedby', $userid);
 				$this->db->update ('issue_file_list');
 				if ($this->db->trans_status() === FALSE)
 				{

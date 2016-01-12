@@ -60,6 +60,7 @@ CREATE TABLE wiki (
 	projectid  VARCHAR(32)   NOT NULL,
 	name       VARCHAR(255)  NOT NULL,
 	text       TEXT          NOT NULL,
+	type       CHAR(1)       NOT NULL DEFAULT 'C',
 	columns    INT           NOT NULL DEFAULT 1,
 
 	createdon  TIMESTAMP     NOT NULL,
@@ -117,24 +118,6 @@ CREATE INDEX issue_index_1 ON issue(projectid, status, type, summary);
 
 CREATE INDEX issue_index_2 ON issue(projectid, summary);
 
-CREATE TABLE issue_attachment (
-	projectid  VARCHAR(32)   NOT NULL,
-	issueid    BIGINT        NOT NULL,
-	name       VARCHAR(255)  NOT NULL,
-	encname    VARCHAR(255)  NOT NULL,
-
-	createdon  TIMESTAMP     NOT NULL,
-	createdby  VARCHAR(32)   NOT NULL,
-
-	UNIQUE (projectid, issueid, name),
-
-	CONSTRAINT issue_attachment_projectid FOREIGN KEY (projectid) REFERENCES project(id)
-		ON DELETE RESTRICT ON UPDATE CASCADE,
-
-	CONSTRAINT issue_attachment_issueid FOREIGN KEY (projectid,issueid) REFERENCES issue(projectid,id)
-		ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
 CREATE TABLE issue_file_list (
 	projectid   VARCHAR(32)   NOT NULL,
 	issueid     BIGINT        NOT NULL,
@@ -143,8 +126,10 @@ CREATE TABLE issue_file_list (
 	md5sum      CHAR(32)      NOT NULL,
 	description VARCHAR(255)  NOT NULL,
 
-	createdon   DATETIME      NOT NULL,
-	createdby   VARCHAR(32)   NOT NULL,
+	createdon    TIMESTAMP     NOT NULL,
+	updatedon    TIMESTAMP     NOT NULL,
+	createdby    VARCHAR(32)   NOT NULL,
+	updatedby    VARCHAR(32)   NOT NULL,
 
 	UNIQUE (projectid, issueid, filename),
 	UNIQUE (encname),
@@ -179,22 +164,24 @@ CREATE TABLE issue_change (
 
 CREATE INDEX issue_change_index_1 ON issue_change(projectid, id, updatedon);
 
-CREATE TABLE issue_change_attachment (
+CREATE TABLE issue_change_file_list (
 	projectid  VARCHAR(32)   NOT NULL,
 	issueid    BIGINT        NOT NULL,
 	issuesno   BIGINT        NOT NULL,
-	name       VARCHAR(255)  NOT NULL,
+	filename   VARCHAR(255)  NOT NULL,
 	encname    VARCHAR(255)  NOT NULL,
 
 	createdon  TIMESTAMP     NOT NULL,
+	updatedon  TIMESTAMP     NOT NULL,
 	createdby  VARCHAR(32)   NOT NULL,
+	updatedby  VARCHAR(32)   NOT NULL,
 
 	UNIQUE (projectid, issueid, name),
 
-	CONSTRAINT issue_change_attachment_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+	CONSTRAINT issue_change_file_list_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE,
 
-	CONSTRAINT issue_change_attachment_issueidsno FOREIGN KEY (projectid,issueid,issuesno) REFERENCES issue_change(projectid,id,sno)
+	CONSTRAINT issue_change_file_list_issueidsno FOREIGN KEY (projectid,issueid,issuesno) REFERENCES issue_change(projectid,id,sno)
 		ON DELETE RESTRICT ON UPDATE CASCADE
 );
 

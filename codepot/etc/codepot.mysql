@@ -19,7 +19,7 @@ CREATE TABLE project (
 	id             VARCHAR(32)  PRIMARY KEY,
 	name           VARCHAR(255) UNIQUE NOT NULL,
 	summary        VARCHAR(255) NOT NULL,
-	description    TEXT NOT NULL,
+	description    TEXT         NOT NULL,
 	commitable     CHAR(1)      NOT NULL DEFAULT 'Y',
 	public         CHAR(1)      NOT NULL DEFAULT 'Y',
 	codecharset    VARCHAR(32),
@@ -44,6 +44,7 @@ CREATE TABLE wiki (
 	projectid  VARCHAR(32)   NOT NULL,
 	name       VARCHAR(255)  NOT NULL,
 	text       TEXT          NOT NULL,
+	type       CHAR(1)       NOT NULL DEFAULT 'C',
 	columns    INT           NOT NULL DEFAULT 1,
 
 	createdon  DATETIME      NOT NULL,
@@ -108,7 +109,9 @@ CREATE TABLE issue_file_list (
 	description VARCHAR(255)  NOT NULL,
 
 	createdon   DATETIME      NOT NULL,
+	updatedon   DATETIME      NOT NULL,
 	createdby   VARCHAR(32)   NOT NULL,
+	updatedby   VARCHAR(32)   NOT NULL,
 
 	UNIQUE KEY issue_file_list_id (projectid, issueid, filename),
 	UNIQUE KEY (encname),
@@ -142,22 +145,24 @@ CREATE TABLE issue_change (
 
 ) charset=utf8 engine=InnoDB;
 
-CREATE TABLE issue_change_attachment (
+CREATE TABLE issue_change_file_list (
 	projectid  VARCHAR(32)   NOT NULL,
 	issueid    BIGINT        NOT NULL,
 	issuesno   BIGINT        NOT NULL,
-	name       VARCHAR(255)  NOT NULL,
+	filename   VARCHAR(255)  NOT NULL,
 	encname    VARCHAR(255)  NOT NULL,
 
 	createdon  DATETIME      NOT NULL,
+	updatedon  DATETIME      NOT NULL,
 	createdby  VARCHAR(32)   NOT NULL,
+	updatedby  VARCHAR(32)   NOT NULL,
 
-	UNIQUE KEY issue_change_attachment_id (projectid, issueid, name),
+	UNIQUE KEY issue_change_file_list_id (projectid, issueid, name),
 
-	CONSTRAINT issue_change_attachment_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+	CONSTRAINT issue_change_file_list_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE,
 
-	CONSTRAINT issue_change_attachment_issueidsno FOREIGN KEY (projectid,issueid,issuesno) REFERENCES issue_change(projectid,id,sno)
+	CONSTRAINT issue_change_file_list_issueidsno FOREIGN KEY (projectid,issueid,issuesno) REFERENCES issue_change(projectid,id,sno)
 		ON DELETE RESTRICT ON UPDATE CASCADE
 ) charset=utf8 engine=InnoDB;
 
@@ -167,10 +172,10 @@ CREATE TABLE file (
 	tag         VARCHAR(54)   NOT NULL,
 	description TEXT          NOT NULL,
 
-	createdon  DATETIME       NOT NULL,
-	updatedon  DATETIME       NOT NULL, 
-	createdby  VARCHAR(32)    NOT NULL,
-	updatedby  VARCHAR(32)    NOT NULL,
+	createdon   DATETIME      NOT NULL,
+	updatedon   DATETIME      NOT NULL, 
+	createdby   VARCHAR(32)   NOT NULL,
+	updatedby   VARCHAR(32)   NOT NULL,
 
 	UNIQUE KEY file_id (projectid, name),
 	INDEX file_tagged_name (projectid, tag, name),
@@ -187,10 +192,10 @@ CREATE TABLE file_list (
 	md5sum      CHAR(32)      NOT NULL,
 	description VARCHAR(255)  NOT NULL,
 
-	createdon  DATETIME       NOT NULL,
-	updatedon  DATETIME       NOT NULL, 
-	createdby  VARCHAR(32)    NOT NULL,
-	updatedby  VARCHAR(32)    NOT NULL,
+	createdon   DATETIME      NOT NULL,
+	updatedon   DATETIME      NOT NULL, 
+	createdby   VARCHAR(32)   NOT NULL,
+	updatedby   VARCHAR(32)   NOT NULL,
 
 	INDEX file_list_id (projectid, name),
 	UNIQUE KEY file_list_fileid (projectid, filename),

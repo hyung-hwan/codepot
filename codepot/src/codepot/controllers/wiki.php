@@ -266,7 +266,7 @@ class Wiki extends Controller
 						{
 							$atpos = strpos ($att, '@');
 							if ($atpos === FALSE) continue;
-	
+
 							$attinfo['name'] = $this->converter->HexToAscii(
 								substr ($att, 0, $atpos));
 							$attinfo['encname'] = $this->converter->HexToAscii(
@@ -554,7 +554,7 @@ class Wiki extends Controller
 		}
 	}
 
-	function _upload_attachments ($id)
+	private function _upload_attachments ($id)
 	{
 		$attno = 0;
 		$count = count($_FILES);
@@ -869,4 +869,159 @@ class Wiki extends Controller
 			$this->_handle_issue_file ($login, $projectid, $issueid, $filename);
 	}
 
+
+	///////////////////////////////////////////////////////////////////
+
+	function xhr_edit ($projectid = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('WikiModel', 'wikis');
+		$this->load->library ('upload');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else
+			{
+				$wiki = new stdClass();
+				$wiki->projectid = $projectid;
+				$wiki->name = $this->input->post('wiki_name');
+				$wiki->text = $this->input->post('wiki_text');
+				$wiki->type = $this->input->post('wiki_type');
+
+				$wiki->original_name = $this->input->post('wiki_original_name');
+				$wiki_file_count = $this->input->post('wiki_file_count');
+
+				if ($wiki->name === FALSE || ($wiki->name = trim($wiki->name)) == '')
+				{
+					$status = 'error - empty name';
+				}
+				else if (strpbrk ($wiki->name, ':#[]|') !== FALSE)
+				{
+					$status = 'error - disallowed characters in name';
+				}
+				else if ($wiki->text === FALSE || ($wiki->text = trim($wiki->text)) == '')
+				{
+					$status = 'error - empty text';
+				}
+				else
+				{
+					if ($wiki_file_count === FALSE || $wiki_file_count <= 0) $wiki_file_count = 0;
+
+					if ($wiki->original_name === FALSE) $wiki->original_name = '';
+					else $wiki->original_name = trim($wiki->original_name);
+
+					$status = '';
+					$attached_files = array ();
+					for ($i = 0; $i < $wiki_file_count; $i++)
+					{
+						$fid = "wiki_file_{$i}";
+						if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
+						{
+							if (strpos($_FILES[$fid]['name'], ':') !== FALSE ||
+							    strpos($_FILES[$fid]['name'], '/') !== FALSE)
+							{
+								// prevents these letters for wiki creole 
+								$status = "error - colon or slash not allowed - {$_FILES[$fid]['name']}";
+								break;
+							}
+
+							array_push ($attached_files, array ('fid' => $fid, 'name' => $_FILES[$fid]['name']));
+						}
+					}
+
+					if ($status == '')
+					{
+						if ($this->wikis->editWithFiles ($login['id'], $wiki, $attached_files, $this->upload) === FALSE)
+						{
+							$status = 'error - ' . $this->wikis->getErrorMessage();
+						}
+						else
+						{
+							$status = 'ok';
+						}
+					}
+				}
+			}
+		}
+
+		print $status;
+	}
+
+	function xhr_delete ($projectid = '', $wikiname = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('WikiModel', 'wikis');
+
+		$login = $this->login->getUser ();
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$wikiname = $this->converter->HexToAscii ($wikiname);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			{
+				$status = "error - not a member {$login['id']}";
+			}
+			else
+			{
+				$post_delete_confirm = $this->input->post('wiki_delete_confirm');
+
+				if ($post_delete_confirm !== FALSE && $post_delete_confirm == 'Y')
+				{
+					$wiki = new stdClass();
+					$wiki->projectid = $projectid;
+					$wiki->name = $wikiname;
+					if ($this->wikis->delete ($login['id'], $wiki) === FALSE)
+					{
+						$status = 'error - ' . $this->wikis->getErrorMessage();
+					}
+					else
+					{
+						$status = 'ok';
+					}
+				}
+				else
+				{
+					$status = 'error - not confirmed';
+				}
+			}
+		}
+
+		print $status;
+	}
 }

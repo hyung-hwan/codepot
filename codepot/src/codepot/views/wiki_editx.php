@@ -73,6 +73,32 @@ function resize_editor()
 
 var new_attachment_no = 0;
 var wiki_text_editor = null;
+var work_in_progress = false;
+var wiki_original_name = '<?php print addslashes($wiki->name); ?>';
+var wiki_new_name = '';
+
+function show_in_progress_message (outputMsg, titleMsg)
+{
+	if (titleMsg == null || outputMsg == null)
+	{
+		$('#wiki_edit_alert').dialog('close');
+	}
+	else
+	{
+		$('#wiki_edit_alert').html(outputMsg).dialog({
+			title: titleMsg,
+			resizable: false,
+			modal: true,
+			width: 'auto',
+			height: 'auto',
+
+			beforeClose: function() { 
+				// if importing is in progress, prevent dialog closing
+				return !work_in_progress;
+			}
+		});
+	}
+}
 
 $(function () {
 	$('#wiki_edit_more_new_attachment').button().click (
@@ -128,12 +154,96 @@ $(function () {
 		}
 	});
 
+<?php if ($mode == 'update'): ?>
+	wiki_text_editor.setContent ('<?php print addslashes($wiki->text); ?>', 0);
+<?php endif; ?>
+
 	$("#wiki_edit_save_button").button().click (function() {
-		// TODO:
 		var e = wiki_text_editor.serialize();
-		alert (e.wiki_edit_text_editor.value);
-		//console.log ("%o", wiki_text_editor);
-		//console.log ("%o", e);
+
+		if (work_in_progress) return;
+
+		if (!!window.FormData)
+		{
+			// FormData is supported
+			work_in_progress = true;
+			show_in_progress_message ('Saving in progress. Please wait...', 'Saving...');
+
+			wiki_new_name = $('#wiki_edit_name').val();
+
+			var form_data = new FormData();
+
+			/*
+			var f_no = 0;
+			for (var i = 0; i <= populated_file_max; i++)
+			{
+
+				var f = populated_file_obj[i];
+				if (f != null)
+				{
+					form_data.append ('wiki_file_' + f_no, f);
+
+					var d = $('#wiki_edit_file_desc_' + i);
+					if (d != null) form_data.append('wiki_file_desc_' + f_no, d.val());
+
+					f_no++;
+				}
+			}
+
+			form_data.append ('wiki_file_count', f_no);*/
+
+			form_data.append ('wiki_type', 'H');
+			form_data.append ('wiki_name', wiki_new_name);
+			form_data.append ('wiki_original_name', wiki_original_name);
+			form_data.append ('wiki_text', e.wiki_edit_text_editor.value);
+
+			$.ajax({
+				url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/wiki/xhr_edit/{$project->id}"; ?>'),
+				type: 'POST',
+				data: form_data,
+				mimeType: 'multipart/form-data',
+				contentType: false,
+				processData: false,
+				cache: false,
+
+				success: function (data, textStatus, jqXHR) { 
+					work_in_progress = false;
+					show_in_progress_message (null, null);
+					if (data == 'ok') 
+					{
+						wiki_original_name = wiki_new_name;
+						// TODO: reload contents?
+					}
+					else
+					{
+						show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+					}
+				},
+
+				error: function (jqXHR, textStatus, errorThrown) { 
+					work_in_progress = false;
+					show_in_progress_message (null, null);
+					var errmsg = '';
+					if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+					if (errmsg == '' && textStatus != null) errmsg = textStatus;
+					if (errmsg == '') errmsg = 'Unknown error';
+					show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
+				}
+			});
+		}
+		else
+		{
+			show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
+		}
+	
+		return false;
+	});
+
+	$("#wiki_edit_exit_button").button().click (function() {
+		if (wiki_original_name == '')
+			$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/home/{$project->id}"; ?>'));
+		else
+			$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/show/{$project->id}/"; ?>' + codepot_string_to_hex(wiki_original_name)));
 		return false;
 	});
 
@@ -177,12 +287,11 @@ $this->load->view (
 <div class="mainarea" id="wiki_edit_mainarea">
 
 <div class="title-band" id="wiki_edit_title_band">
-	<div class="title"><input type="text" name="wiki_name" value="" maxlength="80" size="40" id="wiki_edit_name" placeholder="<?php print $this->lang->line('Name'); ?>" /></div>
+	<div class="title"><input type="text" name="wiki_name" value="<?php print addslashes($wiki->name); ?>" maxlength="80" size="40" id="wiki_edit_name" placeholder="<?php print $this->lang->line('Name'); ?>" /></div>
 
 	<div class="actions">
-		<?php if (isset($login['id']) && $login['id'] != ''): ?>
 		<a id="wiki_edit_save_button" href='#'><?php print $this->lang->line('Save')?></a>
-		<?php endif; ?>
+		<a id="wiki_edit_exit_button" href='#'><?php print $this->lang->line('Exit')?></a>
 	</div>
 
 	<div style='clear: both'></div>
@@ -226,12 +335,6 @@ $this->load->view (
 </div>
 
 <div id="wiki_edit_result">
-
-	<input type="hidden" name="wiki_projectid" value="<?php print addslashes($wiki->projectid); ?>"  id="wiki_edit_projectid" />
-	<?php if ($mode == 'update'): ?>
-	<input type="hidden" name="wiki_original_name" value="<?php print addslashes($wiki->name); ?>"  id="wiki_edit_original_name" />
-	<?php endif; ?>
-
 	<div id='wiki_edit_text_editor'></div>
 </div> <!-- wiki_edit_result -->
 
@@ -249,7 +352,6 @@ $this->load->view (
 <?php $this->load->view ('footer'); ?>
 
 <!---------------------------------------------------------------------------->
-
 
 </body>
 

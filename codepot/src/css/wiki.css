@@ -55,6 +55,7 @@
 #wiki_edit_form {
 }
 
+#wiki_edit_text_area,
 #wiki_edit_text_editor {
 	margin: 0 !important;
 	padding: 0 !important;
@@ -66,4 +67,7 @@
 	outline: none !important;
 }
 
+#wiki_edit_text_editor pre {
+	white-space: pre-wrap !important;
+}
 
