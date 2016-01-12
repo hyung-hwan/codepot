@@ -655,7 +655,7 @@ $this->load->view (
 	</div>
 </div>
 
-<div id="file_show_result'" class="result">
+<div id="file_show_result" class="result">
 	<div id="file_show_wiki">
 		<pre id="file_show_wiki_text" style="visibility: hidden"><?php print htmlspecialchars($file->description); ?></pre>
 	</div>
