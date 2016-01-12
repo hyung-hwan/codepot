@@ -39,7 +39,6 @@ $(function () {
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 	$("#wiki_home_new_button").button().click (
 		function () { 
-			//$('#wiki_home_new_form').dialog('open'); 
 			$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/createx/{$project->id}"; ?>'));
 			return false;
 		}

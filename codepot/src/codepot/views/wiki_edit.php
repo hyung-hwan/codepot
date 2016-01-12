@@ -30,15 +30,15 @@ $hex_wikiname = $this->converter->AsciiToHex ($wiki->name);
 
 function render_wiki(input_text)
 {
-	var column_count = $("#wiki_edit_mainarea_text_column_count").val();
+	var column_count = $("#wiki_edit_text_column_count").val();
 	var x_column_count = parseInt (column_count);
 	if (isNaN(x_column_count) || x_column_count < 1) x_column_count = 1;
 	else if (x_column_count > 9) x_column_count = 9; // sync this max value with wiki_show. TODO: put this into codepot.ini
 
 	column_count = x_column_count.toString();
-	$("#wiki_edit_mainarea_text_column_count").val(column_count);
+	$("#wiki_edit_text_column_count").val(column_count);
 
-	$("#wiki_edit_mainarea_text_preview").css ({
+	$("#wiki_edit_text_preview").css ({
 		"-moz-column-count":    column_count,
 		"-webkit-column-count": column_count,
 		"column-count":         column_count
@@ -46,7 +46,7 @@ function render_wiki(input_text)
 
 	creole_render_wiki_with_input_text (
 		input_text,
-		"wiki_edit_mainarea_text_preview", 
+		"wiki_edit_text_preview", 
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
 		"<?php print site_url()?>/wiki/attachment/<?php print $project->id?>/<?php print $hex_wikiname?>/"
 	);
@@ -69,9 +69,9 @@ $(function () {
 		}
 	);
 
-	$("#wiki_edit_mainarea_text_preview_button").button().click(
+	$("#wiki_edit_text_preview_button").button().click(
 		function () {
-			render_wiki ($("#wiki_edit_mainarea_text").val());
+			render_wiki ($("#wiki_edit_text_area").val());
 			return false;
 		}
 	);
@@ -123,7 +123,7 @@ $this->load->view (
 	</div>
 	<div class='form_input_field'>
 		<?php 
-			$extra = 'maxlength="80" size="40" id="wiki_edit_mainarea_name"';
+			$extra = 'maxlength="80" size="40" id="wiki_edit_name"';
 			//$extra .= ($mode == 'update')? ' readonly="readonly"': ''; 
 		?>
 		<?php print form_input('wiki_name', set_value('wiki_name', $wiki->name), $extra)?>
@@ -132,12 +132,12 @@ $this->load->view (
 
 	<div class='form_input_label'>
 		<?php print form_label($this->lang->line('Text').': ', 'wiki_text')?>
-		<a href='#' id='wiki_edit_mainarea_text_preview_button'><?php print $this->lang->line('Preview')?></a>
+		<a href='#' id='wiki_edit_text_preview_button'><?php print $this->lang->line('Preview')?></a>
 
 		<?php
 			$attrs = array (
 				'name' => 'wiki_columns',
-				'id' => 'wiki_edit_mainarea_text_column_count',
+				'id' => 'wiki_edit_text_column_count',
 				'value' => set_value('wiki_columns', $wiki->columns),
 				'size' => '2',
 				'min' => '1',
@@ -155,14 +155,14 @@ $this->load->view (
 			$xdata = array (
 				'name' => 'wiki_text',
 				'value' => set_value ('wiki_text', $wiki->text),
-				'id' => 'wiki_edit_mainarea_text',
+				'id' => 'wiki_edit_text_area',
 				'rows' => 20,
 				'cols' => 80
 			);
 			print form_textarea ($xdata);
 		?>
 	</div>
-	<div id='wiki_edit_mainarea_text_preview' class='form_input_preview'></div>
+	<div id='wiki_edit_text_preview' class='form_input_preview'></div>
 
 	<?php if (!empty($wiki->attachments)): ?>
 	<div class='form_input_label'>
