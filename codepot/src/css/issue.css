@@ -95,8 +95,11 @@ li.issue-owner {
 /*---------------------------------------------
  * issue home
  *---------------------------------------------*/
-#issue_home_result {
+#issue_home_result,
+#issue_show_result {
+	position: relative;
 	overflow: auto;
+	margin: 0.2em 0 0.2em 0;
 }
 
 #issue_home_result_table tr {

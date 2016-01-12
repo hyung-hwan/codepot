@@ -28,8 +28,8 @@
 function render_wiki()
 {
 	creole_render_wiki (
-		"site_home_mainarea_result_wiki_text",
-		"site_home_mainarea_result_wiki",
+		"site_home_result_wiki_text",
+		"site_home_result_wiki",
 		"<?php print site_url()?>/site/wiki/",
 		"<?php print site_url()?>/site/image/"
 	);
@@ -41,13 +41,13 @@ $(function () {
 	render_wiki ();
 
 <?php if ($issues && count($issues) > 0): ?>
-	$("#site_home_mainarea_result_open_issues").accordion ({
+	$("#site_home_result_open_issues").accordion ({
 		collapsible: true 
 	}); 
 <?php endif; ?>
 
 <?php if ($recently_resolved_issues && count($recently_resolved_issues) > 0): ?>
-	$("#site_home_mainarea_result_resolved_issues").accordion ({
+	$("#site_home_result_resolved_issues").accordion ({
 		collapsible: true 
 	});
 <?php endif; ?>
@@ -282,14 +282,14 @@ foreach ($latest_projects as $project)
 
 <div class="mainarea" id="site_home_mainarea">
 
-<div class="result" id="site_home_mainarea_result">
+<div id="site_home_result" class="result">
 
-<?php if ($issues && count($issues) > 0): ?>
-	<div id="site_home_mainarea_result_open_issues" class="collapsible-box">
-	<div id="site_home_mainarea_result_open_issues_header" class="collapsible-box-header">
+	<?php if ($issues && count($issues) > 0): ?>
+	<div id="site_home_result_open_issues" class="collapsible-box">
+	<div id="site_home_result_open_issues_header" class="collapsible-box-header">
 		<?php print $this->lang->line('Open issues')?>
 	</div>
-	<ul id="site_home_mainarea_result_open_issues_list" class="collapsible-box-list">
+	<ul id="site_home_result_open_issues_list" class="collapsible-box-list">
 		<?php 
 		foreach ($issues as $issue) 
 		{
@@ -313,14 +313,14 @@ foreach ($latest_projects as $project)
 		?>
 	</ul>
 	</div>
-<?php endif; ?>
+	<?php endif; ?>
 
-<?php if ($recently_resolved_issues && count($recently_resolved_issues) > 0): ?>
-	<div id="site_home_mainarea_result_resolved_issues" class="collapsible-box">
-	<div id="site_home_mainarea_result_resolved_issues_header" class="collapsible-box-header">
+	<?php if ($recently_resolved_issues && count($recently_resolved_issues) > 0): ?>
+	<div id="site_home_result_resolved_issues" class="collapsible-box">
+	<div id="site_home_result_resolved_issues_header" class="collapsible-box-header">
 		<?php print $this->lang->line('Recently resolved issues')?>
 	</div>
-	<ul id="site_home_mainarea_result_resolved_issues_list" class="collapsible-box-list">
+	<ul id="site_home_result_resolved_issues_list" class="collapsible-box-list">
 		<?php 
 		foreach ($recently_resolved_issues as $issue) 
 		{
@@ -344,17 +344,14 @@ foreach ($latest_projects as $project)
 		?>
 	</ul>
 	</div>
-<?php endif; ?>
+	<?php endif; ?>
 
+	<div id="site_home_result_wiki">
+	<pre id="site_home_result_wiki_text" style="visibility: hidden"><?php print htmlspecialchars($site->text); ?></pre>
+	</div> <!-- site_home_text -->
 
-<div id="site_home_mainarea_result_wiki">
-<pre id="site_home_mainarea_result_wiki_text" style="visibility: hidden">
-<?php print htmlspecialchars($site->text); ?>
-</pre>
-</div> <!-- site_home_mainarea_text -->
+</div> <! -- site_home_result -->
 
-</div> <! -- site_home_mainarea_result -->
-<!-- ////////////////////////////////////////////////////////////////////// -->
 
 </div> <!-- site_home_mainarea -->
 

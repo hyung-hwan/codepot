@@ -62,7 +62,7 @@ CREATE TABLE "cpot_wiki" (
 	"projectid"  VARCHAR(32)   NOT NULL,
 	"name"       VARCHAR(255)  NOT NULL,
 	"text"       CLOB          NOT NULL,
-	"type"       CHAR(1)       DEFAULT 'C' NOT NULL,
+	"doctype"    CHAR(1)       DEFAULT 'C' NOT NULL,
 	"columns"    INT           DEFAULT 1 NOT NULL,
 	"createdon"  TIMESTAMP     NOT NULL,
 	"updatedon"  TIMESTAMP     NOT NULL,

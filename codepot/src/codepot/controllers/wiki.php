@@ -408,6 +408,7 @@ class Wiki extends Controller
 					$wiki->name = $name;
 					$wiki->text = '';
 					$wiki->columns = '1';
+					$wiki->attachments = array();
 
 					$data['wiki'] = $wiki;
 					$this->load->view ($view_edit, $data);
@@ -907,10 +908,11 @@ class Wiki extends Controller
 				$wiki->projectid = $projectid;
 				$wiki->name = $this->input->post('wiki_name');
 				$wiki->text = $this->input->post('wiki_text');
-				$wiki->type = $this->input->post('wiki_type');
+				$wiki->doctype = $this->input->post('wiki_doctype');
 
 				$wiki->original_name = $this->input->post('wiki_original_name');
 				$wiki_file_count = $this->input->post('wiki_file_count');
+				$wiki_kill_file_count = $this->input->post('wiki_kill_file_count');
 
 				if ($wiki->name === FALSE || ($wiki->name = trim($wiki->name)) == '')
 				{
@@ -927,6 +929,7 @@ class Wiki extends Controller
 				else
 				{
 					if ($wiki_file_count === FALSE || $wiki_file_count <= 0) $wiki_file_count = 0;
+					if ($wiki_kill_file_count === FALSE || $wiki_kill_file_count <= 0) $wiki_kill_file_count = 0;
 
 					if ($wiki->original_name === FALSE) $wiki->original_name = '';
 					else $wiki->original_name = trim($wiki->original_name);
@@ -952,7 +955,17 @@ class Wiki extends Controller
 
 					if ($status == '')
 					{
-						if ($this->wikis->editWithFiles ($login['id'], $wiki, $attached_files, $this->upload) === FALSE)
+						$kill_files = array();
+						for ($i = 0; $i < $wiki_kill_file_count; $i++)
+						{
+							$n = $this->input->post("wiki_kill_file_name_{$i}");
+							if ($n != '') array_push ($kill_files, $n);
+						}
+					}
+
+					if ($status == '')
+					{
+						if ($this->wikis->editWithFiles ($login['id'], $wiki, $attached_files, $kill_files, $this->upload) === FALSE)
 						{
 							$status = 'error - ' . $this->wikis->getErrorMessage();
 						}

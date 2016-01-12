@@ -322,7 +322,7 @@ $this->load->view (
 	<div style='clear: both;'></div>
 </div>
 
-<div class="result" id="issue_home_result">
+<div id="issue_home_result" class="result">
 <?php
 if (empty($issues))
 {

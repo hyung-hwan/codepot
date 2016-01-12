@@ -29,7 +29,7 @@
 <?php
 $hex_wikiname = $this->converter->AsciiToHex ($wiki->name);
 
-if ($wiki->type == 'H')
+if ($wiki->doctype == 'H')
 {
 	$is_html = TRUE;
 	$update_command = 'updatex';
@@ -167,12 +167,6 @@ $(function () {
 		}
 	);
 
-	$("#wiki_show_new_button").button().click (
-		function () { 
-			$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/createx/{$project->id}"; ?>'));
-			return false;
-		}
-	);
 	$("#wiki_show_edit_button").button().click (
 		function () { 
 			$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/{$update_command}/{$project->id}/{$hex_wikiname}"; ?>'));
@@ -219,9 +213,7 @@ $this->load->view (
 			'project' => $project,
 		),
 
-		'ctxmenuitems' => array (
-			array ("wiki/create/{$project->id}", '<i class="fa fa-plus"></i> ' . $this->lang->line('New')),
-		)
+		'ctxmenuitems' => array ()
 	)
 );
 ?>
@@ -236,7 +228,6 @@ $this->load->view (
 
 	<div class="actions">
 		<?php if (isset($login['id']) && $login['id'] != ''): ?>
-		<a id="wiki_show_new_button" href='#'><?php print $this->lang->line('New')?></a>
 		<a id="wiki_show_edit_button" href='#'><?php print $this->lang->line('Edit')?></a>
 		<a id="wiki_show_delete_button" href='#'><?php print $this->lang->line('Delete')?></a>
 		<?php endif; ?>
@@ -245,58 +236,51 @@ $this->load->view (
 	<div style='clear: both'></div>
 </div>
 
-<div id="wiki_show_result" class="result">
-
 <div id='wiki_show_metadata' class='collapsible-box'>
 	<div id='wiki_show_metadata_header' class='collapsible-box-header'><?php print $this->lang->line('Metadata')?></div>
 	<div id='wiki_show_metadata_body'>
 
-		<div id='wiki_show_metadata_list_div'>
-			<ul id='wiki_show_metadata_list'>
-			<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($wiki->createdon); ?></li>
-			<li><?php print $this->lang->line('Created by')?> <?php print htmlspecialchars($wiki->createdby); ?></li>
-			<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($wiki->updatedon); ?></li>
-			<li><?php print $this->lang->line('Last updated by')?> <?php print htmlspecialchars($wiki->updatedby); ?></li>
-			</ul>
-		</div>
+		<ul id='wiki_show_metadata_list'>
+		<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($wiki->createdon); ?></li>
+		<li><?php print $this->lang->line('Created by')?> <?php print htmlspecialchars($wiki->createdby); ?></li>
+		<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($wiki->updatedon); ?></li>
+		<li><?php print $this->lang->line('Last updated by')?> <?php print htmlspecialchars($wiki->updatedby); ?></li>
+		</ul>
 
-		<div id='wiki_show_attachment_list_div'>
-			<ul id='wiki_show_attachment_list'>
-			<?php
-				foreach ($wiki->attachments as $att)
-				{
-					$hexattname = $this->converter->AsciiToHex ($att->name);
-					print '<li>';
-					print anchor (
-						"wiki/attachment/{$project->id}/{$hex_wikiname}/{$hexattname}", 
-						htmlspecialchars($att->name)
-					);
-					print '</li>';
-				}
-			?>
-			</ul>
-		</div>
+		<ul id='wiki_show_file_list'>
+		<?php
+			foreach ($wiki->attachments as $att)
+			{
+				$hexattname = $this->converter->AsciiToHex ($att->name);
+				print '<li>';
+				print anchor (
+					"wiki/attachment/{$project->id}/{$hex_wikiname}/{$hexattname}", 
+					htmlspecialchars($att->name)
+				);
+				print '</li>';
+			}
+		?>
+		</ul>
 
 		<div style='clear: both;'></div>
 	</div>
 </div>
 
-<?php 
+<div id="wiki_show_result" class="result">
+	<?php 
 	if ($is_html)
 	{
 		print $wiki->text;
 	}
 	else
 	{
-		print '<div class="result" id="wiki_show_wiki">';
+		print '<div id="wiki_show_wiki">';
 		print '<pre id="wiki_show_wiki_text" style="visibility: hidden">';
 		print htmlspecialchars($wiki->text);
 		print '</pre>';
 		print '</div>';
 	}
-
-?>
-
+	?>
 </div> <!-- wiki_show_result -->
 
 

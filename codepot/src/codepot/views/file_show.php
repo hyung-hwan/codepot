@@ -34,7 +34,7 @@ $creole_file_base = site_url() . "/wiki/attachment0/{$project->id}/";
 <script type="text/javascript">
 function show_alert (outputMsg, titleMsg) 
 {
-	$('#file_show_mainarea_alert').html(outputMsg).dialog({
+	$('#file_show_alert').html(outputMsg).dialog({
 		title: titleMsg,
 		resizable: true,
 		modal: true,
@@ -51,8 +51,8 @@ function show_alert (outputMsg, titleMsg)
 function render_wiki()
 {
 	creole_render_wiki (
-		"file_show_mainarea_wiki_text", 
-		"file_show_mainarea_wiki", 
+		"file_show_wiki_text", 
+		"file_show_wiki", 
 		"<?php print $creole_base; ?>",
 		"<?php print $creole_file_base; ?>/"
 	);
@@ -64,7 +64,7 @@ function preview_edit_description (input_text)
 {
 	creole_render_wiki_with_input_text (
 		input_text,
-		"file_show_mainarea_edit_description_preview", 
+		"file_show_edit_description_preview", 
 		"<?php print $creole_base; ?>",
 		"<?php print $creole_file_base; ?>/"
 	);
@@ -83,15 +83,15 @@ function populate_selected_files_for_adding ()
 		var f = populated_file_obj_for_adding[n];
 		if (f != null)
 		{
-			var d = $('#file_show_mainarea_add_file_desc_' + n);
+			var d = $('#file_show_add_file_desc_' + n);
 			if (d != null) file_desc[f.name] = d.val();
 		}
 	}
 
-	$('#file_show_mainarea_add_file_table').empty();
+	$('#file_show_add_file_table').empty();
 	populated_file_obj_for_adding = [];
 
-	var f = $('#file_show_mainarea_add_files').get(0);
+	var f = $('#file_show_add_files').get(0);
 	var f_no = 0;
 	for (var n = 0; n < f.files.length; n++)
 	{
@@ -100,9 +100,9 @@ function populate_selected_files_for_adding ()
 			var desc = file_desc[f.files[n].name];
 			if (desc == null) desc = '';
 
-			$('#file_show_mainarea_add_file_table').append (
+			$('#file_show_add_file_table').append (
 				codepot_sprintf (
-					'<tr id="file_show_mainarea_add_file_row_%d"><td><a href="#" id="file_show_mainarea_add_file_cancel_%d" onClick="cancel_out_add_file(%d); return false;"><i class="fa fa-trash"></i></a></td><td>%s</td><td><input type="text" id="file_show_mainarea_add_file_desc_%d" size="40" value="%s" /></td></tr>', 
+					'<tr id="file_show_add_file_row_%d"><td><a href="#" id="file_show_add_file_cancel_%d" onClick="cancel_out_add_file(%d); return false;"><i class="fa fa-trash"></i></a></td><td>%s</td><td><input type="text" id="file_show_add_file_desc_%d" size="40" value="%s" /></td></tr>', 
 					f_no, f_no, f_no, codepot_htmlspecialchars(f.files[n].name), f_no, codepot_addslashes(desc)
 				)
 			);
@@ -118,14 +118,14 @@ function populate_selected_files_for_adding ()
 
 function cancel_out_add_file (no)
 {
-	$('#file_show_mainarea_add_file_row_' + no).remove ();
+	$('#file_show_add_file_row_' + no).remove ();
 	populated_file_obj_for_adding[no] = null;
 }
 
 function kill_edit_file (no)
 {
-	var n = $('#file_show_mainarea_edit_file_name_' + no);
-	var d = $('#file_show_mainarea_edit_file_desc_' + no);
+	var n = $('#file_show_edit_file_name_' + no);
+	var d = $('#file_show_edit_file_desc_' + no);
 	if (n && d)
 	{
 		if (d.prop('disabled'))
@@ -166,12 +166,12 @@ var original_file_desc = [
 ];
 
 $(function () {
-	$('#file_show_mainarea_metadata').accordion({
+	$('#file_show_metadata').accordion({
 		collapsible: true,
 		heightStyle: "content"
 	});
 
-	$('#file_show_mainarea_files').accordion({
+	$('#file_show_files').accordion({
 		collapsible: true,
 		heightStyle: "content"
 	});
@@ -179,12 +179,12 @@ $(function () {
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 
-	$('#file_show_mainarea_edit_description_tabs').tabs ();
-	$('#file_show_mainarea_edit_description_tabs').bind ('tabsshow', function (event, ui) {
-		if (ui.index == 1) preview_edit_description ($('#file_show_mainarea_edit_description').val());
+	$('#file_show_edit_description_tabs').tabs ();
+	$('#file_show_edit_description_tabs').bind ('tabsshow', function (event, ui) {
+		if (ui.index == 1) preview_edit_description ($('#file_show_edit_description').val());
 	});
 
-	$('#file_show_mainarea_edit_form').dialog (
+	$('#file_show_edit_form').dialog (
 		{
 			title: '<?php print $this->lang->line('Edit');?>',
 			resizable: true,
@@ -204,13 +204,13 @@ $(function () {
 
 						var form_data = new FormData();
 
-						var new_name = $('#file_show_mainarea_edit_name').val()
+						var new_name = $('#file_show_edit_name').val()
 
 						form_data.append ('file_edit_name', new_name);
-						form_data.append ('file_edit_tag', $('#file_show_mainarea_edit_tag').val());
-						form_data.append ('file_edit_description', $('#file_show_mainarea_edit_description').val());
+						form_data.append ('file_edit_tag', $('#file_show_edit_tag').val());
+						form_data.append ('file_edit_description', $('#file_show_edit_description').val());
 
-						$('#file_show_mainarea_edit_form').dialog('disable');
+						$('#file_show_edit_form').dialog('disable');
 						$.ajax({
 							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/file/xhr_update/{$project->id}/{$hexname}"; ?>'),
 							type: 'POST',
@@ -222,8 +222,8 @@ $(function () {
 
 							success: function (data, textStatus, jqXHR) { 
 								work_in_progress = false;
-								$('#file_show_mainarea_edit_form').dialog('enable');
-								$('#file_show_mainarea_edit_form').dialog('close');
+								$('#file_show_edit_form').dialog('enable');
+								$('#file_show_edit_form').dialog('close');
 								if (data == 'ok') 
 								{
 									// refresh the page to the head revision
@@ -237,8 +237,8 @@ $(function () {
 
 							error: function (jqXHR, textStatus, errorThrown) { 
 								work_in_progress = false;
-								$('#file_show_mainarea_edit_form').dialog('enable');
-								$('#file_show_mainarea_edit_form').dialog('close');
+								$('#file_show_edit_form').dialog('enable');
+								$('#file_show_edit_form').dialog('close');
 								var errmsg = '';
 								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
 								if (errmsg == '' && textStatus != null) errmsg = textStatus;
@@ -254,7 +254,7 @@ $(function () {
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
 					if (work_in_progress) return;
-					$('#file_show_mainarea_edit_form').dialog('close');
+					$('#file_show_edit_form').dialog('close');
 				}
 			},
 
@@ -266,7 +266,7 @@ $(function () {
 	);
 
 
-	$('#file_show_mainarea_delete_form').dialog (
+	$('#file_show_delete_form').dialog (
 		{
 			title: '<?php print $this->lang->line('Delete');?>',
 			resizable: true,
@@ -285,10 +285,10 @@ $(function () {
 
 						var form_data = new FormData();
 
-						var f = $('#file_show_mainarea_delete_confirm');
+						var f = $('#file_show_delete_confirm');
 						if (f != null && f.is(':checked')) form_data.append ('file_delete_confirm', 'Y');
 
-						$('#file_show_mainarea_delete_form').dialog('disable');
+						$('#file_show_delete_form').dialog('disable');
 						$.ajax({
 							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/file/xhr_delete/{$project->id}/{$hexname}"; ?>'),
 							type: 'POST',
@@ -300,8 +300,8 @@ $(function () {
 
 							success: function (data, textStatus, jqXHR) { 
 								work_in_progress = false;
-								$('#file_show_mainarea_delete_form').dialog('enable');
-								$('#file_show_mainarea_delete_form').dialog('close');
+								$('#file_show_delete_form').dialog('enable');
+								$('#file_show_delete_form').dialog('close');
 								if (data == 'ok') 
 								{
 									// refresh the page to the head revision
@@ -315,8 +315,8 @@ $(function () {
 
 							error: function (jqXHR, textStatus, errorThrown) { 
 								work_in_progress = false;
-								$('#file_show_mainarea_delete_form').dialog('enable');
-								$('#file_show_mainarea_delete_form').dialog('close');
+								$('#file_show_delete_form').dialog('enable');
+								$('#file_show_delete_form').dialog('close');
 								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
 							}
 						});
@@ -328,7 +328,7 @@ $(function () {
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
 					if (work_in_progress) return;
-					$('#file_show_mainarea_delete_form').dialog('close');
+					$('#file_show_delete_form').dialog('close');
 				}
 
 			},
@@ -340,11 +340,11 @@ $(function () {
 		}
 	);
 
-	$('#file_show_mainarea_add_files').change (function () {
+	$('#file_show_add_files').change (function () {
 		populate_selected_files_for_adding ();
 	});
 
-	$('#file_show_mainarea_add_file_form').dialog (
+	$('#file_show_add_file_form').dialog (
 		{
 			title: '<?php print $this->lang->line('Add');?>',
 			resizable: true,
@@ -371,14 +371,14 @@ $(function () {
 							{
 								form_data.append ('file_add_file_' + f_no, f);
 
-								var d = $('#file_show_mainarea_add_file_desc_' + i);
+								var d = $('#file_show_add_file_desc_' + i);
 								if (d != null) form_data.append('file_add_file_desc_' + f_no, d.val());
 								f_no++;
 							}
 						}
 						form_data.append ('file_add_file_count', f_no);
 
-						$('#file_show_mainarea_add_file_form').dialog('disable');
+						$('#file_show_add_file_form').dialog('disable');
 						$.ajax({
 							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/file/xhr_add_file/{$project->id}/{$hexname}"; ?>'),
 							type: 'POST',
@@ -390,8 +390,8 @@ $(function () {
 
 							success: function (data, textStatus, jqXHR) { 
 								work_in_progress = false;
-								$('#file_show_mainarea_add_file_form').dialog('enable');
-								$('#file_show_mainarea_add_file_form').dialog('close');
+								$('#file_show_add_file_form').dialog('enable');
+								$('#file_show_add_file_form').dialog('close');
 								if (data == 'ok') 
 								{
 									// refresh the page to the head revision
@@ -405,8 +405,8 @@ $(function () {
 
 							error: function (jqXHR, textStatus, errorThrown) { 
 								work_in_progress = false;
-								$('#file_show_mainarea_add_file_form').dialog('enable');
-								$('#file_show_mainarea_add_file_form').dialog('close');
+								$('#file_show_add_file_form').dialog('enable');
+								$('#file_show_add_file_form').dialog('close');
 								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
 							}
 						});
@@ -418,7 +418,7 @@ $(function () {
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
 					if (work_in_progress) return;
-					$('#file_show_mainarea_add_file_form').dialog('close');
+					$('#file_show_add_file_form').dialog('close');
 				}
 
 			},
@@ -430,7 +430,7 @@ $(function () {
 		}
 	);
 
-	$('#file_show_mainarea_edit_file_form').dialog (
+	$('#file_show_edit_file_form').dialog (
 		{
 			title: '<?php print $this->lang->line('Edit');?>',
 			resizable: true,
@@ -452,8 +452,8 @@ $(function () {
 						var f_no = 0;
 						for (var i = 0; i <= <?php print $file_count; ?>; i++)
 						{
-							var n = $('#file_show_mainarea_edit_file_name_' + i);
-							var d = $('#file_show_mainarea_edit_file_desc_' + i);
+							var n = $('#file_show_edit_file_name_' + i);
+							var d = $('#file_show_edit_file_desc_' + i);
 
 							if (n && d)
 							{
@@ -473,7 +473,7 @@ $(function () {
 						}
 						form_data.append ('file_edit_file_count', f_no);
 
-						$('#file_show_mainarea_edit_file_form').dialog('disable');
+						$('#file_show_edit_file_form').dialog('disable');
 						$.ajax({
 							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/file/xhr_edit_file/{$project->id}/{$hexname}"; ?>'),
 							type: 'POST',
@@ -485,8 +485,8 @@ $(function () {
 
 							success: function (data, textStatus, jqXHR) { 
 								work_in_progress = false;
-								$('#file_show_mainarea_edit_file_form').dialog('enable');
-								$('#file_show_mainarea_edit_file_form').dialog('close');
+								$('#file_show_edit_file_form').dialog('enable');
+								$('#file_show_edit_file_form').dialog('close');
 								if (data == 'ok') 
 								{
 									// refresh the page to the head revision
@@ -500,8 +500,8 @@ $(function () {
 
 							error: function (jqXHR, textStatus, errorThrown) { 
 								work_in_progress = false;
-								$('#file_show_mainarea_edit_file_form').dialog('enable');
-								$('#file_show_mainarea_edit_file_form').dialog('close');
+								$('#file_show_edit_file_form').dialog('enable');
+								$('#file_show_edit_file_form').dialog('close');
 								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
 							}
 						});
@@ -513,7 +513,7 @@ $(function () {
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
 					if (work_in_progress) return;
-					$('#file_show_mainarea_edit_file_form').dialog('close');
+					$('#file_show_edit_file_form').dialog('close');
 				}
 
 			},
@@ -525,29 +525,29 @@ $(function () {
 		}
 	);
 
-	$('#file_show_mainarea_edit_button').button().click (
+	$('#file_show_edit_button').button().click (
 		function () { 
-			$('#file_show_mainarea_edit_form').dialog('open'); 
+			$('#file_show_edit_form').dialog('open'); 
 			return false; // prevent the default behavior
 		}
 	);
-	$('#file_show_mainarea_delete_button').button().click (
+	$('#file_show_delete_button').button().click (
 		function() {
-			$('#file_show_mainarea_delete_form').dialog('open');
+			$('#file_show_delete_form').dialog('open');
 			return false;
 		}
 	);
 
-	$('#file_show_mainarea_add_file_button').button().click (
+	$('#file_show_add_file_button').button().click (
 		function() {
-			$('#file_show_mainarea_add_file_form').dialog('open');
+			$('#file_show_add_file_form').dialog('open');
 			return false;
 		}
 	);
 
-	$('#file_show_mainarea_edit_file_button').button().click (
+	$('#file_show_edit_file_button').button().click (
 		function() {
-			$('#file_show_mainarea_edit_file_form').dialog('open');
+			$('#file_show_edit_file_form').dialog('open');
 			return false;
 		}
 	);
@@ -601,21 +601,18 @@ $this->load->view (
 
 	<div class="actions">
 	<?php if (isset($login['id']) && $login['id'] != ''): ?>
-		<a id="file_show_mainarea_edit_button" href='#'><?php print $this->lang->line('Edit')?></a>
-		<a id="file_show_mainarea_delete_button" href='#'><?php print $this->lang->line('Delete')?></a>
+		<a id="file_show_edit_button" href='#'><?php print $this->lang->line('Edit')?></a>
+		<a id="file_show_delete_button" href='#'><?php print $this->lang->line('Delete')?></a>
 	<?php endif; ?>
 	</div>
 
 	<div style='clear: both'></div>
 </div>
 
-
-<div id='file_show_mainarea_result'>
-
-<div id='file_show_mainarea_metadata' class='collapsible-box'>
-	<div id='file_show_mainarea_metadata_header' class='collapsible-box-header'><?php print $this->lang->line('Metadata')?></div>
-	<div id='file_show_mainarea_metadata_body'>
-	<ul>
+<div id='file_show_metadata' class='collapsible-box'>
+	<div id='file_show_metadata_header' class='collapsible-box-header'><?php print $this->lang->line('Metadata')?></div>
+	<div id='file_show_metadata_body'>
+	<ul id='file_show_metadata_list'>
 	<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($file->createdon); ?></li>
 	<li><?php print $this->lang->line('Created by')?> <?php print htmlspecialchars($file->createdby); ?></li>
 	<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($file->updatedon); ?></li>
@@ -624,18 +621,18 @@ $this->load->view (
 	</div>
 </div>
 
-<div id='file_show_mainarea_files' class='collapsible-box'>
-	<div id='file_show_mainarea_files_header' class='collapsible-box-header'><?php print $this->lang->line('Files')?></div>
+<div id='file_show_files' class='collapsible-box'>
+	<div id='file_show_files_header' class='collapsible-box-header'><?php print $this->lang->line('Files')?></div>
 
-	<div id='file_show_mainarea_files_body'>
+	<div id='file_show_files_body'>
 	<?php if (isset($login['id']) && $login['id'] != ''): ?>
 	<div>
-		<a id="file_show_mainarea_add_file_button" href='#'><?php print $this->lang->line('Add')?></a>
-		<a id="file_show_mainarea_edit_file_button" href='#'><?php print $this->lang->line('Edit')?></a>
+		<a id="file_show_add_file_button" href='#'><?php print $this->lang->line('Add')?></a>
+		<a id="file_show_edit_file_button" href='#'><?php print $this->lang->line('Edit')?></a>
 	</div>
 	<?php endif; ?>
 
-	<table id='file_show_mainarea_files_table'>
+	<table id='file_show_files_table'>
 	<?php
 	for ($i = 0; $i < $file_count; $i++)
 	{
@@ -658,50 +655,47 @@ $this->load->view (
 	</div>
 </div>
 
-<div class="result" id="file_show_mainarea_wiki">
-<pre id="file_show_mainarea_wiki_text" style="visibility: hidden">
-<?php print htmlspecialchars($file->description); ?>
-</pre>
-</div> <!-- file_show_mainarea_wiki -->
-
-</div> <!-- file_show_mainarea_result -->
-
+<div id="file_show_result'" class="result">
+	<div id="file_show_wiki">
+		<pre id="file_show_wiki_text" style="visibility: hidden"><?php print htmlspecialchars($file->description); ?></pre>
+	</div>
+</div>
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 
-<div id='file_show_mainarea_edit_form'>
+<div id='file_show_edit_form'>
 	<div style='line-height: 2em;'>
-		<?php print $this->lang->line('Tag'); ?>: <input type='text' id='file_show_mainarea_edit_tag' name='file_show_edit_tag' size='30' value='<?php print addslashes($file->tag); ?>'/>
-		<?php print $this->lang->line('Name'); ?>: <input type='text' id='file_show_mainarea_edit_name' name='file_show_edit_name' size='60' value='<?php print addslashes($file->name); ?>'/>
+		<?php print $this->lang->line('Tag'); ?>: <input type='text' id='file_show_edit_tag' name='file_show_edit_tag' size='30' value='<?php print addslashes($file->tag); ?>'/>
+		<?php print $this->lang->line('Name'); ?>: <input type='text' id='file_show_edit_name' name='file_show_edit_name' size='60' value='<?php print addslashes($file->name); ?>'/>
 	</div>
 
-	<div id='file_show_mainarea_edit_description_tabs' style='width:100%;'>
+	<div id='file_show_edit_description_tabs' style='width:100%;'>
 		<ul>
-			<li><a href='#file_show_mainarea_edit_description_input'><?php print $this->lang->line('Description'); ?></a></li>
-			<li><a href='#file_show_mainarea_edit_description_preview'><?php print $this->lang->line('Preview'); ?></a></li>
+			<li><a href='#file_show_edit_description_input'><?php print $this->lang->line('Description'); ?></a></li>
+			<li><a href='#file_show_edit_description_preview'><?php print $this->lang->line('Preview'); ?></a></li>
 		</ul>
 
-		<div id='file_show_mainarea_edit_description_input'>
-			<textarea type='textarea' id='file_show_mainarea_edit_description' name='file_show_edit_description' rows=24 cols=100 style='width:100%;'><?php print htmlspecialchars($file->description); ?></textarea>
+		<div id='file_show_edit_description_input'>
+			<textarea type='textarea' id='file_show_edit_description' name='file_show_edit_description' rows=24 cols=100 style='width:100%;'><?php print htmlspecialchars($file->description); ?></textarea>
 		</div>
-		<div id='file_show_mainarea_edit_description_preview' class='form_input_preview'>
+		<div id='file_show_edit_description_preview' class='form_input_preview'>
 		</div>
 	</div>
 </div>
 
-<div id='file_show_mainarea_delete_form'>
-	<input type='checkbox' id='file_show_mainarea_delete_confirm' />
+<div id='file_show_delete_form'>
+	<input type='checkbox' id='file_show_delete_confirm' />
 	<?php print $this->lang->line('MSG_SURE_TO_DELETE_THIS') . ' - ' . htmlspecialchars($file->name); ?>
 </div>
 
-<div id='file_show_mainarea_add_file_form'>
-	<div id='file_show_mainarea_add_file_input'>
-		<input type='file' id='file_show_mainarea_add_files' name='file_show_add_files' multiple='' autocomplete='off' style='color: transparent;' />
-		<table id='file_show_mainarea_add_file_table'></table>
+<div id='file_show_add_file_form'>
+	<div id='file_show_add_file_input'>
+		<input type='file' id='file_show_add_files' name='file_show_add_files' multiple='' autocomplete='off' style='color: transparent;' />
+		<table id='file_show_add_file_table'></table>
 	</div>
 </div>
 
-<div id='file_show_mainarea_edit_file_form'>
+<div id='file_show_edit_file_form'>
 	<table>
 	<?php
 	for ($i = 0; $i < $file_count; $i++)
@@ -710,9 +704,9 @@ $this->load->view (
 		print '<tr><td>';
 		printf ('<a href="#" onClick="kill_edit_file(%d); return false;"><i class="fa fa-trash"></i></a>', $i);
 		print '</td><td>';
-		printf ('<span id="file_show_mainarea_edit_file_name_%d">%s</span>', $i, htmlspecialchars($f->filename));
+		printf ('<span id="file_show_edit_file_name_%d">%s</span>', $i, htmlspecialchars($f->filename));
 		print '</td><td>';
-		printf ('<input type="text" id="file_show_mainarea_edit_file_desc_%d" value="%s" size="40" autocomplete="off" />', $i, addslashes($f->description));
+		printf ('<input type="text" id="file_show_edit_file_desc_%d" value="%s" size="40" autocomplete="off" />', $i, addslashes($f->description));
 		print '</td></tr>';
 	}
 	?>
@@ -721,7 +715,7 @@ $this->load->view (
 
 <?php endif; ?>
 
-<div id='file_show_mainarea_alert'></div>
+<div id='file_show_alert'></div>
 
 </div> <!-- file_show_mainarea -->
 

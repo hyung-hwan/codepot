@@ -315,13 +315,14 @@ foreach ($urls as $url)
 <?php print htmlspecialchars($project->name)?>
 </div>
 
-<div class="result" id="project_home_mainarea_wiki">
-<pre id="project_home_mainarea_wiki_text" style="visibility: hidden">
-<?php print htmlspecialchars($project->description); ?>
-</pre>
-</div> <!-- project_home_mainarea_wiki -->
+<div id="project_home_result" class="result">
+	<div id="project_home_mainarea_wiki">
+		<pre id="project_home_mainarea_wiki_text" style="visibility: hidden"><?php print htmlspecialchars($project->description); ?></pre>
+	</div> <!-- project_home_mainarea_wiki -->
+</div>
 
 </div> <!-- project_home_mainarea -->
+
 
 <div class='footer-pusher'></div> <!-- for sticky footer -->
 

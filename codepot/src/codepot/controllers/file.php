@@ -5,7 +5,6 @@ class File extends Controller
 	var $VIEW_ERROR = 'error';
 	var $VIEW_HOME = 'file_home';
 	var $VIEW_SHOW = 'file_show';
-	var $VIEW_EDIT = 'file_edit';
 
 	function File ()
 	{
@@ -219,7 +218,7 @@ class File extends Controller
 				codepot_readfile ($path, $name);
 
 				/*
-				$this->load->helper('download');	
+				$this->load->helper('download');
 				$path = CODEPOT_FILE_DIR . '/' . $file->encname;
 				$data = @file_get_contents ($path);
 				if ($data === FALSE)
@@ -236,108 +235,6 @@ class File extends Controller
 			}
 		}
 	}
-
-/*
-// DEPRECATED
-	function update ($projectid = '', $name = '')
-	{
-		$this->load->helper ('form');
-		$this->load->library ('form_validation');
-		$this->load->model ('ProjectModel', 'projects');
-		$this->load->model ('FileModel', 'files');
-
-		$login = $this->login->getUser ();
-		if ($login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
-		$data['login'] = $login;
-
-		$name = $this->converter->HexToAscii ($name);
-
-		$project = $this->projects->get ($projectid);
-		if ($project === FALSE)
-		{
-			$data['message'] = 'DATABASE ERROR';
-			$this->load->view ($this->VIEW_ERROR, $data);
-		}
-		else if ($project === NULL)
-		{
-			$data['message'] = 
-				$this->lang->line('MSG_NO_SUCH_PROJECT') . 
-				" - {$projectid}";
-			$this->load->view ($this->VIEW_ERROR, $data);
-		}
-		else if (!$login['sysadmin?'] && 
-		         $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
-		{
-			$data['project'] = $project;
-			$data['message'] = sprintf (
-				$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
-			$this->load->view ($this->VIEW_ERROR, $data);
-		}
-		else
-		{
-			$this->form_validation->set_rules (
-				'file_name', 'name', 'required|max_length[255]');
-			$this->form_validation->set_rules (
-				'file_tag', 'tag', 'required|max_length[50]');
-			$this->form_validation->set_rules (
-				'file_description', 'description', 'required');
-			$this->form_validation->set_error_delimiters (
-				'<span class="form_field_error">','</span>');
-
-			$data['message'] = '';
-			$data['project'] = $project;
-
-			if ($this->input->post('file'))
-			{
-				$file = new stdClass();
-				$file->name = $this->input->post('file_name');
-				$file->tag = $this->input->post('file_tag');
-				$file->description = $this->input->post('file_description');
-
-				if ($this->form_validation->run())
-				{
-					if ($this->files->update ($login['id'], $projectid, $name, $file) === FALSE)
-					{
-						$data['message'] = 'DATABASE ERROR';
-						$data['file'] = $file;
-						$this->load->view ($this->VIEW_EDIT, $data);
-					}
-					else 
-					{
-						redirect ("file/show/{$project->id}/" . $this->converter->AsciiToHex($file->name));
-					}
-				}
-				else
-				{
-					$data['message'] = $this->lang->line('MSG_FORM_INPUT_INCOMPLETE');
-					$data['file'] = $file;
-					$this->load->view ($this->VIEW_EDIT, $data);
-				}
-			}
-			else
-			{
-				$file = $this->files->get ($login['id'], $project, $name);
-				if ($file === FALSE)
-				{
-					$data['message'] = 'DATABASE ERROR';
-					$this->load->view ($this->VIEW_ERROR, $data);
-				}
-				else if ($file == NULL)
-				{
-					$data['message'] = sprintf 
-						($this->lang->line('FILE_MSG_NO_SUCH_FILE'), $name);
-					$this->load->view ($this->VIEW_ERROR, $data);
-				}
-				else
-				{
-					$data['file'] = $file;
-					$this->load->view ($this->VIEW_EDIT, $data);
-				}
-			}
-		}
-	}
-*/
 
 	function xhr_import ($projectid = '')
 	{

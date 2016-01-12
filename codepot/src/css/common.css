@@ -377,7 +377,6 @@ textarea {
 }
 
 .content .mainarea .result {
-	/*min-height: 30em;*/
 	overflow: auto;
 }
 
