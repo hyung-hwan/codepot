@@ -17,7 +17,7 @@
 #code_file_result_code,
 #code_blame_result_code_container {
 	border: none;
-	line-height: 1.3em;
+	line-height: 1.2em;
 }
 
 #code_blame_result_code_author {
@@ -34,19 +34,6 @@
 #code_file_result_info_locgraph {
 	width: 21em; 
 	height: auto;
-}
-
-#code_diff_metadata_container {
-	margin: 0;
-	padding: 0;
-}
-
-#code_diff_metadata,
-#code_diff_metadata_against {
-	width: 50%;
-	float: left;
-	margin: 0;
-	padding: 0;
 }
 
 #code_folder_metadata_header,
@@ -112,6 +99,11 @@
 	background-color: #FCFCFC;
 	padding: 0.2em 0.2em 0.2em 0.2em;
 	margin: 0;
+}
+
+#code_diff_metadata_body, 
+#code_diff_metadata_against_body {
+	border: none;
 }
 
 #code_folder_metadata_body ul,
@@ -204,7 +196,7 @@
 	-o-tab-size: 5;
 
 	font-size: 1em;
-	line-height: 1.3em;
+	line-height: 1.2em;
 
 	position: absolute !important;
 	/*top: 300;
@@ -251,7 +243,7 @@
  * project source revision view 
  *-----------------------------------------------*/
 #code_revision_metadata_text {
-	line-height: 1.3em;
+	line-height: 1.2em;
 	padding: 0 0.2em 0 0.2em;
 }
 
@@ -332,95 +324,66 @@
 /*----------------------------------------------- 
  * project source diff view 
  *-----------------------------------------------*/
-#code_diff_result_table {
-	border: 0;
-}
 
-#code_diff_result_table tr.diff td pre {
-	background-color: inherit;
-	border: 0;
+#code_diff_metadata_container {
 	margin: 0;
 	padding: 0;
+	width: 100%;
 }
 
-#code_diff_result_table tr.diff td.diff {
-	padding: 0;
-	padding-left:22px;
+#code_diff_metadata,
+#code_diff_metadata_against {
+	width: 50%;
+	float: left;
 	margin: 0;
+	padding: 0.1em;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
-#code_diff_result_table tr.diff td.diffrow {
-	font-style: italic;
-	font-weight: bold;
-}
-
-#code_diff_result_table tr.diff td.diffadded {
-	border:1px solid #cdf0cd;
-	background-color:#ddffdd;
-	background-image:url(images/bullet_add.png);
-	background-repeat:no-repeat;
-	background-position: 2px 50%;
-	padding: 0;
-	padding-left:22px;
-	margin: 0;
-}
-
-#code_diff_result_table tr.diff td.diffdeleted {
-	border:1px solid #e8d4bc;
-	background-color:#f8e4cc;
-	background-image:url(images/bullet_delete.png);
-	background-position: 2px 50%;
-	background-repeat:no-repeat;
-	padding: 0;
-	padding-left:22px;
-	margin: 0;
-}
-
-#code_diff_result_table tr.diff td.diffchanged {
-	border:1px solid #f0f0bc;
-	background-color:#ffffcc;
-	background-image:url(images/bullet_yellow.png);
-	background-repeat:no-repeat;
-	background-position: 2px 50%;
-	padding: 0;
-	padding-left:22px;
-	margin: 0;
-}
-
-#code_diff_result_fulldiffold {
+#code_diff_old_code,
+#code_diff_new_code {
 	border: none;
-	/*padding-left: 10px;
-	background: #F8F8FA;*/
-	padding-left: 1px;
-	line-height: 1.3em;
+	float; left;
+	margin: 0;
+	padding: 0;
+	line-height: 1.2em;
+	width: 100%;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
-#code_diff_result_fulldiffnew {
-	border: none;
-	/*padding-left: 10px;*/
-	background: #FEF8F8;
-	padding-left: 1px;
-	line-height: 1.3em;
+#code_diff_old_code_view,
+#code_diff_new_code_view {
+	width: 50%;
+	float: left;
+	margin: 0;
+	padding: 0.1em;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
-#code_diff_result_fullview .navigator {
+#code_diff_full_code_view .navigator {
 	padding: 0.5em 0.8em 0.5em 0.8em;
 	font-weight: bold;
 	text-align: left;
 	color: #1C94C4;
 	background-color: #E5ECF9;
 	white-space: nowrap;
+	font-size: 0.9em;
 }
 
-#code_diff_result_fullview .diff {
+#code_diff_full_code_view .diff {
 	background-position: 2px 50%;
 	padding: 0;
 	padding-left:15px;
 	margin: 0;
 }
 
-
-#code_diff_result_fullview .diffadded {
+#code_diff_full_code_view .diffadded {
 	border:1px solid #cdf0cd;
 	background-color:#ddffdd;
 	background-image:url(images/bullet_add.png);
@@ -432,7 +395,7 @@
 	margin: 0;
 }
 
-#code_diff_result_fullview .diffdeleted {
+#code_diff_full_code_view .diffdeleted {
 	border:1px solid #e8d4bc;
 	background-color:#f8e4cc;
 	background-image:url(images/bullet_delete.png);
@@ -444,7 +407,7 @@
 	margin: 0;
 }
 
-#code_diff_result_fullview .diffchanged {
+#code_diff_full_code_view .diffchanged {
 	border:1px solid #f0f0bc;
 	background-color:#ffffcc;
 	background-image:url(images/bullet_yellow.png);
@@ -456,16 +419,16 @@
 	margin: 0;
 }
 
-#code_diff_result_fullview .diffchangedold {
+#code_diff_full_code_view .diffchangedold {
 	text-decoration: line-through;
 }
 
-#code_diff_result_fullview .diffchangednew {
+#code_diff_full_code_view .diffchangednew {
 	/*background-color:#ffff00;*/
 	text-decoration: underline;
 }
 
-#code_diff_result_fullview .diffrow {
+#code_diff_full_code_view .diffrow {
 	font-size: 1.2em;
 	padding: 0.2em 0.2em 0.2em 0.2em;
 	font-weight: bold;
