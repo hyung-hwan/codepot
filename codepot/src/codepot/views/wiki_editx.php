@@ -196,11 +196,7 @@ var wiki_text_editor = null;
 var work_in_progress = false;
 var wiki_original_name = '<?php print addslashes($wiki->name); ?>';
 var wiki_new_name = '';
-<?php if (function_exists('json_encode')): ?>
-var wiki_original_text = <?php print json_encode($wiki->text); ?>;
-<?php else: ?>
-var wiki_original_text = '<?php print addcslashes($wiki->text, "\0..\37'\"\\"); ?>';
-<?php endif; ?>
+var wiki_original_text = <?php print codepot_json_encode($wiki->text); ?>;
 
 function show_in_progress_message (outputMsg, titleMsg)
 {
