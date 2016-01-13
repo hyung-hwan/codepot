@@ -76,9 +76,13 @@ if ( ! function_exists('codepot_dbdatetodispdate'))
 
 if ( !function_exists ('codepot_json_encode'))
 {
-	function codepot_json_encode( $data ) 
+	function codepot_json_encode($data) 
 	{
-		if( is_array($data) || is_object($data) ) 
+		if (function_exists('json_encode'))
+		{
+			return json_encode($data);
+		}
+		else if( is_array($data) || is_object($data) ) 
 		{
 			$islist = is_array($data) && ( empty($data) || array_keys($data) === range(0,count($data)-1) );
 
@@ -157,7 +161,7 @@ if ( !function_exists ('codepot_json_encode'))
 if ( !function_exists ('codepot_delete_files'))
 {
 	function codepot_delete_files($path, $del_dir = FALSE, $level = 0)
-	{	
+	{
 		// Trim the trailing slash
 		$path = rtrim($path, DIRECTORY_SEPARATOR);
 			
