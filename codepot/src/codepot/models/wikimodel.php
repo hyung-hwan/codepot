@@ -372,7 +372,7 @@ class WikiModel extends Model
 	{
 		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
-		$now = codepot_dbdatetodispdate();
+		$now = codepot_nowtodbdate();
 		$is_create = empty($wiki->original_name);
 
 		if ($is_create)
