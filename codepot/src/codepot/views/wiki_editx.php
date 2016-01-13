@@ -114,12 +114,15 @@ function populate_selected_files_for_adding ()
 	}
 
 	populated_file_max_for_adding = f_no;
+	resize_editor ();
 }
 
 function cancel_out_add_file (no)
 {
 	$('#wiki_edit_add_file_row_' + no).remove ();
 	populated_file_obj_for_adding[no] = null;
+
+	resize_editor ();
 }
 
 function kill_file (no)
