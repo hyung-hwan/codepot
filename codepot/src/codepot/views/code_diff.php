@@ -28,12 +28,20 @@ if ($revision1 <= 0)
 {
 	$revreq = '';
 	$revreqroot = '';
+
+	$dualrevreq = '';
+	$dualrevreqroot = '';
+
 	$history_path = "/code/history/{$project->id}/{$hex_headpath}";
 }
 else
 {
 	$revreq = "/{$file['created_rev']}";
 	$revreqroot = '/' . $this->converter->AsciiToHex ('.') . $revreq;
+
+	$dualrevreq = "/{$file['created_rev']}/{$file['against']['created_rev']}";
+	$dualrevreqroot = '/' . $this->converter->AsciiToHex ('.') . $dualrevreq;
+
 	if ($hex_headpath == '') $revtrailer = $revreqroot;
 	else $revtrailer = "/{$hex_headpath}{$revreq}";
 	$history_path = "/code/history/{$project->id}{$revtrailer}";
@@ -98,7 +106,7 @@ $(function() {
 		return false;
 	});
 	$("#code_diff_diff_button").button().click (function() {
-		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/{$altdiff_view}/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/{$altdiff_view}/{$project->id}/${hex_headpath}{$dualrevreq}"; ?>'));
 		return false;
 	});
 	$("#code_diff_history_button").button().click (function() {
@@ -120,7 +128,7 @@ $(function() {
 		return false;
 	});
 	$("#code_diff_diff_against_button").button().click (function() {
-		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/{$altdiff_view}/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/{$altdiff_view}/{$project->id}/${hex_headpath}{$dualrevreq}"; ?>'));
 		return false;
 	});
 	$("#code_diff_history_against_button").button().click (function() {
@@ -352,12 +360,12 @@ $this->load->view (
 			  stristr($http_user_agent, 'Opera') === FALSE);
 	if (!$is_msie) $is_msie = (preg_match ("/^Mozilla.+\(Windows.+\) like Gecko$/", $http_user_agent) !== FALSE);
 
-	print '<div style="width: 100%; overflow: hidden;" id="code_diff_result_fullview">';
+	print '<div style="width: 100%; overflow: hidden;" id="code_diff_full_code_view">';
 
 	//
 	// SHOW THE OLD FILE
 	//
-	print ("<div style='float:left; width: 50%; margin: 0; padding: 0;'>");
+	print ('<div id="code_diff_old_code_view">');
 
 	print '<div class="navigator">';
 
@@ -382,8 +390,7 @@ $this->load->view (
 	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
 	print "</div>"; // navigator
 
-	//print "<pre class='prettyprint lang-{$fileext}' style='width: 100%;' id='code_diff_result_fulldiffold'>";
-	print '<pre style="width: 100%;" id="code_diff_result_fulldiffold" class="line-numbered">';
+	print '<pre id="code_diff_old_code" class="line-numbered">';
 
 	print '<span class="line-number-block">';
 	$actual_line_no = 1;
@@ -462,7 +469,7 @@ $this->load->view (
 	//
 	// SHOW THE NEW FILE
 	//
-	print ("<div style='float:left; width: 50%; margin: 0; padding: 0;'>");
+	print ('<div id="code_diff_new_code_view">');
 
 	print '<div class="navigator">';
 
@@ -486,8 +493,7 @@ $this->load->view (
 	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
 	print "</div>"; // navigator
 
-	//print "<pre class='prettyprint lang-{$fileext}' style='width: 100%;' id='code_diff_result_fulldiffnew'>";
-	print '<pre style="width: 100%;" id="code_diff_result_fulldiffnew" class="line-numbered">';
+	print '<pre id="code_diff_new_code" class="line-numbered">';
 
 	print '<span class="line-number-block">';
 	$actual_line_no = 1;
