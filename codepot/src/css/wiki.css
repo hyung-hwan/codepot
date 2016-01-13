@@ -28,6 +28,7 @@
 	overflow: visible !important;
 	margin: 0.2em 0 0.2em 0;
 	width: 100%;
+	clear: both;
 }
 
 #wiki_edit_toolbar {
@@ -36,6 +37,7 @@
 	width: 100%;
 	margin: 0.2em 0 0 0;
 	padding: 0;
+	clear: both;
 }
 
 #wiki_edit_toolbar .medium-editor-toolbar {
