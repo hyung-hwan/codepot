@@ -7,8 +7,8 @@
 	position: relative;
 	overflow: auto;
 	margin: 0.2em 0 0.2em 0;
+	width: 100%;
 }
-
 
 #wiki_show_result pre {
 	white-space: pre-wrap !important;
@@ -25,9 +25,29 @@
 
 #wiki_edit_result {
 	position: relative;
-	overflow: hidden !important;
+	overflow: visible !important;
 	margin: 0.2em 0 0.2em 0;
+	width: 100%;
 }
+
+#wiki_edit_toolbar {
+	position: relative;
+	overflow: visible !important;
+	width: 100%;
+	margin: 0.2em 0 0 0;
+	padding: 0;
+}
+
+#wiki_edit_toolbar .medium-editor-toolbar {
+	visibility: visible !important;
+	line-height: 2em;
+	-moz-border-radius: 0;
+	-webkit-border-radius: 0;
+	border-radius: 0;
+	margin: 0;
+	padding: 0;
+}
+
 
 #wiki_show_wiki {
 	margin-top: 0.5em;
@@ -88,12 +108,16 @@
 
 #wiki_show_file_list a, 
 #wiki_show_file_list a:visited,
-#wiki_show_file_list a:focus {
+#wiki_show_file_list a:focus,
+#wiki_edit_file_list a, 
+#wiki_edit_file_list a:visited,
+#wiki_edit_file_list a:focus {
 	text-decoration: none;
 	color: #FFFFFF;
 }
 
-#wiki_show_file_list a:hover {
+#wiki_show_file_list a:hover,
+#wiki_edit_file_list a:hover {
 	color: #90AACC;
 }
 
