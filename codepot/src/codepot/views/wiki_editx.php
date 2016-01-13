@@ -55,21 +55,23 @@ function show_alert (outputMsg, titleMsg)
 
 function resize_editor()
 {
-	var titleband = $("#wiki_edit_title_band");
 	var editor = $("#wiki_edit_text_editor");
-	var files = $("#wiki_edit_files");
-	var footer = $("#codepot_footer");
 
 	editor.height(0); // to prevent from continuous growing. it seems to affect footer placement when not set to 0.
+
+	var titleband = $("#wiki_edit_title_band");
+	var toolbar = $("#medium-editor-toolbar-1");
+	var files = $("#wiki_edit_files");
+	var footer = $("#codepot_footer");
+	var editor_container = $("#wiki_edit_result");
 
 	var ioff = titleband.offset();
 	var foff = footer.offset();
 
-	ioff.top += titleband.outerHeight() + 5 + files.outerHeight() + 10;
+	ioff.top += titleband.outerHeight() + files.outerHeight() + toolbar.outerHeight() + 10;
 
 	editor.offset (ioff);
-	//editor.innerHeight (foff.top - ioff.top - 5);
-	editor.height (foff.top - ioff.top - 5);
+	editor.innerHeight (foff.top - ioff.top - 5);
 	editor.innerWidth (titleband.innerWidth());
 }
 
@@ -176,13 +178,17 @@ function update_original_file_name_array ()
 	original_file_name_array = file_name_array;
 	for (var i = 0; i < original_file_name_array.length; i++)
 	{
+		var anchor = codepot_sprintf ("<a href='%s'>%s</a>", 
+			'<?php print site_url() . "/wiki/attachment/{$project->id}/" ?>' +
+			codepot_string_to_hex(wiki_original_name) + '/' + codepot_string_to_hex(original_file_name_array[i]),
+			codepot_htmlspecialchars(original_file_name_array[i])
+		);
 		$('#wiki_edit_file_list').append (
 			codepot_sprintf (
 				'<li><a href="#" onClick="kill_file(%d); return false;"><i class="fa fa-trash"></i></a><span id="wiki_edit_file_name_%d">%s</span></li>',
-				i, i, original_file_name_array[i]
+				i, i, anchor
 			)
 		);
-		
 	}
 }
 
@@ -243,22 +249,25 @@ $(function () {
 		toolbar: {
 			allowMultiParagraphSelection: true,
 			buttons: ['bold', 'italic', 'underline', 'strikethrough', 
-			          'anchor', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
-			          'subscript', 'superscript', 'quote', 'pre', 
+			          'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
+			          'subscript', 'superscript', 'removeFormat',
+			          'quote', 'pre', 'anchor', 'image',
 			          'orderedlist', 'unorderedlist', 'indent', 'outdent',
 			          'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull',
-			          'removeFormat', 'table'],
+			          'table'],
 			diffLeft: 0,
 			diffTop: -10,
-			firstButtonClass: 'medium-editor-button-first',
-			lastButtonClass: 'medium-editor-button-last',
+			//firstButtonClass: 'medium-editor-button-first',
+			//lastButtonClass: 'medium-editor-button-last',
+			firstButtonClass: 'medium-editor-button',
+			lastButtonClass: 'medium-editor-button',
 			standardizeSelectionStart: false,
 
-			static: false,
-			relativeContainer: null,
+			static: true,
+			relativeContainer: document.getElementById('wiki_edit_toolbar'),
 			/* options which only apply when static is true */
 			align: 'center',
-			sticky: false,
+			sticky: true,
 			updateOnEmptySelection: false
 		},
 
@@ -460,7 +469,15 @@ $this->load->view (
 				$att = $wiki->attachments[$i];;
 				print '<li>';
 				printf ('<a href="#" onClick="kill_file(%d); return false;"><i class="fa fa-trash"></i></a>', $i);
-				printf (' <span id="wiki_edit_file_name_%d">%s</span>', $i, htmlspecialchars($att->name));
+
+				//printf (' <span id="wiki_edit_file_name_%d">%s</span>', $i, htmlspecialchars($att->name));
+				$hexattname = $this->converter->AsciiToHex ($att->name);
+				printf (' <span id="wiki_edit_file_name_%d">%s</span>', $i, 
+					anchor (
+						"wiki/attachment/{$project->id}/{$hex_wikiname}/{$hexattname}", 
+						htmlspecialchars($att->name)
+					)
+				);
 				print '</li>';
 			}
 			?>
@@ -470,6 +487,9 @@ $this->load->view (
 		<ul id='wiki_edit_add_file_list'>
 		</ul>
 	</div>
+</div>
+
+<div id="wiki_edit_toolbar">
 </div>
 
 <div id="wiki_edit_result" class="result">
