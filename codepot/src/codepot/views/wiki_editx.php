@@ -61,13 +61,14 @@ function resize_editor()
 
 	var titleband = $("#wiki_edit_title_band");
 	var toolbar = $("#medium-editor-toolbar-1");
+	var toolbar_container = $("#wiki_edit_toolbar");
 	var files = $("#wiki_edit_files");
 	var footer = $("#codepot_footer");
-	var editor_container = $("#wiki_edit_result");
 
 	var ioff = titleband.offset();
 	var foff = footer.offset();
 
+	toolbar_container.innerHeight (toolbar.innerHeight());
 	ioff.top += titleband.outerHeight() + files.outerHeight() + toolbar.outerHeight() + 10;
 
 	editor.offset (ioff);
