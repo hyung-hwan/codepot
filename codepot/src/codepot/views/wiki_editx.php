@@ -52,7 +52,6 @@ function show_alert (outputMsg, titleMsg)
 	});
 }
 
-
 function resize_editor()
 {
 	var editor = $("#wiki_edit_text_editor");
@@ -404,6 +403,10 @@ $(function () {
 	});
 
 	$(window).resize(resize_editor);
+
+	// intentional double resizing as it seemed better handling
+	// quirkiness of medium editor's toolbar
+	resize_editor ();
 	resize_editor ();
 });
 </script>
