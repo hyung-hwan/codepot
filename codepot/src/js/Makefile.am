@@ -26,6 +26,7 @@ www_DATA = \
 	jqueryui-editable.min.js \
 	medium-editor.min.js \
 	medium-editor-tables.min.js \
+	showdown.js \
 	d3.min.js \
 	CodeFlower.js
 

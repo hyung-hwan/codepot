@@ -11,6 +11,7 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/showdown.js')?>"></script>
 
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
@@ -197,19 +198,56 @@ function show_loc_by_file_graph (response)
 	$("#code_folder_loc_by_file_spin" ).removeClass ("fa-cog fa-spin");
 }
 
+function showdown_render_wiki (inputid, outputid)
+{
+	var sd = new showdown.Converter ({
+		omitExtraWLInCodeBlocks: false,
+		noHeaderId: false,
+		prefixHeaderId: false,
+		parseImgDimensions: true,
+		headerLevelStarT: 1,
+		simplifiedAutoLink: false,
+		literalMidWordUnderscores: false,
+		strikethrough: true,
+		tables: true,
+		tablesHeaderId: false,
+		ghCodeBlocks: true,
+		tasklists: true
+	});
+
+	function decodeEntities(str)
+	{
+		return str.replace(/&amp;/g, '&').
+				replace(/&lt;/g, '<').
+				replace(/&gt;/g, '>').
+				replace(/&quot;/g, '"');
+	}
+
+	var input = document.getElementById(inputid);
+	var output = document.getElementById(outputid);
+
+	output.innerHTML = sd.makeHtml(decodeEntities(input.innerHTML));
+}
+
 function render_readme()
 {
 	<?php
 	// if the readme file name ends with '.wiki', perform wiki formatting and pretty printing
-	if (strlen($readme_text) > 0 && substr_compare($readme_file, '.wiki', -5) === 0):
+	if (strlen($readme_text) > 0 && (substr_compare($readme_file, '.wiki', -5) === 0 ||
+	                                 substr_compare($readme_file, '.wc', -3) === 0)):
 	?>
 	creole_render_wiki (
-		"code_folder_result_readme_text",
-		"code_folder_result_readme",
+		"code_folder_readme_text",
+		"code_folder_readme",
 		codepot_merge_path("<?php print site_url(); ?>", "/wiki/show/<?php print $project->id?>/"),
 		codepot_merge_path("<?php print site_url(); ?>", "/wiki/attachment0/<?php print $project->id?>/")
 	);
 	prettyPrint();
+	<?php
+	// if the readme file name ends with '.wiki', perform markdown formatting
+	elseif (strlen($readme_text) > 0 && substr_compare($readme_file, '.md', -3) === 0):
+	?>
+	showdown_render_wiki ("code_folder_readme_text", "code_folder_readme");
 	<?php endif; ?>
 }
 
@@ -1106,24 +1144,23 @@ $this->load->view (
 			}
 		}
 		print '</table>';
-
-		if (strlen($readme_text) > 0)
-		{
-			print '<div id="code_folder_result_readme">';
-			// the pre division is gone when rendered as a wiki text.
-			// so is the pre-wrapped class. so let me put the class 
-			// regardless of the text type.
-			print '<pre id="code_folder_result_readme_text" class="pre-wrapped">';
-			print "\n";
-			print htmlspecialchars($readme_text);
-			print "\n";
-			print '</pre>';
-			print '</div>';
-		}
 	}
 	?>
-
 </div> <!-- code_folder_result -->
+
+<?php
+if (strlen($readme_text) > 0)
+{
+	print '<div id="code_folder_readme">';
+	// the pre division is gone when rendered as a wiki text.
+	// so is the pre-wrapped class. so let me put the class 
+	// regardless of the text type.
+	print '<pre id="code_folder_readme_text" class="pre-wrapped">';
+	print htmlspecialchars($readme_text);
+	print '</pre>';
+	print '</div>';
+}
+?>
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
 

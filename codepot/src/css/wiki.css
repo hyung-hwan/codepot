@@ -145,13 +145,20 @@
 #wiki_edit_text_area,
 #wiki_edit_text_editor {
 	margin: 0 !important;
-	padding: 0 !important;
+	padding: 0.2em 0.2em 0.2em 0.2em !important;
 	width: 100% !important;
 	border: none !important;
 	background-color: #F9F9F9 !important;
 	overflow-y: auto !important;
 	overflow-x: visible !important;
 	outline: none !important;
+	border: #C0C0C0 solid 1px !important;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	-moz-box-sizing: border-box !important;
+	-webkit-box-sizing: border-box !important;
+	box-sizing: border-box !important;
 }
 
 #wiki_edit_text_editor pre {
