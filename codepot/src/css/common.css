@@ -661,7 +661,7 @@ pre, code, tt {
 	/*border: 1px solid #ccc;*/
 	/*background-color: #F8F8FA;*/
 	border: none;
-	line-height: 1.2em;
+	line-height: 1.3em;
 	padding: 0.3em;
 
 	tab-size: 5;
@@ -815,7 +815,7 @@ pre, code, tt {
 	white-space: pre-wrap;
 	word-wrap: break-word;
 	overflow: auto;
-	line-height: 1.2em;
+	line-height: 1.3em;
 
 	tab-size: 5;
 	-moz-tab-size: 5;
@@ -843,7 +843,7 @@ pre, code, tt {
 	white-space: pre-wrap;
 	word-wrap: break-word;
 	overflow: auto;
-	line-height: 1.2em;
+	line-height: 1.3em;
 
 	tab-size: 5;
 	-moz-tab-size: 5;
@@ -891,7 +891,7 @@ pre.codepot-line-numbered span.codepot-line-number-block {
 	overflow: auto;
 	margin: 0;
 	padding: 0.2em;
-	line-height: 1.2em;
+	line-height: 1.3em;
 
 	min-width: 4em;
 }
@@ -914,7 +914,7 @@ pre.codepot-line-numbered code.codepot-line-numbered-code {
 	overflow: auto;
 	margin: 0;
 	padding: 0.2em;
-	line-height: 1.2em;
+	line-height: 1.3em;
 }
 
 pre.codepot-line-numbered code.codepot-line-numbered-code span.codepot-line-numbered-code-line-empty {
