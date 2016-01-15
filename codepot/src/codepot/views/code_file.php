@@ -172,7 +172,7 @@ $this->load->view (
 
 <div class="mainarea" id="code_file_mainarea">
 
-<div class="title-band" id="code_file_title_band">
+<div class="codepot-title-band" id="code_file_title_band">
 
 	<div class="title">
 		<?php
@@ -281,7 +281,9 @@ $this->load->view (
 	</div>
 
 	<div id='code_file_metadata_body'>
-		<pre class='pre-wrapped'><?php print htmlspecialchars ($file['logmsg']); ?></pre>
+		<div class='codepot-plain-text-view'>
+			<pre><?php print htmlspecialchars ($file['logmsg']); ?></pre>
+		</div>
 
 		<?php
 		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
@@ -309,7 +311,7 @@ $this->load->view (
 </pre>
 </div>
 
-<div class="result" id="code_file_result">
+<div id="code_file_result" class="codepot-relative-container-view codepot-styled-code-view" >
 
 <?php 
 $fileext = substr(strrchr($file['name'], '.'), 1);
@@ -386,7 +388,7 @@ if ($login['settings'] != NULL &&
 ?>
 </pre>
 
-<div id="code_file_mainarea_loc_info" class="infobox">
+<div id="code_file_mainarea_loc_info" class="codepot-infobox">
 	<div class="title">LOC</div>
 	<?php
 		/* TODO: show this if it's enabled in the user settings  */
@@ -399,7 +401,7 @@ if ($login['settings'] != NULL &&
 
 </div> <!-- code_file_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!--  code_file_content -->
 

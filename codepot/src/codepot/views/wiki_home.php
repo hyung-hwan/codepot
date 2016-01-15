@@ -90,7 +90,7 @@ $this->load->view (
 <div class="mainarea" id="wiki_home_mainarea">
 
 
-<div class="title-band" id="wiki_home_title_band">
+<div class="codepot-title-band" id="wiki_home_title_band">
 	<div class="title"><?php print $this->lang->line('Wikis');?></div>
 
 	<div class="actions">
@@ -104,7 +104,7 @@ $this->load->view (
 	<div style='clear: both'></div>
 </div>
 
-<div id="wiki_home_result" class="result">
+<div id="wiki_home_result" class="codepot-relative-container-view">
 <?php
 if (empty($wikis))
 {
@@ -127,7 +127,7 @@ else
 
 </div> <!-- wiki_home_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- wiki_home_content -->
 

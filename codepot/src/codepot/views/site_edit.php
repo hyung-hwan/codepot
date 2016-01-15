@@ -128,7 +128,7 @@ $this->load->view (
 			'class="text" id="site_edit_mainarea_text"')
 		?>
 	</div>
-	<div id='site_edit_mainarea_text_preview' class='form_input_preview'></div>
+	<div id='site_edit_mainarea_text_preview' class='codepot-styled-text-preview'></div>
 
 
 	<?php $caption = ($mode == 'update')? $this->lang->line('Update'): $this->lang->line('Create'); ?>
@@ -138,7 +138,7 @@ $this->load->view (
 
 </div> <!-- site_edit_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- site_edit_content --> 
 

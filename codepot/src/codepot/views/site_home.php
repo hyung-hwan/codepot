@@ -107,7 +107,7 @@ $this->load->view (
 
 
 
-<div class="sidebar" id="site_home_sidebar">
+<div class="codepot-sidebar" id="site_home_sidebar">
 
 <div id="site_home_sidebar_latest_projects_box" class="collapsible-box">
 <div id="site_home_sidebar_latest_projects_header" class="collapsible-box-header">
@@ -204,10 +204,10 @@ foreach ($latest_projects as $project)
 
 			if ($log['action'] != 'revpropchange')
 			{
-				print '<pre class="pre-wrapped message">';
+				print '<div class="codepot-plain-text-view"><pre>';
 				$sm = strtok (trim ($x['message']), "\r\n");
 				print htmlspecialchars ($sm);
-				print '</pre>';
+				print '</pre></div>';
 			}
 			print '</td>';
 			print '</tr>';
@@ -282,7 +282,7 @@ foreach ($latest_projects as $project)
 
 <div class="mainarea" id="site_home_mainarea">
 
-<div id="site_home_result" class="result">
+<div id="site_home_result" class="codepot-static-container-view">
 
 	<?php if ($issues && count($issues) > 0): ?>
 	<div id="site_home_result_open_issues" class="collapsible-box">
@@ -327,10 +327,10 @@ foreach ($latest_projects as $project)
 			$pro = $issue->projectid;
 			$xid = $this->converter->AsciiToHex ((string)$issue->id);
 			$owner = $issue->owner;
-		
+
 			$proissueanc = anchor ("issue/home/{$issue->projectid}", $pro);
 			$anc = anchor ("issue/show/{$issue->projectid}/{$xid}", '#' . htmlspecialchars($issue->id));
-		
+
 			$status = htmlspecialchars(
 				array_key_exists($issue->status, $issue_status_array)?
 				$issue_status_array[$issue->status]: $issue->status);
@@ -346,7 +346,7 @@ foreach ($latest_projects as $project)
 	</div>
 	<?php endif; ?>
 
-	<div id="site_home_result_wiki">
+	<div id="site_home_result_wiki" class="codepot-styled-text-view">
 	<pre id="site_home_result_wiki_text" style="visibility: hidden"><?php print htmlspecialchars($site->text); ?></pre>
 	</div> <!-- site_home_text -->
 
@@ -355,7 +355,7 @@ foreach ($latest_projects as $project)
 
 </div> <!-- site_home_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- site_home_content -->
 

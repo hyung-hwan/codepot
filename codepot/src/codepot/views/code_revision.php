@@ -571,7 +571,7 @@ $this->load->view (
 $history = $file['history'];
 ?>
 
-<div class="title-band" id="code_revision_title_band">
+<div class="codepot-title-band" id="code_revision_title_band">
 	<div class="title">
 	<?php
 		print anchor (
@@ -671,15 +671,15 @@ $history = $file['history'];
 	</div>
 
 	<div id="code_revision_metadata_body">
-		<pre id="code_revision_metadata_text" class="pre-wrapped"><?php print htmlspecialchars($history['msg']); ?></pre>
+		<pre id="code_revision_metadata_text"><?php print htmlspecialchars($history['msg']); ?></pre>
 	</div>
 </div>
 
-<div id="code_revision_result" class="result">
+<div id="code_revision_result" class="codepot-relative-container-view">
 	<div id="code_revision_result_files" class="collapsible-box">
 		<div class="collapsible-box-header"><?php print $this->lang->line('Files')?></div>
 		<div id="code_revision_result_files_table_container" class="collapsible-box-panel">
-			<table id="code_revision_result_files_table" class="fit-width-result-table">
+			<table id="code_revision_result_files_table" class="codepot-fit-width-table codepot-spacious-table">
 				<?php 
 				/*
 				print '<tr class="heading">';
@@ -723,7 +723,7 @@ $history = $file['history'];
 <div id="code_revision_result_properties" class="collapsible-box">
 	<div class="collapsible-box-header"><?php print $this->lang->line('CODE_PROPERTIES');?></div>
 	<div id="code_revision_result_properties_table_container" class="collapsible-box-panel">
-		<table id="code_revision_result_properties_table" class="fit-width-result-table">
+		<table id="code_revision_result_properties_table" class="codepot-fit-width-table">
 			<?php
 			$rowclasses = array ('odd', 'even');
 			$rowcount = 0;
@@ -870,7 +870,7 @@ $history = $file['history'];
 			<textarea type='textarea' id='code_revision_new_review_comment' name='code_new_review_comment' rows=24 cols=100 style='width:100%;'></textarea>
 		</div>
 
-		<div id='code_revision_new_review_comment_preview' class='form_input_preview'>
+		<div id='code_revision_new_review_comment_preview' class='codepot-styled-text-preview'>
 		</div>
 	</div>
 </div>
@@ -898,7 +898,7 @@ for ($i = 0; $i < $review_count; )
 						<textarea type='textarea' id='code_revision_edit_review_comment_{$i}' name='code_edit_review_comment_{$i}' rows=24 cols=100 style='width:100%;'>{$text}</textarea>
 					</div>
 
-					<div id='code_revision_edit_review_comment_preview_{$i}' class='form_input_preview'>
+					<div id='code_revision_edit_review_comment_preview_{$i}' class='codepot-styled-text-preview'>
 					</div>
 				</div>
 			</div>
@@ -912,7 +912,7 @@ for ($i = 0; $i < $review_count; )
 
 </div> <!-- code_revision_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- code_revision_content -->
 

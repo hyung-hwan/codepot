@@ -13,7 +13,7 @@ body {
 }
 
 textarea {
-	font-family: consolas, monaco, "Andale Mono", monospace;
+	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
 
 	tab-size: 5;
 	-moz-tab-size: 5;
@@ -24,33 +24,47 @@ textarea {
 	box-sizing: border-box;
 }
 
+pre, code, tt {
+	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
+}
+
 .content {
 	font-size: 0.9em;
 	font-family: /*Ubuntu,*/ "Trebuchet MS", Tahoma, Verdana, sans-serif;
 
-	min-height: 100%; /* for stick footer */
-	height: auto !important; /* for stick footer */
-	height: 100%; /* for stick footer */
-	margin: 0 auto -40px; /* for stick footer */
+	min-height: 100%; /* for sticky footer */
+	height: auto !important; /* for sticky footer */
+	height: 100%; /* for sticky footer */
+	margin: 0 auto -40px; /* for sticky footer */
 }
 
 .content h1 {
-	font-size: 1.3em;
+	font-size: 1.4em;
 	font-weight: bold;
 }
 
 .content h2 {
-	font-size: 1.2em;
+	font-size: 1.3em;
 	font-weight: bold;
 }
 
 .content h3 {
-	font-size: 1.1em;
+	font-size: 1.2em;
 	font-weight: bold;
 }
 
 .content h4 {
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+.content h5 {
 	font-size: 1.0em;
+	font-weight: bold;
+}
+
+.content h6 {
+	font-size: 0.9em;
 	font-weight: bold;
 }
 
@@ -70,28 +84,6 @@ textarea {
 
 .content a:visited {
 	color: #4665A2;
-}
-
-.content pre, 
-.content code,
-.content tt {
-	font-family: consolas, monaco, "Andale Mono", monospace;
-	overflow: auto;
-	border: none;
-	white-space: pre;
-	margin: 0;
-	padding: 0.2em 0.2em 0.2em 0.2em;
-
-	tab-size: 5;
-	-moz-tab-size: 5;
-	-o-tab-size: 5;
-}
-
-.content pre.pre-wrapped, 
-.content code.pre-wrapped {
-	white-space: -moz-pre-wrap !important;
-	white-space: -o-pre-wrap !important; 
-	white-space: pre-wrap !important;
 }
 
 .content .collapsible-box {
@@ -128,50 +120,6 @@ textarea {
 	padding: 0.2em 0.2em 0.2em 0.2em !important; /* !important so that jquery-ui.css doesn't override this */
 }
 
-.content .fit-width-result-table,
-.content .full-width-result-table  {
-	border-collapse: collapse;
-	font-size: inherit;
-	background: inherit;
-}
-
-.content .full-width-result-table  {
-	width: 100%;
-}
-
-.content .fit-width-result-table tr,
-.content .full-width-result-table tr {
-	vertical-align: text-top;
-	text-align: left;
-	white-space: nowrap;
-
-	border-bottom: 1px solid #F0F0F0;
-	color: #333333;
-}
-
-.content .fit-width-result-table td,
-.content .full-width-result-table td {
-	padding: 0.4em 0.8em 0.4em 0.8em;
-	white-space: nowrap;
-}
-
-.content .fit-width-result-table tr th,
-.content .full-width-result-table tr th,
-.content .fit-width-result-table tr td.header,
-.content .full-width-result-table tr td.header {
-	padding: 0.5em 0.8em 0.5em 0.8em;
-	font-weight: bold;
-	text-align: left;
-	color: #1C94C4;
-	background-color: #E5ECF9;
-	white-space: nowrap;
-}
-
-.content .fit-width-result-table tr td img,
-.content .full-width-result-table tr td img {
-	vertical-align: middle;
-	display:inline-block;
-}
 
 .content .taskbar {
 	font-size: 1em;
@@ -235,9 +183,9 @@ textarea {
 
 	height: 4.5em;
 
-	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
 	width: 100%;
 
 	background-color: #F5F5F5;
@@ -274,19 +222,6 @@ textarea {
 	right: 2px;
 	padding: 0;
 }
-
-/*
-.content .projectbar .fixedmenu a,
-.content .projectbar .fixedmenu a:visited {
-	padding-left: 0.5em;
-	padding-right: 0.5em;
-	color: #AAAAAA;
-}
-
-
-.content .projectbar .fixedmenu a:hover {
-	color: #333333;
-}*/
 
 
 .content .projectbar .fixedmenu a.selected {
@@ -376,10 +311,6 @@ textarea {
 	background-color: #BBCCDD;
 }
 
-.content .mainarea .result {
-	overflow: auto;
-}
-
 .content .mainarea .form_container {
 	padding: 0.5em 0.5em 0.5em 0.5em;
 	padding-bottom: 0.3em;
@@ -406,6 +337,8 @@ textarea {
 	height: 1.8em; 
 	vertical-align: middle;
 	padding: 0.2em 0.2em 0.2em 0.2em;
+
+	max-width: 100%;
 }
 
 .content .mainarea form input:focus {
@@ -486,52 +419,199 @@ textarea {
 	padding-bottom: 0.2em;
 }
 
-.content .mainarea .form_input_preview {
-	background-color: #FFFFF0;
-	font-size: 90%;
-	padding: 0.2em 0.2em 0.2em 0.2em;
-	margin-bottom: 0.5em;
-}
-
-.content .mainarea .form_input_preview pre {
-	background-color: #F8F8FA;
-	padding: 0.2em 0.2em 0.2em 0.2em;
-}
-
 .content .mainarea .icon {
 	border: 0;
 }
 
-.content .mainarea pre {
-	border: none;
+
+.content .mainarea li img  {
+	vertical-align: middle;
+	padding: 2px;
 }
 
-.content .mainarea pre.wiki {
-	white-space: -moz-pre-wrap;
-	white-space: -o-pre-wrap; 
-	white-space: pre-wrap;
+.content .form_message {
+	color: red;
+}
 
-	padding: 0.3em;
-	line-height: 1.2em;
+.content .form_field_error {
+	color: red;
+}
 
-	tab-size: 5;
-	-moz-tab-size: 5;
-	-o-tab-size: 5;
+.content span.quoted {
+	color: #bb2322;
+	font-style: italic;
+}
+
+.content span.left_arrow_indicator { 
+	position: relative;
+	background: #FA5240;
+	color: #FFFFFF;;
+	font-size: 0.9em;
+	margin-left: 0.2em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+} 
+
+.content span.left_arrow_indicator:after {
+	right: 100%;
+	top: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: rgba(245, 230, 17, 0);
+	border-right-color: #FA5240;
+	border-width: 5px;
+	margin-top: -5px; 
+}
+
+/* ------------------------------------------------------ */
+
+.codepot-infobox {
+	position: absolute;
+	top: 5px;
+	right: 2px;
+	width: 22em;
+
+	background: #E5ECF9 none repeat scroll 0 0;
+
+	border: #D4DBE8 1px solid;
+	overflow: auto;
+	padding: 0.2em 0.4em 0.2em 0.4em;
+	font-size: 0.9em;
 
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 
-	background-color: #F8F8FA;
+	color: #333333;
 }
 
-.content .mainarea table.wiki {
+.codepot-infobox .title {
+	background: #E0E0E0;
+	/*background: #E5ECF9 none repeat scroll 0 0;*/
+	border: none;
+	color: #1C94C4;
+	font-size: 0.9em;
+	padding: 0.5em;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.codepot-infobox ul {
+	line-height: 1.5em;
+	margin: 1px 0 0 0;
+	padding: 0.5em 1.8em 0.5em 1.8em;
+}
+
+.codepot-infostrip {
+	font-size: 0.9em;
+
+	background: #E5ECF9 none repeat scroll 0 0;
+	border: #D4DBE8 1px solid; 
+
+	margin: 0.3em 0em 0em 0em;
+	padding: 0.3em 0.3em 0.3em 0.3em;
+	text-align: right;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.codepot-infostrip a {
+	text-decoration: none;
+}
+
+
+.codepot-title-band {
+	font-size: 0.9em;
+
+	background: #F0F0F0 none repeat scroll 0 0;
+	/*border: #D4DBE8 1px solid; */
+
+	margin: 0.2em 0em 0.2em 0em;
+	padding: 1em 0.5em 1em 0.5em;
+	/*text-align: right;*/
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.codepot-title-band a {
+	text-decoration: none;
+}
+
+.codepot-title-band .title {
+	float: left;
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 1.2em !important;
+	line-height: 1.5em;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.codepot-title-band .actions {
+	float: right;
+	line-height: 1.5em;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.codepot-sidebar {
+	font-size: 0.9em;
+	float: right;
+	width: 22em;
+	margin-top: 0.3em;
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+}
+
+.codepot-sidebar .collapsible-box {
+	/* extra margin-bottom for collapsible located on the sidebar */
+	margin-bottom: 0.5em;
+}
+
+.codepot-sidebar .user_icon_img {
+	height: 2em;
+	width: 2em;
+	vertical-align: middle;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	padding-right: 1px;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.codepot-sidebar a {
+	text-decoration: none;
+	padding-left: .2em;
+	padding-right: .2em;
+}
+
+
+.codepot-fit-width-table,
+.codepot-full-width-table  {
 	border-collapse: collapse;
 	font-size: inherit;
 	background: inherit;
+	max-width: 100%;
 }
 
-.content .mainarea table.wiki tr {
+.codepot-full-width-table  {
+	width: 100%;
+}
+
+.codepot-fit-width-table tr,
+.codepot-full-width-table tr {
 	vertical-align: text-top;
 	text-align: left;
 	white-space: nowrap;
@@ -540,8 +620,17 @@ textarea {
 	color: #333333;
 }
 
-.content .mainarea table.wiki th {
-	padding: 0.5em 0.8em 0.5em 0.8em;
+.codepot-fit-width-table td,
+.codepot-full-width-table td {
+	padding: 0.2em 0.2em 0.2em 0.2em;
+	white-space: nowrap;
+}
+
+.codepot-fit-width-table th,
+.codepot-full-width-table th,
+.codepot-fit-width-table td.header,
+.codepot-full-width-table td.header {
+	padding: 0.2em 0.2em 0.2em 0.2em;
 	font-weight: bold;
 	text-align: left;
 	color: #1C94C4;
@@ -549,76 +638,15 @@ textarea {
 	white-space: nowrap;
 }
 
-.content .mainarea table.wiki td {
-	padding: 0.5em 0.8em 0.5em 0.8em;
-	text-align: left;
-	white-space: normal;
-}
-
-.content .mainarea p.wiki {
-	/* use the default for normal cases */
-	overflow: auto;
-}
-
-.content .mainarea p.wiki img {
-	max-width: 100%;
-}
-
-.content .mainarea li img  {
+.codepot-fit-width-table tr td img,
+.codepot-full-width-table tr td img {
 	vertical-align: middle;
-	padding: 2px;
+	display:inline-block;
 }
 
-.content .mainarea table p.wiki {
-	/* no margin-top within tables */
-	margin-top: 0;
-}
-
-.content .mainarea pre.line-numbered span.line-number-block {
-	color:black;
-	display:block;
-
-	float:left;
-	border-right:1px solid;
-	text-align:right;
-
-	/* the following properties must match .content .mainarea pre.line-numbered code.line-numbered-code */
-	overflow: auto;
-	margin: 0;
-	padding: 0.2em;
-	line-height: 1.4em;
-}
-
-.content .mainarea pre.line-numbered span.line-number-block span {
-	display: block;
-	padding: 0 0.2em 0 0.5em;
-}
-
-.content .mainarea pre.line-numbered span.line-number-block span.line-number-empty {
-
-}
-
-.content .mainarea pre.line-numbered code.line-numbered-code {
-	/* this should override some properties of .prettyprint */
-	color:black;
-	display:block;
-
-	/* the following properties must match .content .mainarea pre.line-numbered span.line-number-block */
-	overflow: auto;
-	margin: 0;
-	padding: 0.2em;
-	line-height: 1.4em;
-}
-
-.content .mainarea pre.line-numbered code.line-numbered-code span.line-numbered-code-line-empty {
-	display: inline-block;
-	width: 100%;
-	background: linear-gradient(0deg, transparent 48%, #CCCCCC 52%, transparent 54%);
-}
-
-.content .mainarea pre.line-numbered span.line-number-clear {
-	display:block;
-	clear:both;
+.codepot-spacious-table th,
+.codepot-spacious-table td {
+	padding: 0.5em 0.5em 0.5em 0.5em;
 }
 
 .prettyprint ol {
@@ -630,7 +658,7 @@ textarea {
 	/* anything that make prettyprint area different from other pres? */
 	/*background-color: #FFFFFF;*/
 	/*border: 1px solid #ccc;*/
-	background-color: #F8F8FA;
+	/*background-color: #F8F8FA;*/
 	border: none;
 	line-height: 1.2em;
 	padding: 0.3em;
@@ -708,201 +736,274 @@ textarea {
 }
 
 
-.content .infostrip {
-	font-size: 0.9em;
-
-	background: #E5ECF9 none repeat scroll 0 0;
-	border: #D4DBE8 1px solid; 
-
-	margin: 0.3em 0em 0em 0em;
-	padding: 0.3em 0.3em 0.3em 0.3em;
-	text-align: right;
-
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-}
-
-.content .infostrip a {
-	text-decoration: none;
-}
-
-.content .title-band {
-	font-size: 0.9em;
-
-	background: #F0F0F0 none repeat scroll 0 0;
-	/*border: #D4DBE8 1px solid; */
-
-	margin: 0.2em 0em 0.2em 0em;
-	padding: 1em 0.5em 1em 0.5em;
-	/*text-align: right;*/
-
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-}
-
-.content .title-band a {
-	text-decoration: none;
-}
-
-.content .title-band .title {
-	float: left;
-	text-transform: uppercase;
-	font-weight: bold;
-	font-size: 1.2em !important;
-	line-height: 1.5em;
-	margin: 0 !important;
-	padding: 0 !important;
-}
-
-.content .title-band .actions {
-	float: right;
-	line-height: 1.5em;
-	margin: 0 !important;
-	padding: 0 !important;
-}
-
-.content .sidebar {
-	font-size: 0.9em;
-	float: right;
-	width: 22em;
-	margin-top: 0.3em;
-	margin-left: 0.5em;
-	margin-right: 0.5em;
-}
-
-.content .sidebar .collapsible-box {
-	/* extra margin-bottom for collapsible located on the sidebar */
-	margin-bottom: 0.5em;
-}
-
-.content .sidebar .user_icon_img {
-	height: 2em;
-	width: 2em;
-	vertical-align: middle;
-	padding-top: 1px;
-	padding-bottom: 1px;
-	padding-right: 1px;
-
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-}
-
-/*
-.content .sidebar ul {
-	margin: 0.2em 0 0.2em 0.5em;
-	padding: 0.2em 0 0.2em 1em;
-}
-*/
-
-.content .sidebar a {
-	text-decoration: none;
-	padding-left: .2em;
-	padding-right: .2em;
-}
-
-/*
-.content .sidebar table {
-	font-size: 1em;
-	width: 100%;
+.codepot-static-container-view {
+	position: static;
+	overflow: visible;
 	margin: 0.2em 0 0.2em 0;
-	padding: 0.2em 0 0.2em 1em;
-}
-*/
-
-.content .infobox {
-	position: absolute;
-	top: 5px;
-	right: 2px;
-	width: 22em;
-
-	background: #E5ECF9 none repeat scroll 0 0;
-
-	border: #D4DBE8 1px solid;
-	overflow: auto;
-	padding: 0.2em 0.4em 0.2em 0.4em;
-	font-size: 0.9em;
-
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-
-	color: #333333;
+	width: 100%;
 }
 
-.content .infobox .title {
-	background: #E0E0E0;
-	/*background: #E5ECF9 none repeat scroll 0 0;*/
-	border: none;
-	color: #1C94C4;
-        font-size: 0.9em;
-	padding: 0.5em;
-
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-}
-
-.content .infobox ul {
-	line-height: 1.5em;
-	margin: 1px 0 0 0;
-	padding: 0.5em 1.8em 0.5em 1.8em;
-}
-
-.content .infobox pre {
-	margin: 0;
-	padding: 0.5em 0.2em 0.5em 0.2em;
-}
-
-.content .form_message {
-	color: red;
-}
-
-.content .form_field_error {
-	color: red;
-}
-
-.content span.quoted {
-	color: #bb2322;
-	font-style: italic;
-}
-
-
-.content span.left_arrow_indicator { 
+.codepot-relative-container-view {
 	position: relative;
-	background: #FA5240;
-	color: #FFFFFF;;
-	font-size: 0.9em;
-	margin-left: 0.2em;
-	padding-left: 0.5em;
-	padding-right: 0.5em;
-} 
+	overflow: auto;
+	margin: 0.2em 0 0.2em 0;
+	width: 100%;
+}
 
-.content span.left_arrow_indicator:after {
-	right: 100%;
-	top: 50%;
-	border: solid transparent;
-	content: " ";
-	height: 0;
-	width: 0;
-	position: absolute;
-	pointer-events: none;
-	border-color: rgba(245, 230, 17, 0);
-	border-right-color: #FA5240;
-	border-width: 5px;
-	margin-top: -5px; 
+.codepot-plain-text-view,
+.codepot-styled-text-view,
+.codepot-styled-text-preview {
+	overflow: auto;
+}
+
+.codepot-styled-text-preview {
+	background-color: #FAFAFA;
+	padding: 0.4em 0.4em 0.4em 0.4em;
+}
+
+.codepot-styled-text-view h1,
+.codepot-styled-text-preview h1 {
+	border-bottom: 1px solid #DDD;
+	font-weight: bold;
+	line-height: 1.4em;
+}
+
+.codepot-styled-text-view h2,
+.codepot-styled-text-preview h2 {
+	font-weight: bold;
+	line-height: 1.3em;
+}
+
+.codepot-styled-text-view h3,
+.codepot-styled-text-preview h3 {
+	font-weight: bold;
+	line-height: 1.2em;
+}
+
+.codepot-styled-text-view h4,
+.codepot-styled-text-preview h4 {
+	font-weight: bold;
+	line-height: 1.1em;
+}
+
+.codepot-styled-text-view h5,
+.codepot-styled-text-preview h5 {
+	font-weight: bold;
+	line-height: 1.0em;
+}
+
+.codepot-styled-text-view h6,
+.codepot-styled-text-preview h6 {
+	font-weight: bold;
+	line-height: 0.9em;
+}
+
+.codepot-plain-text-view blockquote,
+.codepot-styled-text-view blockquote,
+.codepot-styled-text-preview blockquote {
+	background: #F5F5F5;
+	border-left: 5px solid #CCCCCC;
+	margin: 1em 1em 1em 1em;
+	padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
+.codepot-plain-text-view pre,
+.codepot-styled-text-view pre,
+.codepot-styled-text-preview pre,
+.codepot-styled-code-view pre {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow: auto;
+	line-height: 1.2em;
+
+	tab-size: 5;
+	-moz-tab-size: 5;
+	-o-tab-size: 5;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+
+	margin: 0.1em 0 0.1em 0;
+	padding: 0.1em 0.1em 0.1em 0.1em;
+
+	background-color: #F5F5F5;
+	border: 1px solid #DFDFDF;
+}
+
+.codepot-plain-text-view pre code,
+.codepot-styled-text-view pre code,
+.codepot-styled-text-preview pre code,
+.codepot-styled-code-view pre code {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow: auto;
+	line-height: 1.2em;
+
+	tab-size: 5;
+	-moz-tab-size: 5;
+	-o-tab-size: 5;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+
+.codepot-plain-text-view blockquote pre,
+.codepot-styled-text-view blockquote pre,
+.codepot-styled-text-preview blockquote pre {
+	border: none;
+	margin: 0;
+	background-color: inherit;
+}
+
+.codepot-styled-code-view pre,
+.codepot-styled-code-view pre code {
+	/* overrides white-space and word-wrap over the previous definitions */
+	white-space: pre !important;
+	word-wrap: normal !important;
+}
+
+.codepot-plain-text-view pre,
+.codepot-plain-text-view pre code {
+	border: none;
+	background-color: inherit;
+}
+
+pre.codepot-line-numbered span.codepot-line-number-block {
+	color:black;
+	display:block;
+
+	float:left;
+	border-right:1px solid;
+	text-align:right;
+
+	/* the following properties must match .content .mainarea pre.codepot-line-numbered code.codepot-line-numbered-code */
+	overflow: auto;
+	margin: 0;
+	padding: 0.2em;
+	line-height: 1.2em;
+
+	min-width: 5em;
+}
+
+pre.codepot-line-numbered span.codepot-line-number-block span {
+	display: block;
+	padding: 0 0.2em 0 0.5em;
+}
+
+pre.codepot-line-numbered span.codepot-line-number-block span.codepot-line-number-empty {
+
+}
+
+pre.codepot-line-numbered code.codepot-line-numbered-code {
+	/* this should override some properties of .prettyprint */
+	color:black;
+	display:block;
+
+	/* the following properties must match .content .mainarea pre.codepot-line-numbered span.codepot-line-number-block */
+	overflow: auto;
+	margin: 0;
+	padding: 0.2em;
+	line-height: 1.2em;
+}
+
+pre.codepot-line-numbered code.codepot-line-numbered-code span.codepot-line-numbered-code-line-empty {
+	display: inline-block;
+	width: 100%;
+	background: linear-gradient(0deg, transparent 48%, #CCCCCC 52%, transparent 54%);
+}
+
+pre.codepot-line-numbered span.codepot-line-number-clear {
+	display:block;
+	clear:both;
+}
+
+.codepot-styled-text-view table, 
+.codepot-styled-text-preview table {
+	border-collapse: collapse;
+	/*font-size: inherit;
+	background: inherit;*/
+
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+
+	margin: 0.1em 0 0.1em 0;
+	padding: 0;
+
+	max-width: 100%;
+	border: 1px solid #DFDFDF;
+}
+
+.codepot-styled-text-view table tr, 
+.codepot-styled-text-preview table tr {
+	vertical-align: text-top;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.codepot-styled-text-view table th, 
+.codepot-styled-text-preview table th {
+	padding: 0.3em 0.3em 0.3em 0.3em;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+
+	background-color: #F5F5F5;
+	color: #1C1C1C; 
+	border-bottom: 1px solid #F0F0F0;
+}
+
+.codepot-styled-text-view table td, 
+.codepot-styled-text-preview table td {
+	padding: 0.3em 0.3em 0.3em 0.3em;
+	text-align: left;
+	white-space: normal;
+	word-wrap: break-word;
+	color: #333333;
+	border-bottom: 1px solid #F0F0F0;
+	border-left: 1px dashed #F0F0F0;
+}
+
+.codepot-styled-text-view p, 
+.codepot-styled-text-preview p {
+	/* use the default for normal cases */
+	overflow: auto;
+}
+
+.codepot-styled-text-view img, 
+.codepot-styled-text-preview img {
+	max-width: 100%;
+}
+
+.codepot-styled-text-view table p, 
+.codepot-styled-text-preview table p {
+	/* no margin-top within tables */
+	margin-top: 0;
+}
+
+.codepot-styled-text-view table img, 
+.codepot-styled-text-preview table img {
+	/* no margin-top within tables */
+	width: 100%;
 }
 
 /* === footer === */
-
-.content .footer-pusher {
+.codepot-footer-pusher {
 	clear: both;
 	height: 40px; /* for sticky footer */
 }
 
-.footer {
+.codepot-footer {
 	clear: both;
 	text-align: right;
 	vertical-align: middle;
@@ -921,7 +1022,7 @@ textarea {
 }
 
 
-.footer a {
+.codepot-footer a {
 	color: #FFFFFF;
 }
 
@@ -1006,6 +1107,7 @@ textarea {
 	margin-bottom: 0.5em;
 }
 
+
 /* ================ login page =================== */
 
 #login_user_name {
@@ -1035,6 +1137,3 @@ textarea {
 #login_signin_button {
 	height: 2em;
 }
-
-
-

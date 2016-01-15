@@ -162,7 +162,7 @@ $this->load->view (
 			print form_textarea ($xdata);
 		?>
 	</div>
-	<div id='wiki_edit_text_preview' class='form_input_preview'></div>
+	<div id='wiki_edit_text_preview' class='codepot-styled-text-preview'></div>
 
 	<?php if (!empty($wiki->attachments)): ?>
 	<div class='form_input_label'>
@@ -224,7 +224,7 @@ $this->load->view (
 
 </div> <!-- wiki_edit_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- content -->
 
