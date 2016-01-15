@@ -96,7 +96,7 @@ $this->load->view (
 	<div class="actions">
 		<?php if (isset($login['id']) && $login['id'] != ''): ?>
 		<a id="wiki_home_new_h_button" href='#'><?php print $this->lang->line('New')?> [H]</a>
-		<a id="wiki_home_new_c_button" href='#'><?php print $this->lang->line('New')?> [WC]</a>
+		<a id="wiki_home_new_c_button" href='#'><?php print $this->lang->line('New')?> [W]</a>
 		<?php endif; ?>
 		<!-- <a id="wiki_home_search_button" href='#'><?php print $this->lang->line('Search')?></a> -->
 	</div>
