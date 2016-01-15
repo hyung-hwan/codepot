@@ -110,7 +110,7 @@ $this->load->view (
 
 <div class="mainarea" id="code_search_mainarea">
 
-<div class="title-band" id="code_search_title_band">
+<div class="codepot-title-band" id="code_search_title_band">
 
 	<div class="title">
 		<?php
@@ -247,7 +247,7 @@ $this->load->view (
 	<div style="clear: both;"></div>
 </div>
 
-<div id="code_search_mainarea_result" class="result">
+<div id="code_search_result" class="codepot-relative-container-view">
 
 <?php
 // this searching part should have been placed in SubversionModel.
@@ -311,7 +311,7 @@ function search_and_show ($controller, $project, $path, $revision, $pattern, $in
 							$revreqroot = '/' . $controller->converter->AsciiToHex ('.') . $revreq;
 						}
 
-						print '<div class="code_search_result">';
+						print '<div class="codepot-styled-text-view">';
 
 						print '<div class="title">';
 						print anchor (
@@ -330,21 +330,21 @@ function search_and_show ($controller, $project, $path, $revision, $pattern, $in
 							$fileext = substr(strrchr($file2['name'], '.'), 1);
 							if ($fileext == "") $fileext = "html";
 
-							print '<pre class="line-numbered">';
-							print '<span class="line-number-block">';
+							print '<pre class="codepot-line-numbered">';
+							print '<span class="codepot-line-number-block">';
 							foreach ($matchlines as $linenum => $line)
 							{
 								print "<span>{$linenum}</span>";
 							}
 							print '</span>';
-							print "<code class='line-numbered-code prettyprint lang-{$fileext}'>";
+							print "<code class='codepot-line-numbered-code prettyprint lang-{$fileext}'>";
 							foreach ($matchlines as $linenum => $line)
 							{
 								print htmlspecialchars($line);
 								print "\n";
 							}
 							print '</code>';
-							print '<span class="line-number-clear"></span>';
+							print '<span class="codepot-line-number-clear"></span>';
 							print '</pre>';
 						}
 
@@ -372,11 +372,11 @@ if (CODEPOT_ALLOW_SET_TIME_LIMIT) set_time_limit (0);
 search_and_show ($this, $project, $file['fullpath'], $revision, $pattern, $invertedly, $case_insensitively, $is_regex, $recursively, $in_name, $wildcard_pattern);
 ?>
 
-</div> <!-- code_search_mainarea_result -->
+</div> <!-- code_search_result -->
 
 </div> <!-- code_search_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!--  code_search_content -->
 

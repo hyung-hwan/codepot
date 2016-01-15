@@ -183,7 +183,7 @@ $this->load->view (
 
 <div class="mainarea" id="code_diff_mainarea">
 
-<div class="title-band" id="code_diff_title_band">
+<div class="codepot-title-band" id="code_diff_title_band">
 
 	<div class="title">
 	<?php
@@ -250,7 +250,9 @@ $this->load->view (
 		</div>
 
 		<div id='code_diff_metadata_against_body'>
-			<pre class='pre-wrapped'><?php print htmlspecialchars ($file['against']['logmsg']); ?></pre>
+			<div class='codepot-plain-text-view'>
+				<pre><?php print htmlspecialchars ($file['against']['logmsg']); ?></pre>
+			</div>
 		</div>
 	</div>
 
@@ -286,7 +288,9 @@ $this->load->view (
 		</div>
 
 		<div id='code_diff_metadata_body'>
-			<pre class='pre-wrapped'><?php print htmlspecialchars ($file['logmsg']); ?></pre>
+			<div class='codepot-plain-text-view'>
+				<pre><?php print htmlspecialchars ($file['logmsg']); ?></pre>
+			</div>
 		</div>
 	</div>
 
@@ -298,7 +302,7 @@ $this->load->view (
 	if ($fileext == "") $fileext = "html"
 ?>
 
-<div id="code_diff_result" class="result">
+<div id="code_diff_result" class="codepot-relative-container-view codepot-styled-code-view">
 	<?php
 	function format_diff2 ($a, $b, $css_class)
 	{
@@ -360,7 +364,7 @@ $this->load->view (
 			  stristr($http_user_agent, 'Opera') === FALSE);
 	if (!$is_msie) $is_msie = (preg_match ("/^Mozilla.+\(Windows.+\) like Gecko$/", $http_user_agent) !== FALSE);
 
-	print '<div style="width: 100%; overflow: hidden;" id="code_diff_full_code_view">';
+	print '<div id="code_diff_full_code_view">';
 
 	//
 	// SHOW THE OLD FILE
@@ -390,9 +394,9 @@ $this->load->view (
 	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
 	print "</div>"; // navigator
 
-	print '<pre id="code_diff_old_code" class="line-numbered">';
+	print '<pre id="code_diff_old_code" class="codepot-line-numbered">';
 
-	print '<span class="line-number-block">';
+	print '<span class="codepot-line-number-block">';
 	$actual_line_no = 1;
 	foreach ($file['content'] as $x)
 	{
@@ -417,13 +421,13 @@ $this->load->view (
 		}
 		else
 		{
-			if ($actual_line_no > 1) print "<span class='line-number-empty'>&nbsp;</span>";
+			if ($actual_line_no > 1) print "<span class='codepot-line-number-empty'>&nbsp;</span>";
 			$actual_line_no = $x['rev1lineno'];
 		}
 	}
 	print '</span>';
 
-	print '<code class="line-numbered-code prettyprint lang-{$fileext}" id="old-code">';
+	print '<code class="codepot-line-numbered-code prettyprint lang-{$fileext}">';
 	$actual_line_no = 1;
 	foreach ($file['content'] as $x)
 	{
@@ -456,12 +460,12 @@ $this->load->view (
 			//print "<span class='diffrow'> ";
 			//print $x['rev1lineno'];
 			//print " </span>\n";
-			if ($actual_line_no > 1) print "<span class='line-numbered-code-line-empty'>&nbsp;</span>\n"; // \n is required here unlike in the line-number-block
+			if ($actual_line_no > 1) print "<span class='codepot-line-numbered-code-line-empty'>&nbsp;</span>\n"; // \n is required here unlike in the codepot-line-number-block
 			$actual_line_no = $x['rev1lineno'];
 		}
 	}
 	print '</code>';
-	print '<span class="line-number-clear"></span>';
+	print '<span class="codepot-line-number-clear"></span>';
 	print '</pre>';
 
 	print '</div>';
@@ -493,9 +497,9 @@ $this->load->view (
 	print anchor ($nextanc, '<i class="fa fa-arrow-circle-right"></i>');
 	print "</div>"; // navigator
 
-	print '<pre id="code_diff_new_code" class="line-numbered">';
+	print '<pre id="code_diff_new_code" class="codepot-line-numbered">';
 
-	print '<span class="line-number-block">';
+	print '<span class="codepot-line-number-block">';
 	$actual_line_no = 1;
 	foreach ($file['content'] as $x)
 	{
@@ -516,13 +520,13 @@ $this->load->view (
 		}
 		else
 		{
-			if ($actual_line_no > 1) print "<span class='line-number-empty'>&nbsp;</span>";
+			if ($actual_line_no > 1) print "<span class='codepot-line-number-empty'>&nbsp;</span>";
 			$actual_line_no = $x['rev2lineno'];
 		}
 	}
 	print '</span>';
 
-	print '<code class="line-numbered-code prettyprint lang-{$fileext}" id="new-code" class="line-numbered-code">';
+	print '<code class="codepot-line-numbered-code prettyprint lang-{$fileext}" class="codepot-line-numbered-code">';
 	$actual_line_no = 1;
 	foreach ($file['content'] as $x)
 	{
@@ -560,14 +564,14 @@ $this->load->view (
 			//print "<span class='diffrow'> ";
 			//print $x['rev2lineno'];
 			//print " </span>\n";
-			if ($actual_line_no > 1) print "<span class='line-numbered-code-line-empty'>&nbsp;</span>\n"; // \n is required here unlike in the line number block
+			if ($actual_line_no > 1) print "<span class='codepot-line-numbered-code-line-empty'>&nbsp;</span>\n"; // \n is required here unlike in the line number block
 			$actual_line_no = $x['rev2lineno'];
 		}
 	}
 
 
 	print '</code>';
-	print '<span class="line-number-clear"></span>';
+	print '<span class="codepot-line-number-clear"></span>';
 	print '</pre>';
 
 	print '</div>';
@@ -581,7 +585,7 @@ $this->load->view (
 
 </div> <!-- code_diff_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- code_diff_content -->
 

@@ -268,7 +268,7 @@ $this->load->view (
 
 <div class="mainarea" id="code_edit_mainarea">
 
-<div class="title-band" id="code_edit_title_band">
+<div class="codepot-title-band" id="code_edit_title_band">
 	<div class="title">
 	<?php
 		print anchor (
@@ -310,7 +310,7 @@ $this->load->view (
 	<div style="clear: both;"></div>
 </div>
 
-<div  id="code_edit_result" class="result">
+<div  id="code_edit_result" class="codepot-relative-container-view">
 
 	<?php 
 	/*
@@ -368,7 +368,7 @@ $this->load->view (
 
 </div> <!-- code_edit_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!--  code_edit_content -->
 

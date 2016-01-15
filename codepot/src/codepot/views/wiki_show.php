@@ -223,7 +223,7 @@ $this->load->view (
 
 <div class="mainarea" id="wiki_show_mainarea">
 
-<div class="title-band" id="wiki_show_title_band">
+<div class="codepot-title-band" id="wiki_show_title_band">
 	<div class="title"><?php print htmlspecialchars($wiki->name)?></div>
 
 	<div class="actions">
@@ -266,20 +266,20 @@ $this->load->view (
 	</div>
 </div>
 
-<div id="wiki_show_result" class="result">
-	<?php 
+<div id="wiki_show_result" class="codepot-relative-container-view">
+	<?php
+	print '<div id="wiki_show_wiki" class="codepot-styled-text-view">'; 
 	if ($is_html)
 	{
 		print $wiki->text;
 	}
 	else
 	{
-		print '<div id="wiki_show_wiki">';
 		print '<pre id="wiki_show_wiki_text" style="visibility: hidden">';
 		print htmlspecialchars($wiki->text);
 		print '</pre>';
-		print '</div>';
 	}
+	print '</div>';
 	?>
 </div> <!-- wiki_show_result -->
 
@@ -295,7 +295,7 @@ $this->load->view (
 
 </div> <!-- wiki_show_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!--  wiki_show_content -->
 

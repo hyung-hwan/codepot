@@ -131,7 +131,7 @@ $this->load->view (
 			print form_textarea ($xdata);
 		?>
 	</div>
-	<div id='project_edit_mainarea_description_preview' class='form_input_preview'></div>
+	<div id='project_edit_mainarea_description_preview' class='codepot-styled-text-preview'></div>
 
 	<div class='form_input_field'>
 		<?php print form_label($this->lang->line('Commitable').': ', 'project_commitable')?>
@@ -177,7 +177,7 @@ $this->load->view (
 
 </div> <!-- project_edit_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- project_edit_content --> 
 

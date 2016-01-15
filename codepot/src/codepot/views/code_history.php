@@ -51,7 +51,7 @@ $this->load->view (
 
 <div class="mainarea" id="code_history_mainarea">
 
-<div class="title-band" id="code_history_title_band">
+<div class="codepot-title-band" id="code_history_title_band">
 
 	<div class="title">
 	<?php
@@ -105,9 +105,9 @@ $this->load->view (
 </div> <!-- code_history_graph -->
 
 
-<div id="code_history_result" class="result">
-	<table id="code_history_result_table" class="full-width-result-table">
-	<tr class='full-width-result-table-header'>
+<div id="code_history_result" class="codepot-relative-container-view">
+	<table id="code_history_result_table" class="codepot-full-width-table codepot-spacious-table">
+	<tr class='codepot-full-width-table-header'>
 		<th><?php print $this->lang->line('Revision')?></th>
 		<th><?php print $this->lang->line('Committer')?></th>
 		<th><?php print $this->lang->line('Date')?></th>
@@ -147,13 +147,13 @@ $this->load->view (
 			if (array_key_exists('author', $h)) print htmlspecialchars($h['author']);
 			print '</td>';
 
-			print '<td class="commit-date-td"><code>';
+			print '<td class="commit-date-td"><tt>';
 			print strftime('%Y-%m-%d', strtotime($h['date']));
-			print '</code></td>';
+			print '</tt></td>';
 
 			print '<td class="commit-message-td">';
 			print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", htmlspecialchars($h['msg']), "class='commit-message'");
-			//print '<pre class="pre-wrapped">';
+			//print '<pre>';
 			//print htmlspecialchars($h['msg']);
 			//print '</pre>';
 			print '</td>';
@@ -206,7 +206,7 @@ $this->load->view (
 
 </div> <!-- code_history_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!--  code_history_content -->
 

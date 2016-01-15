@@ -309,7 +309,7 @@ $this->load->view (
 
 <div class="mainarea" id="issue_home_mainarea">
 
-<div class="title-band" id="issue_home_title_band">
+<div class="codepot-title-band" id="issue_home_title_band">
 	<div class="title"><?php print $this->lang->line('Issues')?></div>
 
 	<div class="actions">
@@ -322,7 +322,7 @@ $this->load->view (
 	<div style='clear: both;'></div>
 </div>
 
-<div id="issue_home_result" class="result">
+<div id="issue_home_result" class="codepot-relative-container-view">
 <?php
 if (empty($issues))
 {
@@ -330,7 +330,7 @@ if (empty($issues))
 }
 else
 {
-	print '<table id="issue_home_result_table" class="full-width-result-table">';
+	print '<table id="issue_home_result_table" class="codepot-full-width-table codepot-spacious-table">';
 	print '<tr class="heading">';
 	print '<th class="id">' . $this->lang->line('ID') . '</th>';
 	print '<th class="type">' . $this->lang->line('Type') . '</th>';
@@ -418,7 +418,7 @@ else
 			<table id='issue_home_new_file_table'></table>
 			</div>
 		</div>
-		<div id='issue_home_new_description_preview' class='form_input_preview'>
+		<div id='issue_home_new_description_preview' class='codepot-styled-text-preview'>
 		</div>
 	</div>
 </div>
@@ -482,7 +482,7 @@ else
 
 </div> <!-- issue_home_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- issue_home_content -->
 

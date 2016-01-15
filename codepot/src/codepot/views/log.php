@@ -122,7 +122,7 @@ $this->load->view (
 
 <div class="mainarea" id="log_mainarea">
 
-<div class="title-band" id="log_title_band">
+<div class="codepot-title-band" id="log_title_band">
 
 	<div class="title">
 	<?php print  anchor ("site/log", $this->lang->line ('Change log')) ?>
@@ -150,9 +150,9 @@ $this->load->view (
 
 
 
-<div id="log_mainarea_result" class="result">
+<div id="log_mainarea_result" class="codepot-relative-container-view">
 
-<table id="log_mainarea_result_table" class="full-width-result-table">
+<table id="log_mainarea_result_table" class="codepot-full-width-table codepot-spacious-table">
 <?php 
 	$curdate = '';
 	$xdot = $this->converter->AsciiToHex ('.');
@@ -229,9 +229,9 @@ $this->load->view (
 
 			if ($log['action'] != 'revpropchange')
 			{
-				print '<pre class="pre-wrapped message">';
+				print '<div class="codepot-plain-text-view"><pre>';
 				print htmlspecialchars ($code['message']);
-				print '</pre>';
+				print '</pre></div>';
 			}
 		}
 		else
@@ -296,7 +296,7 @@ $this->load->view (
 
 </div> <!-- log_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- log_content -->
 

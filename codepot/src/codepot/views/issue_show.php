@@ -713,7 +713,7 @@ $this->load->view (
 
 <div class="mainarea" id="issue_show_mainarea">
 
-<div class="title-band" id="issue_show_title_band">
+<div class="codepot-title-band" id="issue_show_title_band">
 	<div class="title">
 		<?php print $this->lang->line('Issue')?> <?php print htmlspecialchars($issue->id)?>: 
 		<?php print htmlspecialchars($issue->summary)?>
@@ -780,9 +780,9 @@ $this->load->view (
 	</div>
 </div>
 
-<div id="issue_show_result" class="result">
+<div id="issue_show_result" class="codepot-relative-container-view">
 
-	<div id="issue_show_description">
+	<div id="issue_show_description" class="codepot-styled-text-view">
 	<pre id="issue_show_description_pre" style="visibility: hidden"><?php print htmlspecialchars($issue->description); ?></pre>
 	</div> <!-- issue_show_description -->
 
@@ -816,16 +816,8 @@ $this->load->view (
 		<?php endif; ?>
 	</div>
 </div>
-
-<div id="issue_show_changes">
+<div id="issue_show_changes_strip" class="codepot-infostrip">
 	<?php
-	$commentno = 0;
-
-	$msgfmt_changed_from_to = $this->lang->line ('ISSUE_MSG_CHANGED_X_FROM_Y_TO_Z');
-	$msgfmt_changed_to = $this->lang->line ('ISSUE_MSG_CHANGED_X_TO_Z');
-	$count = count($issue->changes);
-
-	print '<div class="infostrip">';
 	print '<span class="title">';
 	print $this->lang->line('Change log');
 	print '</span>';
@@ -840,16 +832,25 @@ $this->load->view (
 	print '<a id="issue_show_undo_change" href="#">';
 	print $this->lang->line('Undo');
 	print '</a>';
-	print '</div>';
+	?>
+</div>
 
-	print '<table id="issue_show_changes_table" class="full-width-result-table">';
+<div id="issue_show_changes">
+	<?php
+	$commentno = 0;
+
+	$msgfmt_changed_from_to = $this->lang->line ('ISSUE_MSG_CHANGED_X_FROM_Y_TO_Z');
+	$msgfmt_changed_to = $this->lang->line ('ISSUE_MSG_CHANGED_X_TO_Z');
+	$count = count($issue->changes);
+
+	print '<table id="issue_show_changes_table" class="codepot-full-width-table">';
 	while ($count > 1)
 	{
 		$new = $issue->changes[--$count];
 		$old = $issue->changes[$count-1];
 
 		print '<tr>';
-		
+
 		print '<td class="date">'; 
 		print codepot_dbdatetodispdate($new->updatedon);
 		print '</td>';
@@ -861,7 +862,7 @@ $this->load->view (
 		print '<td class="details">';
 		if ($new->comment != "")
 		{
-			print "<div id='issue_show_changes_comment_{$commentno}' class='issue_changes_comment'>";
+			print "<div id='issue_show_changes_comment_{$commentno}' class='codepot-styled-text-view'>";
 			print "<pre id='issue_show_changes_comment_pre_{$commentno}'>";
 			print htmlspecialchars($new->comment);
 			print '</pre>';
@@ -971,7 +972,7 @@ $this->load->view (
 		<div id='issue_show_edit_description_input'>
 			<textarea type='textarea' id='issue_show_edit_description' name='issue_show_edit_description' rows=24 cols=100 style='width:100%;'><?php print htmlspecialchars($issue->description); ?></textarea>
 		</div>
-		<div id='issue_show_edit_description_preview' class='form_input_preview'>
+		<div id='issue_show_edit_description_preview' class='codepot-styled-text-preview'>
 		</div>
 	</div>
 </div>
@@ -1085,7 +1086,7 @@ $this->load->view (
 			?>
 		</div>
 
-		<div id='issue_change_comment_preview' class='form_input_preview'></div>
+		<div id='issue_change_comment_preview' class='codepot-styled-text-preview'></div>
 	<?php print form_close()?>
 </div> <!-- issue_show_change_form -->
 
@@ -1098,7 +1099,7 @@ $this->load->view (
 
 </div> <!-- issue_show_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!--  issue_show_content -->
 

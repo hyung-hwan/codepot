@@ -91,7 +91,7 @@ $this->load->view (
 
 </div> <!-- user_settings_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- user_settings_content -->
 

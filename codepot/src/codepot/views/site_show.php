@@ -25,8 +25,8 @@
 function render_wiki()
 {
 	creole_render_wiki (
-		"site_show_mainarea_wiki_text",
-		"site_show_mainarea_wiki",
+		"site_show_result_wiki_text",
+		"site_show_result_wiki",
 		"<?php print site_url()?>/site/wiki/",
 		"<?php print site_url()?>/site/image/"
 	);
@@ -86,17 +86,19 @@ $this->load->view (
 <?php print htmlspecialchars($site->name)?> (<?php print htmlspecialchars($site->id)?>)
 </div>
 
-<div id="site_show_mainarea_wiki">
-<pre id="site_show_mainarea_wiki_text" style="visibility: hidden">
-<?php print htmlspecialchars($site->text); ?>
-</pre>
-</div> <!-- site_show_mainarea_text -->
+<div id="site_show_result" class="codepot-relative-container-view">
+	<div id="site_show_result_wiki" class="codepot-styled-text-view">
+	<pre id="site_show_result_wiki_text" style="visibility: hidden">
+	<?php print htmlspecialchars($site->text); ?>
+	</pre>
+	</div> <!-- site_show_result_wiki -->
+</div>
 
 <!----------------------------------------------------------->
 
 </div> <!-- site_show_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- site_show_content -->
 

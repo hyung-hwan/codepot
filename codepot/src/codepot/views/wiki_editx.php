@@ -445,7 +445,7 @@ $this->load->view (
 
 <div class="mainarea" id="wiki_edit_mainarea">
 
-<div class="title-band" id="wiki_edit_title_band">
+<div class="codepot-title-band" id="wiki_edit_title_band">
 	<div class="title"><input type="text" name="wiki_name" value="<?php print addslashes($wiki->name); ?>" maxlength="80" size="40" id="wiki_edit_name" placeholder="<?php print $this->lang->line('Name'); ?>" /></div>
 
 	<div class="actions">
@@ -495,8 +495,8 @@ $this->load->view (
 <div id="wiki_edit_toolbar">
 </div>
 
-<div id="wiki_edit_result" class="result">
-	<div id='wiki_edit_text_editor'></div>
+<div id="wiki_edit_result" class="codepot-relative-container-view">
+	<div id='wiki_edit_text_editor' class="codepot-styled-text-view"></div>
 </div> <!-- wiki_edit_result -->
 
 
@@ -504,7 +504,7 @@ $this->load->view (
 
 </div> <!-- wiki_edit_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- content -->
 

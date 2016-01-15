@@ -461,7 +461,7 @@ $this->load->view (
 <!-- /////////////////////////////////////////////////////////////////////// -->
 
 <!--
-<div class="sidebar" id="graph_main_sidebar">
+<div class="codepot-sidebar" id="graph_main_sidebar">
 <div class="collapsible-box">
 <div class="collapsible-box-header">
 </div>
@@ -480,7 +480,7 @@ $this->load->view (
 <div class="mainarea" id="graph_main_mainarea">
 
 
-<div class="title-band" id="graph_main_title_band">
+<div class="codepot-title-band" id="graph_main_title_band">
 	<div class="title"><?php print htmlspecialchars($project->name);?></div>
 
 	<div class="actions">
@@ -507,7 +507,7 @@ $this->load->view (
 
 </div> <!-- graph_main_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!--  graph_main_content -->
 

@@ -117,7 +117,7 @@ $num_activities = 0;
 
 </div> <!-- user_home_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- user_home_content -->
 

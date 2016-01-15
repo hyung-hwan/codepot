@@ -255,7 +255,7 @@ cloc_command_path =  "@CFGDIR@/cloc.pl"
 ; The first file found is shown. You can specify multiple file name 
 ; separated by a comma.
 ;------------------------------------------------------------------------------
-code_folder_readme = "README.wiki,README.txt,README.wc,README.md,README"
+code_folder_readme = "README.md,README.wc,README.txt,README"
 
 ;------------------------------------------------------------------------------
 ; Email address to use when sending notification emails

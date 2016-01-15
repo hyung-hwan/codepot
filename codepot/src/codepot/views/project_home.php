@@ -29,8 +29,8 @@
 function render_wiki() 
 {
 	creole_render_wiki (
-		"project_home_mainarea_wiki_text", 
-		"project_home_mainarea_wiki", 
+		"project_home_result_wiki_text", 
+		"project_home_result_wiki", 
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
 		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
 	);
@@ -101,7 +101,7 @@ $this->load->view (
 ?>
 
 <!-- /////////////////////////////////////////////////////////////////////// -->
-<div class="sidebar" id="project_home_sidebar">
+<div class="codepot-sidebar" id="project_home_sidebar">
 
 
 <div id="project_home_sidebar_info_box" class="collapsible-box">
@@ -232,7 +232,7 @@ foreach ($urls as $url)
 
 				if ($log['action'] != 'revpropchange')
 				{
-					print '<pre class="pre-wrapped message">';
+					print '<pre class="message">';
 					$sm = strtok (trim ($x['message']), "\r\n");
 					print htmlspecialchars ($sm);
 					print '</pre>';
@@ -315,16 +315,16 @@ foreach ($urls as $url)
 <?php print htmlspecialchars($project->name)?>
 </div>
 
-<div id="project_home_result" class="result">
-	<div id="project_home_mainarea_wiki">
-		<pre id="project_home_mainarea_wiki_text" style="visibility: hidden"><?php print htmlspecialchars($project->description); ?></pre>
-	</div> <!-- project_home_mainarea_wiki -->
+<div id="project_home_result" class="codepot-static-container-view">
+	<div id="project_home_result_wiki" class="codepot-styled-text-view">
+		<pre id="project_home_result_wiki_text" style="visibility: hidden"><?php print htmlspecialchars($project->description); ?></pre>
+	</div> <!-- project_home_result_wiki -->
 </div>
 
 </div> <!-- project_home_mainarea -->
 
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!--  project_home_content -->
 

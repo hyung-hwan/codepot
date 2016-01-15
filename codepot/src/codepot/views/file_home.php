@@ -259,7 +259,7 @@ $this->load->view (
 
 <div class="mainarea" id="file_home_mainarea">
 
-<div class="title-band" id="file_home_title_band">
+<div class="codepot-title-band" id="file_home_title_band">
 	<div class="title"><?php print $this->lang->line('Files')?></div>
 
 	<div class="actions">
@@ -277,7 +277,7 @@ $this->load->view (
 	<div style='clear: both'></div>
 </div>
 
-<div id="file_home_result" class="result">
+<div id="file_home_result" class="codepot-relative-container-view">
 	<?php
 	if (empty($files))
 	{
@@ -325,7 +325,7 @@ $this->load->view (
 
 		usort ($files, 'comp_files');
 
-		print '<table id="file_home_result_table" class="fit-width-result-table">';
+		print '<table id="file_home_result_table" class="codepot-fit-width-table codepot-spacious-table">';
 		print '<tr class="heading">';
 		print '<th>' . $this->lang->line('Tag') . '</th>';
 		print '<th>' . $this->lang->line('Name') . '</th>';
@@ -427,7 +427,7 @@ $this->load->view (
 		<div id='file_home_new_description_input'>
 			<textarea type='textarea' id='file_home_new_description' name='file_home_new_description' rows=10 cols=80 style='width:100%;'></textarea>
 		</div>
-		<div id='file_home_new_description_preview' class='form_input_preview'>
+		<div id='file_home_new_description_preview' class='codepot-styled-text-preview'>
 		</div>
 	</div>
 </div>
@@ -438,7 +438,7 @@ $this->load->view (
 
 </div> <!-- file_home_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- file_home_content -->
 
