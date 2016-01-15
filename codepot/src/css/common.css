@@ -315,7 +315,7 @@ pre, code, tt {
 	padding: 0.5em 0.5em 0.5em 0.5em;
 	padding-bottom: 0.3em;
 	vertical-align: middle;
-	font-size: 1em;
+	/*font-size: 1em;*/
 	/*border: 1px solid #CCDDEE;*/
 }
 
@@ -892,7 +892,7 @@ pre.codepot-line-numbered span.codepot-line-number-block {
 	padding: 0.2em;
 	line-height: 1.2em;
 
-	min-width: 5em;
+	min-width: 4em;
 }
 
 pre.codepot-line-numbered span.codepot-line-number-block span {
