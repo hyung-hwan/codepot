@@ -13,6 +13,7 @@ body {
 }
 
 textarea {
+	font-size: inherit;
 	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
 
 	tab-size: 5;
