@@ -2,18 +2,6 @@
 /*----------------------------------------------- 
  * project source file view  & blame view
  *-----------------------------------------------*/
-#code_folder_result,
-#code_file_result,
-#code_blame_result,
-#code_revision_result,
-#code_history_result,
-#code_diff_result,
-#code_search_result {
-	position: relative;
-	overflow: auto;
-	margin: 0.2em 0 0.2em 0;
-}
-
 #code_file_result_code,
 #code_blame_result_code_container {
 	border: none;
@@ -174,39 +162,22 @@
 	white-space: normal;
 	line-height: 1.2em;
 	background-color: #FAFAFA;
+
 	border: none;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
+
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
-}
-
-#code_folder_readme h1 {
-	border-bottom: 1px solid #DDD;
-	font-weight: bold;
-	line-height: 1.4em;
-}
-
-#code_folder_readme pre {
-	white-space: pre-wrap !important;
-	word-wrap: break-word !important;
-	background-color: #EEEEEE;
-	border: 1px solid #DFDFDF;
-}
-#code_folder_readme pre code {
-	white-space: pre-wrap !important;
-	word-wrap: break-word !important;
-	margin: 0 !important;
-	padding: 0 !important;
 }
 
 /*----------------------------------------------- 
  * project source edit view 
  *-----------------------------------------------*/
 #code_edit_result_code {
-	font-family: consolas, monaco, "Andale Mono", monospace;
+	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
 	overflow: auto;
 	border: none;
 	white-space: pre;
@@ -219,10 +190,6 @@
 	line-height: 1.2em;
 
 	position: absolute !important;
-	/*top: 300;
-	bottom: 200;
-	left: 100;
-	right: 100;*/
 }
 
 /*----------------------------------------------- 
@@ -256,7 +223,7 @@
 	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
 	white-space: -pre-wrap; /* Opera 4-6 */    
 	white-space: -o-pre-wrap; /* Opera 7 */    
-	font-family: consolas, monaco, "Andale Mono", monospace;
+	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
 }
 
 /*----------------------------------------------- 
@@ -266,13 +233,14 @@
 	line-height: 1.2em;
 	padding: 0.2em 0.2em 0.2em 0.2em;
 }
-
+/*
 #code_revision_result_files_table,
 #code_revision_result_properties_table {
 	padding: 0.5em 0 0.5em 0;
 	background: inherit;
 	line-height: 1.5em;
 }
+*/
 
 #code_revision_result_files_table td,
 #code_revision_result_properties_table td {
@@ -362,17 +330,9 @@
 	box-sizing: border-box;
 }
 
-#code_diff_old_code,
-#code_diff_new_code {
-	border: none;
-	float; left;
-	margin: 0;
-	padding: 0;
-	line-height: 1.2em;
+#code_diff_full_code_view {
 	width: 100%;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
+	overflow: hidden;
 }
 
 #code_diff_old_code_view,

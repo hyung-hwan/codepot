@@ -68,7 +68,7 @@ foreach ($sites as $site)
 
 </div> <!-- site_catalog_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- site_catalog_content -->
 

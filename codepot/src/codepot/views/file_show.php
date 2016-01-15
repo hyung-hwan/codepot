@@ -596,7 +596,7 @@ $this->load->view (
 
 <div class="mainarea" id="file_show_mainarea">
 
-<div class="title-band" id="file_show_title_band">
+<div class="codepot-title-band" id="file_show_title_band">
 	<div class="title"><?php print htmlspecialchars($file->name)?></div>
 
 	<div class="actions">
@@ -655,7 +655,7 @@ $this->load->view (
 	</div>
 </div>
 
-<div id="file_show_result" class="result">
+<div id="file_show_result" class="codepot-relative-container-view">
 	<div id="file_show_wiki">
 		<pre id="file_show_wiki_text" style="visibility: hidden"><?php print htmlspecialchars($file->description); ?></pre>
 	</div>
@@ -678,7 +678,7 @@ $this->load->view (
 		<div id='file_show_edit_description_input'>
 			<textarea type='textarea' id='file_show_edit_description' name='file_show_edit_description' rows=24 cols=100 style='width:100%;'><?php print htmlspecialchars($file->description); ?></textarea>
 		</div>
-		<div id='file_show_edit_description_preview' class='form_input_preview'>
+		<div id='file_show_edit_description_preview' class='codepot-styled-text-preview'>
 		</div>
 	</div>
 </div>
@@ -719,7 +719,7 @@ $this->load->view (
 
 </div> <!-- file_show_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!--  file_show_content -->
 

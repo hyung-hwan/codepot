@@ -2,26 +2,6 @@
  * wiki
  *---------------------------------------------*/
 
-#wiki_home_result,
-#wiki_show_result {
-	position: relative;
-	overflow: auto;
-	margin: 0.2em 0 0.2em 0;
-	width: 100%;
-}
-
-#wiki_show_result pre {
-	white-space: pre-wrap !important;
-}
-
-#wiki_show_result table {
-	border-collapse: collapse;
-}
-
-#wiki_show_result table td {
-	border: 1px solid #B0B0B0;
-}
-
 #wiki_edit_result {
 	position: relative;
 	overflow: visible !important;
@@ -148,7 +128,6 @@
 	padding: 0.2em 0.2em 0.2em 0.2em !important;
 	width: 100% !important;
 	border: none !important;
-	background-color: #F9F9F9 !important;
 	overflow-y: auto !important;
 	overflow-x: visible !important;
 	outline: none !important;

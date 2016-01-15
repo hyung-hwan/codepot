@@ -95,12 +95,6 @@ li.issue-owner {
 /*---------------------------------------------
  * issue home
  *---------------------------------------------*/
-#issue_home_result,
-#issue_show_result {
-	position: relative;
-	overflow: auto;
-	margin: 0.2em 0 0.2em 0;
-}
 
 #issue_home_result_table tr {
 	vertical-align: text-top;
@@ -215,19 +209,27 @@ li.issue-owner {
 	padding-top: 0.5em;
 }
 
-#issue_show_changes {
-	margin-top: 1em;
-	padding-top: 0.5em;
-	padding-bottom: 0.5em;
-	overflow: auto;
-}
-
-#issue_show_changes .infostrip {
+#issue_show_changes_strip .infostrip {
 	margin-bottom: 0.5em;
 }
 
-#issue_show_changes .infostrip .title {
+#issue_show_changes_strip .title {
 	float: left;
+}
+
+#issue_show_changes {
+	/*
+	margin-top: 1em;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	*/
+	overflow: auto;
+}
+
+#issue_show_changes_table td {
+	padding: 0.3em 0.3em 0.3em 0.3em;
+	white-space: normal;
+	word-wrap: break-word;
 }
 
 #issue_show_changes_table td.date {
@@ -247,49 +249,13 @@ li.issue-owner {
 	background-color: #F1F1FF;
 }
 
+#issue_show_changes_table td.details .list ul {
+	padding: 0;
+	margin: 0.2em 0.5em 0.5em 1em;
+}
+
 #issue_show_changes_table td.details .list ul li {
-	padding-bottom: 0.3em;
-}
-
-#issue_show_changes_table .issue_changes_comment .prettyprint {
-	/* special pre-wrap rule to make the pretty-printed text to wrap 
-	 * in the issue comment listing. i didn't manage to get oveflow: auto 
-	 * or overflow: scroll to make make a scroll bar show up. */
-
-	white-space: -moz-pre-wrap;
-	white-space: -o-pre-wrap;
-	white-space: pre-wrap;
-}
-
-#issue_change_form {
-	font-size: 1em;
-}
-
-/* all these elements inside the form requires a lot of refinement.
- * many of these are duplicates of elemenents in common.css */
-#issue_change_form .form_input_preview {
-	background-color: #FFFFF0;
-	font-size: 1em;
-	padding: 0.2em 0.2em 0.2em 0.2em;
-	margin-bottom: 0.5em;
-}
-
-#issue_change_form .form_input_preview table {
-	font-size: 1em;
-}
-
-#issue_change_form .form_input_preview pre {
-	background-color: #F8F8FA;
-	/*padding: 0.2em 0.2em 0.2em 0.2em;*/
-
-	background-color: #F8F8FA;
-	border: none;
-	line-height: 1.2em;
-	padding: 0.3em;
-
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
+	padding: 0.1em;
 }
 
 #issue_change_comment_preview_button.ui-button {

@@ -57,7 +57,7 @@ $this->load->view (
 <?php print  htmlspecialchars($message) ?>
 </div>
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!-- project_error_content -->
 

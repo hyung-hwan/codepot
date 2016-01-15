@@ -74,7 +74,7 @@ $this->load->view (
 
 </div> <!-- mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div>  <!-- wiki_delete_content -->
 

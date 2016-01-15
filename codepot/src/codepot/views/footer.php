@@ -1,4 +1,4 @@
-<div class="footer" id="codepot_footer">
+<div class="codepot-footer" id="codepot_footer">
 
 <?php if (CODEPOT_FOOTER == ''): ?>
 	Codepot <?php print CODEPOT_VERSION?> by Hyung-Hwan Chung 

@@ -202,10 +202,10 @@ function showdown_render_wiki (inputid, outputid)
 {
 	var sd = new showdown.Converter ({
 		omitExtraWLInCodeBlocks: false,
-		noHeaderId: false,
+		noHeaderId: true,
 		prefixHeaderId: false,
 		parseImgDimensions: true,
-		headerLevelStarT: 1,
+		headerLevelStart: 1,
 		simplifiedAutoLink: false,
 		literalMidWordUnderscores: false,
 		strikethrough: true,
@@ -248,6 +248,7 @@ function render_readme()
 	elseif (strlen($readme_text) > 0 && substr_compare($readme_file, '.md', -3) === 0):
 	?>
 	showdown_render_wiki ("code_folder_readme_text", "code_folder_readme");
+	prettyPrint();
 	<?php endif; ?>
 }
 
@@ -488,7 +489,7 @@ $(function () {
 		}
 	);
 
-	$('#code_folder_mainarea_rename_form_div').dialog (
+	$('#code_folder_mainarea_rename_form').dialog (
 		{
 			title: '<?php print $this->lang->line('rename');?>',
 			resizable: true,
@@ -525,7 +526,7 @@ $(function () {
 						}
 						form_data.append ('code_rename_file_count', xi);
 
-						$('#code_folder_mainarea_rename_form_div').dialog('disable');
+						$('#code_folder_mainarea_rename_form').dialog('disable');
 						$.ajax({
 							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/code/xhr_rename/{$project->id}/{$hex_headpath}"; ?>'),
 							type: 'POST',
@@ -537,8 +538,8 @@ $(function () {
 
 							success: function (data, textStatus, jqXHR) { 
 								rename_in_progress = false;
-								$('#code_folder_mainarea_rename_form_div').dialog('enable');
-								$('#code_folder_mainarea_rename_form_div').dialog('close');
+								$('#code_folder_mainarea_rename_form').dialog('enable');
+								$('#code_folder_mainarea_rename_form').dialog('close');
 								if (data == 'ok') 
 								{
 									// refresh the page to the head revision
@@ -552,8 +553,8 @@ $(function () {
 
 							error: function (jqXHR, textStatus, errorThrown) { 
 								rename_in_progress = false;
-								$('#code_folder_mainarea_rename_form_div').dialog('enable');
-								$('#code_folder_mainarea_rename_form_div').dialog('close');
+								$('#code_folder_mainarea_rename_form').dialog('enable');
+								$('#code_folder_mainarea_rename_form').dialog('close');
 
 								var errmsg = '';
 								if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
@@ -571,7 +572,7 @@ $(function () {
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () {
 					if (rename_in_progress) return;
-					$('#code_folder_mainarea_rename_form_div').dialog('close');
+					$('#code_folder_mainarea_rename_form').dialog('close');
 				}
 
 			},
@@ -637,10 +638,10 @@ $(function () {
 			}
 		}
 
-		$('#code_folder_mainarea_rename_form_div').dialog ('option', 'title', 
+		$('#code_folder_mainarea_rename_form').dialog ('option', 'title', 
 			codepot_sprintf ("<?php print addslashes($this->lang->line('CODE_FMT_RENAME_X_SELECTED_FILES')) ?>", xi)
 		);
-		$('#code_folder_mainarea_rename_form_div').dialog('open');
+		$('#code_folder_mainarea_rename_form').dialog('open');
 
 		return false; // prevent the default behavior
 	});
@@ -794,7 +795,7 @@ $this->load->view (
 
 <div class="mainarea" id="code_folder_mainarea">
 
-<div class="title-band" id="code_folder_title_band">
+<div class="codepot-title-band" id="code_folder_title_band">
 
 	<div class="title">
 	<?php
@@ -907,7 +908,9 @@ $this->load->view (
 	</div>
 
 	<div id='code_folder_metadata_body'>
-		<div><pre class='pre-wrapped'><?php print htmlspecialchars ($file['logmsg']); ?></pre></div>
+		<div class='codepot-plain-text-view'>
+			<pre><?php print htmlspecialchars ($file['logmsg']); ?></pre>
+		</div>
 
 		<?php
 		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
@@ -1023,7 +1026,7 @@ $this->load->view (
 	?>
 </div>
 
-<div id="code_folder_result" class="result" >
+<div id="code_folder_result" class="codepot-relative-container-view" >
 	<?php
 	function comp_files ($a, $b)
 	{
@@ -1043,11 +1046,11 @@ $this->load->view (
 	{
 		usort ($file['content'], 'comp_files');
 
-		print '<table id="code_folder_result_table" class="fit-width-result-table">';
+		print '<table id="code_folder_result_table" class="codepot-fit-width-table codepot-spacious-table">';
 		print '<tr class="heading">';
 		if (isset($login['id']) && $login['id'] != '')
 		{
-			print '<th align="middle"><input type="checkbox" id="code_folder_result_table_select_all", "select_all" /><label for="code_folder_result_table_select_all"><i class="fa fa-check"></i></label></th>';
+			print '<th align="middle"><input type="checkbox" id="code_folder_result_table_select_all" /><label for="code_folder_result_table_select_all"><i class="fa fa-check"></i></label></th>';
 		}
 		print '<th>' . $this->lang->line('Name') . '</th>';
 		print '<th>' . $this->lang->line('Revision') . '</th>';
@@ -1091,9 +1094,9 @@ $this->load->view (
 				print '<td>';
 				print htmlspecialchars($f['last_author']);
 				print '</td>';
-				print '<td><code>';
+				print '<td><tt>';
 				print strftime('%Y-%m-%d', $f['time_t']);
-				print '</code></td>';
+				print '</tt></td>';
 				print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';
@@ -1127,9 +1130,9 @@ $this->load->view (
 				print '<td>';
 				print htmlspecialchars($f['last_author']);
 				print '</td>';
-				print '<td><code>';
+				print '<td><tt>';
 				print strftime('%Y-%m-%d', $f['time_t']);
-				print '</code></td>';
+				print '</tt></td>';
 
 				print '<td>';
 				print anchor ("code/blame/{$project->id}/{$hexpath}{$revreq}", $blame_anchor_text);
@@ -1151,11 +1154,8 @@ $this->load->view (
 <?php
 if (strlen($readme_text) > 0)
 {
-	print '<div id="code_folder_readme">';
-	// the pre division is gone when rendered as a wiki text.
-	// so is the pre-wrapped class. so let me put the class 
-	// regardless of the text type.
-	print '<pre id="code_folder_readme_text" class="pre-wrapped">';
+	print '<div id="code_folder_readme" class="codepot-styled-text-view">';
+	print '<pre id="code_folder_readme_text">';
 	print htmlspecialchars($readme_text);
 	print '</pre>';
 	print '</div>';
@@ -1192,7 +1192,7 @@ if (strlen($readme_text) > 0)
 	<div><textarea type='textarea' id='code_folder_mainarea_delete_message' name='code_folder_delete_message' style='width:100%;' ></textarea></div>
 </div>
 
-<div id="code_folder_mainarea_rename_form_div">
+<div id="code_folder_mainarea_rename_form">
 	<div><?php print $this->lang->line('Message'); ?>:</div>
 	<div><textarea type='textarea' id='code_folder_mainarea_rename_message' name='code_folder_rename_message' style='width:100%;' ></textarea></div>
 	<div id="code_folder_mainarea_rename_file_div">
@@ -1206,7 +1206,7 @@ if (strlen($readme_text) > 0)
 
 </div> <!-- code_folder_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!--  code_folder_content -->
 

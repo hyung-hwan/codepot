@@ -141,7 +141,7 @@ $this->load->view (
 
 <div class="mainarea" id="code_blame_mainarea">
 
-<div class="title-band" id="code_blame_title_band">
+<div class="codepot-title-band" id="code_blame_title_band">
 
 	<div class="title">
 	<?php
@@ -256,7 +256,9 @@ $this->load->view (
 	</div>
 
 	<div id='code_blame_metadata_body'>
-		<div><pre class='pre-wrapped'><?php print htmlspecialchars ($file['logmsg']); ?></pre></div>
+		<div class='codepot-plain-text-view'>
+			<pre><?php print htmlspecialchars ($file['logmsg']); ?></pre>
+		</div>
 
 		<?php
 		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
@@ -279,7 +281,7 @@ $this->load->view (
 	</div>
 </div>
 
-<div class="result" id="code_blame_result">
+<div id="code_blame_result" class="codepot-relative-container-view codepot-styled-code-view" >
 
 	<?php 
 	$fileext = substr(strrchr($file['name'], '.'), 1);
@@ -294,14 +296,14 @@ $this->load->view (
 	    $login['settings']->code_hide_line_num == 'Y') $prettyprint_linenums = '';
 	?>
 
-	<pre id="code_blame_result_code_container" class="line-numbered">
 	<?php
-	// when producing line-numbered code, make sure to produce proper
+	print '<pre id="code_blame_result_code_container" class="codepot-line-numbered">';
+	// when producing codepot-line-numbered code, make sure to produce proper
 	// line terminators.
 	//
 	// the <code> </code> block requires \n after every line.
 	// while the <span></span> block to contain revision numbers and authors
-	// doesn't require \n. It is because the css file sets the line-number span
+	// doesn't require \n. It is because the css file sets the codepot-line-number span
 	// to display: block.
 	//
 	// If you have new lines between <span></span> and <code></code>, there will
@@ -311,7 +313,7 @@ $this->load->view (
 	$content = &$file['content'];
 	$len = count($content);
 
-	print '<span class="line-number-block" id="code_blame_result_code_revision">';
+	print '<span class="codepot-line-number-block" id="code_blame_result_code_revision">';
 	$rev = '';
 	for ($i = 0; $i < $len; $i++)
 	{
@@ -336,7 +338,7 @@ $this->load->view (
 	}
 	print '</span>';
 
-	print '<span class="line-number-block" id="code_blame_result_code_author">';
+	print '<span class="codepot-line-number-block" id="code_blame_result_code_author">';
 	$rev = '';
 	$author = '';
 	for ($i = 0; $i < $len; $i++)
@@ -361,7 +363,7 @@ $this->load->view (
 	}
 	print '</span>';
 
-	printf ('<code class="line-numbered-code prettyprint %s %s" id="code_blame_result_code">', $prettyprint_linenums, $prettyprint_lang);
+	printf ('<code class="codepot-line-numbered-code prettyprint %s %s" id="code_blame_result_code">', $prettyprint_linenums, $prettyprint_lang);
 
 	$charset = '';
 	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
@@ -400,10 +402,10 @@ $this->load->view (
 	}
 
 	print '</code>';
+	print '</pre>';
 	?>
-	</pre>
 
-	<div id="code_blame_mainarea_loc_info" class="infobox">
+	<div id="code_blame_mainarea_loc_info" class="codepot-infobox">
 		<div class="title">LOC</div>
 		<?php
 		/* TODO: show this if it's enabled in the user settings  */
@@ -416,7 +418,7 @@ $this->load->view (
 
 </div> <!-- code_blame_mainarea -->
 
-<div class='footer-pusher'></div> <!-- for sticky footer -->
+<div class='codepot-footer-pusher'></div> <!-- for sticky footer -->
 
 </div> <!--  code_blame_content -->
 
