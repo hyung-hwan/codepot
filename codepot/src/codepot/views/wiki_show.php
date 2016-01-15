@@ -9,6 +9,7 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
 
 <script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/showdown.js')?>"></script>
 
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
@@ -58,6 +59,37 @@ function show_alert (outputMsg, titleMsg)
 	});
 }
 
+function showdown_render_wiki (inputid, outputid)
+{
+	var sd = new showdown.Converter ({
+		omitExtraWLInCodeBlocks: false,
+		noHeaderId: true,
+		prefixHeaderId: false,
+		parseImgDimensions: true,
+		headerLevelStart: 1,
+		simplifiedAutoLink: false,
+		literalMidWordUnderscores: false,
+		strikethrough: true,
+		tables: true,
+		tablesHeaderId: false,
+		ghCodeBlocks: true,
+		tasklists: true
+	});
+
+	function decodeEntities(str)
+	{
+		return str.replace(/&amp;/g, '&').
+				replace(/&lt;/g, '<').
+				replace(/&gt;/g, '>').
+				replace(/&quot;/g, '"');
+	}
+
+	var input = document.getElementById(inputid);
+	var output = document.getElementById(outputid);
+
+	output.innerHTML = sd.makeHtml(decodeEntities(input.innerHTML));
+}
+
 function render_wiki()
 {
 	var column_count = '<?php print  $wiki->columns ?>';
@@ -75,12 +107,16 @@ function render_wiki()
 		});
 	}
 
+<?php if ($wiki->doctype == 'M'): ?>
+	showdown_render_wiki ("wiki_show_wiki_text", "wiki_show_wiki");
+<?php else: ?>
 	creole_render_wiki (
 		"wiki_show_wiki_text", 
 		"wiki_show_wiki", 
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
 		"<?php print site_url()?>/wiki/attachment/<?php print $project->id?>/<?php print $hex_wikiname?>/"
 	);
+<?php endif; ?>
 
 	prettyPrint ();
 }
