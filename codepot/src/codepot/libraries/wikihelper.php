@@ -2,6 +2,14 @@
  
 class WikiHelper
 {
+	private static $double_hash_table = array (
+		'##P' => '__PROJECT__',
+		'##W' => '__WIKI__',
+		'##I' => '__ISSUE__',
+		'##C' => '__CODE__',
+		'##F' => '__FILE__'
+	);
+
 	function WikiHelper ()
 	{
 	}
@@ -35,8 +43,33 @@ class WikiHelper
 			$link = "file/show/{$projectid}/{$file_name}";
 			return $link;
 		}
+		else if (preg_match ('/^#P(.+)$/', $name, $matches) == 1)
+		{
+			// #Pprojectid -> translate it to a project home
+			$project_name = $matches[1]; // no AsciiToHex
+			$link = "project/home/{$project_name}";
+			return $link;
+		}
+		else if (preg_match ('/^#W(.+)$/', $name, $matches) == 1)
+		{
+			// #Pprojectid -> translate it to a wiki name
+			$wiki_name = $converter->AsciiToHex ($matches[1]);
+			$link = "wiki/show/{$projectid}/{$wiki_name}";
+			return $link;
+		}
 
-		if ($this->_is_reserved ($name, TRUE))
+		$r = $this->double_hash_to_reserved($name);
+		if ($r !== FALSE) 
+		{
+			$name = $r;
+			$reserved = TRUE;
+		}
+		else 
+		{
+			$reserved = $this->_is_reserved ($name, TRUE);
+		}
+
+		if ($reserved)
 		{
 			$ex0 = $this->_trans_reserved ($name);
 
@@ -56,6 +89,8 @@ class WikiHelper
 		{
 			$ex = explode (':', $name);
 			$cnt = count($ex);
+			if ($cnt >= 1 && ($r = $this->double_hash_to_reserved($ex[0])) !== FALSE) $ex[0] = $r;
+
 			if ($cnt == 2)
 			{
 				if ($ex[0] == '__LOCALURL__')
@@ -66,14 +101,6 @@ class WikiHelper
 				{
 					$ex0 = $this->_trans_reserved ($ex[0]);
 					$ex1 = ($ex[1] == '')? $projectid: $ex[1];
-
-					//redirect ("{$ex0}/home/{$ex1}");
-
-					//$link->type = $ex0;
-					//$link->target = 'home';
-					//$link->projectid = $ex1;
-					//if ($link->projectid == NULL) return FALSE;
-					//$link->extra = NULL;
 
 					if ($ex1 == NULL) return FALSE;
 					$link = "{$ex0}/home/{$ex1}";
@@ -88,13 +115,6 @@ class WikiHelper
 					$ex0 = $this->_trans_reserved ($ex[0]);
 					$ex1 = ($ex[1] == '')? $projectid: $ex[1];
 					$ex2 = $converter->AsciiToHex ($ex[2]);
-					//redirect ("{$ex0}/show/{$ex1}/{$ex2}");
-
-					//$link->type = $ex0;
-					//$link->target = 'show';
-					//$link->projectid = $ex1;
-					//if ($link->projectid == NULL) return FALSE;
-					//$link->extra = $ex2;
 
 					if ($ex1 == NULL) return FALSE;
 					$link = "{$ex0}/show/{$ex1}/{$ex2}";
@@ -110,13 +130,9 @@ class WikiHelper
 					if ($ex[2] == 'file' || $ex[2] == 'history' || 
 					    $ex[2] == 'blame' || $ex[2] == 'diff')
 					{
+						// __CODE__|project001|file|file001.txt
+
 						$ex3 = $converter->AsciiToHex ($ex[3]);
-						//redirect ("{$ex0}/{$ex[2]}/{$ex1}/{$ex3}");
-						//$link->type = $ex0;
-						//$link->target = $ex[2];
-						//$link->projectid = $ex1;
-						//if ($link->projectid == NULL) return FALSE;
-						//$link->extra = $ex3;
 
 						if ($ex1 == NULL) return FALSE;
 						$link = "{$ex0}/{$ex[2]}/{$ex1}/{$ex3}";
@@ -136,11 +152,6 @@ class WikiHelper
 				else if ($ex[0] == '__WIKI__')
 				{
 					// __WIKI__:projectid:wikiname:attachment
-
-					//$link->type = $this->_trans_reserved ($ex[0]);
-					//$link->target = 'attachment0';
-					//$link->projectid = ($ex[1] == '')? $projectid: $ex[1];
-					//$link->extra = $converter->AsciiToHex ("{$link->projectid}:{$ex[2]}:{$ex[3]}");
 
 					$ex0 = $this->_trans_reserved ($ex[0]);
 					$ex1 = ($ex[1] == '')? $projectid: $ex[1];
@@ -175,12 +186,18 @@ class WikiHelper
 		}
 		else
 		{
-			return substr ($name, 0, 11) == '__PROJECT__' ||
-			       substr ($name, 0, 8) == '__WIKI__' ||
-			       substr ($name, 0, 8) == '__FILE__' ||
-			       substr ($name, 0, 8) == '__CODE__' ||
-			       substr ($name, 0, 9) == '__ISSUE__';
+			return substr($name, 0, 11) == '__PROJECT__' ||
+			       substr($name, 0, 8) == '__WIKI__' ||
+			       substr($name, 0, 8) == '__FILE__' ||
+			       substr($name, 0, 8) == '__CODE__' ||
+			       substr($name, 0, 9) == '__ISSUE__';
 		}
+	}
+
+	private function double_hash_to_reserved ($name)
+	{
+		if (array_key_exists ($name, self::$double_hash_table)) return self::$double_hash_table[$name];
+		return FALSE;
 	}
 } 
 ?>
