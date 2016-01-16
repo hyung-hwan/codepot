@@ -233,10 +233,13 @@ foreach ($urls as $url)
 
 				if ($log['action'] != 'revpropchange')
 				{
-					print '<pre class="message">';
+
+					print '<div class="codepot-plain-text-view">';
+					print '<pre>';
 					$sm = strtok (trim ($x['message']), "\r\n");
 					print htmlspecialchars ($sm);
 					print '</pre>';
+					print '</div>';
 				}
 				print '</td>';
 				print '</tr>';
