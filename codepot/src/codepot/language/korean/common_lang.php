@@ -5,6 +5,7 @@ $lang['All'] = '모두';
 $lang['Apply'] = '적용';
 $lang['Attachment'] = '첨부';
 $lang['Attachments'] = '첨부';
+$lang['Back'] = '뒤로';
 $lang['Blame'] = '책임전가';
 $lang['Blank'] = '공백';
 $lang['Cancel'] = '취소';
@@ -135,5 +136,6 @@ $lang['MSG_SIGNIN_FAILURE'] = '로그인할 수 없습니다';
 
 $lang['MSG_PROJECT_MEMBERSHIP_REQUIRED'] = '이 작업을 수행하려면 %s 프로젝트의 멤버가 되어야 합니다';
 $lang['MSG_FORM_INPUT_INCOMPLETE'] = '입력이 완전하지 않습니다';
+$lang['MSG_DISCARD_CHANGES?'] = '변경된 내용을 버리겠습니까?';
 
 ?>

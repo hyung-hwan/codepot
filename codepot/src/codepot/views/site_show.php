@@ -28,7 +28,8 @@ function render_wiki()
 		"site_show_result_wiki_text",
 		"site_show_result_wiki",
 		"<?php print site_url()?>/site/wiki/",
-		"<?php print site_url()?>/site/image/"
+		"<?php print site_url()?>/site/image/",
+		false
 	);
 
 	prettyPrint ();

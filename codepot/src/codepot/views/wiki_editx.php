@@ -397,7 +397,7 @@ $(function () {
 		var ed = wiki_text_editor.serialize();
 		if (wiki_original_text != ed.wiki_edit_text_editor.value) 
 		{
-			return 'Do you want to discard changes?';
+			return '<?php print $this->lang->line('MSG_DISCARD_CHANGES?'); ?>';
 		}
 		// return null;  // this line caused firefox to show the default message.
 	});
