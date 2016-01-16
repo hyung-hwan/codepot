@@ -1117,7 +1117,8 @@ function render_wiki()
 		"issue_show_description_pre", 
 		"issue_show_description", 
 		"<?php print $creole_base?>",
-		"<?php print $creole_file_base?>"
+		"<?php print $creole_file_base?>",
+		false
 	);
 
 	<?php
@@ -1128,8 +1129,7 @@ function render_wiki()
 			print "creole_render_wiki (
 				'issue_show_changes_comment_pre_{$xxx}', 
 				'issue_show_changes_comment_{$xxx}', 
-				'{$creole_base}',
-				'{$creole_file_base}');";
+				'{$creole_base}', '{$creole_file_base}', false);";
 		}
 	}
 	?>

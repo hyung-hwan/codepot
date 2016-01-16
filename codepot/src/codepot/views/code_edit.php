@@ -82,7 +82,7 @@ function set_editor_changed (changed)
 		if (changed)
 		{
 			$(window).on ("beforeunload", function () {
-				return 'Do you want to discard changes?';
+				return '<?php print $this->lang->line('MSG_DISCARD_CHANGES?'); ?>';
 			});
 		}
 		else

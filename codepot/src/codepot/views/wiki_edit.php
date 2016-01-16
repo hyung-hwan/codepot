@@ -82,8 +82,10 @@ function preview_text (input_text)
 		previewing_text = false;
 		$("#wiki_edit_text_preview").empty();
 		$("#wiki_edit_text_area").show();
-		$("#wiki_edit_text_show").hide();
+		$("#wiki_edit_text_preview").hide();
 		$("#wiki_edit_preview_button").button("option", "label", "<?php print $this->lang->line('Preview'); ?>");
+		$("#wiki_edit_save_button").button("enable");
+		$("#wiki_edit_exit_button").button("enable");
 	}
 	else
 	{
@@ -92,7 +94,9 @@ function preview_text (input_text)
 
 		$("#wiki_edit_text_preview").show();
 		$("#wiki_edit_text_area").hide();
-		$("#wiki_edit_preview_button").button("option", "label", "<?php print $this->lang->line('Edit'); ?>");
+		$("#wiki_edit_preview_button").button("option", "label", "<?php print $this->lang->line('Back'); ?>");
+		$("#wiki_edit_save_button").button("disable");
+		$("#wiki_edit_exit_button").button("disable");
 
 		if ($('#wiki_edit_doctype').val() == 'M')
 		{
@@ -403,11 +407,12 @@ $(function () {
 		var wiki_new_text = $('#wiki_edit_text_area').val();
 		if (wiki_original_text != wiki_new_text) 
 		{
-			return 'Do you want to discard changes?';
+			return '<?php print $this->lang->line('MSG_DISCARD_CHANGES?'); ?>';
 		}
 		// return null;  // this line caused firefox to show the default message.
 	});
 
+	$('#wiki_edit_text_preview').hide();
 	$(window).resize(resize_text_editor);
 	resize_text_editor ();
 });
@@ -502,7 +507,7 @@ $this->load->view (
 </div>
 
 <div id="wiki_edit_result" class="codepot-relative-container-view">
-	<div id='wiki_edit_text_preview' class='codepot-styled-text-view'></div>
+	<div id='wiki_edit_text_preview' class='codepot-styled-text-preview'></div>
 	<textarea id='wiki_edit_text_area' style='resize: none;'></textarea>
 </div> <!-- wiki_edit_result -->
 

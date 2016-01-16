@@ -558,7 +558,7 @@ Parse.Simple.Creole.prototype = new Parse.Simple.Base();
 
 Parse.Simple.Creole.prototype.constructor = Parse.Simple.Creole;
 
-function creole_render_wiki_with_input_text (input_text, outputid, linkbase, imgbase, raw = false)
+function creole_render_wiki_with_input_text (input_text, outputid, linkbase, imgbase, raw)
 {
         function decodeEntities(str)
         {
@@ -588,7 +588,7 @@ function creole_render_wiki_with_input_text (input_text, outputid, linkbase, img
         creole.parse (output, xinput);
 }
 
-function creole_render_wiki (inputid, outputid, linkbase, imgbase, raw = false)
+function creole_render_wiki (inputid, outputid, linkbase, imgbase, raw)
 {
         var input = document.getElementById(inputid);
         return creole_render_wiki_with_input_text (input.innerHTML, outputid, linkbase, imgbase, raw);

@@ -5,6 +5,7 @@ $lang['All'] = 'Semua';
 $lang['Apply'] = 'Menterapkan';
 $lang['Attachment'] = 'Attachment';
 $lang['Attachments'] = 'Attachments';
+$lang['Back'] = 'Back';
 $lang['Blame'] = 'Menyalahkan';
 $lang['Blank'] = 'Kosong';
 $lang['Cancel'] = 'Membatalkan';
@@ -132,4 +133,6 @@ $lang['MSG_SIGNIN_FAILURE'] = 'Cannot sign in';
 
 $lang['MSG_PROJECT_MEMBERSHIP_REQUIRED'] = 'You have to be a member of the %s project to perform this task';
 $lang['MSG_FORM_INPUT_INCOMPLETE'] = 'Your input is incomplete';
+$lang['MSG_DISCARD_CHANGES?'] = 'Do you want to discard chagnes?';
+
 ?>

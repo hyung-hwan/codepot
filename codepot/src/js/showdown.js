@@ -2510,7 +2510,7 @@ if (typeof module !== 'undefined' && module.exports) {
 //# sourceMappingURL=showdown.js.map
 
 
-function showdown_render_wiki_with_input_text (input_text, outputid, linkbase, imgbase, raw = false)
+function showdown_render_wiki_with_input_text (input_text, outputid, linkbase, imgbase, raw)
 {
 	var sd = new showdown.Converter ({
 		omitExtraWLInCodeBlocks: false,
@@ -2542,8 +2542,8 @@ function showdown_render_wiki_with_input_text (input_text, outputid, linkbase, i
 	output.innerHTML = sd.makeHtml(xinput);
 }
 
-function showdown_render_wiki (inputid, outputid, linkbase, imgbase, raw = false)
+function showdown_render_wiki (inputid, outputid, linkbase, imgbase, raw)
 {
-        var input = document.getElementById(inputid);
-        return showdown_render_wiki_with_input_text (input.innerHTML, outputid, linkbase, imgbase, raw);
+	var input = document.getElementById(inputid);
+	return showdown_render_wiki_with_input_text (input.innerHTML, outputid, linkbase, imgbase, raw);
 }

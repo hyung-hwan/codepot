@@ -81,14 +81,16 @@ function render_wiki()
 		"wiki_show_wiki_text",
 		"wiki_show_wiki",
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		"<?php print site_url()?>/wiki/attachment/<?php print $project->id?>/<?php print $hex_wikiname?>/"
+		"<?php print site_url()?>/wiki/attachment/<?php print $project->id?>/<?php print $hex_wikiname?>/",
+		false
 	);
 <?php else: ?>
 	creole_render_wiki (
 		"wiki_show_wiki_text", 
 		"wiki_show_wiki", 
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		"<?php print site_url()?>/wiki/attachment/<?php print $project->id?>/<?php print $hex_wikiname?>/"
+		"<?php print site_url()?>/wiki/attachment/<?php print $project->id?>/<?php print $hex_wikiname?>/",
+		false
 	);
 <?php endif; ?>
 

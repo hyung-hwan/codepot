@@ -69,7 +69,8 @@ function preview_new_review_comment (input_text)
 		input_text,
 		"code_revision_new_review_comment_preview", 
 		"<?php print $creole_base; ?>",
-		"<?php print $creole_file_base; ?>/"
+		"<?php print $creole_file_base; ?>/",
+		true
 	);
 
 	prettyPrint ();
@@ -81,7 +82,8 @@ function preview_edit_review_comment (input_text, no)
 		input_text,
 		"code_revision_edit_review_comment_preview_" + no, 
 		"<?php print $creole_base; ?>",
-		"<?php print $creole_file_base; ?>/"
+		"<?php print $creole_file_base; ?>/",
+		true
 	);
 
 	prettyPrint ();
@@ -484,7 +486,8 @@ function render_wiki()
 		"code_revision_mainarea_review_comment_text_" + (i + 1) , 
 		"code_revision_mainarea_review_comment_" + (i + 1), 
 		"<?php print $creole_base; ?>",
-		"<?php print $creole_file_base; ?>/"
+		"<?php print $creole_file_base; ?>/",
+		false
 	);
 
 	<?php
