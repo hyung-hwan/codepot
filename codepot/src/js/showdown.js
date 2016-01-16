@@ -2508,3 +2508,42 @@ if (typeof module !== 'undefined' && module.exports) {
 }).call(this);
 
 //# sourceMappingURL=showdown.js.map
+
+
+function showdown_render_wiki_with_input_text (input_text, outputid, linkbase, imgbase, raw = false)
+{
+	var sd = new showdown.Converter ({
+		omitExtraWLInCodeBlocks: false,
+		noHeaderId: true,
+		prefixHeaderId: false,
+		parseImgDimensions: true,
+		headerLevelStart: 1,
+		simplifiedAutoLink: false,
+		literalMidWordUnderscores: false,
+		strikethrough: true,
+		tables: true,
+		tablesHeaderId: false,
+		ghCodeBlocks: true,
+		tasklists: true
+	});
+
+	function decodeEntities(str)
+	{
+		return str.replace(/&lt;/g, '<').
+		           replace(/&gt;/g, '>').
+		           replace(/&quot;/g, '"').
+		           replace(/&amp;/g, '&');
+	}
+
+	if (raw) xinput = input_text;
+	else xinput = decodeEntities(input_text);
+	var output = document.getElementById(outputid);
+
+	output.innerHTML = sd.makeHtml(xinput);
+}
+
+function showdown_render_wiki (inputid, outputid, linkbase, imgbase, raw = false)
+{
+        var input = document.getElementById(inputid);
+        return showdown_render_wiki_with_input_text (input.innerHTML, outputid, linkbase, imgbase, raw);
+}

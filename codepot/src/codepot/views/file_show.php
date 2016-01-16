@@ -66,7 +66,8 @@ function preview_edit_description (input_text)
 		input_text,
 		"file_show_edit_description_preview", 
 		"<?php print $creole_base; ?>",
-		"<?php print $creole_file_base; ?>/"
+		"<?php print $creole_file_base; ?>/",
+		true // raw
 	);
 
 	prettyPrint ();

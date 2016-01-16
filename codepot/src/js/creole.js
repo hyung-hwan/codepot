@@ -558,20 +558,17 @@ Parse.Simple.Creole.prototype = new Parse.Simple.Base();
 
 Parse.Simple.Creole.prototype.constructor = Parse.Simple.Creole;
 
-function creole_render_wiki (inputid, outputid, linkbase, imgbase)
+function creole_render_wiki_with_input_text (input_text, outputid, linkbase, imgbase, raw = false)
 {
-        function $(id) { return document.getElementById(id); }
-
         function decodeEntities(str)
         {
-                return str.replace(/&amp;/g, '&').
-                           replace(/&lt;/g, '<').
+                return str.replace(/&lt;/g, '<').
                            replace(/&gt;/g, '>').
-                           replace(/&quot;/g, '"');
+                           replace(/&quot;/g, '"').
+                           replace(/&amp;/g, '&'); /* &amp; replacement must be the last */
         }
 
-        var input = $(inputid);
-        var output = $(outputid);
+        var output = document.getElementById(outputid);
         var creole = new Parse.Simple.Creole(
         {
                 forIE: document.all,
@@ -580,40 +577,19 @@ function creole_render_wiki (inputid, outputid, linkbase, imgbase)
                         Wikipedia: 'http://en.wikipedia.org/wiki/'
                 },*/
                 linkFormat: linkbase,
-		imgFormat: imgbase
+                imgFormat: imgbase
         } );
 
-        var xinput = decodeEntities(input.innerHTML);
+        var xinput;
+        if (raw) xinput = input_text;
+        else xinput = decodeEntities(input_text);
+
         output.innerHTML = '';
         creole.parse (output, xinput);
 }
 
-function creole_render_wiki_with_input_text (input_text, outputid, linkbase, imgbase)
+function creole_render_wiki (inputid, outputid, linkbase, imgbase, raw = false)
 {
-        function $(id) { return document.getElementById(id); }
-
-        function decodeEntities(str)
-        {
-                return str.replace(/&amp;/g, '&').
-                           replace(/&lt;/g, '<').
-                           replace(/&gt;/g, '>').
-                           replace(/&quot;/g, '"');
-        }
-
-        //var input = $(inputid);
-        var output = $(outputid);
-        var creole = new Parse.Simple.Creole(
-        {
-                forIE: document.all,
-                /*interwiki: {
-                        WikiCreole: 'http://www.wikicreole.org/wiki/',
-                        Wikipedia: 'http://en.wikipedia.org/wiki/'
-                },*/
-                linkFormat: linkbase,
-		imgFormat: imgbase
-        } );
-
-        var xinput = decodeEntities(input_text);
-        output.innerHTML = '';
-        creole.parse (output, xinput);
+        var input = document.getElementById(inputid);
+        return creole_render_wiki_with_input_text (input.innerHTML, outputid, linkbase, imgbase, raw);
 }

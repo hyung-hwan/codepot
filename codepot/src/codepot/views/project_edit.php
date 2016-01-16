@@ -23,22 +23,23 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
 <script type="text/javascript">
-function render_wiki(input_text)
+function preview_description(input_text)
 {
 	creole_render_wiki_with_input_text (
 		input_text,
-		"project_edit_mainarea_description_preview", 
+		"project_edit_description_preview", 
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
+		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/",
+		true // raw
 	);
 
 	prettyPrint ();
 }
 
 $(function() {
-	$("#project_edit_mainarea_description_preview_button").button().click(
+	$("#project_edit_description_preview_button").button().click(
 		function () {
-			render_wiki ($("#project_edit_mainarea_description").val());
+			preview_description ($("#project_edit_description").val());
 		}
 	);
 });
@@ -116,7 +117,7 @@ $this->load->view (
 
 	<div class='form_input_label'>
 		<?php print form_label($this->lang->line('Description').': ', 'project_description')?>
-		<a href='#' id='project_edit_mainarea_description_preview_button'><?php print $this->lang->line('Preview')?></a>	
+		<a href='#' id='project_edit_description_preview_button'><?php print $this->lang->line('Preview')?></a>	
 		<?php print form_error('project_description')?>
 	</div>
 	<div class='form_input_field'>
@@ -124,14 +125,14 @@ $this->load->view (
 			$xdata = array (
 				'name' => 'project_description',
 				'value' => set_value ('project_description', $project->description),
-				'id' => 'project_edit_mainarea_description',
+				'id' => 'project_edit_description',
 				'rows' => 20,
 				'cols' => 80
 			);
 			print form_textarea ($xdata);
 		?>
 	</div>
-	<div id='project_edit_mainarea_description_preview' class='codepot-styled-text-preview'></div>
+	<div id='project_edit_description_preview' class='codepot-styled-text-preview'></div>
 
 	<div class='form_input_field'>
 		<?php print form_label($this->lang->line('Commitable').': ', 'project_commitable')?>
@@ -161,7 +162,7 @@ $this->load->view (
 			$xdata = array (
 				'name' => 'project_members',
 				'value' => set_value ('project_members', $member_string),
-				'id' => 'project_edit_mainarea_members',
+				'id' => 'project_edit_members',
 				'rows' => 2,
 				'cols' => 80
 			);
