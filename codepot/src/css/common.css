@@ -403,6 +403,8 @@ pre, code, tt {
 	font-size: inherit;
 	border: 0 none;
 	padding: 0.2em 0.2em 0.2em 0.2em;
+
+	width: 100%;
 }
 
 .content .mainarea .form_input_label {

@@ -67,7 +67,8 @@ function preview_new_description(input_text)
 		input_text,
 		"issue_home_new_description_preview", 
 		"<?php print $creole_base; ?>",
-		"<?php print $creole_file_base; ?>"
+		"<?php print $creole_file_base; ?>",
+		true
 	);
 
 	prettyPrint ();

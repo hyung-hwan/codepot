@@ -41,13 +41,14 @@ function show_alert (outputMsg, titleMsg)
 	});
 }
 
-function render_wiki(input_text)
+function preview_new_description(input_text)
 {
 	creole_render_wiki_with_input_text (
 		input_text,
 		"file_home_new_description_preview", 
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
+		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/",
+		true // raw
 	);
 
 	prettyPrint ();
@@ -113,7 +114,7 @@ $(function () {
 
 	$("#file_home_new_description_tabs").tabs ();
 	$("#file_home_new_description_tabs").bind ('tabsshow', function (event, ui) {
-		if (ui.index == 2) render_wiki ($("#file_home_new_description").val());
+		if (ui.index == 2) preview_new_description ($("#file_home_new_description").val());
 	});
 
 	$('#file_home_new_form_div').dialog (
