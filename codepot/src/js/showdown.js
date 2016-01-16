@@ -72,7 +72,12 @@ function getDefaultOpts(simple) {
       default: false,
       describe: 'Prevents weird effects in live previews due to incomplete input',
       type: 'boolean'
-    }
+    },
+
+    // codepot 
+    codepotImageBase: '',
+    codepotLinkBase: ''
+    // end codepot
   };
   if (simple === false) {
     return JSON.parse(JSON.stringify(defaultOptions));
@@ -1121,6 +1126,20 @@ showdown.subParser('anchors', function (text, options, globals) {
     }
 
     url = showdown.helper.escapeCharacters(url, '*_', false);
+
+    // codepot
+    var front2 = url.substr(0, 2);
+    var front3 = url.substr(0, 3);
+
+    if (front2 == '#P' || front2 == '#I' || front2 == '#C' || front2 == '#R' || front2 == '#F' || front2 == '#W')
+    {
+        url = options.codepotLinkBase + codepot_string_to_hex(url);
+    }
+    else if (front3 == '##P' || front3 == '##W' || front3 == '##I' || front3 == '##C' || front3 == '##F')
+    {
+        url = options.codepotLinkBase + codepot_string_to_hex(url);
+    }
+    // end codepot
     var result = '<a href="' + url + '"';
 
     if (title !== '' && title !== null) {
@@ -1633,6 +1652,7 @@ showdown.subParser('githubCodeBlocks', function (text, options, globals) {
     codeblock = codeblock.replace(/^\n+/g, ''); // trim leading newlines
     codeblock = codeblock.replace(/\n+$/g, ''); // trim trailing whitespace
 
+    // prettyprint lang- added for codepot
     codeblock = '<pre><code' + (language ? ' class="' + language + ' language-' + language + ' prettyprint lang-' + language + '"' : '') + '>' + codeblock + end + '</code></pre>';
 
     return showdown.subParser('hashBlock')(codeblock, options, globals);
@@ -2510,11 +2530,12 @@ if (typeof module !== 'undefined' && module.exports) {
 //# sourceMappingURL=showdown.js.map
 
 
+// codepot
 function showdown_render_wiki_with_input_text (input_text, outputid, linkbase, imgbase, raw)
 {
 	var sd = new showdown.Converter ({
 		omitExtraWLInCodeBlocks: false,
-		noHeaderId: true,
+		noHeaderId: false,
 		prefixHeaderId: false,
 		parseImgDimensions: true,
 		headerLevelStart: 1,
@@ -2524,7 +2545,10 @@ function showdown_render_wiki_with_input_text (input_text, outputid, linkbase, i
 		tables: true,
 		tablesHeaderId: false,
 		ghCodeBlocks: true,
-		tasklists: true
+		tasklists: true,
+
+		codepotLinkBase: linkbase,
+		codepotImgBase: imgbase
 	});
 
 	function decodeEntities(str)
@@ -2547,3 +2571,4 @@ function showdown_render_wiki (inputid, outputid, linkbase, imgbase, raw)
 	var input = document.getElementById(inputid);
 	return showdown_render_wiki_with_input_text (input.innerHTML, outputid, linkbase, imgbase, raw);
 }
+// end codepot

@@ -302,11 +302,10 @@ class File extends Controller
 								break;
 							}
 
-							if (strpos($_FILES[$fid]['name'], ':') !== FALSE ||
-							    strpos($_FILES[$fid]['name'], '/') !== FALSE)
+							if (strpbrk($_FILES[$fid]['name'], CODEPOT_DISALLOWED_LETTERS_IN_FILENAME) !== FALSE)
 							{
 								// prevents these letters for wiki creole 
-								$status = "error - colon or slash not allowed - {$_FILES[$fid]['name']}";
+								$status = "error - disallowed character contained - {$_FILES[$fid]['name']}";
 								break;
 							}
 
@@ -386,11 +385,10 @@ class File extends Controller
 							break;
 						}
 
-						if (strpos($_FILES[$fid]['name'], ':') !== FALSE ||
-							strpos($_FILES[$fid]['name'], '/') !== FALSE)
+						if (strpbrk($_FILES[$fid]['name'], CODEPOT_DISALLOWED_LETTERS_IN_FILENAME) !== FALSE)
 						{
 							// prevents these letters for wiki creole
-							$status = "error - colon or slash not allowed - {$_FILES[$fid]['name']}";
+							$status = "error - disallowed character contained - {$_FILES[$fid]['name']}";
 							break;
 						}
 
