@@ -10,6 +10,7 @@
 
 
 <script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/showdown.js')?>"></script>
 
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-css.js')?>"></script>
@@ -45,23 +46,79 @@ function show_alert (outputMsg, titleMsg)
 	});
 }
 
-function resize_editor()
+var previewing_text = false;
+
+function resize_text_editor()
 {
-	var editor = $("#wiki_edit_text_area");
-	editor.height(0); // to prevent from continuous growing. it seems to affect footer placement when not set to 0.
+	var editor_container = $("#wiki_edit_result");
 
-	var titleband = $("#wiki_edit_title_band");
-	var files = $("#wiki_edit_files");
-	var footer = $("#codepot_footer");
+	if (previewing_text)
+	{
+		editor_container.height('auto');
+	}
+	else
+	{
+		var editor = $("#wiki_edit_text_area");
+		var titleband = $("wiki_edit_titleband");
+		var footer = $("#codepot_footer");
 
-	var ioff = titleband.offset();
-	var foff = footer.offset();
+		editor_container.height(0);
+		var coff = editor_container.offset();
+		var foff = footer.offset();
 
-	ioff.top += titleband.outerHeight() + files.outerHeight() + 10;
+		var editor_height = foff.top - coff.top - 10;
+		editor_container.innerHeight (editor_height);
+		editor.innerHeight (editor_height);
+		editor.innerWidth (titleband.innerWidth());
+	}
+}
 
-	editor.offset (ioff);
-	editor.innerHeight (foff.top - ioff.top - 5);
-	editor.innerWidth (titleband.innerWidth());
+
+function preview_text (input_text)
+{
+	if (previewing_text)
+	{
+		// switch to editing mode
+		previewing_text = false;
+		$("#wiki_edit_text_preview").empty();
+		$("#wiki_edit_text_area").show();
+		$("#wiki_edit_text_show").hide();
+		$("#wiki_edit_preview_button").button("option", "label", "<?php print $this->lang->line('Preview'); ?>");
+	}
+	else
+	{
+		// switch to preview mode
+		previewing_text = true;
+
+		$("#wiki_edit_text_preview").show();
+		$("#wiki_edit_text_area").hide();
+		$("#wiki_edit_preview_button").button("option", "label", "<?php print $this->lang->line('Edit'); ?>");
+
+		if ($('#wiki_edit_doctype').val() == 'M')
+		{
+			showdown_render_wiki_with_input_text (
+				input_text,
+				"wiki_edit_text_preview", 
+				"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
+				"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/",
+				true // raw
+			);
+		}
+		else
+		{
+			creole_render_wiki_with_input_text (
+				input_text,
+				"wiki_edit_text_preview", 
+				"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
+				"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/",
+				true // raw
+			);
+		}
+
+		prettyPrint ();
+	}
+
+	resize_text_editor ();
 }
 
 var populated_file_obj_for_adding = [];
@@ -102,7 +159,7 @@ function populate_selected_files_for_adding ()
 	}
 
 	populated_file_max_for_adding = f_no;
-	resize_editor ();
+	resize_text_editor ();
 }
 
 function cancel_out_add_file (no)
@@ -110,7 +167,7 @@ function cancel_out_add_file (no)
 	$('#wiki_edit_add_file_row_' + no).remove ();
 	populated_file_obj_for_adding[no] = null;
 
-	resize_editor ();
+	resize_text_editor ();
 }
 
 function kill_file (no)
@@ -130,7 +187,7 @@ function kill_file (no)
 		}
 	}
 
-	resize_editor ();
+	resize_text_editor ();
 }
 
 
@@ -217,7 +274,7 @@ $(function () {
 	$('#wiki_edit_files').accordion({
 		collapsible: true,
 		heightStyle: "content",
-		activate: function() { resize_editor(); }
+		activate: function() { resize_text_editor(); }
 	});
 
 	$('#wiki_edit_add_files_button').button().click (function () {
@@ -234,7 +291,7 @@ $(function () {
 <?php endif; ?>
 
 	$("#wiki_edit_preview_button").button().click (function() {
-		// TODO:
+		preview_text ($('#wiki_edit_text_area').val());
 		return false;
 	});
 	$("#wiki_edit_save_button").button().click (function() {
@@ -330,7 +387,7 @@ $(function () {
 		{
 			show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
 		}
-	
+
 		return false;
 	});
 
@@ -351,8 +408,8 @@ $(function () {
 		// return null;  // this line caused firefox to show the default message.
 	});
 
-	$(window).resize(resize_editor);
-	resize_editor ();
+	$(window).resize(resize_text_editor);
+	resize_text_editor ();
 });
 </script>
 
@@ -444,10 +501,8 @@ $this->load->view (
 	</div>
 </div>
 
-<div id="wiki_edit_toolbar">
-</div>
-
 <div id="wiki_edit_result" class="codepot-relative-container-view">
+	<div id='wiki_edit_text_preview' class='codepot-styled-text-view'></div>
 	<textarea id='wiki_edit_text_area' style='resize: none;'></textarea>
 </div> <!-- wiki_edit_result -->
 

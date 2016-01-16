@@ -198,37 +198,6 @@ function show_loc_by_file_graph (response)
 	$("#code_folder_loc_by_file_spin" ).removeClass ("fa-cog fa-spin");
 }
 
-function showdown_render_wiki (inputid, outputid)
-{
-	var sd = new showdown.Converter ({
-		omitExtraWLInCodeBlocks: false,
-		noHeaderId: true,
-		prefixHeaderId: false,
-		parseImgDimensions: true,
-		headerLevelStart: 1,
-		simplifiedAutoLink: false,
-		literalMidWordUnderscores: false,
-		strikethrough: true,
-		tables: true,
-		tablesHeaderId: false,
-		ghCodeBlocks: true,
-		tasklists: true
-	});
-
-	function decodeEntities(str)
-	{
-		return str.replace(/&amp;/g, '&').
-				replace(/&lt;/g, '<').
-				replace(/&gt;/g, '>').
-				replace(/&quot;/g, '"');
-	}
-
-	var input = document.getElementById(inputid);
-	var output = document.getElementById(outputid);
-
-	output.innerHTML = sd.makeHtml(decodeEntities(input.innerHTML));
-}
-
 function render_readme()
 {
 	<?php
@@ -247,7 +216,12 @@ function render_readme()
 	// if the readme file name ends with '.wiki', perform markdown formatting
 	elseif (strlen($readme_text) > 0 && substr_compare($readme_file, '.md', -3) === 0):
 	?>
-	showdown_render_wiki ("code_folder_readme_text", "code_folder_readme");
+	showdown_render_wiki (
+		"code_folder_readme_text",
+		"code_folder_readme",
+		codepot_merge_path("<?php print site_url(); ?>", "/wiki/show/<?php print $project->id?>/"),
+		codepot_merge_path("<?php print site_url(); ?>", "/wiki/attachment0/<?php print $project->id?>/")
+	);
 	prettyPrint();
 	<?php endif; ?>
 }

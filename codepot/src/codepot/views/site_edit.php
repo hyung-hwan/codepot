@@ -24,22 +24,23 @@
 
 <script type="text/javascript">
 
-function render_wiki(input_text)
+function preview_site_text(input_text)
 {
 	creole_render_wiki_with_input_text (
 		input_text,
-		"site_edit_mainarea_text_preview", 
+		"site_edit_text_preview", 
 		"<?php print site_url()?>/site/wiki/",
-		"<?php print site_url()?>/site/image/"
+		"<?php print site_url()?>/site/image/",
+		true // raw
 	);
 
 	prettyPrint ();
 }
 
 $(function () {
-	$("#site_edit_mainarea_text_preview_button").button().click(
+	$("#site_edit_text_preview_button").button().click(
 		function () {
-			render_wiki ($("#site_edit_mainarea_text").val());
+			preview_site_text ($("#site_edit_text").val());
 		}
 	);
 });
@@ -119,16 +120,16 @@ $this->load->view (
 
 	<div class='form_input_label'>
 		<?php print form_label($this->lang->line('Text').': ', 'site_text')?>
-		<a href='#' id='site_edit_mainarea_text_preview_button'><?php print $this->lang->line('Preview')?></a>
+		<a href='#' id='site_edit_text_preview_button'><?php print $this->lang->line('Preview')?></a>
 		<?php print form_error('site_text')?>
 	</div>
 	<div class='form_input_field'>
 		<?php print form_textarea('site_text', 
 			set_value('site_text', $site->text),
-			'class="text" id="site_edit_mainarea_text"')
+			'class="text" id="site_edit_text"')
 		?>
 	</div>
-	<div id='site_edit_mainarea_text_preview' class='codepot-styled-text-preview'></div>
+	<div id='site_edit_text_preview' class='codepot-styled-text-preview'></div>
 
 
 	<?php $caption = ($mode == 'update')? $this->lang->line('Update'): $this->lang->line('Create'); ?>
