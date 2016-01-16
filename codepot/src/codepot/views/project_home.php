@@ -32,7 +32,8 @@ function render_wiki()
 		"project_home_result_wiki_text", 
 		"project_home_result_wiki", 
 		"<?php print site_url()?>/wiki/show/<?php print $project->id?>/",
-		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/"
+		"<?php print site_url()?>/wiki/attachment0/<?php print $project->id?>/",
+		false
 	);
 
 	prettyPrint ();

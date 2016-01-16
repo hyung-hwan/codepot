@@ -54,7 +54,8 @@ function render_wiki()
 		"file_show_wiki_text", 
 		"file_show_wiki", 
 		"<?php print $creole_base; ?>",
-		"<?php print $creole_file_base; ?>/"
+		"<?php print $creole_file_base; ?>/",
+		false
 	);
 
 	prettyPrint ();

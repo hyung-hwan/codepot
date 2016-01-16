@@ -201,26 +201,27 @@ function show_loc_by_file_graph (response)
 function render_readme()
 {
 	<?php
-	// if the readme file name ends with '.wiki', perform wiki formatting and pretty printing
-	if (strlen($readme_text) > 0 && (substr_compare($readme_file, '.wiki', -5) === 0 ||
-	                                 substr_compare($readme_file, '.wc', -3) === 0)):
+	// if the readme file name ends with '.wc', perform wiki formatting and pretty printing
+	if (strlen($readme_text) > 0 && substr_compare($readme_file, '.wc', -3) === 0):
 	?>
 	creole_render_wiki (
 		"code_folder_readme_text",
 		"code_folder_readme",
 		codepot_merge_path("<?php print site_url(); ?>", "/wiki/show/<?php print $project->id?>/"),
-		codepot_merge_path("<?php print site_url(); ?>", "/wiki/attachment0/<?php print $project->id?>/")
+		codepot_merge_path("<?php print site_url(); ?>", "/wiki/attachment0/<?php print $project->id?>/"),
+		false
 	);
 	prettyPrint();
 	<?php
-	// if the readme file name ends with '.wiki', perform markdown formatting
+	// if the readme file name ends with '.md', perform markdown formatting
 	elseif (strlen($readme_text) > 0 && substr_compare($readme_file, '.md', -3) === 0):
 	?>
 	showdown_render_wiki (
 		"code_folder_readme_text",
 		"code_folder_readme",
 		codepot_merge_path("<?php print site_url(); ?>", "/wiki/show/<?php print $project->id?>/"),
-		codepot_merge_path("<?php print site_url(); ?>", "/wiki/attachment0/<?php print $project->id?>/")
+		codepot_merge_path("<?php print site_url(); ?>", "/wiki/attachment0/<?php print $project->id?>/"),
+		false
 	);
 	prettyPrint();
 	<?php endif; ?>
