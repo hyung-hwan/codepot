@@ -335,11 +335,10 @@ class Issue extends Controller
 							$d = $this->input->post("issue_new_file_desc_{$i}");
 							if ($d === FALSE || ($d = trim($d)) == '') $d = ''; // description optional
 
-							if (strpos($_FILES[$fid]['name'], ':') !== FALSE ||
-							    strpos($_FILES[$fid]['name'], '/') !== FALSE)
+							if (strpbrk($_FILES[$fid]['name'], CODEPOT_DISALLOWED_LETTERS_IN_FILENAME) !== FALSE)
 							{
 								// prevents these letters for wiki creole 
-								$status = "error - colon or slash not allowed - {$_FILES[$fid]['name']}";
+								$status = "error - disallowed character contained - {$_FILES[$fid]['name']}";
 								break;
 							}
 
@@ -545,11 +544,10 @@ class Issue extends Controller
 						$d = $this->input->post("issue_add_file_desc_{$i}");
 						if ($d === FALSE || ($d = trim($d)) == '') $d = ''; 
 
-						if (strpos($_FILES[$fid]['name'], ':') !== FALSE ||
-						    strpos($_FILES[$fid]['name'], '/') !== FALSE)
+						if (strpbrk($_FILES[$fid]['name'], CODEPOT_DISALLOWED_LETTERS_IN_FILENAME) !== FALSE)
 						{
 							// prevents these letters for wiki creole
-							$status = "error - colon or slash not allowed - {$_FILES[$fid]['name']}";
+							$status = "error - disallowed character contained - {$_FILES[$fid]['name']}";
 							break;
 						}
 

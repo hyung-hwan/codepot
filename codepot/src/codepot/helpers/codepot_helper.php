@@ -164,10 +164,10 @@ if ( !function_exists ('codepot_delete_files'))
 	{
 		// Trim the trailing slash
 		$path = rtrim($path, DIRECTORY_SEPARATOR);
-			
+
 		if ( ! $current_dir = @opendir($path))
 			return;
-	
+
 		while(FALSE !== ($filename = @readdir($current_dir)))
 		{
 			if ($filename != "." && $filename != "..")

@@ -121,7 +121,7 @@ class Wiki extends Controller
 			}
 			else if ($link !== NULL)
 			{
-				// redirect to  a special link like __WIKI__:projectid:wikiname
+				// redirect to  a special link like __WIKI__:projectid:wikiname, #R1234, #I999
 				redirect ($link);
 			}
 			else
@@ -151,8 +151,7 @@ class Wiki extends Controller
 					else
 					{
 						$data['project'] = $project;
-						$data['message'] = sprintf (
-							$this->lang->line('WIKI_MSG_NO_SUCH_PAGE'), $name);
+						$data['message'] = $this->lang->line('WIKI_MSG_NO_SUCH_PAGE') . " - {$name}";
 						$this->load->view ($this->VIEW_ERROR, $data);
 					}
 				}
@@ -168,7 +167,7 @@ class Wiki extends Controller
 
 	function show ($projectid = '' , $name = '')
 	{
-		$this->_show_wiki ($projectid, $name, TRUE);
+		$this->_show_wiki ($projectid, $name, CODEPOT_CREATE_MISSING_WIKI);
 	}
 
 	function show_r ($projectid = '' , $name = '')
@@ -290,9 +289,8 @@ class Wiki extends Controller
 					}
 					$wiki->attachments = $atts;
 
-					// disallow : # [ ] |
-					if (strpbrk ($wiki->name, ':#[]|') !== FALSE ||
-					    (!is_null($new_wiki_name) && strpbrk ($new_wiki_name, ':#[]|') !== FALSE))
+					if (strpbrk ($wiki->name, CODEPOT_DISALLOWED_LETTERS_IN_WIKINAME) !== FALSE ||
+					    (!is_null($new_wiki_name) && strpbrk ($new_wiki_name, CODEPOT_DISALLOWED_LETTERS_IN_WIKINAME) !== FALSE))
 					{
 						$data['message'] = $this->lang->line('WIKI_MSG_NAME_DISALLOWED_CHARS');
 						$data['wiki'] = $wiki;
@@ -390,9 +388,7 @@ class Wiki extends Controller
 					}
 					else if ($wiki == NULL)
 					{
-						$data['message'] = 
-							$this->lang->line('WIKI_MSG_NO_SUCH_PAGE') . 
-							" - {$name}";
+						$data['message'] = $this->lang->line('WIKI_MSG_NO_SUCH_PAGE') . " - {$name}";
 						$this->load->view ($this->VIEW_ERROR, $data);
 					}
 					else
@@ -540,8 +536,7 @@ class Wiki extends Controller
 				}
 				else if ($wiki === NULL)
 				{
-					$data['message'] = sprintf (
-						$this->lang->line('WIKI_MSG_NO_SUCH_PAGE'), $name);
+					$data['message'] = $this->lang->line('WIKI_MSG_NO_SUCH_PAGE') . " - {$name}";
 					$this->load->view ($this->VIEW_ERROR, $data);
 				}
 				else
@@ -570,7 +565,7 @@ class Wiki extends Controller
 			    $_FILES[$field_name]['name'] != '')
 			{
 				$fname = $_FILES[$field_name]['name'];
-				if (strpos ($fname, ':') !== FALSE)
+				if (strpbrk($fname, CODEPOT_DISALLOWED_LETTERS_IN_FILENAME) !== FALSE)
 				{
 					while ($attno > 0)
 						@unlink ($attachments[$attno--]['fullencpath']);
@@ -918,7 +913,7 @@ class Wiki extends Controller
 				{
 					$status = 'error - empty name';
 				}
-				else if (strpbrk ($wiki->name, ':#[]|') !== FALSE)
+				else if (strpbrk ($wiki->name, CODEPOT_DISALLOWED_LETTERS_IN_WIKINAME) !== FALSE)
 				{
 					$status = 'error - disallowed characters in name';
 				}
@@ -941,11 +936,10 @@ class Wiki extends Controller
 						$fid = "wiki_file_{$i}";
 						if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
 						{
-							if (strpos($_FILES[$fid]['name'], ':') !== FALSE ||
-							    strpos($_FILES[$fid]['name'], '/') !== FALSE)
+							if (strpbrk($_FILES[$fid]['name'], CODEPOT_DISALLOWED_LETTERS_IN_FILENAME) !== FALSE)
 							{
 								// prevents these letters for wiki creole 
-								$status = "error - colon or slash not allowed - {$_FILES[$fid]['name']}";
+								$status = "error - disallowed character contained - {$_FILES[$fid]['name']}";
 								break;
 							}
 

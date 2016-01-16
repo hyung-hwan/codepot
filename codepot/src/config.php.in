@@ -21,6 +21,9 @@ function load_ini ($file)
 	if (!is_array($cfg)) $cfg = array ();
 
 	$xcfgs = array (
+		array ('disallowed_letters_in_filename', 'string', ':#|[]$*/'),
+		array ('disallowed_letters_in_wikiname', 'string', ':#|[]$*'),
+
 		array ('default_site_language',        'string',     'english'),
 		array ('default_site_name',            'string',     '@PACKAGE@'),
 
@@ -79,6 +82,7 @@ function load_ini ($file)
 
 		array ('log_threshold',                'integer',     0),
 
+		array ('create_missing_wiki',          'boolean',     FALSE),
 		array ('force_project_delete',         'boolean',     FALSE),
 		array ('allow_set_time_limit',         'boolean',     FALSE),
 		array ('signin_for_code_search',       'boolean',     TRUE),
@@ -102,7 +106,7 @@ function load_ini ($file)
 		array ('svn_restriction_allowed_subdir_depth_max', 'integer',     0),
 
 		// this item is used by the codepot-user command.
-		array ('codepot_user_executor',                    'string',      'root')
+		array ('codepot_user_executor',                    'string',      'root'),
 	);
 
 	foreach ($xcfgs as $x)

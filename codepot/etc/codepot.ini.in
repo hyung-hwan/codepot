@@ -213,6 +213,12 @@ usericon_dir = "@DEPOTDIR@/usericons"
 log_threshold = 0
 
 ;------------------------------------------------------------------------------
+; When yes, open a wiki creation page if a non-existent wiki pages is 
+; requested
+;------------------------------------------------------------------------------
+create_missing_wiki = "no"
+
+;------------------------------------------------------------------------------
 ; When yes, a project member can delete a non-empty project containing
 ; wiki pages, file uploads, etc. An empty project can be deleted any time 
 ; regardless of this option. A system administrator(sysadmin_userids) is 
