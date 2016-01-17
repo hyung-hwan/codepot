@@ -674,7 +674,9 @@ $history = $file['history'];
 	</div>
 
 	<div id="code_revision_metadata_body">
-		<pre id="code_revision_metadata_text"><?php print htmlspecialchars($history['msg']); ?></pre>
+		<div class="codepot-plain-text-view">
+			<pre id="code_revision_metadata_text"><?php print htmlspecialchars($history['msg']); ?></pre>
+		</div>
 	</div>
 </div>
 
