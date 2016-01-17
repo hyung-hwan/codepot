@@ -47,6 +47,7 @@ database_password = ""
 database_name = ""
 database_driver = ""
 database_prefix = ""
+database_store_gmt = "yes"
 
 ;------------------------------------------------------------------------------
 ; ldap settings
