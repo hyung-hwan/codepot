@@ -176,9 +176,16 @@
 /*----------------------------------------------- 
  * project source edit view 
  *-----------------------------------------------*/
+#code_edit_result {
+	/* ace editor doesn't work well with overflow: auto */
+	overflow: initial;
+}
+
 #code_edit_result_code {
 	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
-	overflow: auto;
+	/*overflow: auto;*/
+	overflow: initial;
+
 	border: none;
 	white-space: pre;
 
