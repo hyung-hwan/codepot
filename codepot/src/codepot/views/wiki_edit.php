@@ -277,6 +277,12 @@ function show_in_progress_message (outputMsg, titleMsg)
 			width: 'auto',
 			height: 'auto',
 
+			buttons: { 
+				"OK": function () {
+					// do nothing
+				}
+			},
+
 			beforeClose: function() { 
 				// if importing is in progress, prevent dialog closing
 				return !work_in_progress;
