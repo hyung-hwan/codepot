@@ -8,4 +8,7 @@ $lang['WIKI_MSG_NAME_DISALLOWED_CHARS'] = 'Wiki name contains disallowed charact
 $lang['WIKI_MSG_NO_PAGES_AVAILABLE'] = 'No wiki pages available';
 $lang['WIKI_MSG_NO_SUCH_PAGE'] = 'No such wiki page';
 $lang['WIKI_MSG_RESERVED_WIKI_NAME'] = 'Wiki name containing a reserved word - %s';
+
+$lang['WIKI_MSG_SAVE_DESPITE_NO_CHANGES?'] = "There seems to be no changes. Do you still want to save?";
+$lang['WIKI_MSG_SAVE_IN_PROGRESS'] = 'Saving in progress, Please wait';
 ?>

@@ -1,4 +1,6 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -45,6 +47,7 @@ function show_alert (outputMsg, titleMsg)
 		}
 	});
 }
+
 
 var previewing_text = false;
 
@@ -127,6 +130,8 @@ function preview_text (input_text)
 
 var populated_file_obj_for_adding = [];
 var populated_file_max_for_adding = 0;
+var cancelled_file_count_for_adding = 0;
+var killed_file_count = 0;
 
 var original_file_name_array = [
 	<?php
@@ -168,10 +173,13 @@ function populate_selected_files_for_adding ()
 
 function cancel_out_add_file (no)
 {
-	$('#wiki_edit_add_file_row_' + no).remove ();
-	populated_file_obj_for_adding[no] = null;
-
-	resize_text_editor ();
+	if (populated_file_obj_for_adding[no] != null)
+	{
+		cancelled_file_count_for_adding++;
+		$('#wiki_edit_add_file_row_' + no).remove ();
+		populated_file_obj_for_adding[no] = null;
+		resize_text_editor ();
+	}
 }
 
 function kill_file (no)
@@ -183,11 +191,13 @@ function kill_file (no)
 		{
 			n.css ('text-decoration', '');
 			n.prop ('disabled', false);
+			killed_file_count--;
 		}
 		else
 		{
 			n.css ('text-decoration', 'line-through');
 			n.prop ('disabled', true);
+			killed_file_count++;
 		}
 	}
 
@@ -207,6 +217,7 @@ function update_original_file_name_array ()
 
 	populated_file_obj_for_adding = [];
 	populated_file_max_for_adding = 0;
+	cancelled_file_count_for_adding = 0;
 	$('#wiki_edit_add_files').empty();
 
 	var f_no = 0;
@@ -228,6 +239,7 @@ function update_original_file_name_array ()
 	}
 
 	$('#wiki_edit_file_list').empty();
+	killed_file_count = 0;
 	original_file_name_array = file_name_array;
 	for (var i = 0; i < original_file_name_array.length; i++)
 	{
@@ -248,7 +260,6 @@ function update_original_file_name_array ()
 var wiki_text_editor = null;
 var work_in_progress = false;
 var wiki_original_name = '<?php print addslashes($wiki->name); ?>';
-var wiki_new_name = '';
 var wiki_original_text = <?php print codepot_json_encode($wiki->text); ?>;
 
 function show_in_progress_message (outputMsg, titleMsg)
@@ -272,6 +283,111 @@ function show_in_progress_message (outputMsg, titleMsg)
 			}
 		});
 	}
+}
+
+function save_wiki (wiki_new_name, wiki_new_text)
+{
+	work_in_progress = true;
+
+	show_in_progress_message ('<?php print $this->lang->line('WIKI_MSG_SAVE_IN_PROGRESS'); ?>', wiki_new_name);
+
+	var form_data = new FormData();
+
+	var f_no = 0;
+	for (var i = 0; i < populated_file_max_for_adding; i++)
+	{
+		var f = populated_file_obj_for_adding[i];
+		if (f != null)
+		{
+			form_data.append ('wiki_file_' + f_no, f);
+			f_no++;
+		}
+	}
+	form_data.append ('wiki_file_count', f_no);
+
+	f_no = 0;
+	for (var i = 0; i < original_file_name_array.length; i++)
+	{
+		var n = $('#wiki_edit_file_name_' + i);
+		if (n)
+		{
+			if (n.prop('disabled'))
+			{
+				form_data.append ('wiki_kill_file_name_' + f_no, original_file_name_array[i]);
+				f_no++;
+			}
+		}
+	}
+	form_data.append ('wiki_kill_file_count', f_no);
+
+	form_data.append ('wiki_doctype', $('#wiki_edit_doctype').val()); 
+	form_data.append ('wiki_name', wiki_new_name);
+	form_data.append ('wiki_original_name', wiki_original_name);
+	form_data.append ('wiki_text', wiki_new_text);
+
+	$.ajax({
+		url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/wiki/xhr_edit/{$project->id}"; ?>'),
+		type: 'POST',
+		data: form_data,
+		mimeType: 'multipart/form-data',
+		contentType: false,
+		processData: false,
+		cache: false,
+
+		success: function (data, textStatus, jqXHR) { 
+			work_in_progress = false;
+
+			if (data == 'ok') 
+			{
+				var name_changed = (wiki_original_name != wiki_new_name);
+				wiki_original_name = wiki_new_name;
+				wiki_original_text = wiki_new_text;
+				update_original_file_name_array ();
+				show_in_progress_message (null, null);
+				if (name_changed)
+				{
+					// reload the whole page if the name has changed.
+					$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/update/{$project->id}/"; ?>' + codepot_string_to_hex(wiki_new_name)));
+				}
+			}
+			else
+			{
+				show_in_progress_message (null, null);
+				show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+			}
+		},
+
+		error: function (jqXHR, textStatus, errorThrown) { 
+			work_in_progress = false;
+			show_in_progress_message (null, null);
+			var errmsg = '';
+			if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
+			if (errmsg == '' && textStatus != null) errmsg = textStatus;
+			if (errmsg == '') errmsg = 'Unknown error';
+			show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
+		}
+	});
+}
+
+
+function save_wiki_with_confirmation (outputMsg, titleMsg, wiki_new_name, wiki_new_text) 
+{
+	$('#wiki_edit_alert').html(outputMsg).dialog({
+		title: titleMsg,
+		resizable: true,
+		modal: true,
+		width: 'auto',
+		height: 'auto',
+		buttons: {
+			"OK": function () {
+				$(this).dialog("close");
+				save_wiki (wiki_new_name, wiki_new_text);
+			},
+			"Cancel": function () {
+				$(this).dialog("close");
+			}
+		}
+	});
 }
 
 $(function () {
@@ -304,88 +420,21 @@ $(function () {
 		if (!!window.FormData)
 		{
 			// FormData is supported
-			work_in_progress = true;
-			show_in_progress_message ('Saving in progress. Please wait...', 'Saving...');
-
-			wiki_new_name = $('#wiki_edit_name').val();
-			wiki_new_text = $('#wiki_edit_text_area').val();
-
-			var form_data = new FormData();
-
-			var f_no = 0;
-			for (var i = 0; i < populated_file_max_for_adding; i++)
+			var wiki_new_name = $('#wiki_edit_name').val();
+			var wiki_new_text = $('#wiki_edit_text_area').val();
+			if (populated_file_max_for_adding > cancelled_file_count_for_adding || 
+			    killed_file_count > 0 ||
+			    wiki_original_name != wiki_new_name ||
+			    wiki_original_text != wiki_new_text) 
 			{
-				var f = populated_file_obj_for_adding[i];
-				if (f != null)
-				{
-					form_data.append ('wiki_file_' + f_no, f);
-					f_no++;
-				}
+				// there are changes. just save the document
+				save_wiki (wiki_new_name, wiki_new_text);
 			}
-			form_data.append ('wiki_file_count', f_no);
-
-			f_no = 0;
-			for (var i = 0; i < original_file_name_array.length; i++)
+			else
 			{
-				var n = $('#wiki_edit_file_name_' + i);
-				if (n)
-				{
-					if (n.prop('disabled'))
-					{
-						form_data.append ('wiki_kill_file_name_' + f_no, original_file_name_array[i]);
-						f_no++;
-					}
-				}
+				// no changes detected.
+				save_wiki_with_confirmation ("<?php print $this->lang->line('WIKI_MSG_SAVE_DESPITE_NO_CHANGES?'); ?>", wiki_new_name, wiki_new_name, wiki_new_text);
 			}
-			form_data.append ('wiki_kill_file_count', f_no);
-
-			form_data.append ('wiki_doctype', $('#wiki_edit_doctype').val()); 
-			form_data.append ('wiki_name', wiki_new_name);
-			form_data.append ('wiki_original_name', wiki_original_name);
-			form_data.append ('wiki_text', wiki_new_text);
-
-			$.ajax({
-				url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/wiki/xhr_edit/{$project->id}"; ?>'),
-				type: 'POST',
-				data: form_data,
-				mimeType: 'multipart/form-data',
-				contentType: false,
-				processData: false,
-				cache: false,
-
-				success: function (data, textStatus, jqXHR) { 
-					work_in_progress = false;
-
-					if (data == 'ok') 
-					{
-						var name_changed = (wiki_original_name != wiki_new_name);
-						wiki_original_name = wiki_new_name;
-						wiki_original_text = wiki_new_text;
-						update_original_file_name_array ();
-						show_in_progress_message (null, null);
-						if (name_changed)
-						{
-							// reload the whole page if the name has changed.
-							$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/wiki/update/{$project->id}/"; ?>' + codepot_string_to_hex(wiki_new_name)));
-						}
-					}
-					else
-					{
-						show_in_progress_message (null, null);
-						show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
-					}
-				},
-
-				error: function (jqXHR, textStatus, errorThrown) { 
-					work_in_progress = false;
-					show_in_progress_message (null, null);
-					var errmsg = '';
-					if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
-					if (errmsg == '' && textStatus != null) errmsg = textStatus;
-					if (errmsg == '') errmsg = 'Unknown error';
-					show_alert ('Failed - ' + errmsg, "<?php print $this->lang->line('Error')?>");
-				}
-			});
 		}
 		else
 		{
@@ -404,8 +453,12 @@ $(function () {
 	});
 
 	$(window).on ("beforeunload", function (e) {
+		var wiki_new_name = $('#wiki_edit_name').val();
 		var wiki_new_text = $('#wiki_edit_text_area').val();
-		if (wiki_original_text != wiki_new_text) 
+		if (populated_file_max_for_adding > cancelled_file_count_for_adding || 
+		    killed_file_count > 0 ||
+		    wiki_original_name != wiki_new_name ||
+		    wiki_original_text != wiki_new_text) 
 		{
 			return '<?php print $this->lang->line('MSG_DISCARD_CHANGES?'); ?>';
 		}
