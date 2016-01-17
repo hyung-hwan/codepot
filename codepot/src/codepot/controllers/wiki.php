@@ -470,9 +470,6 @@ class Wiki extends Controller
 
 	function attachment0 ($projectid = '', $target = '')
 	{
-		//$target => projectid:wikiname:attachment
-		//$target => projectid:#I1:file
-
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
@@ -489,6 +486,8 @@ class Wiki extends Controller
 		$part = explode (':', $target);
 		if (count($part) == 3)
 		{
+			//$target => projectid:wikiname:attachment
+			//$target => projectid:#I1:file
 			if ($part[0] == '') $part[0] = $projectid;
 			if ($part[1][0] == '#' && $part[1][1] == 'I')
 			{
@@ -498,6 +497,20 @@ class Wiki extends Controller
 			else
 			{
 				$this->_handle_wiki_attachment ($login, $part[0], $part[1], $part[2]);
+			}
+		}
+		else if (count($part) == 2)
+		{
+			//$target => wikiname:attachment
+			//$target => #I1:file
+			if ($part[0][0] == '#' && $part[0][1] == 'I')
+			{
+				$issueid = substr ($part[0],2);
+				$this->_handle_issue_file ($login, $projectid, $issueid, $part[1]);
+			}
+			else
+			{
+				$this->_handle_wiki_attachment ($login, $projectid, $part[0], $part[1]);
 			}
 		}
 	}
@@ -537,6 +550,25 @@ class Wiki extends Controller
 				}
 			}
 			if ($part[2] != '') $filename = $part[2];
+		}
+		else if (count($part) == 2)
+		{
+			//$target => wikiname:attachment
+			//$target => #I1:file
+			if ($part[0] != '')
+			{
+				if ($part[0][0] == '#' && $part[0][1] == 'I')
+				{
+					$issueid = substr ($part[0],2);
+					$wikiname = '';
+				}
+				else
+				{
+					$wikiname = $part[0];
+					$issueid = '';
+				}
+			}
+			if ($part[1] != '') $filename = $part[1];
 		}
 
 		if ($wikiname != '')

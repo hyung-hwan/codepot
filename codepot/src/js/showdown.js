@@ -1125,8 +1125,6 @@ showdown.subParser('anchors', function (text, options, globals) {
       }
     }
 
-    url = showdown.helper.escapeCharacters(url, '*_', false);
-
     // codepot
     var front2 = url.substr(0, 2);
     var front3 = url.substr(0, 3);
@@ -1140,6 +1138,8 @@ showdown.subParser('anchors', function (text, options, globals) {
         url = options.codepotLinkBase + codepot_string_to_hex(url);
     }
     // end codepot
+
+    url = showdown.helper.escapeCharacters(url, '*_', false);
     var result = '<a href="' + url + '"';
 
     if (title !== '' && title !== null) {
@@ -1908,7 +1908,20 @@ showdown.subParser('images', function (text, options, globals) {
     }
 
     altText = altText.replace(/"/g, '&quot;');
-    altText = showdown.helper.escapeCharacters(altText, '*_', false);
+    altText = showdown.helper.escapeCharacters(altText, '*_', false);    
+
+    // codepot
+    if (url.match (/^[a-zA-Z]+:\/\//)) 
+    {
+        // begins with XXX://
+        // do nothing special
+    }
+    else
+    {
+        url = options.codepotImageBase + codepot_string_to_hex(url);
+    }
+    // end codepot
+
     url = showdown.helper.escapeCharacters(url, '*_', false);
     var result = '<img src="' + url + '" alt="' + altText + '"';
 
@@ -2548,7 +2561,7 @@ function showdown_render_wiki_with_input_text (input_text, outputid, linkbase, i
 		tasklists: true,
 
 		codepotLinkBase: linkbase,
-		codepotImgBase: imgbase
+		codepotImageBase: imgbase
 	});
 
 	function decodeEntities(str)

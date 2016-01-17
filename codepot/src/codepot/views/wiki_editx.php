@@ -37,6 +37,8 @@ $file_count = count($wiki->attachments);
 ?>
 
 <script type="text/javascript">
+var wiki_original_name = '<?php print addslashes($wiki->name); ?>';
+var wiki_original_text = <?php print codepot_json_encode($wiki->text); ?>;
 
 function show_alert (outputMsg, titleMsg) 
 {
@@ -52,6 +54,34 @@ function show_alert (outputMsg, titleMsg)
 			}
 		}
 	});
+}
+
+function show_in_progress_message (outputMsg, titleMsg)
+{
+	if (titleMsg == null || outputMsg == null)
+	{
+		$('#wiki_edit_alert').dialog('close');
+	}
+	else
+	{
+		$('#wiki_edit_alert').html(outputMsg).dialog({
+			title: titleMsg,
+			resizable: false,
+			modal: true,
+			width: 'auto',
+			height: 'auto',
+
+			buttons: { 
+				"OK": function () {
+					// do nothing, don't event close the dialog.
+				}
+			},
+			beforeClose: function() { 
+				// if importing is in progress, prevent dialog closing
+				return !work_in_progress;
+			}
+		});
+	}
 }
 
 function resize_editor()
@@ -208,36 +238,6 @@ function update_original_file_name_array ()
 
 var wiki_text_editor = null;
 var work_in_progress = false;
-var wiki_original_name = '<?php print addslashes($wiki->name); ?>';
-var wiki_original_text = <?php print codepot_json_encode($wiki->text); ?>;
-
-function show_in_progress_message (outputMsg, titleMsg)
-{
-	if (titleMsg == null || outputMsg == null)
-	{
-		$('#wiki_edit_alert').dialog('close');
-	}
-	else
-	{
-		$('#wiki_edit_alert').html(outputMsg).dialog({
-			title: titleMsg,
-			resizable: false,
-			modal: true,
-			width: 'auto',
-			height: 'auto',
-
-			buttons: { 
-				"OK": function () {
-					// do nothing
-				}
-			},
-			beforeClose: function() { 
-				// if importing is in progress, prevent dialog closing
-				return !work_in_progress;
-			}
-		});
-	}
-}
 
 function save_wiki (wiki_new_name, wiki_new_text)
 {
