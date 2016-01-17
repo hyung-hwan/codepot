@@ -416,16 +416,15 @@ var Url = {
                 var img = document.createElement('img');
 
                 if (r[1].match(rx.uriPrefix))
-		{
-                	img.src = r[1];
-		}
-		else
-		{
-			var tmp = r[1].replace(/~(.)/g, '$1');
-			tmp = Url.encode (tmp);
-			img.src = options && options.imgFormat? 
-				formatLink (tmp, options.imgFormat): tmp;
-		}
+                {
+                    img.src = r[1];
+                }
+                else
+                {
+                    var tmp = r[1].replace(/~(.)/g, '$1');
+                    tmp = Url.encode (tmp);
+                    img.src = options && options.imgFormat? formatLink (tmp, options.imgFormat): tmp;
+                }
 
                 img.alt = r[2] === undefined
                     ? (options && options.defaultImageText ? options.defaultImageText : '')
@@ -450,15 +449,15 @@ var Url = {
             build: function(node, r, options) {
                 var link = document.createElement('a');
 
-		var tmp = r[1].replace(/~(.)/g, '$1');
-		tmp = Url.encode (tmp);
+                var tmp = r[1].replace(/~(.)/g, '$1');
+                tmp = Url.encode (tmp);
 
                 /*link.href = options && options.linkFormat
                     ? formatLink(r[1].replace(/~(.)/g, '$1'), options.linkFormat)
                     : r[1].replace(/~(.)/g, '$1');*/
 
                 link.href = options && options.linkFormat? 
-			formatLink (tmp, options.linkFormat): tmp;
+                formatLink (tmp, options.linkFormat): tmp;
 
                 this.apply(link, r[2], options);
 
