@@ -8,6 +8,17 @@ li.issue-type-request {
 	color: #FFFFFF;
 }
 
+li.issue-type-enhancement {
+	background-color: #558FAD;
+	color: #FFFFFF;
+}
+
+li.issue-type-feature {
+	background-color: #5577BC;
+	color: #FFFFFF;
+}
+
+
 li.issue-type-other {
 	background-color: #4E8BCA;
 	color: #FFFFFF;

@@ -3,6 +3,8 @@ class IssueHelper
 {
 	var $TYPE_DEFECT       = 'defect';
 	var $TYPE_REQUEST      = 'request';
+	var $TYPE_ENHANCEMENT  = 'enhancement';
+	var $TYPE_FEATURE      = 'feature';
 	var $TYPE_OTHER        = 'other';
 
 	// a newly created issue is set to 'new'.
@@ -40,6 +42,10 @@ class IssueHelper
 				$lang->line('ISSUE_TYPE_DEFECT'),
 			$this->TYPE_REQUEST => 
 				$lang->line('ISSUE_TYPE_REQUEST'),
+			$this->TYPE_ENHANCEMENT => 
+				$lang->line('ISSUE_TYPE_ENHANCEMENT'),
+			$this->TYPE_FEATURE => 
+				$lang->line('ISSUE_TYPE_FEATURE'),
 			$this->TYPE_OTHER   => 
 				$lang->line('ISSUE_TYPE_OTHER')
 		);

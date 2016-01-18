@@ -1,6 +1,8 @@
 <?php
 $lang['ISSUE_TYPE_DEFECT'] = '문제점';
 $lang['ISSUE_TYPE_REQUEST'] = '요청';
+$lang['ISSUE_TYPE_ENHANCEMENT'] = '기능향샹';
+$lang['ISSUE_TYPE_FEATURE'] = '기능추가 ';
 $lang['ISSUE_TYPE_OTHER'] = '기타';
 
 $lang['ISSUE_STATUS_NEW'] = '신규';

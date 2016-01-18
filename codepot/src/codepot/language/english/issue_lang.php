@@ -1,6 +1,8 @@
 <?php
 $lang['ISSUE_TYPE_DEFECT'] = 'Defect';
 $lang['ISSUE_TYPE_REQUEST'] = 'Request';
+$lang['ISSUE_TYPE_ENHANCEMENT'] = 'Enhancement';
+$lang['ISSUE_TYPE_FEATURE'] = 'New Feature';
 $lang['ISSUE_TYPE_OTHER'] = 'Other';
 
 $lang['ISSUE_STATUS_NEW'] = 'New';
