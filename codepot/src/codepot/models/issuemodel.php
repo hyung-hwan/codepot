@@ -313,11 +313,11 @@ class IssueModel extends Model
 		return $issue->id;
 	}
 
-	function change ($userid, $project, $id, $change)
+	function change ($userid, $project, $id, $change, $disallow_state_change)
 	{
 		$now = codepot_nowtodbdate();
 
-		$this->db->trans_start ();
+		$this->db->trans_begin ();
 
 		$this->db->where ('projectid', $project->id);
 		$this->db->where ('id', $id);
@@ -325,12 +325,53 @@ class IssueModel extends Model
 		$query = $this->db->get ('issue_change');
 		if ($this->db->trans_status() === FALSE) 
 		{
-			$this->db->trans_complete ();
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
 			return FALSE;
 		}
 		$result = $query->result();
 		$maxsno = (empty($result) || $result[0] == NULL)? 0: $result[0]->maxsno;
 		$newsno = $maxsno + 1;
+
+		if ($change->comment == '' || $disallow_state_change)
+		{
+			$this->db->where ('projectid', $project->id);
+			$this->db->where ('id', $id);
+			$this->db->where ('sno', $maxsno);
+			$this->db->select('type,status,owner,priority');
+			$query = $this->db->get ('issue_change');
+			if ($this->db->trans_status() === FALSE) 
+			{
+				$this->errmsg = $this->db->_error_message(); 
+				$this->db->trans_rollback ();
+				return FALSE;
+			}
+
+			$result = $query->result();
+			if (!empty($result))
+			{
+				$c = $result[0];
+
+				if ($c->type == $change->type &&
+				    $c->status == $change->status &&
+				    $c->owner == $change->owner &&
+				    $c->priority == $change->priority)
+				{
+					if ($change->comment == '')
+					{
+						$this->errmsg = 'empty comment but no state change in the input';
+						$this->db->trans_rollback ();
+						return FALSE;
+					}
+				}
+				else if ($disallow_state_change)
+				{
+					$this->errmsg = 'state change disallowed';
+					$this->db->trans_rollback ();
+					return FALSE;
+				}
+			}
+		}
 
 		$this->db->set ('projectid', $project->id);
 		$this->db->set ('id', $id);
@@ -345,6 +386,12 @@ class IssueModel extends Model
 		$this->db->set ('updatedon', $now);
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue_change');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
 
 		$this->db->where ('projectid', $project->id);
 		$this->db->where ('id', $id);
@@ -355,6 +402,12 @@ class IssueModel extends Model
 		$this->db->set ('updatedon', $now);
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
 
 		$this->db->set ('createdon', $now);
 		$this->db->set ('type',      'issue');
@@ -363,10 +416,14 @@ class IssueModel extends Model
 		$this->db->set ('userid',    $userid);
 		$this->db->set ('message',   $id);
 		$this->db->insert ('log');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
 
-		$this->db->trans_complete ();
-		if ($this->db->trans_status() === FALSE) return FALSE;
-
+		$this->db->trans_commit ();
 		return $id;
 	}
 
