@@ -1,3 +1,27 @@
+.codepot-issue-comment-updater {
+	float: left;
+}
+
+.codepot-issue-comment-actions {
+	float: right;
+}
+
+.codepot-issue-comment-action-button {
+	font-size: 75% !important;
+}
+
+textarea.codepot-issue-edit-comment {
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	border: 0 none;
+	width: 100%;
+	font-size: 0.9em;
+}
+
+
 li.issue-type-defect {
 	background-color: #D9534F;
 	color: #FFFFFF;
@@ -179,21 +203,36 @@ li.issue-owner {
 /*---------------------------------------------
  * issue show
  *---------------------------------------------*/
-#issue_show_state_body {
+#issue_show_metadata_body {
 	background-color: #FCFCFC;
 	padding: 1em 1em;
 }
 
-#issue_show_state_body ul {
+#issue_show_metadata_list,
+#issue_show_state_list {
+	clear: both;
 	padding: 0;
 	margin: 0;
 	list-style: outside none none;
 }
 
-#issue_show_state_body ul li {
+#issue_show_state_list {
+	padding-top: 0.2em;
+}
+
+#issue_show_metadata_list li,
+#issue_show_state_list li {
 	padding: 0.2em 0.2em 0.2em 0.2em;
 	margin: 0 0.2em 0 0.2em;
 	float: left;
+}
+
+#issue_show_metadata_list li {
+	background-color: #EAEAEA !important;
+	color: #000000 !important;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 }
 
 #issue_show_change_form {
@@ -229,11 +268,6 @@ li.issue-owner {
 }
 
 #issue_show_changes {
-	/*
-	margin-top: 1em;
-	padding-top: 0.5em;
-	padding-bottom: 0.5em;
-	*/
 	overflow: auto;
 }
 
@@ -246,10 +280,7 @@ li.issue-owner {
 #issue_show_changes_table td.date {
 	min-width: 5em;
 	width: 1px;
-}
-
-#issue_show_changes_table td.updater {
-	width: 1px;
+	vertical-align: top;
 }
 
 #issue_show_changes_table td.details {
@@ -304,7 +335,7 @@ li.issue-owner {
 }
 
 /*-----------------------------------------------
- * issue home show - edit issue dialog
+ * issue show - edit issue dialog
  *-----------------------------------------------*/
 #issue_show_edit_description_tabs {
 	border: none !important;

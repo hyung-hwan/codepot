@@ -181,6 +181,8 @@ class IssueModel extends Model
 
 	function create ($userid, $issue)
 	{
+		$now = codepot_nowtodbdate();
+
 		// TODO: check if userid can do this..
 		$this->db->trans_start ();
 
@@ -206,8 +208,8 @@ class IssueModel extends Model
 		$this->db->set ('status', $issue->status);
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('priority', $issue->priority);
-		$this->db->set ('createdon', codepot_nowtodbdate());
-		$this->db->set ('updatedon', codepot_nowtodbdate());
+		$this->db->set ('createdon', $now);
+		$this->db->set ('updatedon', $now);
 		$this->db->set ('createdby', $userid);
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue');
@@ -220,11 +222,13 @@ class IssueModel extends Model
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('comment', '');
 		$this->db->set ('priority', $issue->priority);
-		$this->db->set ('updatedon', codepot_nowtodbdate());
+		$this->db->set ('createdon', $now);
+		$this->db->set ('createdby', $userid);
+		$this->db->set ('updatedon', $now);
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue_change');
 
-		$this->db->set ('createdon', codepot_nowtodbdate());
+		$this->db->set ('createdon', $now);
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'create');
 		$this->db->set ('projectid', $issue->projectid);
@@ -240,16 +244,18 @@ class IssueModel extends Model
 
 	function update_partial ($userid, $issue)
 	{
+		$now = codepot_nowtodbdate();
+
 		$this->db->trans_start ();
 		$this->db->where ('projectid', $issue->projectid);
 		$this->db->where ('id', $issue->id);
 		$this->db->set ('summary', $issue->summary);
 		$this->db->set ('description', $issue->description);
-		$this->db->set ('updatedon', codepot_nowtodbdate());
+		$this->db->set ('updatedon', $now);
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue');
 
-                $this->db->set ('createdon', codepot_nowtodbdate());
+		$this->db->set ('createdon', $now);
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $issue->projectid);
@@ -265,6 +271,8 @@ class IssueModel extends Model
 
 	function update ($userid, $issue)
 	{
+		$now = codepot_nowtodbdate();
+
 		// TODO: check if userid can do this..
 		$this->db->trans_start ();
 		$this->db->where ('projectid', $issue->projectid);
@@ -275,7 +283,7 @@ class IssueModel extends Model
 		$this->db->set ('status', $issue->status);
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('priority', $issue->priority);
-		$this->db->set ('updatedon', codepot_nowtodbdate());
+		$this->db->set ('updatedon', $now);
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue');
 
@@ -287,11 +295,11 @@ class IssueModel extends Model
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('priority', $issue->priority);
 		$this->db->set ('comment', '');
-		$this->db->set ('updatedon', codepot_nowtodbdate());
+		$this->db->set ('updatedon', $now);
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue_change');
 
-		$this->db->set ('createdon', codepot_nowtodbdate());
+		$this->db->set ('createdon', $now);
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $issue->projectid);
@@ -307,6 +315,8 @@ class IssueModel extends Model
 
 	function change ($userid, $project, $id, $change)
 	{
+		$now = codepot_nowtodbdate();
+
 		$this->db->trans_start ();
 
 		$this->db->where ('projectid', $project->id);
@@ -330,7 +340,9 @@ class IssueModel extends Model
 		$this->db->set ('owner', $change->owner);
 		$this->db->set ('priority', $change->priority);
 		$this->db->set ('comment', $change->comment);
-		$this->db->set ('updatedon', codepot_nowtodbdate());
+		$this->db->set ('createdon', $now);
+		$this->db->set ('createdby', $userid);
+		$this->db->set ('updatedon', $now);
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue_change');
 
@@ -340,11 +352,11 @@ class IssueModel extends Model
 		$this->db->set ('status', $change->status);
 		$this->db->set ('owner', $change->owner);
 		$this->db->set ('priority', $change->priority);
-		$this->db->set ('updatedon', codepot_nowtodbdate());
+		$this->db->set ('updatedon', $now);
 		$this->db->set ('updatedby', $userid);
 		$this->db->update ('issue');
 
-		$this->db->set ('createdon', codepot_nowtodbdate());
+		$this->db->set ('createdon', $now);
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'change');
 		$this->db->set ('projectid', $project->id);
@@ -505,6 +517,8 @@ class IssueModel extends Model
 		$this->db->set ('owner', $issue->owner);
 		$this->db->set ('comment', '');
 		$this->db->set ('priority', $issue->priority);
+		$this->db->set ('createdon', $now);
+		$this->db->set ('createdby', $userid);
 		$this->db->set ('updatedon', $now);
 		$this->db->set ('updatedby', $userid);
 		$this->db->insert ('issue_change');
@@ -888,7 +902,7 @@ class IssueModel extends Model
 			}
 		}
 
-		$this->db->set ('createdon', codepot_nowtodbdate());
+		$this->db->set ('createdon', $now);
 		$this->db->set ('type',      'issue');
 		$this->db->set ('action',    'update');
 		$this->db->set ('projectid', $projectid);
@@ -917,6 +931,55 @@ class IssueModel extends Model
 		return $x;
 	}
 
+	private function _edit_comment ($userid, $projectid, $issueid, $sno, $text)
+	{
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
+
+		$now = codepot_nowtodbdate();
+
+		$this->db->where ('projectid', $projectid);
+		$this->db->where ('id',        $issueid);
+		$this->db->where ('sno',       $sno);
+		$this->db->set   ('comment',   $text);
+		$this->db->set   ('updatedon', $now);
+		$this->db->set   ('updatedby', $userid);
+		$this->db->update ('issue_change');
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		/*
+		$this->db->set ('createdon', codepot_nowtodbdate());
+		$this->db->set ('type',      'issue');
+		$this->db->set ('action',    'update');
+		$this->db->set ('projectid', $projectid);
+		$this->db->set ('userid',    $userid);
+		$this->db->set ('message',   $issueid);
+		$this->db->insert ('log');
+
+		if ($this->db->trans_status() === FALSE)
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}*/
+
+		$this->db->trans_commit ();
+		return TRUE;
+	}
+
+	function editComment ($userid, $projectid, $issueid, $sno, $text)
+	{
+		set_error_handler (array ($this, 'capture_error'));
+		$errmsg = '';
+		$x = $this->_edit_comment ($userid, $projectid, $issueid, $sno, $text);
+		restore_error_handler ();
+		return $x;
+	}
+
 	function isIssueCreatedBy ($projectid, $issueid, $userid)
 	{
 		$this->db->trans_begin (); // manual transaction. not using trans_start().
@@ -926,6 +989,7 @@ class IssueModel extends Model
 		$query = $this->db->get ('issue');
 		if ($this->db->trans_status() === FALSE) 
 		{
+			$this->errmsg = $this->db->_error_message(); 
 			$this->db->trans_rollback ();
 			return FALSE;
 		}
@@ -940,7 +1004,63 @@ class IssueModel extends Model
 		$this->db->trans_commit ();
 
 		$issue = &$result[0];
-		return ($issue->created_by == $userid);
+		return ($issue->createdby == $userid);
+	}
+
+	function isIssueChangeCreatedBy ($projectid, $issueid, $sno, $userid)
+	{
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
+
+		$this->db->where ('projectid', $projectid);
+		$this->db->where ('id', $issueid);
+		$this->db->where ('sno', $sno);
+		$query = $this->db->get ('issue_change');
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$result = $query->result ();
+		if (empty($result))
+		{
+			$this->db->trans_commit ();
+			return FALSE;
+		}
+
+		$this->db->trans_commit ();
+
+		$issue = &$result[0];
+		return $issue->createdby == $userid;
+	}
+
+	function isIssueChangeMadeBy ($projectid, $issueid, $sno, $userid)
+	{
+		$this->db->trans_begin (); // manual transaction. not using trans_start().
+
+		$this->db->where ('projectid', $projectid);
+		$this->db->where ('id', $issueid);
+		$this->db->where ('sno', $sno);
+		$query = $this->db->get ('issue_change');
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$result = $query->result ();
+		if (empty($result))
+		{
+			$this->db->trans_commit ();
+			return FALSE;
+		}
+
+		$this->db->trans_commit ();
+
+		$issue = &$result[0];
+		return ($issue->createdby == $userid || $issue->updatedby == $userid);
 	}
 }
 

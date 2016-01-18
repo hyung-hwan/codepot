@@ -152,8 +152,10 @@ CREATE TABLE issue_change (
 	priority  VARCHAR(32)  NOT NULL,
 	comment   TEXT         NOT NULL,
 
-	updatedon TIMESTAMP    NOT NULL,
-	updatedby VARCHAR(32)  NOT NULL,
+	createdon  TIMESTAMP     NOT NULL,
+	updatedon  TIMESTAMP     NOT NULL,
+	createdby  VARCHAR(32)   NOT NULL,
+	updatedby  VARCHAR(32)   NOT NULL,
 
 	PRIMARY KEY (projectid, id, sno),
 

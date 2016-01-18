@@ -24,6 +24,8 @@ UPGRADING FROM 0.2.0
   mysql> ALTER TABLE project ADD COLUMN (codecharset VARCHAR(32));
   mysql> DROP TABLE issue_attachment;
   mysql> create the issue_file_list table according to the definition found in codepot.mysql
+  mysql> ALTER TABLE issue_change ADD COLUMN(createdon datetime not null, createdby varchar(32) not null);
+  mysql> UPDATE issue_change SET createdby=updatedby, createdon=updatedon;
 
 INSTALLATION ON CENTOS
 
