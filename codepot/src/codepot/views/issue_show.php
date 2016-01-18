@@ -685,20 +685,61 @@ $(function () {
 			width: '85%',
 			buttons: { 
 				'<?php print $this->lang->line('OK')?>': function () { 
-					var comment = $('#issue_change_comment');
-					if (comment.val().trim().length <= 0)
+					if (work_in_progress) return;
+
+					if (!!window.FormData)
 					{
-						comment.addClass ('ui-state-error');
-						setTimeout (function () {
-							comment.removeClass ('ui-state-error', 500);
-						}, 500);
+						// FormData is supported
+						work_in_progress = true;
+
+						var form_data = new FormData();
+
+						form_data.append ('issue_change_type', $('#issue_change_type').val());
+						form_data.append ('issue_change_status', $('#issue_change_status').val());
+						form_data.append ('issue_change_priority', $('#issue_change_priority').val());
+						form_data.append ('issue_change_owner', $('#issue_change_owner').val());
+						form_data.append ('issue_change_comment', $('#issue_change_comment').val());
+
+						$('#issue_show_change_form').dialog('disable');
+						$.ajax({
+							url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/issue/xhr_change/{$project->id}/{$hex_issue_id}"; ?>'),
+							type: 'POST',
+							data: form_data,
+							mimeType: 'multipart/form-data',
+							contentType: false,
+							processData: false,
+							cache: false,
+
+							success: function (data, textStatus, jqXHR) { 
+								work_in_progress = false;
+								$('#issue_show_change_form').dialog('enable');
+								$('#issue_show_change_form').dialog('close');
+								if (data == 'ok') 
+								{
+									// refresh the page to the head revision
+									$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/issue/show/{$project->id}/{$hex_issue_id}"; ?>'));
+								}
+								else
+								{
+									show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+								}
+							},
+
+							error: function (jqXHR, textStatus, errorThrown) { 
+								work_in_progress = false;
+								$('#issue_show_change_form').dialog('enable');
+								$('#issue_show_change_form').dialog('close');
+								show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
+							}
+						});
 					}
 					else
 					{
-						$(this).dialog('close'); 
-						$('#issue_change').val ('change');
-						$('#issue_change_form').submit ();
+						show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
 					}
+
+
+
 				},
 				'<?php print $this->lang->line('Cancel')?>': function () { 
 					$(this).dialog('close'); 
@@ -1035,18 +1076,16 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 	$new = $issue->changes[0];
 
 	print '<div id="issue_show_change_start" class="codepot-issue-start">';
-		print '<div class="codepot-issue-change">';
-			print '<div class="codepot-issue-change-topline">';
-				printf ('<div class="codepot-issue-change-date">%s</div>',  codepot_dbdatetodispdate($new->updatedon));
-				print '<div class="codepot-issue-comment-updater">';
-				$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($new->updatedby));
-				print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' /> ";
-				print htmlspecialchars($new->updatedby);
-				print '</div>';
-
-				print '<div class="codepot-issue-comment-actions"></div>';
-				print '<div style="clear: both;"></div>';
+		print '<div class="codepot-issue-start-topline">';
+			printf ('<div class="codepot-issue-change-date">%s</div>',  codepot_dbdatetodispdate($new->updatedon));
+			print '<div class="codepot-issue-comment-updater">';
+			$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($new->updatedby));
+			print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' /> ";
+			print htmlspecialchars($new->updatedby);
 			print '</div>';
+
+			print '<div class="codepot-issue-comment-actions"></div>';
+			print '<div style="clear: both;"></div>';
 		print '</div>';
 
 		print '<ul id="issue_show_change_start_list" class="codepot-issue-horizontal-list">';
@@ -1181,81 +1220,53 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 
 <div id="issue_show_change_form">
 
-	<?php print form_open("issue/show/{$project->id}/{$hex_issue_id}/", 'id="issue_change_form"')?>
+	<div>
+		<?php 
+		print form_label ($this->lang->line('Type'), 'issue_change_type');
+		print form_dropdown('issue_change_type', $issue_type_array, set_value('issue_change_type', $issue->type), 'id="issue_change_type"');
 
-		<input type='hidden' name='issue_change' id='issue_change' value='change' />
+		print ' ';
+		print form_label ($this->lang->line('Status'), 'issue_change_status');
+		print form_dropdown('issue_change_status', $issue_status_array, set_value('issue_change_status', $issue->status), 'id="issue_change_status"');
 
-		<div>
-			<?php print form_label ($this->lang->line('Type'),
-				'issue_change_type')
-			?>
-			<?php print form_dropdown('issue_change_type', 
-				$issue_type_array,
-				set_value('issue_change_type', $issue->type),
-				'id="issue_change_type"')
-			?>
+		print ' ';
+		print form_label ($this->lang->line('Priority'), 'issue_change_priority');
+		print form_dropdown ('issue_change_priority', $issue_priority_array, set_value('issue_change_priority', $issue->priority), 'id="issue_change_priority"');
 
-			<?php print form_label ($this->lang->line('Status'),
-				'issue_change_status')
-			?>
-			<?php print form_dropdown('issue_change_status', 
-				$issue_status_array,
-				set_value('issue_change_status', $issue->status),
-				'id="issue_change_status"')
-			?>
+		print ' ';
+		print form_label ($this->lang->line('Owner'), 'issue_change_owner');
+		$owner_array = array ();
+		$found = FALSE;
+		foreach ($project->members as $t) 
+		{
+			if ($issue->owner == $t) $found = TRUE;
+			$owner_array[$t] = $t;
+		}
+		if ($found === FALSE) $owner_array[$issue->owner] = $issue->owner;
 
-			<?php print form_label ($this->lang->line('Priority'),
-				'issue_change_priority')
-			?>
+		print form_dropdown ('issue_change_owner', $owner_array, set_value('issue_change_owner', $issue->owner), 'id="issue_change_owner"');
+		?>
+	</div>
 
-			<?php print form_dropdown (
-				'issue_change_priority', 
-				$issue_priority_array,
-				set_value('issue_change_priority', $issue->priority),
-				'id="issue_change_priority"')
-			?>
-		</div>
-
-		<div>
+	<div>
+		<?php print form_label ($this->lang->line('Comment'), 'issue_change_comment')?>
+		<a href='#' id='issue_change_comment_preview_button'><?php print $this->lang->line('Preview')?></a>
+	</div>
+	<div>
 		<?php
-			print form_label ($this->lang->line('Owner'), 'issue_change_owner');
+			$xdata = array (
+				'name' => 'issue_change_comment',
+				'value' => set_value ('issue_change_comment', ''),
+				'id' => 'issue_change_comment',
+				'rows' => 10,
+				'cols' => 80
+			);
+			print form_textarea ($xdata);
+		?>
+	</div>
 
-			$owner_array = array ();
-			$found = FALSE;
-			foreach ($project->members as $t) 
-			{
-				if ($issue->owner == $t) $found = TRUE;
-				$owner_array[$t] = $t;
-			}
-			if ($found === FALSE) $owner_array[$issue->owner] = $issue->owner;
+	<div id='issue_change_comment_preview' class='codepot-styled-text-preview'></div>
 
-			print form_dropdown (
-				'issue_change_owner', 
-				$owner_array,
-				set_value('issue_change_owner', $issue->owner),
-				'id="issue_change_owner"');
-			?>
-		</div>
-
-		<div>
-			<?php print form_label ($this->lang->line('Comment'), 'issue_change_comment')?>
-			<a href='#' id='issue_change_comment_preview_button'><?php print $this->lang->line('Preview')?></a>
-		</div>
-		<div>
-			<?php
-				$xdata = array (
-					'name' => 'issue_change_comment',
-					'value' => set_value ('issue_change_comment', ''),
-					'id' => 'issue_change_comment',
-					'rows' => 10,
-					'cols' => 80
-				);
-				print form_textarea ($xdata);
-			?>
-		</div>
-
-		<div id='issue_change_comment_preview' class='codepot-styled-text-preview'></div>
-	<?php print form_close()?>
 </div> <!-- issue_show_change_form -->
 
 

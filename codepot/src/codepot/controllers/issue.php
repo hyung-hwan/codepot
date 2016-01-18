@@ -176,37 +176,9 @@ class Issue extends Controller
 		}
 		else
 		{
+			/*
 			$change_post = $this->input->post('issue_change');
-			if ($change_post == 'change')
-			{
-				$change = new stdClass();
-				$change->type = $this->input->post('issue_change_type');
-				$change->status = $this->input->post('issue_change_status');
-				$change->owner = $this->input->post('issue_change_owner');
-				$change->priority = $this->input->post('issue_change_priority');
-				$change->comment = $this->input->post('issue_change_comment');
-
-				if (!$login['sysadmin?'] && 
-				    $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
-				{
-					$data['project'] = $project;
-					$data['message'] = sprintf (
-						$this->lang->line('MSG_PROJECT_MEMBERSHIP_REQUIRED'), $projectid);
-					$this->load->view ($this->VIEW_ERROR, $data);
-				}
-				else if ($this->issues->change ($login['id'], $project, $id, $change) === FALSE)
-				{
-					$data['project'] = $project;
-					$data['message'] = 'DATABASE ERROR';
-					$this->load->view ($this->VIEW_ERROR, $data);
-				}
-				else
-				{
-					redirect ("/issue/show/{$projectid}/{$hexid}");
-				}
-				return;
-			}
-			else if ($change_post == 'undo')
+			if ($change_post == 'undo')
 			{
 				if (!$login['sysadmin?'] && 
 				    $this->projects->projectHasMember($project->id, $login['id']) === FALSE)
@@ -227,7 +199,7 @@ class Issue extends Controller
 					redirect ("/issue/show/{$projectid}/{$hexid}");
 				}
 				return;
-			}
+			}*/
 
 			$issue = $this->issues->get ($login['id'], $project, $id);
 			if ($issue === FALSE)
@@ -656,6 +628,61 @@ class Issue extends Controller
 					{
 						$status = 'ok';
 					}
+				}
+			}
+		}
+
+		print $status;
+	}
+
+
+	function xhr_change ($projectid = '', $issueid = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('IssueModel', 'issues');
+
+		$login = $this->login->getUser ();
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$issueid = $this->converter->HexToAscii ($issueid);
+			$is_nonmember = FALSE;
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (!$login['sysadmin?'] && 
+			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE &&
+			         ($is_nonmember = $this->issues->isIssueCreatedBy($projectid, $issueid, $login['id'])) === FALSE)
+			{
+				$status = "error - not a member nor a creator - {$login['id']}";
+			}
+			else
+			{
+				$change = new stdClass();
+				$change->type = $this->input->post('issue_change_type');
+				$change->status = $this->input->post('issue_change_status');
+				$change->owner = $this->input->post('issue_change_owner');
+				$change->priority = $this->input->post('issue_change_priority');
+				$change->comment = $this->input->post('issue_change_comment');
+
+				if ($this->issues->change ($login['id'], $project, $issueid, $change, $is_nonmember) === FALSE)
+				{
+					$status = 'error - ' . $this->issues->getErrorMessage();
+				}
+				else
+				{
+					$status = 'ok';
 				}
 			}
 		}
