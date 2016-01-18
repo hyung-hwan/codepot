@@ -658,7 +658,7 @@ $this->load->view (
 </div>
 
 <div id="file_show_result" class="codepot-relative-container-view">
-	<div id="file_show_wiki">
+	<div id="file_show_wiki" class="codepot-styled-text-view">
 		<pre id="file_show_wiki_text" style="visibility: hidden"><?php print htmlspecialchars($file->description); ?></pre>
 	</div>
 </div>
