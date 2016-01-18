@@ -984,7 +984,7 @@ class IssueModel extends Model
 	{
 		$this->db->trans_begin (); // manual transaction. not using trans_start().
 
-		$this->db->where ('projectid', $projectod);
+		$this->db->where ('projectid', $projectid);
 		$this->db->where ('id', $issueid);
 		$query = $this->db->get ('issue');
 		if ($this->db->trans_status() === FALSE) 

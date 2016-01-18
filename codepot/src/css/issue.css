@@ -1,5 +1,47 @@
+ul.codepot-issue-horizontal-list {
+	clear: both;
+	padding: 0;
+	margin: 0;
+	list-style: outside none none !important;
+}
+
+ul.codepot-issue-horizontal-list li {
+	padding: 0.2em 0.2em 0.2em 0.2em;
+	margin: 0 0.2em 0 0.2em;
+	float: left;
+}
+
+.codepot-issue-change  ul.codepot-issue-horizontal-list {
+	padding: 0.3em 0 0.3em 0;
+}
+
+.codepot-issue-start,
+.codepot-issue-change {
+	padding: 0.3em 0 0.3em 0;
+}
+
+.codepot-issue-change {
+	border-top: 1px solid #cccccc;
+}
+
+.codepot-issue-change-topline {
+	background-color: #EEEEEE;
+	padding: 0.3em;
+
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+
+	line-height: 1.5em;
+}
+
+.codepot-issue-change-date,
 .codepot-issue-comment-updater {
 	float: left;
+}
+
+.codepot-issue-comment-updater {
+	margin-left: 0.5em;
 }
 
 .codepot-issue-comment-actions {
@@ -20,7 +62,6 @@ textarea.codepot-issue-edit-comment {
 	width: 100%;
 	font-size: 0.9em;
 }
-
 
 li.issue-type-defect {
 	background-color: #D9534F;
@@ -208,23 +249,8 @@ li.issue-owner {
 	padding: 1em 1em;
 }
 
-#issue_show_metadata_list,
-#issue_show_state_list {
-	clear: both;
-	padding: 0;
-	margin: 0;
-	list-style: outside none none;
-}
-
 #issue_show_state_list {
 	padding-top: 0.2em;
-}
-
-#issue_show_metadata_list li,
-#issue_show_state_list li {
-	padding: 0.2em 0.2em 0.2em 0.2em;
-	margin: 0 0.2em 0 0.2em;
-	float: left;
 }
 
 #issue_show_metadata_list li {
@@ -271,34 +297,6 @@ li.issue-owner {
 	overflow: auto;
 }
 
-#issue_show_changes_table td {
-	padding: 0.3em 0.3em 0.3em 0.3em;
-	white-space: normal;
-	word-wrap: break-word;
-}
-
-#issue_show_changes_table td.date {
-	min-width: 5em;
-	width: 1px;
-	vertical-align: top;
-}
-
-#issue_show_changes_table td.details {
-	overflow: auto;
-}
-
-#issue_show_changes_table td.details .list {
-	background-color: #F1F1FF;
-}
-
-#issue_show_changes_table td.details .list ul {
-	padding: 0;
-	margin: 0.2em 0.5em 0.5em 1em;
-}
-
-#issue_show_changes_table td.details .list ul li {
-	padding: 0.1em;
-}
 
 #issue_change_comment_preview_button.ui-button {
 	font-size: 0.8em;
