@@ -11,7 +11,8 @@ ul.codepot-issue-horizontal-list li {
 	float: left;
 }
 
-.codepot-issue-change  ul.codepot-issue-horizontal-list {
+.codepot-issue-start ul.codepot-issue-horizontal-list,
+.codepot-issue-change ul.codepot-issue-horizontal-list {
 	padding: 0.3em 0 0.3em 0;
 }
 
@@ -21,11 +22,12 @@ ul.codepot-issue-horizontal-list li {
 }
 
 .codepot-issue-change {
-	border-top: 1px solid #cccccc;
+	border-top: 1px dashed #EAEAEA;
 }
 
+.codepot-issue-start-topline,
 .codepot-issue-change-topline {
-	background-color: #EEEEEE;
+	background-color: #F5F5F5;
 	padding: 0.3em;
 
 	-moz-border-radius: 3px;
