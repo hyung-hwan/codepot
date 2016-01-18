@@ -1000,6 +1000,17 @@ pre.codepot-line-numbered span.codepot-line-number-clear {
 	width: 100%;
 }
 
+.codepot-committer-icon-24x24 {
+        width: 24px;
+	height: 24px;
+        vertical-align: middle;
+        margin-right: 2px;
+
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: 3px;
+}
+
 /* === footer === */
 .codepot-footer-pusher {
 	clear: both;
