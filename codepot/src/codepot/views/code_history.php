@@ -108,7 +108,7 @@ $this->load->view (
 <div id="code_history_result" class="codepot-relative-container-view">
 	<table id="code_history_result_table" class="codepot-full-width-table codepot-spacious-table">
 	<tr class='codepot-full-width-table-header'>
-		<th><?php print $this->lang->line('Revision')?></th>
+		<th><?php /*print $this->lang->line('Revision')*/ ?></th>
 		<th><?php print $this->lang->line('Committer')?></th>
 		<th><?php print $this->lang->line('Date')?></th>
 		<th><?php print $this->lang->line('Message')?></th>
@@ -144,7 +144,13 @@ $this->load->view (
 			print '<td class="commit-author-td">';
 			// Repository migration from googlecode revealed that it did not put 
 			// 'author' for initial project creation. So I've added the following check.
-			if (array_key_exists('author', $h)) print htmlspecialchars($h['author']);
+			if (array_key_exists('author', $h)) 
+			{
+				$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($h['author']));
+                		print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' />";
+
+				print htmlspecialchars($h['author']);
+			}
 			print '</td>';
 
 			print '<td class="commit-date-td"><tt>';
