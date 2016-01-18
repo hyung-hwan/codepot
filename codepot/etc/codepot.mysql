@@ -134,7 +134,9 @@ CREATE TABLE issue_change (
 	priority     VARCHAR(32)  NOT NULL,
 	comment      TEXT         NOT NULL,
 
+	createdon    DATETIME     NOT NULL,
 	updatedon    DATETIME     NOT NULL,
+	createdby    VARCHAR(32)  NOT NULL,
 	updatedby    VARCHAR(32)  NOT NULL,
 
 	PRIMARY KEY (projectid, id, sno),

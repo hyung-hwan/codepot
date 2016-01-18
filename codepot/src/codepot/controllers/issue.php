@@ -663,6 +663,67 @@ class Issue extends Controller
 		print $status;
 	}
 
+
+	function xhr_edit_comment ($projectid = '', $issueid = '')
+	{
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('IssueModel', 'issues');
+
+		$login = $this->login->getUser ();
+		$revision_saved = -1;
+
+		if ($login['id'] == '')
+		{
+			$status = 'error - anonymous user';
+		}
+		else
+		{
+			$issueid = $this->converter->HexToAscii ($issueid);
+
+			$project = $this->projects->get ($projectid);
+			if ($project === FALSE)
+			{
+				$status = "error - failed to get the project {$projectid}";
+			}
+			else if ($project === NULL)
+			{
+				$status = "error - no such project {$projectid}";
+			}
+			else if (($comment_sno = $this->input->post('issue_edit_comment_sno')) === FALSE || $comment_sno <= 0)
+			{
+				$status = "error - invalid comment number";
+			}
+			else if (!$login['sysadmin?'] && 
+			         /*$this->projects->projectHasMember($projectid, $login['id']) === FALSE &&*/
+			         $this->issues->isIssueChangeCreatedBy($projectid, $issueid, $comment_sno, $login['id']) === FALSE)
+			{
+				$status = "error - comment not created by {$login['id']}";
+			}
+			else
+			{
+				$text = $this->input->post('issue_edit_comment_text');
+
+				if ($text === FALSE ||$text == '')
+				{
+					$status = "error - empty comment text";
+				}
+				else
+				{
+					if ($this->issues->editComment ($login['id'], $projectid, $issueid, $comment_sno, $text) === FALSE)
+					{
+						$status = 'error - ' . $this->issues->getErrorMessage();
+					}
+					else
+					{
+						$status = 'ok';
+					}
+				}
+			}
+		}
+
+		print $status;
+	}
+
 	////////////////////////////////////////////////////////////////////////
 	// Handling of attached files share the (almost) same code 
 	// between issue.php and wiki.php. It would be way better
@@ -883,6 +944,25 @@ class Issue extends Controller
 				}
 			}
 			if ($part[2] != '') $filename = $part[2];
+		}
+		else if (count($part) == 2)
+		{
+			//$target => wikiname:attachment
+			//$target => #I1:file
+			if ($part[0] != '')
+			{
+				if ($part[0][0] == '#' && $part[0][1] == 'I')
+				{
+					$issueid = substr ($part[0],2);
+					$wikiname = '';
+				}
+				else
+				{
+					$wikiname = $part[0];
+					$issueid = '';
+				}
+			}
+			if ($part[1] != '') $filename = $part[1];
 		}
 
 		if ($wikiname != '')

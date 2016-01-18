@@ -147,7 +147,7 @@ $this->load->view (
 			if (array_key_exists('author', $h)) 
 			{
 				$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($h['author']));
-                		print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' />";
+				print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' /> ";
 
 				print htmlspecialchars($h['author']);
 			}

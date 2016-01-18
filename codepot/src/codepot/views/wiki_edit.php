@@ -45,7 +45,7 @@ function show_alert (outputMsg, titleMsg)
 		width: 'auto',
 		height: 'auto',
 		buttons: {
-			"OK": function () {
+			'<?php print $this->lang->line('OK')?>': function () {
 				$(this).dialog("close");
 			}
 		}
@@ -68,7 +68,7 @@ function show_in_progress_message (outputMsg, titleMsg)
 			height: 'auto',
 
 			buttons: { 
-				"OK": function () {
+				'<?php print $this->lang->line('OK')?>': function () {
 					// do nothing, don't event close the dialog.
 				}
 			},
@@ -381,11 +381,11 @@ function save_wiki_with_confirmation (outputMsg, titleMsg, wiki_new_name, wiki_n
 		width: 'auto',
 		height: 'auto',
 		buttons: {
-			"OK": function () {
+			'<?php print $this->lang->line('OK')?>': function () {
 				$(this).dialog("close");
 				save_wiki (wiki_new_name, wiki_new_text);
 			},
-			"Cancel": function () {
+			'<?php print $this->lang->line('Cancel')?>': function () {
 				$(this).dialog("close");
 			}
 		}
