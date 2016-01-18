@@ -52,7 +52,7 @@ function show_alert (outputMsg, titleMsg)
 		width: 'auto',
 		height: 'auto',
 		buttons: {
-			"OK": function () {
+			'<?php print $this->lang->line('OK')?>': function () {
 				$(this).dialog("close");
 			}
 		}

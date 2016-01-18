@@ -27,6 +27,8 @@ $issue_file_count = count ($issue->files);
 
 $creole_base = site_url() . "/wiki/show/{$project->id}/"; 
 $creole_file_base = site_url() . "/issue/file/{$project->id}/{$issue->id}/"; 
+
+$change_count = count($issue->changes);
 ?>
 
 <script type="text/javascript">
@@ -40,11 +42,34 @@ function show_alert (outputMsg, titleMsg)
 		width: 'auto',
 		height: 'auto',
 		buttons: {
-			"OK": function () {
+			'<?php print $this->lang->line('OK')?>': function () {
 				$(this).dialog("close");
 			}
 		}
 	});
+}
+
+function render_wiki()
+{
+	creole_render_wiki (
+		"issue_show_description_pre", 
+		"issue_show_description", 
+		"<?php print $creole_base?>",
+		"<?php print $creole_file_base?>",
+		false
+	);
+
+	<?php
+	for ($i = 1; $i < $change_count; $i++)
+	{
+		print "creole_render_wiki (
+			'issue_show_comment_pre_{$i}', 
+			'issue_show_comment_{$i}', 
+			'{$creole_base}', '{$creole_file_base}', false);\n";
+	}
+	?>
+
+	prettyPrint ();
 }
 
 $.widget("ui.combobox", {
@@ -184,6 +209,20 @@ function preview_edit_description (input_text)
 	prettyPrint ();
 }
 
+
+function preview_issue_change_comment(input_text)
+{
+	creole_render_wiki_with_input_text (
+		input_text,
+		"issue_change_comment_preview", 
+		"<?php print $creole_base?>",
+		"<?php print $creole_file_base?>",
+		true
+	);
+
+	prettyPrint ();
+}
+
 var work_in_progress = false;
 
 var original_file_name = [
@@ -207,6 +246,60 @@ var original_file_desc = [
 	print "\n";
 	?>
 ];
+
+
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+function save_issue_comment (comment_no)
+{
+	if (!!window.FormData)
+	{
+		// FormData is supported
+		var form_elem_id = '#issue_show_edit_comment_form_' + comment_no;
+		var sno_elem_id = '#issue_show_edit_comment_sno_' + comment_no;
+		var text_elem_id = '#issue_show_edit_comment_text_' + comment_no;
+		var form_data = new FormData();
+
+		form_data.append ('issue_edit_comment_sno', $(sno_elem_id).val());
+		form_data.append ('issue_edit_comment_text', $(text_elem_id).val());
+
+		$(form_elem_id).dialog('disable');
+		$.ajax({
+			url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/issue/xhr_edit_comment/{$project->id}/{$hex_issue_id}"; ?>'),
+			type: 'POST',
+			data: form_data,
+			mimeType: 'multipart/form-data',
+			contentType: false,
+			processData: false,
+			cache: false,
+
+			success: function (data, textStatus, jqXHR) { 
+				$(form_elem_id).dialog('enable');
+				$(form_elem_id).dialog('close');
+				if (data == 'ok') 
+				{
+					// refresh the page to the head revision
+					$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/issue/show/{$project->id}/${hex_issue_id}"; ?>'));
+				}
+				else
+				{
+					show_alert ('<pre>' + codepot_htmlspecialchars(data) + '</pre>', "<?php print $this->lang->line('Error')?>");
+				}
+			},
+
+			error: function (jqXHR, textStatus, errorThrown) { 
+				$(form_elem_id).dialog('enable');
+				$(form_elem_id).dialog('close');
+				show_alert ('Failed - ' + errorThrown, "<?php print $this->lang->line('Error')?>");
+			}
+		});
+	}
+	else
+	{
+		show_alert ('<pre>NOT SUPPORTED</pre>', "<?php print $this->lang->line('Error')?>");
+	}
+
+}
+<?php endif; ?>
 
 $(function () { 
 
@@ -670,6 +763,47 @@ $(function () {
 		}
 	);
 
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+
+	for (var i = 1; i < <?php print $change_count; ?>; i++)
+	{
+		$('#issue_show_edit_comment_form_' + i).dialog ({
+			title: '<?php print $this->lang->line('Comment')?>',
+			autoOpen: false,
+			modal: true,
+			width: '85%',
+			buttons: { 
+				'<?php print $this->lang->line('OK')?>': function () { 
+					if (work_in_progress) return;
+					work_in_progress = true;
+					var id = $(this).attr('id');
+					var comment_no = id.replace('issue_show_edit_comment_form_', '');
+					save_issue_comment (comment_no);
+					work_in_progress = false;
+				},
+				'<?php print $this->lang->line('Cancel')?>': function () { 
+					if (work_in_progress) return;
+					$(this).dialog ('close');
+				}
+			},
+			beforeClose: function() { 
+				// if importing is in progress, prevent dialog closing
+				return !work_in_progress;
+			}
+		});
+
+		$('#issue_show_edit_comment_button_' + i).button().click(
+			function () {
+				var id = $(this).attr('id');
+				var comment_no = id.replace('issue_show_edit_comment_button_', '');
+				$('#issue_show_edit_comment_form_' + comment_no).dialog('open'); // @issue_show_edit_comment_form_xxx
+				return false;
+			}
+		);
+	}
+
+<?php endif; ?>
+
 	render_wiki();
 });
 </script>
@@ -736,48 +870,57 @@ $this->load->view (
 </div>
 
 <div id='issue_show_state' class='collapsible-box'>
-	<div id='issue_show_state_header' class='collapsible-box-header'><?php print $this->lang->line('State')?></div>
-	<div id='issue_show_state_body'>
-	<ul>
-	<?php
+	<div id='issue_show_metadata_header' class='collapsible-box-header'><?php print $this->lang->line('State')?></div>
+	<div id='issue_show_metadata_body'>
+		<ul id='issue_show_metadata_list'>
+			<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($issue->createdon); ?></li>
+			<li><?php print $this->lang->line('Created by')?> <?php print htmlspecialchars($issue->createdby); ?></li>
+			<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($issue->updatedon); ?></li>
+			<li><?php print $this->lang->line('Last updated by')?> <?php print htmlspecialchars($issue->updatedby); ?></li>
+		</ul>
 
-		$type = array_key_exists($issue->type, $issue_type_array)? 
-			$issue_type_array[$issue->type]: $issue->type;
+		<ul id='issue_show_state_list'>
+			<?php
 
-		$status = array_key_exists($issue->status, $issue_status_array)? 
-				$issue_status_array[$issue->status]: $issue->status;
+			$type = array_key_exists($issue->type, $issue_type_array)? 
+				$issue_type_array[$issue->type]: $issue->type;
 
-		$priority = array_key_exists($issue->priority, $issue_priority_array)? 
-				$issue_priority_array[$issue->priority]: $issue->priority;
+			$status = array_key_exists($issue->status, $issue_status_array)? 
+					$issue_status_array[$issue->status]: $issue->status;
 
-		printf ('<li class="issue-type-%s">', $issue->type);
-		print $this->lang->line('Type');
-		print ': '; 
-		print htmlspecialchars($type);
-		print '</li>';
+			$priority = array_key_exists($issue->priority, $issue_priority_array)? 
+					$issue_priority_array[$issue->priority]: $issue->priority;
 
-		printf ('<li class="issue-status-%s">', $issue->status);
-		print $this->lang->line('Status');
-		print ': '; 
-		print htmlspecialchars($status);
-		print '</li>';
-
-		printf ('<li class="issue-priority-%s">', $issue->priority);
-		print $this->lang->line('Priority');
-		print ': '; 
-		print htmlspecialchars($priority);
-		print '</li>';
-
-		print '<li class="issue-owner">';
-		if ($issue->owner != '')
-		{
-			print $this->lang->line('Owner');
+			printf ('<li class="issue-type-%s">', $issue->type);
+			print $this->lang->line('Type');
 			print ': '; 
-			print htmlspecialchars($issue->owner);
+			print htmlspecialchars($type);
 			print '</li>';
-		}
-	?>
-	</ul>
+
+			printf ('<li class="issue-status-%s">', $issue->status);
+			print $this->lang->line('Status');
+			print ': '; 
+			print htmlspecialchars($status);
+			print '</li>';
+
+			printf ('<li class="issue-priority-%s">', $issue->priority);
+			print $this->lang->line('Priority');
+			print ': '; 
+			print htmlspecialchars($priority);
+			print '</li>';
+
+			print '<li class="issue-owner">';
+			if ($issue->owner != '')
+			{
+				print $this->lang->line('Owner');
+				print ': '; 
+				print htmlspecialchars($issue->owner);
+				print '</li>';
+			}
+			?>
+		</ul>
+
+		<div style='clear: both'></div>
 	</div>
 </div>
 
@@ -838,17 +981,16 @@ $this->load->view (
 
 <div id="issue_show_changes">
 	<?php
-	$commentno = 0;
 
 	$msgfmt_changed_from_to = $this->lang->line ('ISSUE_MSG_CHANGED_X_FROM_Y_TO_Z');
 	$msgfmt_changed_to = $this->lang->line ('ISSUE_MSG_CHANGED_X_TO_Z');
-	$count = count($issue->changes);
 
 	print '<table id="issue_show_changes_table" class="codepot-full-width-table">';
-	while ($count > 1)
+// TODO: displa changes[0];
+	for ($i = 1; $i < $change_count; $i++)
 	{
-		$new = $issue->changes[--$count];
-		$old = $issue->changes[$count-1];
+		$new = $issue->changes[$i];
+		$old = $issue->changes[$i - 1];
 
 		print '<tr>';
 
@@ -856,20 +998,30 @@ $this->load->view (
 		print codepot_dbdatetodispdate($new->updatedon);
 		print '</td>';
 
-		print '<td class="updater">'; 
-		print htmlspecialchars($new->updatedby);
-		print '</td>';
-
 		print '<td class="details">';
-		if ($new->comment != "")
+
+		print "<div>";
+		print "<div class='codepot-issue-comment-updater'>";
+		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($new->updatedby));
+		print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' /> ";
+		print htmlspecialchars($new->updatedby);
+		print "</div>";
+		printf ("<div class='codepot-issue-comment-actions'><a href='#' id='issue_show_edit_comment_button_%d' class='codepot-issue-comment-action-button'>%s</a></div>", $i, $this->lang->line('Edit'));
+		print "<div style='clear: both;'></div>";
+		print "</div>";
+
+		$escaped_comment = htmlspecialchars($new->comment);
+		if(isset($login['id']) && $login['id'] != '')
 		{
-			print "<div id='issue_show_changes_comment_{$commentno}' class='codepot-styled-text-view'>";
-			print "<pre id='issue_show_changes_comment_pre_{$commentno}'>";
-			print htmlspecialchars($new->comment);
-			print '</pre>';
+			print "<div id='issue_show_edit_comment_form_{$i}'>";
+			printf ('<input type="hidden" id="issue_show_edit_comment_sno_%d" value="%s" />', $i, addslashes($new->sno));
+			printf ('<textarea id="issue_show_edit_comment_text_%d" class="codepot-issue-edit-comment" rows="20">%s</textarea>', $i, $escaped_comment);
 			print '</div>';
-			$commentno++;
 		}
+
+		print "<div id='issue_show_comment_{$i}' class='codepot-styled-text-view'>";
+		printf ("<pre id='issue_show_comment_pre_%d'>%s</pre>", $i, $escaped_comment);
+		print '</div>';
 
 		print '<div class="list">';
 		print '<ul>';
@@ -931,21 +1083,6 @@ $this->load->view (
 		print '</tr>';
 	}
 
-	print '<tr>';
-	print '<td class="date">'; 
-	print codepot_dbdatetodispdate($issue->createdon);
-	print '</td>';
-
-	print '<td class="updater">'; 
-	print htmlspecialchars($issue->createdby);
-	print '</td>';
-
-	print '<td class="details">';
-	print $this->lang->line('ISSUE_MSG_CREATED');
-	print '</td>';
-
-	print '</tr>';
-
 	print '</table>';
 	?>
 </div> <!-- issue_show_changes -->
@@ -971,7 +1108,7 @@ $this->load->view (
 		</ul>
 
 		<div id='issue_show_edit_description_input'>
-			<textarea type='textarea' id='issue_show_edit_description' name='issue_show_edit_description' rows=24 cols=100 style='width:100%;'><?php print htmlspecialchars($issue->description); ?></textarea>
+			<textarea id='issue_show_edit_description' name='issue_show_edit_description' rows=24 cols=100 style='width:100%;'><?php print htmlspecialchars($issue->description); ?></textarea>
 		</div>
 		<div id='issue_show_edit_description_preview' class='codepot-styled-text-preview'>
 		</div>
@@ -1109,47 +1246,6 @@ $this->load->view (
 <?php $this->load->view ('footer'); ?>
 
 <!---------------------------------------------------------------------------->
-
-<script type="text/javascript">
-function render_wiki()
-{
-	creole_render_wiki (
-		"issue_show_description_pre", 
-		"issue_show_description", 
-		"<?php print $creole_base?>",
-		"<?php print $creole_file_base?>",
-		false
-	);
-
-	<?php
-	if ($commentno > 0)
-	{
-		for ($xxx = 0; $xxx < $commentno; $xxx++)
-		{
-			print "creole_render_wiki (
-				'issue_show_changes_comment_pre_{$xxx}', 
-				'issue_show_changes_comment_{$xxx}', 
-				'{$creole_base}', '{$creole_file_base}', false);";
-		}
-	}
-	?>
-
-	prettyPrint ();
-}
-
-function preview_issue_change_comment(input_text)
-{
-	creole_render_wiki_with_input_text (
-		input_text,
-		"issue_change_comment_preview", 
-		"<?php print $creole_base?>",
-		"<?php print $creole_file_base?>",
-		true
-	);
-
-	prettyPrint ();
-}
-</script>
 
 </body>
 

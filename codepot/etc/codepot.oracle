@@ -14,9 +14,9 @@
 -- DROP TABLE "cpot_log";
 -- DROP TABLE "cpot_code_review";
 -- DROP TABLE "cpot_file";
--- DROP TABLE "cpot_issue_change_attachment";
+-- DROP TABLE "cpot_issue_change_file_list";
 -- DROP TABLE "cpot_issue_change";
--- DROP TABLE "cpot_issue_attachment";
+-- DROP TABLE "cpot_issue_file_list";
 -- DROP TABLE "cpot_issue";
 -- DROP TABLE "cpot_wiki_attachment";
 -- DROP TABLE "cpot_wiki";
@@ -130,8 +130,10 @@ CREATE TABLE "cpot_issue_change" (
 	"owner"        VARCHAR(255) NOT NULL,
 	"priority"     VARCHAR(32)  NOT NULL,
 	"comment"      CLOB         NOT NULL,
-	"updatedon"    TIMESTAMP    NOT NULL,
-	"updatedby"    VARCHAR(32)  NOT NULL,
+	"createdon"    TIMESTAMP     NOT NULL,
+	"updatedon"    TIMESTAMP     NOT NULL,
+	"createdby"    VARCHAR(32)   NOT NULL,
+	"updatedby"    VARCHAR(32)   NOT NULL,
 	PRIMARY KEY ("projectid", "id", "sno"),
 	CONSTRAINT issue_update_id FOREIGN KEY ("projectid","id") REFERENCES "cpot_issue"("projectid","id")
 );
