@@ -600,6 +600,16 @@ pre, code, tt {
 	padding-right: .2em;
 }
 
+span.codepot-open-issue-count {
+	-moz-border-radius: 45%;
+	-webkit-border-radius: 45%;
+	border-radius: 45%;
+	background-color: #BB4444;
+	color: white;
+	font-weight: bold;
+	font-size: 1.2em;
+	padding: 0.2em;
+}
 
 .codepot-fit-width-table,
 .codepot-full-width-table  {
