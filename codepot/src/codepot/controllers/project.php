@@ -21,6 +21,9 @@ class Project extends Controller
 		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG);
 		$this->lang->load ('project', CODEPOT_LANG);
+
+		$this->load->library ('IssueHelper', 'issuehelper');
+		$this->lang->load ('issue', CODEPOT_LANG);
 	}
 
 	function catalog ($filter = '', $offset = '')
@@ -118,6 +121,7 @@ class Project extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('LogModel',     'logs');
+		$this->load->model ('IssueModel',   'issues');
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '') 
@@ -155,6 +159,19 @@ class Project extends Controller
 			}
 			else
 			{
+				$total_open_issue_count = $this->issues->countIssues ('', $projectid, $this->issuehelper->_get_open_status_array($this->lang), 0);
+				if ($total_open_issue_count === FALSE) $open_issue_count = 0;
+				$data['total_open_issue_count'] = $total_open_issue_count;
+
+				if ($login['id'] != '')
+				{
+					$your_open_issue_count = $this->issues->countIssues ($login['id'], $projectid, $this->issuehelper->_get_open_status_array($this->lang), 0);
+					if ($your_open_issue_count === FALSE) $your_open_issue_count = 0;
+				}
+				else $your_open_issue_count = 0;
+
+				$data['your_open_issue_count'] = $your_open_issue_count;
+
 				$data['project'] = $project;
 				$data['log_entries'] = $log_entries;
 				$this->load->view ($this->VIEW_HOME, $data);

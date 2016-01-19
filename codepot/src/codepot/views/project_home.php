@@ -39,19 +39,30 @@ function render_wiki()
 	prettyPrint ();
 
 	$("#project_home_sidebar_info_box").accordion ({
-		collapsible: true 
+		collapsible: true,
+		heightStyle: "content"
 	});
 
+<?php if ($total_open_issue_count > 0): ?>
+	$("#project_home_sidebar_issue_box").accordion ({
+		collapsible: true,
+		heightStyle: "content"
+	});
+<?php endif; ?>
+
 	$("#project_home_sidebar_member_box").accordion ({
-		collapsible: true 
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 	$("#project_home_sidebar_repo_box").accordion ({
-		collapsible: true 
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 	$("#project_home_sidebar_log_box").accordion ({
-		collapsible: true 
+		collapsible: true,
+		heightStyle: "content"
 	});
 
 	$("#project_home_sidebar_log_all_button").button ().click (function () {
@@ -104,16 +115,27 @@ $this->load->view (
 <!-- /////////////////////////////////////////////////////////////////////// -->
 <div class="codepot-sidebar" id="project_home_sidebar">
 
-
 <div id="project_home_sidebar_info_box" class="collapsible-box">
-<div id="project_home_sidebar_info_header" class="collapsible-box-header"><?php print $this->lang->line('Summary')?></div>
-<ul id="project_home_sidebar_info_list" class="collapsible-box-list">
-<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($project->createdon);?></li>
-<li><?php print $this->lang->line('Created by')?> <?php print $project->createdby;?></li>
-<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($project->updatedon);?></li>
-<li><?php print $this->lang->line('Last updated by')?> <?php print $project->updatedby?></li>
-</ul>
+	<div id="project_home_sidebar_info_header" class="collapsible-box-header"><?php print $this->lang->line('Summary')?></div>
+
+	<ul id="project_home_sidebar_info_list" class="collapsible-box-list">
+	<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($project->createdon);?></li>
+	<li><?php print $this->lang->line('Created by')?> <?php print $project->createdby;?></li>
+	<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($project->updatedon);?></li>
+	<li><?php print $this->lang->line('Last updated by')?> <?php print $project->updatedby?></li>
+	</ul>
 </div>
+
+<?php if ($total_open_issue_count > 0): ?>
+<div id="project_home_sidebar_issue_box" class="collapsible-box">
+	<div id="project_home_sidebar_issue_header" class="collapsible-box-header"><?php print $this->lang->line('Issues')?></div>
+
+	<ul id="project_home_issue_stat_list" class="collapsible-box-list">
+	<li><a href='<?php print site_url() . "/issue/home/{$project->id}"; ?>'><?php printf ($this->lang->line('FMT_TOTAL_OPEN_ISSUES_X'), $total_open_issue_count); ?></a></li>
+	<li><a href='<?php print site_url() . "/issue/home/{$project->id}"; ?>'><?php printf ($this->lang->line('FMT_YOUR_OPEN_ISSUES_X'), $your_open_issue_count); ?></a></li>
+	</ul>
+</div>
+<?php endif; ?>
 
 <div id="project_home_sidebar_member_box" class="collapsible-box">
 <div id="project_home_sidebar_member_header" class="collapsible-box-header"><?php print $this->lang->line('Members')?></div>
@@ -192,18 +214,16 @@ foreach ($urls as $url)
 		$xdot = $this->converter->AsciiToHex ('.');
 		foreach ($log_entries as $log)
 		{
-			if (CODEPOT_DATABASE_STORE_GMT)
-				$createdon = $log['createdon'] . ' +0000';
-			else
-				$createdon = $log['createdon'];
-			
+
+			$createdon_mmdd = codepot_dbdatetodispdate ($log['createdon'], '%m-%d');
+
 			if ($log['type'] == 'code')
 			{
 				$x = $log['message'];
 				print '<tr class="odd">';
 				print '<td class="date">';
 				
-				print strftime ('%m-%d', strtotime($createdon));
+				print $createdon_mmdd;
 				print '</td>';
 				print '<td class="object">';
 				print anchor (	
@@ -247,7 +267,7 @@ foreach ($urls as $url)
 			{
 				print '<tr class="odd">';
 				print '<td class="date">';
-				print strftime ('%m-%d', strtotime($createdon));
+				print $createdon_mmdd;
 				print '</td>';
 
 				print '<td class="object">';
