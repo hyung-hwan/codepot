@@ -135,4 +135,6 @@ $lang['MSG_PROJECT_MEMBERSHIP_REQUIRED'] = 'You have to be a member of the %s pr
 $lang['MSG_FORM_INPUT_INCOMPLETE'] = 'Your input is incomplete';
 $lang['MSG_DISCARD_CHANGES?'] = 'Do you want to discard changes?';
 
+$lang['FMT_TOTAL_OPEN_ISSUES_X'] = 'Total <span class="codepot-open-issue-count">%d</span> open issues';
+$lang['FMT_YOUR_OPEN_ISSUES_X'] = '<span class="codepot-open-issue-count">%d</span> open issues assigned to you';
 ?>
