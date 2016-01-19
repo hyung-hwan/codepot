@@ -470,6 +470,25 @@ $(function () {
 	$('#wiki_edit_text_preview').hide();
 	$(window).resize(resize_text_editor);
 	resize_text_editor ();
+
+	$('#wiki_edit_text_area').keydown (function(e) {
+		if (e.keyCode == 9)  // capture a tab key to insert "\n".
+		{
+			// get caret position/selection
+			var start = this.selectionStart;
+			var end = this.selectionEnd;
+
+			var $this = $(this);
+			var value = $this.val();
+
+			// set textarea value to: text before caret + tab + text after caret
+			$this.val(value.substring(0, start) + "\t" + value.substring(end));
+
+			// put caret at right position again (add one for the tab)
+			this.selectionStart = this.selectionEnd = start + 1;
+			e.preventDefault();
+		}
+	});
 });
 </script>
 

@@ -603,7 +603,7 @@ pre, code, tt {
 span.codepot-open-issue-count {
 	-moz-border-radius: 45%;
 	-webkit-border-radius: 45%;
-	border-radius: 45%;
+	border-radius: 30%;
 	background-color: #BB4444;
 	color: white;
 	font-weight: bold;
@@ -814,8 +814,9 @@ span.codepot-open-issue-count {
 .codepot-plain-text-view blockquote,
 .codepot-styled-text-view blockquote,
 .codepot-styled-text-preview blockquote {
-	background: #F5F5F5;
-	border-left: 5px solid #CCCCCC;
+	/*background: #F5F5F5;*/
+	background: inherit;
+	border-left: 3px solid #EEEEEE;
 	margin: 1em 1em 1em 1em;
 	padding: 0.5em 0.5em 0.5em 0.5em;
 }
@@ -875,7 +876,8 @@ span.codepot-open-issue-count {
 .codepot-styled-text-preview blockquote pre {
 	border: none;
 	margin: 0;
-	background-color: inherit;
+	/*background-color: inherit;*/
+	background-color: #F5F5F5;
 }
 
 .codepot-styled-code-view pre,
