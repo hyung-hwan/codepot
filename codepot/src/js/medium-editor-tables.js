@@ -541,7 +541,10 @@ Table.prototype = {
             '<tbody>' +
             html +
             '</tbody>' +
-            '</table>', {
+            // codepot
+            //'</table>', {
+            '</table><p></p>', {
+            // end codepot
                 cleanAttrs: [],
                 cleanTags: []
             }
