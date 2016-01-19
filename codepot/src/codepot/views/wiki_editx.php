@@ -389,6 +389,10 @@ $(function () {
 			updateOnEmptySelection: false
 		},
 
+		fontName: { 
+			fonts: ['', 'Arial', 'Times New Roman', 'Serif', 'Sans-serif', 'Monospace' ] 
+		},
+
 		paste: {
 			forcePlainText: false,
 			cleanPastedHTML: true,
