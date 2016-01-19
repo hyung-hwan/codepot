@@ -24,7 +24,6 @@ class Site extends Controller
 		$this->lang->load ('common', CODEPOT_LANG);
 		$this->lang->load ('site', CODEPOT_LANG);
 
-
 		$this->load->library ('IssueHelper', 'issuehelper');
 		$this->lang->load ('issue', CODEPOT_LANG);
 	}
@@ -86,11 +85,24 @@ class Site extends Controller
 
 		// get the issue for all users
 		$issues = $this->issues->getMyIssues (
-			/*$login['id']*/ "", $this->issuehelper->_get_open_status_array($this->lang));
+			/*$login['id']*/ '', $this->issuehelper->_get_open_status_array($this->lang));
 		$recently_resolved_issues = $this->issues->getMyIssues (
-			"", $this->issuehelper->_get_resolved_status_array($this->lang), 168);
+			'', $this->issuehelper->_get_resolved_status_array($this->lang), 168);
 
-		if ($issues === FALSE || $recently_resolved_issues === FALSE)
+		$open_issue_counts_per_project = $this->issues->countIssuesPerProject (
+			'', $this->issuehelper->_get_open_status_array($this->lang), 0);
+
+		if ($login['id'] == '')
+		{
+			$your_open_issue_counts_per_project = array ();
+		}
+		else
+		{
+			$your_open_issue_counts_per_project = $this->issues->countIssuesPerProject (
+				$login['id'], $this->issuehelper->_get_open_status_array($this->lang), 0);
+		}
+
+		if ($issues === FALSE || $recently_resolved_issues === FALSE || $open_issue_counts_per_project === FALSE)
 		{
 			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
@@ -98,13 +110,14 @@ class Site extends Controller
 			return;
 		}
 
-
 		$data['login'] = $login;
 		$data['latest_projects'] = $latest_projects;
 		$data['log_entries'] = $log_entries;
 		$data['site'] = $site;
 		$data['issues'] = $issues;
 		$data['recently_resolved_issues'] = $recently_resolved_issues;
+		$data['open_issue_counts_per_project'] = $open_issue_counts_per_project;
+		$data['your_open_issue_counts_per_project'] = $your_open_issue_counts_per_project;
 		$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
 		$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
 		$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
@@ -401,7 +414,7 @@ class Site extends Controller
 		$this->load->model ('LogModel', 'logs');
 		$this->load->model ('SiteModel', 'sites');
 
-                $site = $this->sites->get ($this->config->config['language']);
+		$site = $this->sites->get ($this->config->config['language']);
 		if ($site === FALSE)
 		{
 			$data['login'] = $login;
@@ -411,7 +424,7 @@ class Site extends Controller
 		}
 		if ($site === NULL && CODEPOT_DEFAULT_SITE_LANGUAGE != '') 
 		{
-                	$site = $this->sites->get (CODEPOT_DEFAULT_SITE_LANGUAGE);
+			$site = $this->sites->get (CODEPOT_DEFAULT_SITE_LANGUAGE);
 			if ($site === FALSE)
 			{
 				$data['login'] = $login;

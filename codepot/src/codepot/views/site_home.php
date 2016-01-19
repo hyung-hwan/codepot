@@ -290,17 +290,34 @@ foreach ($latest_projects as $project)
 	<div id="site_home_result_open_issues_header" class="collapsible-box-header">
 		<?php print $this->lang->line('Open issues')?>
 	</div>
+
+
+
 	<ul id="site_home_result_open_issues_list" class="collapsible-box-list">
 		<?php 
+		foreach ($open_issue_counts_per_project as $issue)
+		{
+			$pro = $issue->projectid;
+			$proissueanc = anchor ("issue/home/{$issue->projectid}", $pro);
+			print "<li>{$proissueanc} <span class='codepot-open-issue-count'>{$issue->issue_count}</span></li>";
+		}
+
+		foreach ($your_open_issue_counts_per_project as $issue)
+		{
+			$pro = $issue->projectid;
+			$proissueanc = anchor ("issue/home/{$issue->projectid}", $pro);
+			print "<li>{$proissueanc} <span class='codepot-open-issue-count'>{$issue->issue_count}</span></li>";
+		}
+
 		foreach ($issues as $issue) 
 		{
 			$pro = $issue->projectid;
 			$xid = $this->converter->AsciiToHex ((string)$issue->id);
 			$owner = $issue->owner;
-		
+
 			$proissueanc = anchor ("issue/home/{$issue->projectid}", $pro);
 			$anc = anchor ("issue/show/{$issue->projectid}/{$xid}", '#' . htmlspecialchars($issue->id));
-		
+
 			$status = htmlspecialchars(
 				array_key_exists($issue->status, $issue_status_array)?
 				$issue_status_array[$issue->status]: $issue->status);
@@ -311,6 +328,7 @@ foreach ($latest_projects as $project)
 			$sum = htmlspecialchars ($issue->summary);
 			print "<li><font color='blue'>{$owner}</font> | {$proissueanc} | {$anc} | {$type} {$status} - {$sum}</li>";
 		}
+
 		?>
 	</ul>
 	</div>
