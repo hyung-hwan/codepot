@@ -138,4 +138,7 @@ $lang['MSG_PROJECT_MEMBERSHIP_REQUIRED'] = '이 작업을 수행하려면 %s 프
 $lang['MSG_FORM_INPUT_INCOMPLETE'] = '입력이 완전하지 않습니다';
 $lang['MSG_DISCARD_CHANGES?'] = '변경된 내용을 버리겠습니까?';
 
+
+$lang['FMT_TOTAL_OPEN_ISSUES_X'] = '전체 열린 이슈 <span class="codepot-open-issue-count">%d</span>개';
+$lang['FMT_YOUR_OPEN_ISSUES_X'] = '담당 열린 이슈 <span class="codepot-open-issue-count">%d</span>개';
 ?>
