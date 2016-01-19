@@ -197,6 +197,37 @@ class IssueModel extends Model
 		return $result[0]->issue_count;
 	}
 
+	function countIssuesPerProject ($userid, $status_filter, $hour_limit = 0)
+	{
+		$this->db->trans_begin ();
+		if (strlen($userid) > 0) $this->db->where ('owner', $userid);
+
+		if (is_array($status_filter))
+		{
+			$this->db->where_in ('status', array_keys($status_filter));
+		}
+
+		if ($hour_limit > 0)
+		{
+			//$this->db->where ("updatedon >= SYSDATE() - INTERVAL {$hour_limit} HOUR");
+			$this->db->where ("updatedon >= CURRENT_TIMESTAMP - INTERVAL '{$hour_limit}' HOUR");
+		}
+
+		$this->db->select ('projectid, COUNT(id) AS issue_count');
+		$this->db->group_by ('projectid');
+		$query = $this->db->get ('issue');
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$this->db->trans_commit();
+
+		return $query->result ();
+	}
+
 	function getFile ($userid, $project, $issueid, $filename)
 	{
 		$this->db->trans_start ();
