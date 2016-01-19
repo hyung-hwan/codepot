@@ -45,7 +45,7 @@ class Site extends Controller
 		$this->load->model ('LogModel', 'logs');
 		$this->load->model ('IssueModel', 'issues');
 
-                $site = $this->sites->get ($this->config->config['language']);
+		$site = $this->sites->get ($this->config->config['language']);
 		if ($site === FALSE)
 		{
 			$data['login'] = $login;
@@ -55,7 +55,7 @@ class Site extends Controller
 		}
 		if ($site === NULL && CODEPOT_DEFAULT_SITE_LANGUAGE != '') 
 		{
-                	$site = $this->sites->get (CODEPOT_DEFAULT_SITE_LANGUAGE);
+			$site = $this->sites->get (CODEPOT_DEFAULT_SITE_LANGUAGE);
 			if ($site === FALSE)
 			{
 				$data['login'] = $login;

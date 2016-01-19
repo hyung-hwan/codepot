@@ -6,6 +6,24 @@
  * project home view 
  *-----------------------------------------------*/
 
+#project_home_issue_stat_list li {
+	margin-top: 0.1em;
+	margin-bottom: 0.1em;
+	line-height: 2em;
+	background-color: #BB4444;
+
+	border: none;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+#project_home_issue_stat_list a {
+	color: white;
+	font-weight: bold;
+}
+
+
 #project_home_sidebar_log_all_button {
 	color: #1C94C4;
 }

@@ -60,16 +60,16 @@ if ( ! function_exists('codepot_unixtimetodbdate'))
 
 if ( ! function_exists('codepot_dbdatetodispdate'))
 {
-	function codepot_dbdatetodispdate($dbdate)
+	function codepot_dbdatetodispdate($dbdate, $format = NULL)
 	{
 		// display time is in the local time zone.
 		if (CODEPOT_DATABASE_STORE_GMT)
 		{
-			return strftime('%Y-%m-%d %H:%M:%S %z', strtotime($dbdate . ' +0000'));
+			return strftime(($format == NULL? '%Y-%m-%d %H:%M:%S %z': $format), strtotime($dbdate . ' +0000'));
 		}
 		else
 		{
-			return strftime('%Y-%m-%d %H:%M:%S %z', strtotime($dbdate));
+			return strftime(($format == NULL? '%Y-%m-%d %H:%M:%S %z': $format), strtotime($dbdate));
 		}
 	}
 }
