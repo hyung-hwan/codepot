@@ -368,7 +368,7 @@ $(function () {
 			buttons: ['bold', 'italic', 'underline', 'strikethrough', 
 			          'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
 			          'subscript', 'superscript', 'removeFormat',
-			          'quote', 'pre', 'anchor', 'image',
+			          'pre', 'anchor', 'image',
 			          'orderedlist', 'unorderedlist', 'indent', 'outdent',
 			          'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull',
 			          'table'],
@@ -394,6 +394,67 @@ $(function () {
 			cleanReplacements: [],
 			cleanAttrs: ['class', 'style', 'dir'],
 			cleanTags: ['meta']
+		},
+
+		keyboardCommands: {
+			commands: [
+				{ // ctrl-b
+					command: 'bold',
+					key: 'B',
+					meta: true,
+					shift: false,
+					alt: false
+				},
+				{ // ctrl-i
+					command: 'italic',
+					key: 'I',
+					meta: true,
+					shift: false,
+					alt: false
+				},
+				{ // ctrl-u
+					command: 'underline',
+					key: 'U',
+					meta: true,
+					shift: false,
+					alt: false
+				},
+				{ // alt-i
+					command: 'indent',
+					key: 'I',
+					meta: false,
+					shift: false,
+					alt: true
+				},
+				{ // alt-o
+					command: 'outdent',
+					key: 'O',
+					meta: false,
+					shift: false,
+					alt: true
+				},
+				{ // alt-l
+					command: 'insertUnorderedList',
+					key: 'L',
+					meta: false,
+					shift: false,
+					alt: true
+				},
+				{ // alt-p
+					command: 'append-pre',
+					key: 'P',
+					meta: false,
+					shift: false,
+					alt: true
+				},
+				{ // alt-h
+					command: 'append-h1',
+					key: 'H',
+					meta: false,
+					shift: false,
+					alt: true
+				}
+			]
 		},
 
 		extensions: { 
