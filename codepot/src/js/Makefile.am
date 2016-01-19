@@ -25,7 +25,7 @@ www_DATA = \
 	jquery.flot.tickrotor.js \
 	jqueryui-editable.min.js \
 	medium-editor.min.js \
-	medium-editor-tables.min.js \
+	medium-editor-tables.js \
 	showdown.js \
 	d3.min.js \
 	CodeFlower.js

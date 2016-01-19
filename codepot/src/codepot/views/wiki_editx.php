@@ -28,8 +28,8 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/medium-editor.min.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/medium-editor-theme.min.css')?>" />
 
-<script type="text/javascript" src="<?php print base_url_make('/js/medium-editor-tables.min.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/medium-editor-tables.min.css')?>" />
+<script type="text/javascript" src="<?php print base_url_make('/js/medium-editor-tables.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/medium-editor-tables.min.css')?>" /> 
 
 <?php
 $hex_wikiname = $this->converter->AsciiToHex ($wiki->name);
@@ -365,7 +365,8 @@ $(function () {
 
 		toolbar: {
 			allowMultiParagraphSelection: true,
-			buttons: ['bold', 'italic', 'underline', 'strikethrough', 
+			buttons: ['fontname', 'fontsize',
+			          'bold', 'italic', 'underline', 'strikethrough', 
 			          'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
 			          'subscript', 'superscript', 'removeFormat',
 			          'pre', 'anchor', 'image',
@@ -526,6 +527,14 @@ $(function () {
 	// quirkiness of medium editor's toolbar
 	resize_editor ();
 	resize_editor ();
+
+	// to diable firefox's object resizing.
+	try 
+	{ 
+		document.execCommand("enableInlineTableEditing", false, false); 
+		document.execCommand("enableObjectResizing", false, false); 
+	}
+	catch (err) { }
 });
 </script>
 
