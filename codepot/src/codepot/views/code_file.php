@@ -268,7 +268,8 @@ $this->load->view (
 		print anchor ('#', $diff_anchor_text, 'id="code_file_diff_button"');
 		print anchor ('#', $fulldiff_anchor_text, 'id="code_file_fulldiff_button"');
 		print anchor ('#', $history_anchor_text, 'id="code_file_history_button"');
-		print anchor ('#', $download_anchor_text, 'id="code_file_download_button"');
+		//print anchor ('', $download_anchor_text, 'id="code_file_download_button"');
+		print anchor ("code/fetch/{$project->id}/${hex_headpath}{$revreq}", $download_anchor_text, 'id="code_file_download_button"');
 		print anchor ('#', $this->lang->line('Enstyle'), 'id="code_file_style_button"');
 		print '</div>';
 
