@@ -853,7 +853,8 @@ $this->load->view (
 		}
 
 		print anchor ('#', $history_anchor_text, 'id="code_folder_history_button"');
-		print anchor ('#', $download_anchor_text, 'id="code_folder_download_button"');
+		//print anchor ('#', $download_anchor_text, 'id="code_folder_download_button"');
+		print anchor ("code/fetch/{$project->id}/${hex_headpath}{$revreq}", $download_anchor_text, 'id="code_folder_download_button"');
 
 		print '<a id="code_folder_loc_by_lang_button" href="#">';
 		print '<i id="code_folder_loc_by_lang_spin" class="fa"></i>LOC-';
