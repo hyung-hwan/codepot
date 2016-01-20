@@ -1,0 +1,56 @@
+#!/bin/sh
+
+#
+# This is just a sample script for httpd resource monitoring
+# While this is inside the codepot distro, it's not supposed
+# to be used without consideration of the actual environment.
+#
+
+DAEMON=0
+THRESHOLD=1024
+
+if [ "$1" = "-daemon" ]
+then
+	($0 --daemon </dev/null >/dev/null 2>&1 &) &
+	#($0 --daemon &) &
+	exit 0
+elif [ "$1" = "--daemon" ]
+then
+	DAEMON=1
+fi
+
+
+while true
+do
+	sleep 5
+
+	ps -ylC httpd | awk -vdaemon=$DAEMON -v"self=$0" -vthreshold=$THRESHOLD '
+{
+	x += $8;
+	y += 1;
+}
+END {
+	MB = x / 1024;
+	AVGMB = x / ((y - 1) * 1024);
+
+	if (daemon <= 0)
+	{
+		print "Apache Memory Usage (MB): " MB;
+		print "Average Proccess Size (MB): " AVGMB;
+
+		if (MB > int(threshold))
+		{
+			system ("/etc/init.d/httpd restart");
+		}
+	}
+	else
+	{
+		if (MB > int(threshold))
+		{
+			system (sprintf ("logger -t \"%s\" \"Restarting httpd for excess memory usage [%s/%d]\"", self, MB, threshold));
+			system ("/etc/init.d/httpd restart >/dev/null 2>&1 </dev/null");
+		}
+	}
+}
+'
+done
