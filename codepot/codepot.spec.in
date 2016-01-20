@@ -68,6 +68,7 @@ rm -rf $RPM_BUILD_ROOT
 
 /var/www/html/codepot
 /usr/sbin/codepot-user
+/usr/sbin/codepot-mon-httpd
 
 %config(noreplace) /etc/codepot/codepot.ini
 /etc/codepot/codepot.mysql 
