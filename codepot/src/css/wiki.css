@@ -46,13 +46,6 @@
 	column-gap: 2em;
 }
 
-#wiki_show_metadata_body,
-#wiki_edit_files_body {
-	background-color: #FCFCFC;
-	margin: 0 !important;
-	padding: 0.5em 0.5em 0.5em 0.5em !important;
-}
-
 /*
 #wiki_show_file_list a,
 */
