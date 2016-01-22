@@ -146,6 +146,7 @@ class Issue extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('IssueModel', 'issues');
+		$this->load->model ('CodeModel', 'code');
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
@@ -217,11 +218,16 @@ class Issue extends Controller
 			}
 			else
 			{
+
+				$related_code_revisions = $this->code->getRelatedRevisions ($project->id, $issue->id);
+				if ($related_code_revisions === FALSE) $related_code_revisions = array();
+
 				$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
 				$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
 				$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
 				$data['project'] = $project;
 				$data['issue'] = $issue;
+				$data['related_code_revisions'] = $related_code_revisions;
 				$this->load->view ($this->VIEW_SHOW, $data);
 			}
 		}
