@@ -1001,7 +1001,7 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 			<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($issue->updatedon); ?></li>
 			<li><?php print $this->lang->line('Last updated by')?> <?php print htmlspecialchars($issue->updatedby); ?></li>
 		</ul>
-
+		
 		<ul id='issue_show_state_list' class='codepot-horizontal-list'>
 			<?php
 			print_issue_state ($this, $issue, NULL, $issue_type_array, $issue_status_array, $issue_priority_array);
@@ -1014,6 +1014,9 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 				print '<ul id="issue_show_coderev_list" class="codepot-horizontal-list">';
 				foreach ($related_code_revisions as $r)
 				{
+					print '<li>';
+					print anchor ("/code/revision/{$r->projectid}/!./{$r->coderev}", $r->coderev);
+					print '</li>';
 				}
 				print '</ul>';
 			}
