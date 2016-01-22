@@ -1,6 +1,6 @@
 <?php
 
-class CodeReviewModel extends Model
+class CodeModel extends Model
 {
 	protected $errmsg = '';
 
@@ -9,10 +9,34 @@ class CodeReviewModel extends Model
 		return $this->errmsg;
 	}
 
-	function CodeReviewModel ()
+	function CodeModel ()
 	{
 		parent::Model ();
 		$this->load->database ();
+	}
+
+	function getRelatedIssues ($projectid, $revision)
+	{
+		$this->db->trans_begin ();
+
+		$this->db->from ('issue');
+		$this->db->join ('issue_coderev', 'issue.projectid = issue_coderev.projectid AND issue.id = issue_coderev.issueid');
+		//$this->db->where ('issue_coderev.projectid', (string)$projectid);
+		$this->db->where ('issue_coderev.codeproid', (string)$projectid);
+		$this->db->where ('issue_coderev.coderev', $revision);
+		$this->db->order_by ('issue.projectid ASC');
+		$this->db->order_by ('issue_coderev.issueid ASC');
+		$this->db->select ('issue.projectid, issue_coderev.issueid, issue.summary, issue.type, issue.status, issue.priority, issue.owner');
+		$query = $this->db->get ();
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$this->db->trans_commit ();
+		return $query->result();
 	}
 
 	function getReviews ($projectid, $revision)

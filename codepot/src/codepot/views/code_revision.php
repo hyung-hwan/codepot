@@ -362,7 +362,6 @@ $(function() {
 		}
 	);
 
-
 	function make_edit_review_comment_ok_function (no)
 	{
 		var form_name = '#code_revision_edit_review_comment_form_' + no;
@@ -673,10 +672,41 @@ $history = $file['history'];
 		<div style='clear: both'></div>
 	</div>
 
-	<div id="code_revision_metadata_body">
+
+	<div id="code_revision_metadata_body" class='codepot-metadata-collapsible-body'>
 		<div class="codepot-plain-text-view">
-			<pre id="code_revision_metadata_text"><?php print htmlspecialchars($history['msg']); ?></pre>
+			<?php
+				$transformed_message = htmlspecialchars($history['msg']);
+				foreach ($related_issues as $ri)
+				{
+					$hex_issueid = $this->converter->AsciiToHex ($ri->issueid);
+					//$transformed_message = preg_replace ("/\[\[#I{$ri->issueid}\]\]/", anchor ("/issue/show/{$ri->projectid}/{$hex_issueid}", $ri->issueid . ':' . htmlspecialchars($ri->summary), "class='codepot-issue-type-{$ri->type}'"), $transformed_message);
+					//$transformed_message = preg_replace ("/\[\[(#I{$ri->issueid})\]\]/", "[[<span class='codepot-issue-type-{$ri->type}'>\${1}</span>]]", $transformed_message);
+					$transformed_message = preg_replace (
+						"/\[\[(#I{$ri->issueid})\]\]/", 
+						'[[' . anchor ("/issue/show/{$ri->projectid}/{$hex_issueid}", "\${1}", "class='codepot-issue-type-{$ri->type}'") . ']]',
+						$transformed_message
+					);
+				}
+			?>
+			<pre id="code_revision_metadata_text"><?php print $transformed_message; ?></pre>
 		</div>
+		<?php 
+			if (!empty($related_issues))
+			{
+				print '<div><ul id="code_revision_related_issue_list" class="codepot-horizontal-list">';
+				foreach ($related_issues as $ri)
+				{
+					$hex_issueid = $this->converter->AsciiToHex ($ri->issueid);
+					print '<li>';
+					print anchor ("/issue/show/{$ri->projectid}/{$hex_issueid}", $ri->issueid . ':' . htmlspecialchars($ri->summary), "class='codepot-issue-type-{$ri->type}'");
+					print '</li>';
+				}
+				print '</ul></div>';
+			}
+		?>
+
+		<div style='clear: both'></div>
 	</div>
 </div>
 
