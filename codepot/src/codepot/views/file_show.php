@@ -613,7 +613,7 @@ $this->load->view (
 
 <div id='file_show_metadata' class='collapsible-box'>
 	<div id='file_show_metadata_header' class='collapsible-box-header'><?php print $this->lang->line('Metadata')?></div>
-	<div id='file_show_metadata_body'>
+	<div id='file_show_metadata_body' class='codepot-metadata-collapsible-body'>
 	<ul id='file_show_metadata_list'>
 	<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($file->createdon); ?></li>
 	<li><?php print $this->lang->line('Created by')?> <?php print htmlspecialchars($file->createdby); ?></li>
@@ -626,7 +626,7 @@ $this->load->view (
 <div id='file_show_files' class='collapsible-box'>
 	<div id='file_show_files_header' class='collapsible-box-header'><?php print $this->lang->line('Files')?></div>
 
-	<div id='file_show_files_body'>
+	<div id='file_show_files_body' class='codepot-metadata-collapsible-body'>
 	<?php if (isset($login['id']) && $login['id'] != ''): ?>
 	<div>
 		<a id="file_show_add_file_button" href='#'><?php print $this->lang->line('Add')?></a>

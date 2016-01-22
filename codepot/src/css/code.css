@@ -78,17 +78,6 @@
 	float: right;
 }
 
-#code_folder_metadata_body,
-#code_file_metadata_body,
-#code_blame_metadata_body,
-#code_revision_metadata_body,
-#code_diff_metadata_body, 
-#code_diff_metadata_against_body {
-	background-color: #FCFCFC;
-	padding: 0.2em 0.2em 0.2em 0.2em;
-	margin: 0;
-}
-
 #code_diff_metadata_body, 
 #code_diff_metadata_against_body {
 	border: none;
@@ -240,14 +229,28 @@
 	line-height: 1.2em;
 	padding: 0.2em 0.2em 0.2em 0.2em;
 }
-/*
-#code_revision_result_files_table,
-#code_revision_result_properties_table {
-	padding: 0.5em 0 0.5em 0;
-	background: inherit;
-	line-height: 1.5em;
+
+#code_revision_related_issue_list {
+	padding-top: 0.3em;
+	border-top: 1px dashed #EAEAEA
 }
-*/
+
+#code_revision_related_issue_list li {
+	margin-top: 0.1em;
+	margin-bottom: 0.1em;
+}
+
+#code_revision_metadata_text a,
+#code_revision_related_issue_list a {
+	padding: 0.3em;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	color: inherit;
+	filter:alpha(opacity=85); /* IE */
+	opacity: 0.85; /* Safari, Opera */
+	-moz-opacity:0.85; /* FireFox */
+}
 
 #code_revision_result_files_table td,
 #code_revision_result_properties_table td {

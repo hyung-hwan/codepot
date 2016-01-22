@@ -109,6 +109,45 @@ sub close_database
 	$dbh->disconnect ();
 }
 
+sub find_issue_reference_in_commit_message
+{
+	my ($dbh, $prefix, $projectid, $revision, $commit_message) = @_;
+
+	# find [[#IXXXX]]
+	my @issue_ids = ($commit_message =~ /\[\[#I(\d+)\]\]/g);
+
+	# find unique issue ids in the findings.
+	my %tmp;
+	@tmp{@issue_ids}=1;
+	my @unique_issue_ids=keys %tmp;
+
+	$dbh->begin_work ();
+
+	my $query = $dbh->prepare ("DELETE FROM ${QC}${prefix}issue_coderev${QC} WHERE ${QC}codeproid${QC}=? AND ${QC}coderev${QC}=?");
+	if (!$query || !$query->execute ($projectid, $revision))
+	{
+		my $errstr = $dbh->errstr();
+		if ($query) { $query->finish (); }
+		$dbh->rollback ();
+		return (-1, $errstr);
+	}
+	$query->finish ();
+
+	for my $issue_id(@unique_issue_ids)
+	{
+		my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}issue_coderev${QC} (${QC}projectid${QC},${QC}issueid${QC},${QC}codeproid${QC},${QC}coderev${QC}) VALUES (?,?,?,?)");
+		if ($query)
+		{
+			# ignore errors
+			$query->execute ($projectid, $issue_id, $projectid, $revision);
+			$query->finish ();
+		}
+	}
+
+	$dbh->commit ();
+	return (0, undef);
+}
+
 sub write_commit_log
 {
 	my ($dbh, $prefix, $projectid, $revision, $userid) = @_;
@@ -136,7 +175,7 @@ sub write_commit_log
 	if (!$query || !$query->execute ('code', $projectid, $message, 'commit', $userid))
 	{
 		my $errstr = $dbh->errstr();
-		$query->finish ();
+		if ($query) { $query->finish (); }
 		$dbh->rollback ();
 		return (-1, $errstr);
 	}
@@ -185,8 +224,8 @@ sub get_commit_message
 		return undef;
 	}
 
-	my $author = $fs->revision_prop ($REV, 'svn:log');
-	return $author;
+	my $logmsg = $fs->revision_prop ($REV, 'svn:log');
+	return $logmsg;
 }
 
 
@@ -317,6 +356,7 @@ sub email_message_to_project_members
 	my $query = $dbh->prepare ("SELECT ${QC}userid${QC} FROM ${QC}${prefix}project_membership${QC} WHERE ${QC}projectid${QC}=?");
 	if (!$query || !$query->execute ($projectid))
 	{
+		if ($query) { $query->finish (); }
 		return (-1, $dbh->errstr());
 	}
 
@@ -408,6 +448,9 @@ if (!defined($dbh))
 	exit (1);
 }
 
+my $raw_commit_message = get_commit_message();
+
+find_issue_reference_in_commit_message ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $raw_commit_message);
 write_commit_log ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $AUTHOR);
 
 if (lc($cfg->{commit_notification}) eq 'yes')
@@ -424,10 +467,9 @@ if (lc($cfg->{commit_notification}) eq 'yes')
 		$commit_message = format_commit_url($cfg->{commit_notification_url}, $REPOBASE, $AUTHOR, $REV);
 	}
 
-	my $m = get_commit_message ();
-	if (defined($m))
+	if (defined($raw_commit_message))
 	{
-		$commit_message = $commit_message . "\n" . $m;
+		$commit_message = $commit_message . "\n" . $raw_commit_message;
 	}
 
 

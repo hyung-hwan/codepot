@@ -255,7 +255,7 @@ $this->load->view (
 		<div style='clear: both'></div>
 	</div>
 
-	<div id='code_blame_metadata_body'>
+	<div id='code_blame_metadata_body' class='codepot-metadata-collapsible-body'>
 		<div class='codepot-plain-text-view'>
 			<pre><?php print htmlspecialchars ($file['logmsg']); ?></pre>
 		</div>

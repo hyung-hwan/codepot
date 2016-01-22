@@ -7,9 +7,13 @@ use DBI;
 use File::Basename;
 use POSIX qw(strftime);
 
+use SVN::Core;
+use SVN::Repos;
+use SVN::Fs;
+
 my $CFG_FILE = '@CFGDIR@/codepot.ini';
-my $REPO = $ARGV[0];
-my $REPOBASE = basename($REPO);
+my $REPOFS = $ARGV[0];
+my $REPOBASE = basename($REPOFS);
 my $REV = $ARGV[1];
 my $USER = $ARGV[2];
 my $PROPNAME = $ARGV[3];
@@ -88,6 +92,46 @@ sub close_database
 	$dbh->disconnect ();
 }
 
+
+sub find_issue_reference_in_commit_message
+{
+	my ($dbh, $prefix, $projectid, $revision, $commit_message) = @_;
+
+	# find [[#IXXXX]]
+	my @issue_ids = ($commit_message =~ /\[\[#I(\d+)\]\]/g);
+
+	# find unique issue ids in the findings.
+	my %tmp;
+	@tmp{@issue_ids}=1;
+	my @unique_issue_ids=keys %tmp;
+
+	$dbh->begin_work ();
+
+	my $query = $dbh->prepare ("DELETE FROM ${QC}${prefix}issue_coderev${QC} WHERE ${QC}codeproid${QC}=? AND ${QC}coderev${QC}=?");
+	if (!$query || !$query->execute ($projectid, $revision))
+	{
+		my $errstr = $dbh->errstr();
+		if ($query) { $query->finish (); }
+		$dbh->rollback ();
+		return (-1, $errstr);
+	}
+	$query->finish ();
+
+	for my $issue_id(@unique_issue_ids)
+	{
+		my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}issue_coderev${QC} (${QC}projectid${QC},${QC}issueid${QC},${QC}codeproid${QC},${QC}coderev${QC}) VALUES (?,?,?,?)");
+		if ($query)
+		{
+			# ignore errors
+			$query->execute ($projectid, $issue_id, $projectid, $revision);
+			$query->finish ();
+		}
+	}
+
+	$dbh->commit ();
+	return (0, undef);
+}
+
 sub write_revprop_change_log
 {
 	my ($dbh, $prefix, $projectid, $revision, $userid, $propname, $action) = @_;
@@ -106,7 +150,7 @@ sub write_revprop_change_log
 	if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'revpropchange', $userid))
 	{
 		my $errstr = $dbh->errstr();
-		$query->finish ();
+		if ($query) { $query->finish (); }
 		$dbh->rollback ();
 		return (-1, $errstr);
 	}
@@ -114,6 +158,27 @@ sub write_revprop_change_log
 	$query->finish ();
 	$dbh->commit ();
 	return (0, undef);
+}
+
+sub get_commit_message
+{
+	my $pool = SVN::Pool->new(undef);
+	my $svn = eval { SVN::Repos::open ($REPOFS, $pool) };
+	if (!defined($svn))
+	{
+		print (STDERR "Cannot open svn - $REPOFS\n");
+		return undef;
+	}
+
+	my $fs = $svn->fs ();
+	if (!defined($fs))
+	{
+		print (STDERR "Cannot open fs - $REPOFS\n");
+		return undef;
+	}
+
+	my $logmsg = $fs->revision_prop ($REV, 'svn:log');
+	return $logmsg;
 }
 
 #------------------------------------------------------------
@@ -134,6 +199,9 @@ if (!defined($dbh))
 	exit (1);
 }
 
+my $raw_commit_message = get_commit_message();
+
+find_issue_reference_in_commit_message ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $raw_commit_message);
 write_revprop_change_log ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $USER, $PROPNAME, $ACTION);
 close_database ($dbh);
 

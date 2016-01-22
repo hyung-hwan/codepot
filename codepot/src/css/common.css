@@ -600,6 +600,12 @@ pre, code, tt {
 	padding-right: .2em;
 }
 
+.codepot-metadata-collapsible-body {
+	background-color: #FCFCFC !important;
+	padding: 0.4em 0.2em 0.2em 0.2em !important;
+	margin: 0px !important;
+}
+
 span.codepot-open-issue-count {
 	-moz-border-radius: 45%;
 	-webkit-border-radius: 45%;
@@ -1015,16 +1021,135 @@ pre.codepot-line-numbered span.codepot-line-number-clear {
 }
 
 .codepot-committer-icon-24x24 {
-        width: 24px;
+	width: 24px;
 	height: 24px;
-        vertical-align: middle;
-        margin-right: 2px;
+	vertical-align: middle;
+	margin-right: 2px;
 
-        -moz-border-radius: 3px;
-        -webkit-border-radius: 3px;
-        border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
 }
 
+
+/* === list === */
+ul.codepot-horizontal-list {
+	clear: both;
+	padding: 0;
+	margin: 0;
+	list-style: outside none none !important;
+}
+
+ul.codepot-horizontal-list li {
+	padding: 0.2em 0.2em 0.2em 0.2em;
+	margin: 0 0.2em 0 0.2em;
+	float: left;
+}
+
+/* === common issue class === */
+
+.codepot-issue-type-defect {
+	background-color: #D9534F;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-type-request {
+	background-color: #44AD8E;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-type-enhancement {
+	background-color: #558FAD;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-type-feature {
+	background-color: #5577BC;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-type-other {
+	background-color: #4E8BCA;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-status-new {
+	background-color: #44AD8E;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-status-accepted {
+	background-color: #44AD8E;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-status-rejected {
+	background-color: #AD448E;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-status-started {
+	background-color: #44ADAD;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-status-stalled {
+	background-color: #ADAD8E;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-status-testing {
+	background-color: #44ADBB;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-status-resolved {
+	background-color: #34AD56;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-status-worked-around {
+	background-color: #65AD67;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-status-other {
+	background-color: #888888;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-type-other {
+	background-color: #4E8BCA;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-priority-critical {
+	background-color: #D9534F;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-priority-high {
+	background-color: #B9534F;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-priority-medium {
+	background-color: #99534F;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-priority-low {
+	background-color: #EEE39E;
+	color: #FFFFFF !important;
+}
+
+.codepot-issue-priority-other {
+	background-color: #FFF39E;
+}
+
+.codepot-issue-owner {
+	background-color: #FFF39E;
+}
 /* === footer === */
 .codepot-footer-pusher {
 	clear: both;

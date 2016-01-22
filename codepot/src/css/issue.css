@@ -1,18 +1,6 @@
-ul.codepot-issue-horizontal-list {
-	clear: both;
-	padding: 0;
-	margin: 0;
-	list-style: outside none none !important;
-}
 
-ul.codepot-issue-horizontal-list li {
-	padding: 0.2em 0.2em 0.2em 0.2em;
-	margin: 0 0.2em 0 0.2em;
-	float: left;
-}
-
-.codepot-issue-start ul.codepot-issue-horizontal-list,
-.codepot-issue-change ul.codepot-issue-horizontal-list {
+.codepot-issue-start ul.codepot-horizontal-list,
+.codepot-issue-change ul.codepot-horizontal-list {
 	padding: 0.3em 0 0.3em 0;
 }
 
@@ -63,111 +51,6 @@ textarea.codepot-issue-edit-comment {
 	border: 0 none;
 	width: 100%;
 	font-size: 0.9em;
-}
-
-li.issue-type-defect {
-	background-color: #D9534F;
-	color: #FFFFFF;
-}
-
-li.issue-type-request {
-	background-color: #44AD8E;
-	color: #FFFFFF;
-}
-
-li.issue-type-enhancement {
-	background-color: #558FAD;
-	color: #FFFFFF;
-}
-
-li.issue-type-feature {
-	background-color: #5577BC;
-	color: #FFFFFF;
-}
-
-
-li.issue-type-other {
-	background-color: #4E8BCA;
-	color: #FFFFFF;
-}
-
-
-li.issue-status-new {
-	background-color: #44AD8E;
-	color: #FFFFFF;
-}
-
-li.issue-status-accepted {
-	background-color: #44AD8E;
-	color: #FFFFFF;
-}
-
-li.issue-status-rejected {
-	background-color: #AD448E;
-	color: #FFFFFF;
-}
-
-li.issue-status-started {
-	background-color: #44ADAD;
-	color: #FFFFFF;
-}
-
-li.issue-status-stalled {
-	background-color: #ADAD8E;
-	color: #FFFFFF;
-}
-
-li.issue-status-testing {
-	background-color: #44ADBB;
-	color: #FFFFFF;
-}
-
-li.issue-status-resolved {
-	background-color: #34AD56;
-	color: #FFFFFF;
-}
-
-li.issue-status-worked-around {
-	background-color: #65AD67;
-	color: #FFFFFF;
-}
-
-li.issue-status-other {
-	background-color: #888888;
-	color: #FFFFFF;
-}
-
-li.issue-type-other {
-	background-color: #4E8BCA;
-	color: #FFFFFF;
-}
-
-li.issue-priority-critical {
-	background-color: #D9534F;
-	color: #FFFFFF;
-}
-
-li.issue-priority-high {
-	background-color: #B9534F;
-	color: #FFFFFF;
-}
-
-li.issue-priority-medium {
-	background-color: #99534F;
-	color: #FFFFFF;
-}
-
-li.issue-priority-low {
-	background-color: #EEE39E;
-	color: #FFFFFF;
-}
-
-li.issue-priority-other {
-	background-color: #FFF39E;
-}
-
-li.issue-owner {
-	background-color: #FFF39E;
 }
 
 /*---------------------------------------------
@@ -246,13 +129,15 @@ li.issue-owner {
 /*---------------------------------------------
  * issue show
  *---------------------------------------------*/
-#issue_show_metadata_body {
-	background-color: #FCFCFC;
-	padding: 1em 1em;
+#issue_show_metadata_list li {
+	margin-top: 0.1em;
+	margin-bottom: 0.2em;
 }
 
-#issue_show_state_list {
-	padding-top: 0.2em;
+#issue_show_state_list,
+#issue_show_coderev_list {
+	padding-top: 0.3em;
+	border-top: 1px dashed #EAEAEA
 }
 
 #issue_show_metadata_list li {

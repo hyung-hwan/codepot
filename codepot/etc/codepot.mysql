@@ -142,7 +142,7 @@ CREATE TABLE issue_change (
 	PRIMARY KEY (projectid, id, sno),
 	KEY issue_update_time (projectid, id, updatedon),
 
-	CONSTRAINT issue_update_id FOREIGN KEY (projectid,id) REFERENCES issue(projectid,id)
+	CONSTRAINT issue_change_id FOREIGN KEY (projectid,id) REFERENCES issue(projectid,id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
 
 ) charset=utf8 engine=InnoDB;
@@ -166,6 +166,31 @@ CREATE TABLE issue_change_file_list (
 
 	CONSTRAINT issue_change_file_list_issueidsno FOREIGN KEY (projectid,issueid,issuesno) REFERENCES issue_change(projectid,id,sno)
 		ON DELETE RESTRICT ON UPDATE CASCADE
+) charset=utf8 engine=InnoDB;
+
+CREATE TABLE issue_coderev (
+	projectid  VARCHAR(32)   NOT NULL,
+	issueid    BIGINT        NOT NULL,
+
+	codeproid  VARCHAR(32)   NOT NULL,
+	coderev    VARCHAR(64)   NOT NULL, -- git commit id is 40 characters. subversion revision is a number.
+
+	UNIQUE KEY issue_coderev_uid(projectid, issueid, codeproid, coderev),
+
+	KEY issue_coderev_codekey (codeproid, coderev),
+	KEY issue_coderev_issuekey (projectid, issueid),
+
+	CONSTRAINT issue_coderev_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+
+	CONSTRAINT issue_coderev_codeproid FOREIGN KEY (codeproid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+
+	-- Commit message is typypicall free text. Its issue reference could be error-prone.
+	-- So i won't have this constraint enforced.
+	-- CONSTRAINT issue_coderev_issueid FOREIGN KEY (projectid,issueid) REFERENCES issue(projectid,id)
+	--	ON DELETE RESTRICT ON UPDATE CASCADE
+
 ) charset=utf8 engine=InnoDB;
 
 CREATE TABLE file (

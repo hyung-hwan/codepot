@@ -549,7 +549,7 @@ $this->load->view (
 		<?php print $this->lang->line('WIKI_ATTACHMENTS')?>
 		<a href='#' id='wiki_edit_add_files_button'><?php print $this->lang->line('New')?></a>
 	</div>
-	<div id='wiki_edit_files_body'>
+	<div id='wiki_edit_files_body' class='codepot-metadata-collapsible-body'>
 		<input type='file' id='wiki_edit_add_files' name='wiki_add_files' multiple='' autocomplete='off' style='color: transparent; visibility: hidden; display: none;' />
 
 		<ul id='wiki_edit_file_list'>

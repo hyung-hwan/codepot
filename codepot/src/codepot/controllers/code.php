@@ -724,7 +724,7 @@ class Code extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
-		$this->load->model ('CodeReviewModel', 'code_review');
+		$this->load->model ('CodeModel', 'code');
 
 		$login = $this->login->getUser ();
 		$revision_saved = -1;
@@ -759,10 +759,10 @@ class Code extends Controller
 				}
 				else
 				{
-					$review_sno = $this->code_review->insertReview ($projectid, $rev, $login['id'], $review_comment);
+					$review_sno = $this->code->insertReview ($projectid, $rev, $login['id'], $review_comment);
 					if ($review_sno === FALSE)
 					{
-						$status = 'error - ' . $this->code_review->getErrorMessage();
+						$status = 'error - ' . $this->code->getErrorMessage();
 					}
 					else
 					{
@@ -792,7 +792,7 @@ class Code extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
-		$this->load->model ('CodeReviewModel', 'code_review');
+		$this->load->model ('CodeModel', 'code');
 
 		$login = $this->login->getUser ();
 		$revision_saved = -1;
@@ -832,9 +832,9 @@ class Code extends Controller
 				}
 				else
 				{
-					if ($this->code_review->updateReview ($projectid, $rev, (integer)$review_no, $login['id'], $review_comment, TRUE) === FALSE)
+					if ($this->code->updateReview ($projectid, $rev, (integer)$review_no, $login['id'], $review_comment, TRUE) === FALSE)
 					{
-						$status = 'error - ' . $this->code_review->getErrorMessage();
+						$status = 'error - ' . $this->code->getErrorMessage();
 					}
 					else
 					{
@@ -993,8 +993,8 @@ class Code extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
-		$this->load->model ('CodeReviewModel', 'code_review');
-	
+		$this->load->model ('CodeModel', 'code');
+
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
@@ -1048,7 +1048,11 @@ class Code extends Controller
 						if (array_key_exists('rev', $h)) $r_rev = $h['rev'];
 					}
 				}
-				$reviews = $this->code_review->getReviews ($projectid, $r_rev);
+
+				$related_issues = $this->code->getRelatedIssues ($projectid, $r_rev);
+				if ($related_issues == FALSE) $related_issues = array();
+
+				$reviews = $this->code->getReviews ($projectid, $r_rev);
 				if ($reviews === FALSE)
 				{
 					$data['project'] = $project;
@@ -1122,7 +1126,8 @@ class Code extends Controller
 					$data['headpath'] = $path;
 					$data['file'] = $file;
 					$data['reviews'] = $reviews; 
-	
+					$data['related_issues'] = $related_issues;
+
 					$data['revision'] = $rev;
 					$data['prev_revision'] = $prev_revision;
 					$data['next_revision'] = $this->subversion->getNextRev ($projectid, $path, $rev);

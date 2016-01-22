@@ -927,7 +927,7 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 
 	if ($old == NULL || $issue->type != $old->type)
 	{
-		printf ('<li class="issue-type-%s">', $issue->type);
+		printf ('<li class="codepot-issue-type-%s">', $issue->type);
 		print $con->lang->line('Type');
 		print ': '; 
 		print htmlspecialchars($type);
@@ -936,7 +936,7 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 
 	if ($old == NULL || $issue->status != $old->status)
 	{
-		printf ('<li class="issue-status-%s">', $issue->status);
+		printf ('<li class="codepot-issue-status-%s">', $issue->status);
 		print $con->lang->line('Status');
 		print ': '; 
 		print htmlspecialchars($status);
@@ -945,7 +945,7 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 
 	if ($old == NULL || $issue->priority != $old->priority)
 	{
-		printf ('<li class="issue-priority-%s">', $issue->priority);
+		printf ('<li class="codepot-issue-priority-%s">', $issue->priority);
 		print $con->lang->line('Priority');
 		print ': '; 
 		print htmlspecialchars($priority);
@@ -954,7 +954,7 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 
 	if ($old == NULL || $issue->owner != $old->owner)
 	{
-		print '<li class="issue-owner">';
+		print '<li class="codepot-issue-owner">';
 		if ($issue->owner != '')
 		{
 			print $con->lang->line('Owner');
@@ -994,19 +994,30 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 
 <div id='issue_show_state' class='collapsible-box'>
 	<div id='issue_show_metadata_header' class='collapsible-box-header'><?php print $this->lang->line('State')?></div>
-	<div id='issue_show_metadata_body'>
-		<ul id='issue_show_metadata_list' class='codepot-issue-horizontal-list'>
+	<div id='issue_show_metadata_body' class='codepot-metadata-collapsible-body'>
+		<ul id='issue_show_metadata_list' class='codepot-horizontal-list'>
 			<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($issue->createdon); ?></li>
 			<li><?php print $this->lang->line('Created by')?> <?php print htmlspecialchars($issue->createdby); ?></li>
 			<li><?php print $this->lang->line('Last updated on')?> <?php print codepot_dbdatetodispdate($issue->updatedon); ?></li>
 			<li><?php print $this->lang->line('Last updated by')?> <?php print htmlspecialchars($issue->updatedby); ?></li>
 		</ul>
 
-		<ul id='issue_show_state_list' class='codepot-issue-horizontal-list'>
+		<ul id='issue_show_state_list' class='codepot-horizontal-list'>
 			<?php
 			print_issue_state ($this, $issue, NULL, $issue_type_array, $issue_status_array, $issue_priority_array);
 			?>
 		</ul>
+
+		<?php
+			if (!empty($related_code_revisions))
+			{
+				print '<ul id="issue_show_coderev_list" class="codepot-horizontal-list">';
+				foreach ($related_code_revisions as $r)
+				{
+				}
+				print '</ul>';
+			}
+		?>
 
 		<div style='clear: both'></div>
 	</div>
@@ -1088,7 +1099,7 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 			print '<div style="clear: both;"></div>';
 		print '</div>';
 
-		print '<ul id="issue_show_change_start_list" class="codepot-issue-horizontal-list">';
+		print '<ul id="issue_show_change_start_list" class="codepot-horizontal-list">';
 			print_issue_state ($this, $new, NULL, $issue_type_array, $issue_status_array, $issue_priority_array);
 		print '</ul>';
 		print '<div style="clear: both;"></div>';
@@ -1118,7 +1129,7 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 		print '<div style="clear: both;"></div>';
 		print '</div>';
 
-		print '<ul class="codepot-issue-horizontal-list">';
+		print '<ul class="codepot-horizontal-list">';
 		print_issue_state ($this, $new, $old, $issue_type_array, $issue_status_array, $issue_priority_array);
 		print '</ul>';
 

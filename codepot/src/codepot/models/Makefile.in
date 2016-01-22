@@ -145,7 +145,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 wwwdir = $(WWWDIR)/codepot/models
 www_DATA = \
-	codereviewmodel.php \
+	codemodel.php \
 	dbloginmodel.php \
 	filemodel.php \
 	index.html \

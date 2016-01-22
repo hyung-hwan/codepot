@@ -22,13 +22,6 @@
 	white-space: nowrap;
 }
 
-#file_show_metadata_body,
-#file_show_files_body {
-	background-color: #FCFCFC;
-	margin: 0 !important;
-	padding: 0.5em 0.5em 0.5em 0.5em !important;
-}
-
 #file_show_metadata_list {
 	padding: 0 !important;
 	margin: 0 0 0.5em 0 !important;

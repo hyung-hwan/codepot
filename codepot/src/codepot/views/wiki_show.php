@@ -252,7 +252,7 @@ $this->load->view (
 
 <div id='wiki_show_metadata' class='collapsible-box'>
 	<div id='wiki_show_metadata_header' class='collapsible-box-header'><?php print $this->lang->line('Metadata')?></div>
-	<div id='wiki_show_metadata_body'>
+	<div id='wiki_show_metadata_body' class='codepot-metadata-collapsible-body'>
 
 		<ul id='wiki_show_metadata_list'>
 		<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($wiki->createdon); ?></li>
