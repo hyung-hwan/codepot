@@ -39,6 +39,29 @@ class CodeModel extends Model
 		return $query->result();
 	}
 
+	function getRelatedRevisions ($projectid, $issueid)
+	{
+		$this->db->trans_begin ();
+
+		$this->db->from ('issue');
+		$this->db->join ('issue_coderev', 'issue.projectid = issue_coderev.projectid AND issue.id = issue_coderev.issueid');
+		$this->db->where ('issue_coderev.projectid', (string)$projectid);
+		$this->db->where ('issue_coderev.issueid', $issueid);
+		$this->db->order_by ('issue_coderev.projectid ASC');
+		$this->db->order_by ('issue_coderev.coderev ASC');
+		$this->db->select ('issue_coderev.projectid, issue_coderev.coderev');
+		$query = $this->db->get ();
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$this->db->trans_commit ();
+		return $query->result();
+	}
+
 	function getReviews ($projectid, $revision)
 	{
 		$this->db->trans_begin ();

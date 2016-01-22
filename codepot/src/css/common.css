@@ -1046,6 +1046,12 @@ ul.codepot-horizontal-list li {
 	float: left;
 }
 
+.codepot-opacity-85 {
+	filter:alpha(opacity=85); /* IE */
+	opacity: 0.85; /* Safari, Opera */
+	-moz-opacity:0.85; /* FireFox */
+}
+
 /* === common issue class === */
 
 .codepot-issue-type-defect {
