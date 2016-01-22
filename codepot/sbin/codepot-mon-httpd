@@ -11,7 +11,8 @@ THRESHOLD=1024
 
 if [ "$1" = "-daemon" ]
 then
-	($0 --daemon </dev/null >/dev/null 2>&1 &) &
+	shift
+	($0 --daemon $@ </dev/null >/dev/null 2>&1 &) &
 	#($0 --daemon &) &
 	exit 0
 elif [ "$1" = "--daemon" ]
@@ -19,41 +20,46 @@ then
 	DAEMON=1
 fi
 
+[ -n "$2" ] && THRESHOLD="$2"
+
 exit_requested=no
 
 trap 'exit_requested=yes' SIGINT SIGHUP SIGTERM
 
-[ "${DAEMON}" = "1" ] && logger -t "$0" "Started"
+[ "${DAEMON}" = "1" ] && logger -t "$0" "Started (THRESHOLD=$THRESHOLD)"
 
 while [ "${exit_requested}" = "no" ]
 do
 	sleep 5
 
 	ps -ylC httpd | awk -vdaemon=$DAEMON -v"self=$0" -vthreshold=$THRESHOLD '
-{
+/httpd/ {
 	x += $8;
 	y += 1;
 }
 END {
-	MB = x / 1024;
-	AVGMB = x / ((y - 1) * 1024);
-
-	if (daemon <= 0)
+	if (y > 0)
 	{
-		print "Apache Memory Usage (MB): " MB;
-		print "Average Proccess Size (MB): " AVGMB;
+		MB = x / 1024;
+		AVGMB = x / (y * 1024);
 
-		if (MB > int(threshold))
+		if (daemon <= 0)
 		{
-			system ("/etc/init.d/httpd restart");
+			print "Apache Memory Usage (MB): " MB;
+			print "Average Proccess Size (MB): " AVGMB;
+
+			if (MB > int(threshold))
+			{
+				system ("/etc/init.d/httpd restart");
+			}
 		}
-	}
-	else
-	{
-		if (MB > int(threshold))
+		else
 		{
-			system (sprintf ("logger -t \"%s\" \"Restarting httpd for excess memory usage [%s/%d]\"", self, MB, threshold));
-			system ("/etc/init.d/httpd restart >/dev/null 2>&1 </dev/null");
+			if (MB > int(threshold))
+			{
+				system (sprintf ("logger -t \"%s\" \"Restarting httpd for excess memory usage [%s/%d]\"", self, MB, threshold));
+				system ("/etc/init.d/httpd restart >/dev/null 2>&1 </dev/null");
+			}
 		}
 	}
 }
