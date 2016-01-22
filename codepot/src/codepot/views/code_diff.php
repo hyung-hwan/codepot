@@ -249,7 +249,7 @@ $this->load->view (
 			<div style='clear: both'></div>
 		</div>
 
-		<div id='code_diff_metadata_against_body'>
+		<div id='code_diff_metadata_against_body' class='codepot-metadata-collapsible-body'>
 			<div class='codepot-plain-text-view'>
 				<pre><?php print htmlspecialchars ($file['against']['logmsg']); ?></pre>
 			</div>
