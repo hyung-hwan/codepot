@@ -186,7 +186,7 @@ CREATE TABLE issue_coderev (
 	CONSTRAINT issue_coderev_codeproid FOREIGN KEY (codeproid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE
 
-	-- Commit message is typypicall free text. Its issue reference could be error-prone.
+	-- Commit message is typically a free text. Its issue reference could be error-prone.
 	-- So i won't have this constraint enforced.
 	-- CONSTRAINT issue_coderev_issueid FOREIGN KEY (projectid,issueid) REFERENCES issue(projectid,id)
 	--	ON DELETE RESTRICT ON UPDATE CASCADE
