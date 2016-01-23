@@ -1012,6 +1012,7 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 			if (!empty($related_code_revisions))
 			{
 				print '<ul id="issue_show_coderev_list" class="codepot-horizontal-list">';
+				print '<li><i class="fa fa-hand-o-right"></i> ' . $this->lang->line ('Code') . '</li>';
 				foreach ($related_code_revisions as $r)
 				{
 					print '<li>';

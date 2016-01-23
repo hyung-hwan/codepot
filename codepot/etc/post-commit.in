@@ -115,11 +115,18 @@ sub find_issue_reference_in_commit_message
 
 	# find [[#IXXXX]]
 	my @issue_ids = ($commit_message =~ /\[\[#I(\d+)\]\]/g);
+	# find #XXXX
+	my @issue_ids2 = ($commit_message =~ /(^|[^#])#(\d+)(\D|$)/g);
 
 	# find unique issue ids in the findings.
 	my %tmp;
-	@tmp{@issue_ids}=1;
-	my @unique_issue_ids=keys %tmp;
+	@tmp{@issue_ids} = 1;
+	for (my $i = 0; $i < scalar(@issue_ids2); $i += 3)
+	{
+		my $id = @issue_ids2[$i + 1];
+		@tmp{$id} = 1;
+	}
+	my @unique_issue_ids = keys(%tmp);
 
 	$dbh->begin_work ();
 
