@@ -709,6 +709,7 @@ $history = $file['history'];
 			if (!empty($related_issues))
 			{
 				print '<div><ul id="code_revision_related_issue_list" class="codepot-horizontal-list">';
+				print '<li><i class="fa fa-hand-o-right"></i> </li>';
 				foreach ($related_issues as $ri)
 				{
 					$hex_issueid = $this->converter->AsciiToHex ($ri->issueid);

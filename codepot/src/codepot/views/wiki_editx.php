@@ -24,7 +24,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
-<script type="text/javascript" src="<?php print base_url_make('/js/medium-editor.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/medium-editor.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/medium-editor.min.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/medium-editor-theme.min.css')?>" />
 
@@ -370,7 +370,7 @@ $(function () {
 			          'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
 			          'subscript', 'superscript', 'removeFormat',
 			          'pre', 'anchor', 'image',
-			          'orderedlist', 'unorderedlist', 'indent', 'outdent',
+			          'orderedlist', 'unorderedlist', 'quote', 'indent', 'outdent',
 			          'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull',
 			          'table'],
 			diffLeft: 0,
@@ -455,6 +455,13 @@ $(function () {
 				{ // alt-p
 					command: 'append-pre',
 					key: 'P',
+					meta: false,
+					shift: false,
+					alt: true
+				},
+				{ // alt-q
+					command: 'append-blockquote',
+					key: 'Q',
 					meta: false,
 					shift: false,
 					alt: true
