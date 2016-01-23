@@ -187,6 +187,26 @@ CREATE TABLE issue_change_file_list (
 		ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+CREATE TABLE issue_coderev (
+	projectid  VARCHAR(32)   NOT NULL,
+	issueid    BIGINT        NOT NULL,
+
+	codeproid  VARCHAR(32)   NOT NULL,
+	coderev    VARCHAR(64)   NOT NULL,
+
+	UNIQUE (projectid, issueid, codeproid, coderev),
+
+	CONSTRAINT issue_coderev_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+
+	CONSTRAINT issue_coderev_codeproid FOREIGN KEY (codeproid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+CREATE INDEX issue_coderev_index_1 ON issue_coderev(codeproid, coderev);
+CREATE INDEX issue_coderev_index_2 ON issue_coderev(projectid, issueid);
+
+
 CREATE TABLE file (
 	projectid   VARCHAR(32)   NOT NULL,
 	name        VARCHAR(255)  NOT NULL,
