@@ -531,7 +531,7 @@ Table.prototype = {
         // end codepot
 
         this._editor.pasteHTML(
-            '<table class="medium-editor-table" id="medium-editor-table"' +
+            '<p>&nbsp;&nbsp;</p><table class="medium-editor-table" id="medium-editor-table"' +
             ' >' +
             // codepot
             '<thead>' +
@@ -543,7 +543,7 @@ Table.prototype = {
             '</tbody>' +
             // codepot
             //'</table>', {
-            '</table><p></p>', {
+            '</table><p>&nbsp;&nbsp;</p>', {
             // end codepot
                 cleanAttrs: [],
                 cleanTags: []
