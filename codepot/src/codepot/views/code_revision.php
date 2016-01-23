@@ -680,14 +680,28 @@ $history = $file['history'];
 				foreach ($related_issues as $ri)
 				{
 					$hex_issueid = $this->converter->AsciiToHex ($ri->issueid);
-					//$transformed_message = preg_replace ("/\[\[#I{$ri->issueid}\]\]/", anchor ("/issue/show/{$ri->projectid}/{$hex_issueid}", $ri->issueid . ':' . htmlspecialchars($ri->summary), "class='codepot-issue-type-{$ri->type}'"), $transformed_message);
-					//$transformed_message = preg_replace ("/\[\[(#I{$ri->issueid})\]\]/", "[[<span class='codepot-issue-type-{$ri->type}'>\${1}</span>]]", $transformed_message);
+
+					// handle [[#IXXX]]
 					$transformed_message = preg_replace (
 						"/\[\[(#I{$ri->issueid})\]\]/", 
 						'[[' . anchor ("/issue/show/{$ri->projectid}/{$hex_issueid}", "\${1}", "class='codepot-issue-type-{$ri->type}'") . ']]',
 						$transformed_message
 					);
+
+					// handle #XXXX. ##XXXX or some weird variants are not allowed.
+					$transformed_message = preg_replace (
+						"/(^|[^#])#{$ri->issueid}([^[:digit:]]|$)/", 
+						"\${1}" . anchor ("/issue/show/{$ri->projectid}/{$hex_issueid}", "#{$ri->issueid}", "class='codepot-issue-type-{$ri->type}'") . "\${2}",
+						$transformed_message
+					);
 				}
+
+				// handle [[#RXXX]]
+				$transformed_message = preg_replace (
+					"/\[\[(#R([[:digit:]]+))\]\]/", 
+					'[[' . anchor ("/code/revision/{$project->id}/!./\${2}", "\${1}", "class='codepot-hashed-revision-number'") . ']]',
+					$transformed_message
+				);
 			?>
 			<pre id="code_revision_metadata_text"><?php print $transformed_message; ?></pre>
 		</div>

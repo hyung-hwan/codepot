@@ -150,9 +150,13 @@ textarea.codepot-issue-edit-comment {
 	margin-top: 2em;
 }
 
+#issue_show_coderev_list li:nth-child(1) i {
+	color: #BB4533;
+}
+
 #issue_show_coderev_list a {
-	color: #FFFFFF;
-	background-color: #45A067;
+	color: #444444;
+	background-color: #CECECE;
 	padding: 0.3em;
 
 	-moz-border-radius: 3px;
