@@ -936,7 +936,22 @@ MediumEditor.extensions = {};
                 }
             }
 
-            return doc.execCommand('formatBlock', false, tagName);
+            // codepot
+            // return doc.execCommand('formatBlock', false, tagName);
+            var ret = doc.execCommand('formatBlock', false, tagName);
+            if (tagName == 'blockquote')
+            {
+                var node = window.getSelection().focusNode.parentNode;
+
+console.log ("%o", node);
+                if (node && node.tagName.toLowerCase() == 'p') 
+                    node = node.parentNode;
+
+                if (node && node.tagName.toLowerCase() == 'blockquote')
+                    node.classList.add ("codepot-formatted-block");
+            }
+            return ret;
+            // end codepot
         },
 
         /**
