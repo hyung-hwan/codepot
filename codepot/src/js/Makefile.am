@@ -24,7 +24,7 @@ www_DATA = \
 	excanvas.min.js \
 	jquery.flot.tickrotor.js \
 	jqueryui-editable.min.js \
-	medium-editor.min.js \
+	medium-editor.js \
 	medium-editor-tables.js \
 	showdown.js \
 	d3.min.js \
