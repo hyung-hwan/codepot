@@ -293,8 +293,8 @@ foreach ($latest_projects as $project)
 
 	<ul id="site_home_result_open_issues_list" class="collapsible-box-list">
 		<?php 
+
 /*
-TODO: show site issue stats.
 		foreach ($open_issue_counts_per_project as $issue)
 		{
 			$pro = $issue->projectid;
