@@ -17,7 +17,15 @@
 
 <script type="text/javascript">
 $(function () {
-	$('#user_home_mainarea_result').tabs();
+	$("#user_home_mainarea_open_issues").accordion ({
+		collapsible: true,
+		heightStyle: "content"
+	});
+
+	$("#user_home_mainarea_projects").accordion ({
+		collapsible: true,
+		heightStyle: "content"
+	}); 
 });
 </script>
 
@@ -66,52 +74,45 @@ $num_activities = 0;
 
 <div id="user_home_mainarea_result" class="result">
 
+	<div id="user_home_mainarea_open_issues" class="collapsible-box">
+		<div class="collapsible-box-header"><?php print $this->lang->line('Open issues')?></div>
+		<ul>
+		<?php 
+		foreach ($issues as $issue) 
+		{
+			$pro = $issue->projectid;
+			$xid = $this->converter->AsciiToHex ((string)$issue->id);
 
-<div id="tabs">
+			$anc = anchor ("issue/show/{$issue->projectid}/{$xid}", '#' . htmlspecialchars($issue->id));
 
-	<ul>
-	 	<li><a href="#user_home_mainarea_result_issues"> <?php print $this->lang->line('Open issues')?> (<?php print $num_issues?>) </a></li>
-		<li><a href="#user_home_mainarea_result_projects"> <?php print $this->lang->line('Projects')?> (<?php print $num_projects?>) </a></li>
-	</ul>
+			$status = htmlspecialchars(
+				array_key_exists($issue->status, $issue_status_array)?
+				$issue_status_array[$issue->status]: $issue->status);
+			$type = htmlspecialchars(
+				array_key_exists($issue->type, $issue_type_array)?
+				$issue_type_array[$issue->type]: $issue->type);
 
-	<div id="user_home_mainarea_result_issues">
-	<ul>
-	<?php 
-	foreach ($issues as $issue) 
-	{
-		$pro = $issue->projectid;
-		$xid = $this->converter->AsciiToHex ((string)$issue->id);
-	
-		$anc = anchor ("issue/show/{$issue->projectid}/{$xid}", '#' . htmlspecialchars($issue->id));
-	
-		$status = htmlspecialchars(
-			array_key_exists($issue->status, $issue_status_array)?
-			$issue_status_array[$issue->status]: $issue->status);
-		$type = htmlspecialchars(
-			array_key_exists($issue->type, $issue_type_array)?
-			$issue_type_array[$issue->type]: $issue->type);
-	
-		$sum = htmlspecialchars ($issue->summary);
-		print "<li>{$pro} {$anc} {$type} {$status} - {$sum}</li>";
-	}
-	?>
-	</ul>
+			$sum = htmlspecialchars ($issue->summary);
+			print "<li>{$pro} {$anc} {$type} {$status} - {$sum}</li>";
+		}
+		?>
+		</ul>
 	</div>
-	
-	<div id="user_home_mainarea_result_projects">
-	<ul>
-	<?php 
-	foreach ($projects as $project) 
-	{
-		$cap = "{$project->name} ({$project->id})";
-		$anc = anchor ("project/home/{$project->id}", htmlspecialchars($cap));
-		$sum = htmlspecialchars ($project->summary);
-		print "<li>{$anc} - {$sum}</li>";
-	}
-	?>
-	</ul>
+
+	<div id="user_home_mainarea_projects" class="collapsible-box">
+		<div class="collapsible-box-header"><?php print $this->lang->line('Projects')?></div>
+		<ul>
+		<?php 
+		foreach ($projects as $project) 
+		{
+			$cap = "{$project->name} ({$project->id})";
+			$anc = anchor ("project/home/{$project->id}", htmlspecialchars($cap));
+			$sum = htmlspecialchars ($project->summary);
+			print "<li>{$anc} - {$sum}</li>";
+		}
+		?>
+		</ul>
 	</div>
-</div>
 
 </div> <!-- user_home_mainarea_result -->
 
