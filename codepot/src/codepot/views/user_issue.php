@@ -1,5 +1,21 @@
 <html>
 
+<?php
+$num_issues = count($issues);
+
+$issues_by_projects = array();
+foreach ($issues as $issue)
+{
+	if (!array_key_exists ($issue->projectid, $issues_by_projects))
+		$issues_by_projects[$issue->projectid] = array();
+
+	$arr = &$issues_by_projects[$issue->projectid];
+	array_push ($arr, $issue);
+
+	$unique_projects = array_keys ($issues_by_projects);
+}
+?>
+
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
@@ -14,15 +30,12 @@
 
 <script type="text/javascript">
 $(function () {
-	$("#user_home_mainarea_open_issues").accordion ({
-		collapsible: true,
-		heightStyle: "content"
-	});
-
-	$("#user_home_mainarea_projects").accordion ({
-		collapsible: true,
-		heightStyle: "content"
-	}); 
+	<?php
+	for ($i = 0; $i < count($unique_projects); $i++)
+	{
+		printf ('$("#user_home_mainarea_open_issues_%d").accordion({collapsible:true, heightStyle:"content"}); ', $i);
+	}
+	?>
 });
 </script>
 
@@ -63,18 +76,18 @@ $this->load->view (
 
 <div class="mainarea" id="user_home_mainarea">
 
-<?php
-$num_projects = count($projects);
-$num_issues = count($issues);
-$num_activities = 0;
-?>
-
 <div id="user_home_mainarea_result" class="result">
 
-	<div id="user_home_mainarea_open_issues" class="collapsible-box">
-		<div class="collapsible-box-header"><?php print $this->lang->line('Open issues')?></div>
-		<ul>
-		<?php 
+<div id="user_home_mainarea_open_issues">
+
+	<?php
+	for ($i = 0; $i < count($unique_projects); $i++)
+	{
+		printf ('<div id="user_home_mainarea_open_issues_%d" class="collapsible-box">', $i);
+		$issues = &$issues_by_projects[$unique_projects[$i]];
+
+		printf ('<div class="collapsible-box-header">%s</div>', htmlspecialchars($unique_projects[$i]));
+		print '<ul>';
 		foreach ($issues as $issue) 
 		{
 			$pro = $issue->projectid;
@@ -92,24 +105,12 @@ $num_activities = 0;
 			$sum = htmlspecialchars ($issue->summary);
 			print "<li>{$pro} {$anc} {$type} {$status} - {$sum}</li>";
 		}
-		?>
-		</ul>
-	</div>
+		print '</ul>';
+		print '</div>';
+	}
+	?>
 
-	<div id="user_home_mainarea_projects" class="collapsible-box">
-		<div class="collapsible-box-header"><?php print $this->lang->line('Projects')?></div>
-		<ul>
-		<?php 
-		foreach ($projects as $project) 
-		{
-			$cap = "{$project->name} ({$project->id})";
-			$anc = anchor ("project/home/{$project->id}", htmlspecialchars($cap));
-			$sum = htmlspecialchars ($project->summary);
-			print "<li>{$anc} - {$sum}</li>";
-		}
-		?>
-		</ul>
-	</div>
+</div>
 
 </div> <!-- user_home_mainarea_result -->
 

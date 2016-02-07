@@ -5,6 +5,7 @@ class User extends Controller
 	var $VIEW_ERROR = 'error';
 	var $VIEW_LOG = 'log';
 	var $VIEW_HOME = 'user_home';
+	var $VIEW_ISSUE = 'user_issue';
 	var $VIEW_SETTINGS = 'user_settings';
 
 	function User ()
@@ -63,6 +64,43 @@ class User extends Controller
 			$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
 			$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
 			$this->load->view ($this->VIEW_HOME, $data);
+		}
+	}
+
+	function issue ()
+	{
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect ('main/signin');
+
+		if ($login['id'] == '')
+		{
+			redirect ('site/home');
+			return;
+		}
+
+		$this->load->library ('IssueHelper', 'issuehelper');
+		$this->lang->load ('issue', CODEPOT_LANG);
+
+		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('IssueModel', 'issues');
+
+		$issues = $this->issues->getMyIssues (
+			$login['id'], $this->issuehelper->_get_open_status_array($this->lang));
+		if ($issues === FALSE)
+		{
+			$data['login'] = $login;
+			$data['message'] = 'DATABASE ERROR';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+		else
+		{
+			$data['login'] = $login;
+			$data['issues'] = $issues;
+			$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
+			$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
+			$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
+			$this->load->view ($this->VIEW_ISSUE, $data);
 		}
 	}
 

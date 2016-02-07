@@ -30,6 +30,7 @@ www_DATA =  \
 	site_show.php \
 	taskbar.php \
 	user_home.php \
+	user_issue.php \
 	user_settings.php \
 	wiki_edit.php \
 	wiki_editx.php \
