@@ -222,7 +222,9 @@ $(function () {
 		return false; // prevent the default behavior
 	});
 
+	<?php if (!$is_special_stream): ?>
 	$("#code_file_mainarea_edit_button").button();
+	<?php endif; ?>
 
 	<?php if ($file['created_rev'] != $file['head_rev']): ?>
 		$("#code_file_headrev_button").button().click (function() {
@@ -403,7 +405,7 @@ $this->load->view (
 		print ' | ';
 		printf ('%s: %s', $this->lang->line('Size'), $file['size']);
 
-		if ((isset($login['id']) && $login['id'] != ''))
+		if ((isset($login['id']) && $login['id'] != '') && !$is_special_stream)
 		{
 			print ' ';
 			print anchor ("code/edit/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Edit'), 'id="code_file_mainarea_edit_button"');
