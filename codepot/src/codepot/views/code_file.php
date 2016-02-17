@@ -14,15 +14,24 @@
 		{
 			if ($pn == 'svn:mime-type')
 			{
-				if ($pv == 'application/octet-stream' &&
-				    in_array (strtolower($fileext), array ('png', 'jpg', 'gif', 'tif', 'bmp', 'ico')))
+				if ($pv == 'application/octet-stream')
 				{
-					$img = @imagecreatefromstring ($file['content']);
-					if ($img !== FALSE) 
+					$lower_fileext = strtolower($fileext);
+					if (in_array ($lower_fileext, array ('png', 'jpg', 'gif', 'tif', 'bmp', 'ico')))
 					{
-						@imagedestroy ($img);
-						$is_image_file = TRUE;
+						$img = @imagecreatefromstring ($file['content']);
+						if ($img !== FALSE) 
+						{
+							@imagedestroy ($img);
+							$is_image_file = TRUE;
+							$is_special_stream = TRUE;
+							break;
+						}
+					}
+					else if (in_array ($lower_fileext, array ('pdf')))
+					{
 						$is_special_stream = TRUE;
+						$is_pdf_file = TRUE;
 						break;
 					}
 				}
@@ -502,7 +511,7 @@ if ($login['settings'] != NULL &&
 		print '<div id="code_file_pdf_navigator">';
 		print '<button id="code_file_pdf_first_page"><i class="fa fa-fast-backward"></i></button>';
 		print '<button id="code_file_pdf_prev_page"><i class="fa fa-backward"></i></button>';
-		print '<input type="range" id="code_file_pdf_page_slider"/>';
+		print '<input type="range" id="code_file_pdf_page_slider" step="1" />';
 		print '<span id="code_file_pdf_page"><span id="code_file_pdf_page_num"></span>/<span id="code_file_pdf_page_count"></span></span>';
 		print '<button id="code_file_pdf_next_page"><i class="fa fa-forward"></i></button>';
 		print '<button id="code_file_pdf_last_page"><i class="fa fa-fast-forward"></i></button>';
