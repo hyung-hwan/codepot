@@ -181,7 +181,7 @@ www_DATA = \
 	medium-editor-tables.js \
 	showdown.js \
 	d3.min.js \
-        CodeFlower.js \ 
+	CodeFlower.js \
 	pdf.min.js \
 	pdf.worker.min.js
 
