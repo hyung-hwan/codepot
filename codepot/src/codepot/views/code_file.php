@@ -7,6 +7,7 @@
 
 	$is_image_file = FALSE;
 	$is_pdf_file = FALSE;
+	$is_odf_file = FALSE;
 	$is_special_stream = FALSE;
 	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 	{
@@ -17,7 +18,7 @@
 				if ($pv == 'application/octet-stream')
 				{
 					$lower_fileext = strtolower($fileext);
-					if (in_array ($lower_fileext, array ('png', 'jpg', 'gif', 'tif', 'bmp', 'ico')))
+					if (in_array ($lower_fileext, array ('png', 'jpg', 'jpeg', 'gif', 'tif', 'bmp', 'ico')))
 					{
 						$img = @imagecreatefromstring ($file['content']);
 						if ($img !== FALSE) 
@@ -34,11 +35,25 @@
 						$is_pdf_file = TRUE;
 						break;
 					}
+					else if (in_array ($lower_fileext, array ('odt', 'odp', 'ods')))
+					{
+						$is_special_stream = TRUE;
+						$is_odf_file = TRUE;
+						break;
+					}
 				}
 				else if ($pv == 'application/pdf')
 				{
 					$is_special_stream = TRUE;
 					$is_pdf_file = TRUE;
+					break;
+				}
+				else if ($pv == 'application/vnd.oasis.opendocument.text' ||
+				         $pv == 'application/vnd.oasis.opendocument.presentation' ||
+				         $pv == 'application/vnd.oasis.opendocument.spreadsheet')
+				{
+					$is_special_stream = TRUE;
+					$is_odf_file = TRUE;
 					break;
 				}
 			}
@@ -75,6 +90,10 @@ if ($is_pdf_file)
 {
 	printf ('<script type="text/javascript" src="%s"></script>', base_url_make('/js/pdf.min.js'));
 }
+else if ($is_odf_file)
+{
+	printf ('<script type="text/javascript" src="%s"></script>', base_url_make('/js/webodf.js'));
+}
 
 $enstyle_anchor_text = '<i class="fa fa-magic"></i> ' . $this->lang->line('Enstyle');
 $destyle_anchor_text = '<i class="fa fa-times"></i> ' . $this->lang->line('Destyle');
@@ -99,24 +118,6 @@ else
 ?>
 
 <script type="text/javascript">
-var showing_raw_code = false;
-
-function showRawCode()
-{
-	if (showing_raw_code)
-	{
-		$("#code_file_style_button").button("option", "label", '<?php print $destyle_anchor_text; ?>');
-		$("#code_file_result_code").removeClass("prettyprinted");
-		prettyPrint();
-	}
-	else
-	{
-		$("#code_file_style_button").button("option", "label", '<?php print $enstyle_anchor_text; ?>');
-		$("#code_file_result_code").html($("#code_file_result_raw").html());
-	}
-
-	showing_raw_code = !showing_raw_code;
-}
 
 <?php if ($is_pdf_file): ?>
 
@@ -133,7 +134,7 @@ function render_pdf_page (num)
 	// Using promise to fetch the page
 	pdf_doc.getPage(num).then(function(page) {
 		var vp1 = page.getViewport (1);
-		scale = ($('#code_file_result_code').innerWidth() - 20) / vp1.width;
+		scale = ($('#code_file_result').innerWidth() - 20) / vp1.width;
 		var viewport = page.getViewport(scale);
 		pdf_canvas.height = viewport.height;
 		pdf_canvas.width = viewport.width;
@@ -198,6 +199,31 @@ function on_last_pdf_page ()
 	pdf_page_num = pdf_doc.numPages;
 	queue_pdf_rendering_in_progress (pdf_page_num);
 }
+
+<?php elseif ($is_odf_file): ?>
+
+var odf_canvas = null;
+
+<?php elseif (!$is_special_stream): ?>
+
+var showing_raw_code = false;
+
+function showRawCode()
+{
+	if (showing_raw_code)
+	{
+		$("#code_file_style_button").button("option", "label", '<?php print $destyle_anchor_text; ?>');
+		$("#code_file_result_code").removeClass("prettyprinted");
+		prettyPrint();
+	}
+	else
+	{
+		$("#code_file_style_button").button("option", "label", '<?php print $enstyle_anchor_text; ?>');
+		$("#code_file_result_code").html($("#code_file_result_raw").html());
+	}
+
+	showing_raw_code = !showing_raw_code;
+}
 <?php endif; ?>
 
 
@@ -208,30 +234,31 @@ $(function () {
 		heightStyle: "content"
 	});
 
-	$("#code_file_mainarea_loc_info").hide();
+<?php if (!$is_special_stream): ?>
+	$("#code_file_loc_info").hide();
 	btn = $("#code_file_mainarea_loc_button").button().click (function () {
-		if ($("#code_file_mainarea_loc_info").is(":visible"))
+		if ($("#code_file_loc_info").is(":visible"))
 		{
-			$("#code_file_mainarea_loc_info").hide("blind",{},200);
+			$("#code_file_loc_info").hide("blind",{},200);
 		}
 		else
 		{
-			$("#code_file_mainarea_loc_info").show("blind",{},200);
+			$("#code_file_loc_info").show("blind",{},200);
 		}
 
 		return false; // prevent the default behavior
 	});
 
-	<?php if (!$is_special_stream): ?>
+	
 	$("#code_file_mainarea_edit_button").button();
-	<?php endif; ?>
+<?php endif; ?>
 
-	<?php if ($file['created_rev'] != $file['head_rev']): ?>
-		$("#code_file_headrev_button").button().click (function() {
-			$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/file/{$project->id}/${hex_headpath}"; ?>'));
-			return false;
-		});
-	<?php endif; ?>
+<?php if ($file['created_rev'] != $file['head_rev']): ?>
+	$("#code_file_headrev_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/file/{$project->id}/${hex_headpath}"; ?>'));
+		return false;
+	});
+<?php endif; ?>
 
 	$("#code_file_blame_button").button().click (function() {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/blame/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
@@ -262,15 +289,17 @@ $(function () {
 
 	PDFJS.workerSrc = "<?php print base_url_make('/js/pdf.worker.min.js'); ?>";
 
-	var pdf_data = new Uint8Array( [
+	//var pdf_data = new Uint8Array( [
 		<?php
+		/*
 		$fc = &$file['content'];
 		$len = strlen ($fc);
 		printf ("%d", ord($fc[0]));
-		/* TODO: use encoding to minimize data size when dumping to pdf_data */
 		for ($i = 1; $i < $len; $i++) printf (",%d", ord($fc[$i]));
+		*/
 		?>
-	]);
+	//]);
+	var pdf_data = codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fetch/{$project->id}/${hex_headpath}{$revreq}"; ?>');
 
 	PDFJS.getDocument(pdf_data).then(function (pdf) {
 		pdf_doc = pdf;
@@ -292,6 +321,11 @@ $(function () {
 		});
 
 	});
+
+<?php elseif ($is_odf_file): ?>
+
+	odf_canvas = new odf.OdfCanvas (document.getElementById('code_file_result'));
+	odf_canvas.load (codepot_merge_path("<?php print site_url(); ?>", '<?php print "/code/fetch/{$project->id}/${hex_headpath}{$revreq}"; ?>'));
 
 <?php elseif (!$is_special_stream): ?>
 
@@ -373,8 +407,16 @@ $this->load->view (
 
 		if ($headpath != $file['fullpath'])
 		{
-			print ' - ';
-			print htmlspecialchars($file['fullpath']);
+			// it looks like the subversion module returns a URL-encoded
+			// path when it contains a whitespace and the revision is given.
+			// for example, "UOML SAMPLE.ODT" is returned as "UOML%20SAMPLE.ODT" 
+			// when revision is specified. let's work around it.
+			$decpath = urldecode ($file['fullpath']);
+			if ($headpath != $decpath)
+			{
+				print ' - ';
+				print htmlspecialchars($file['fullpath']);
+			}
 		}
 		?>
 	</div>
@@ -405,12 +447,15 @@ $this->load->view (
 		print ' | ';
 		printf ('%s: %s', $this->lang->line('Size'), $file['size']);
 
-		if ((isset($login['id']) && $login['id'] != '') && !$is_special_stream)
+		if (!$is_special_stream)
 		{
-			print ' ';
-			print anchor ("code/edit/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Edit'), 'id="code_file_mainarea_edit_button"');
+			if ((isset($login['id']) && $login['id'] != '') )
+			{
+				print ' ';
+				print anchor ("code/edit/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Edit'), 'id="code_file_mainarea_edit_button"');
+			}
+			print anchor ("#", "LOC", "id=code_file_mainarea_loc_button");
 		}
-		print anchor ("#", "LOC", "id=code_file_mainarea_loc_button");
 		?>
 	</div>
 
@@ -488,7 +533,11 @@ $this->load->view (
 </pre>
 </div>
 
+<?php if ($is_special_stream): ?>
+<div id="code_file_result">
+<?php else: ?>
 <div id="code_file_result" class="codepot-relative-container-view codepot-styled-code-view" >
+<?php endif; ?>
 
 <?php 
 if ($fileext == 'adb' || $fileext == 'ads') $fileext = 'ada';
@@ -502,7 +551,6 @@ if ($login['settings'] != NULL &&
     $login['settings']->code_hide_line_num == 'Y') $prettyprint_linenums = '';
 ?>
 
-<pre class="prettyprint <?php print $prettyprint_linenums?> <?php print $prettyprint_lang?>" id="code_file_result_code">
 <?php 
 	if ($is_image_file)
 	{
@@ -520,8 +568,12 @@ if ($login['settings'] != NULL &&
 		print '</div>';
 		print '<canvas id="code_file_pdf_canvas" style="border:1px solid black;"/>';
 	}
+	else if ($is_odf_file)
+	{
+	}
 	else
 	{
+		printf ('<pre class="prettyprint %s %s" id="code_file_result_code">', $prettyprint_linenums, $prettyprint_lang);
 		$charset = '';
 		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 		{
@@ -550,18 +602,19 @@ if ($login['settings'] != NULL &&
 			// ignore iconv error
 			print htmlspecialchars(@iconv ($charset, 'UTF-8//IGNORE', $file['content'])); 
 		}
-	}
-?>
-</pre>
 
-<div id="code_file_mainarea_loc_info" class="codepot-infobox">
-	<div class="title">LOC</div>
-	<?php
+		print '</pre>';
+
+		print '<div id="code_file_loc_info" class="codepot-infobox">';
+		print '<div class="title">LOC</div>';
 		/* TODO: show this if it's enabled in the user settings  */
 		$graph_url = codepot_merge_path (site_url(), "/code/graph/cloc-file/{$project->id}/{$hex_headpath}{$revreq}");
-		print "<img src='{$graph_url}' id='code_file_mainarea_loc_info_locgraph' />";
-	?>
-</div> <!-- code_file_mainarea_loc_info -->
+		print "<img src='{$graph_url}' id='code_file_loc_info_locgraph' />";
+		print '</div>';
+	}
+?>
+
+
 
 </div> <!-- code_file_result -->
 
