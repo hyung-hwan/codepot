@@ -817,7 +817,7 @@ span.codepot-open-issue-count {
 	line-height: 0.9em;
 }
 
-/* normal blockquote is for indentation */ */
+/* normal blockquote is for indentation */ 
 .codepot-plain-text-view blockquote,
 .codepot-styled-text-view blockquote,
 .codepot-styled-text-preview blockquote {

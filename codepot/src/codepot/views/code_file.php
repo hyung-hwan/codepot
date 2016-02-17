@@ -2,6 +2,41 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
+<?php
+	$fileext = substr(strrchr($file['name'], '.'), 1);
+
+	$is_image_file = FALSE;
+	$is_pdf_file = FALSE;
+	$is_special_stream = FALSE;
+	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+	{
+		foreach ($file['properties'] as $pn => $pv)
+		{
+			if ($pn == 'svn:mime-type')
+			{
+				if ($pv == 'application/octet-stream' &&
+				    in_array (strtolower($fileext), array ('png', 'jpg', 'gif', 'tif', 'bmp', 'ico')))
+				{
+					$img = @imagecreatefromstring ($file['content']);
+					if ($img !== FALSE) 
+					{
+						@imagedestroy ($img);
+						$is_image_file = TRUE;
+						$is_special_stream = TRUE;
+						break;
+					}
+				}
+				else if ($pv == 'application/pdf')
+				{
+					$is_special_stream = TRUE;
+					$is_pdf_file = TRUE;
+					break;
+				}
+			}
+		}
+	}
+?>
+
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
@@ -24,7 +59,14 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
+
 <?php
+
+if ($is_pdf_file)
+{
+	printf ('<script type="text/javascript" src="%s"></script>', base_url_make('/js/pdf.min.js'));
+}
+
 $enstyle_anchor_text = '<i class="fa fa-magic"></i> ' . $this->lang->line('Enstyle');
 $destyle_anchor_text = '<i class="fa fa-times"></i> ' . $this->lang->line('Destyle');
 
@@ -67,11 +109,94 @@ function showRawCode()
 	showing_raw_code = !showing_raw_code;
 }
 
+<?php if ($is_pdf_file): ?>
+
+var pdf_doc = null;
+var pdf_page_num = 1;
+var pdf_rendering_in_progress = false;
+var pdf_page_num_pending = null;
+var pdf_canvas = null;
+var pdf_ctx = null;
+
+function render_pdf_page (num)
+{
+	pdf_rendering_in_progress = true;
+	// Using promise to fetch the page
+	pdf_doc.getPage(num).then(function(page) {
+		var vp1 = page.getViewport (1);
+		scale = ($('#code_file_result_code').innerWidth() - 20) / vp1.width;
+		var viewport = page.getViewport(scale);
+		pdf_canvas.height = viewport.height;
+		pdf_canvas.width = viewport.width;
+
+		// Render PDF page into canvas context
+		var renderContext = {
+			canvasContext: pdf_ctx,
+			viewport: viewport
+		};
+
+
+		var renderTask = page.render(renderContext);
+
+		// Wait for rendering to finish
+		renderTask.promise.then(function () {
+			pdf_rendering_in_progress = false;
+			if (pdf_page_num_pending !== null) {
+				// New page rendering is pending
+				render_pdf_pagee(pdf_page_num_pending);
+				pdf_page_num_pending = null;
+			}
+		});
+	});
+
+	$('#code_file_pdf_page_num').text (pdf_page_num);
+	$('#code_file_pdf_page_slider').val (pdf_page_num);
+}
+
+function queue_pdf_rendering_in_progress (num) {
+	if (pdf_rendering_in_progress) 
+	{
+		pdf_page_num_pending = num;
+	}
+	else
+	{
+		render_pdf_page (num);
+	}
+}
+
+function on_next_pdf_page ()
+{
+	if (pdf_page_num >= pdf_doc.numPages) return;
+	pdf_page_num++;
+	queue_pdf_rendering_in_progress (pdf_page_num);
+}
+
+function on_prev_pdf_page ()
+{
+	if (pdf_page_num <= 1) return;
+	pdf_page_num--;
+	queue_pdf_rendering_in_progress (pdf_page_num);
+}
+
+function on_first_pdf_page ()
+{
+	pdf_page_num = 1;
+	queue_pdf_rendering_in_progress (pdf_page_num);
+}
+
+function on_last_pdf_page ()
+{
+	pdf_page_num = pdf_doc.numPages;
+	queue_pdf_rendering_in_progress (pdf_page_num);
+}
+<?php endif; ?>
+
+
 $(function () {
 
 	$('#code_file_metadata').accordion({
 		collapsible: true,
-                heightStyle: "content"
+		heightStyle: "content"
 	});
 
 	$("#code_file_mainarea_loc_info").hide();
@@ -120,6 +245,45 @@ $(function () {
 		return false;
 	});
 
+<?php if ($is_pdf_file): ?>
+	pdf_canvas = document.getElementById('code_file_pdf_canvas');
+	pdf_ctx = pdf_canvas.getContext('2d');
+
+	PDFJS.workerSrc = "<?php print base_url_make('/js/pdf.worker.min.js'); ?>";
+
+	var pdf_data = new Uint8Array( [
+		<?php
+		$fc = &$file['content'];
+		$len = strlen ($fc);
+		printf ("%d", ord($fc[0]));
+		/* TODO: use encoding to minimize data size when dumping to pdf_data */
+		for ($i = 1; $i < $len; $i++) printf (",%d", ord($fc[$i]));
+		?>
+	]);
+
+	PDFJS.getDocument(pdf_data).then(function (pdf) {
+		pdf_doc = pdf;
+		render_pdf_page (pdf_page_num);
+
+		$('#code_file_pdf_page_count').text (pdf_doc.numPages);
+
+		$('#code_file_pdf_first_page').click (on_first_pdf_page);
+		$('#code_file_pdf_last_page').click (on_last_pdf_page);
+		$('#code_file_pdf_next_page').click (on_next_pdf_page);
+		$('#code_file_pdf_prev_page').click (on_prev_pdf_page);
+		$(window).resize(function () { queue_pdf_rendering_in_progress (pdf_page_num); });
+
+		$('#code_file_pdf_page_slider').prop ('min', 1);
+		$('#code_file_pdf_page_slider').prop ('max', pdf_doc.numPages);
+		$('#code_file_pdf_page_slider').change (function () { 
+			pdf_page_num = parseInt(this.value);
+			queue_pdf_rendering_in_progress (pdf_page_num);
+		});
+
+	});
+
+<?php elseif (!$is_special_stream): ?>
+
 	$("#code_file_style_button").button({"label": '<?php print $destyle_anchor_text; ?>'}).click (function () {
 		showRawCode();
 		return false;
@@ -128,6 +292,8 @@ $(function () {
 	// for code rendering
 	$("#code_file_result_raw").html ($("#code_file_result_code").html())
 	prettyPrint ();
+
+<?php endif; ?>
 });
 
 
@@ -228,7 +394,6 @@ $this->load->view (
 		print ' | ';
 		printf ('%s: %s', $this->lang->line('Size'), $file['size']);
 
-
 		if ((isset($login['id']) && $login['id'] != ''))
 		{
 			print ' ';
@@ -270,7 +435,7 @@ $this->load->view (
 		print anchor ('#', $history_anchor_text, 'id="code_file_history_button"');
 		//print anchor ('', $download_anchor_text, 'id="code_file_download_button"');
 		print anchor ("code/fetch/{$project->id}/${hex_headpath}{$revreq}", $download_anchor_text, 'id="code_file_download_button"');
-		print anchor ('#', $this->lang->line('Enstyle'), 'id="code_file_style_button"');
+		if (!$is_special_stream) print anchor ('#', $this->lang->line('Enstyle'), 'id="code_file_style_button"');
 		print '</div>';
 
 		print '<div class="metadata-commit-date">';
@@ -315,7 +480,6 @@ $this->load->view (
 <div id="code_file_result" class="codepot-relative-container-view codepot-styled-code-view" >
 
 <?php 
-$fileext = substr(strrchr($file['name'], '.'), 1);
 if ($fileext == 'adb' || $fileext == 'ads') $fileext = 'ada';
 else if ($fileext == 'pas') $fileext = 'pascal';
 else if ($fileext == 'bas') $fileext = 'basic';
@@ -329,33 +493,23 @@ if ($login['settings'] != NULL &&
 
 <pre class="prettyprint <?php print $prettyprint_linenums?> <?php print $prettyprint_lang?>" id="code_file_result_code">
 <?php 
-	$is_octet_stream = FALSE;
-	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+	if ($is_image_file)
 	{
-		foreach ($file['properties'] as $pn => $pv)
-		{
-			if ($pn == 'svn:mime-type' && $pv == 'application/octet-stream')
-			{
-				$is_octet_stream = TRUE;
-				break;
-			}
-		}
+		print ('<img src="data:image;base64,' . base64_encode ($file['content']) . '" alt="[image]" />');
 	}
-
-	$is_image_stream = FALSE;
-	if ($is_octet_stream || 
-	    in_array (strtolower($fileext), array ('png', 'jpg', 'gif', 'tif', 'bmp', 'ico')))
+	else if ($is_pdf_file)
 	{
-		$img = @imagecreatefromstring ($file['content']);
-		if ($img !== FALSE)
-		{
-			@imagedestroy ($img);
-			print ('<img src="data:image;base64,' . base64_encode ($file['content']) . '" alt="[image]" />');
-			$is_image_stream = TRUE;
-		}
+		print '<div id="code_file_pdf_navigator">';
+		print '<button id="code_file_pdf_first_page"><i class="fa fa-fast-backward"></i></button>';
+		print '<button id="code_file_pdf_prev_page"><i class="fa fa-backward"></i></button>';
+		print '<input type="range" id="code_file_pdf_page_slider"/>';
+		print '<span id="code_file_pdf_page"><span id="code_file_pdf_page_num"></span>/<span id="code_file_pdf_page_count"></span></span>';
+		print '<button id="code_file_pdf_next_page"><i class="fa fa-forward"></i></button>';
+		print '<button id="code_file_pdf_last_page"><i class="fa fa-fast-forward"></i></button>';
+		print '</div>';
+		print '<canvas id="code_file_pdf_canvas" style="border:1px solid black;"/>';
 	}
-
-	if (!$is_image_stream) 
+	else
 	{
 		$charset = '';
 		if (array_key_exists('properties', $file) && count($file['properties']) > 0)

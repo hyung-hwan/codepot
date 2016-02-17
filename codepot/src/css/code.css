@@ -101,6 +101,20 @@
 	color: #FFFFFF !important;
 }
 
+#code_file_pdf_navigator {
+	padding: 0.5em 1em 0.5em 1em;
+}
+
+#code_file_pdf_page_slider {
+	padding-left: 0.5em;
+}
+#code_file_pdf_page {
+	padding-right: 0.5em;
+}
+
+#code_file_pdf_canvas  {
+	border: none !important;
+}
 /*----------------------------------------------- 
  * project source folder view 
  *-----------------------------------------------*/
