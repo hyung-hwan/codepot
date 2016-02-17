@@ -183,7 +183,8 @@ www_DATA = \
 	d3.min.js \
 	CodeFlower.js \
 	pdf.min.js \
-	pdf.worker.min.js
+	pdf.worker.min.js \
+	webodf.js
 
 
 EXTRA_DIST = $(www_DATA)

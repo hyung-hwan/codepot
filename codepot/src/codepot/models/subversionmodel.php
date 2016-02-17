@@ -93,7 +93,30 @@ class SubversionModel extends Model
 				$prop = @svn_proplist ($workurl, FALSE, $rev);
 				if ($prop === FALSE) return FALSE;
 
-				$fileinfo['properties'] = array_key_exists($orgurl, $prop)?  $prop[$orgurl]: NULL;
+				//$fileinfo['properties'] = array_key_exists($orgurl, $prop)?  $prop[$orgurl]: NULL;
+				$fileinfo['properties'] = NULL;
+				foreach ($prop as $k => $v)
+				{
+					if ($k == $orgurl || $k == $workurl) 
+					{
+						$fileinfo['properties'] = $v;
+						break;
+					}
+					else 
+					{
+						// it looks like the subversion module returns a URL-encoded
+						// path when it contains a whitespace and the revision is given.
+						// for example, "UOML SAMPLE.ODT" is returned as "UOML%20SAMPLE.ODT" 
+						// when revision is specified. let's work around it.
+						$decurl = urldecode($k);
+						if ($decurl == $orgurl || $decurl == $workurl)  
+						{
+							$fileinfo['properties'] = $v;
+							break;
+						}
+					}
+				}
+
 				$fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
 			}
 
@@ -133,7 +156,26 @@ class SubversionModel extends Model
 				$prop = @svn_proplist ($workurl, FALSE, $rev);
 				if ($prop === FALSE) return FALSE;
 
-				$fileinfo['properties'] = array_key_exists($orgurl, $prop)?  $prop[$orgurl]: NULL;
+				//$fileinfo['properties'] = array_key_exists($orgurl, $prop)?  $prop[$orgurl]: NULL;
+				$fileinfo['properties'] = NULL;
+				foreach ($prop as $k => $v)
+				{
+					if ($k == $orgurl || $k == $workurl) 
+					{
+						$fileinfo['properties'] = $v;
+						break;
+					}
+					else 
+					{
+						$decurl = urldecode($k);
+						if ($decurl == $orgurl || $decurl == $workurl)  
+						{
+							$fileinfo['properties'] = $v;
+							break;
+						}
+					}
+				}
+
 				$fileinfo['logmsg'] = (count($log) > 0)? $log[0]['msg']: '';
 			}
 
@@ -188,7 +230,25 @@ class SubversionModel extends Model
 
 		$prop = @svn_proplist ($workurl, FALSE, $rev);
 		if ($prop === FALSE) return FALSE;
-		$fileinfo['properties'] = array_key_exists($orgurl, $prop)?  $prop[$orgurl]: NULL;
+		//$fileinfo['properties'] = array_key_exists($orgurl, $prop)?  $prop[$orgurl]: NULL;
+		$fileinfo['properties'] = NULL;
+		foreach ($prop as $k => $v)
+		{
+			if ($k == $orgurl || $k == $workurl) 
+			{
+				$fileinfo['properties'] = $v;
+				break;
+			}
+			else 
+			{
+				$decurl = urldecode($k);
+				if ($decurl == $orgurl || $decurl == $workurl)  
+				{
+					$fileinfo['properties'] = $v;
+					break;
+				}
+			}
+		}
 
 		$log = @svn_log ($workurl, 
 			$fileinfo['created_rev'], 
