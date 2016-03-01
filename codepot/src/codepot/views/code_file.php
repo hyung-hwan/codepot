@@ -127,6 +127,7 @@ var pdf_rendering_in_progress = false;
 var pdf_page_num_pending = null;
 var pdf_canvas = null;
 var pdf_ctx = null;
+var pdf_scale = "fw";
 
 function render_pdf_page (num)
 {
@@ -134,7 +135,11 @@ function render_pdf_page (num)
 	// Using promise to fetch the page
 	pdf_doc.getPage(num).then(function(page) {
 		var vp1 = page.getViewport (1);
-		scale = ($('#code_file_result').innerWidth() - 20) / vp1.width;
+		var scale;
+		if (pdf_scale == "fw")
+			scale = ($('#code_file_result').innerWidth() - 20) / vp1.width;
+		else
+			scale = parseFloat (pdf_scale);
 		var viewport = page.getViewport(scale);
 		pdf_canvas.height = viewport.height;
 		pdf_canvas.width = viewport.width;
@@ -317,6 +322,11 @@ $(function () {
 		$('#code_file_pdf_page_slider').prop ('max', pdf_doc.numPages);
 		$('#code_file_pdf_page_slider').change (function () { 
 			pdf_page_num = parseInt(this.value);
+			queue_pdf_rendering_in_progress (pdf_page_num);
+		});
+
+		$('#code_file_pdf_scale').change (function () {
+			pdf_scale = this.value;
 			queue_pdf_rendering_in_progress (pdf_page_num);
 		});
 
@@ -565,6 +575,10 @@ if ($login['settings'] != NULL &&
 		print '<span id="code_file_pdf_page"><span id="code_file_pdf_page_num"></span>/<span id="code_file_pdf_page_count"></span></span>';
 		print '<button id="code_file_pdf_next_page"><i class="fa fa-forward"></i></button>';
 		print '<button id="code_file_pdf_last_page"><i class="fa fa-fast-forward"></i></button>';
+		print '<select id="code_file_pdf_scale">';
+		print '<option value="fw">Full-width</option>';
+		for ($i = 50; $i <= 200; $i += 10) printf  ('<option value="%f">%d%%</option>', $i / 100, $i);
+		print '</select>';
 		print '</div>';
 		print '<canvas id="code_file_pdf_canvas" style="border:1px solid black;"/>';
 	}
