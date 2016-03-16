@@ -24,6 +24,14 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
+<!--[if lte IE 8]><script type="text/javascript" src="<?php print base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.time.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.pie.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
+
 <script type="text/javascript">
 function render_wiki()
 {
@@ -37,6 +45,86 @@ function render_wiki()
 
 	prettyPrint ();
 }
+
+
+function show_open_issues_per_project()
+{
+	var open_issues_per_project_data = [
+	<?php
+	if ($issues && count($issues) > 0)
+	{
+		$first = TRUE;
+		foreach ($open_issue_counts_per_project as $issue)
+		{
+			if ($issue->issue_count > 0)
+			{
+				if ($first) $first = FALSE;
+				else print "\n,";
+				printf ("['%s', %d]", $issue->projectid, $issue->issue_count);
+			}
+		}
+	}
+	?>
+	];
+
+	var your_open_issues_per_project_data = [
+	<?php
+	if ($issues && count($issues) > 0)
+	{
+		$first = TRUE;
+		foreach ($your_open_issue_counts_per_project as $issue)
+		{
+			if ($issue->issue_count > 0)
+			{
+				if ($first) $first = FALSE;
+				else print "\n,";
+				printf ("['%s', %d]", $issue->projectid, $issue->issue_count);
+			}
+		}
+	}
+	?>
+	];
+
+	var dataset =
+	[
+		{
+			label: "Total Open Issues",
+			data: open_issues_per_project_data
+		},
+
+		{
+			label: "My Open Issues",
+			data: your_open_issues_per_project_data
+		}
+	];
+
+	var options =
+	{
+		series: {
+			shadowSize: 0,
+			bars: { 
+				show: true, 
+				fill: true,
+				align: "center",
+				barWidth: 0.8
+			}
+		},
+
+		//grid: { hoverable: true, clickable: true },
+
+		xaxes: [
+			{ mode: "categories",
+			  autoscaleMargin: 0.05,
+			  rotateTicks: ((open_issues_per_project_data.length >= 8)? 135: 0)
+			}
+		],
+
+		yaxes: { }
+	};
+
+	$.plot($("#site_home_open_issues_per_project"), dataset, options);
+}
+
 
 $(function () {
 	render_wiki ();
@@ -65,6 +153,10 @@ $(function () {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", "/site/log"));
 		return false;
 	});
+
+<?php if ($issues && count($issues) > 0): ?>
+	show_open_issues_per_project();
+<?php endif; ?>
 });
 </script>
 
@@ -285,7 +377,13 @@ foreach ($latest_projects as $project)
 
 <div id="site_home_result" class="codepot-static-container-view">
 
+	<div id="site_home_result_open_issues_graph" style="overflow:auto; display:block;">
 	<?php if ($issues && count($issues) > 0): ?>
+	<div id="site_home_open_issues_per_project" style="width:100%;height:400px;margin-bottom:1em;">
+	</div>
+	</div>
+
+<!--
 	<div id="site_home_result_open_issues" class="collapsible-box">
 	<div id="site_home_result_open_issues_header" class="collapsible-box-header">
 		<?php print $this->lang->line('Open issues')?>
@@ -293,23 +391,6 @@ foreach ($latest_projects as $project)
 
 	<ul id="site_home_result_open_issues_list" class="collapsible-box-list">
 		<?php 
-
-/*
-		foreach ($open_issue_counts_per_project as $issue)
-		{
-			$pro = $issue->projectid;
-			$proissueanc = anchor ("issue/home/{$issue->projectid}", $pro);
-			print "<li>{$proissueanc} <span class='codepot-open-issue-count'>{$issue->issue_count}</span></li>";
-		}
-
-		foreach ($your_open_issue_counts_per_project as $issue)
-		{
-			$pro = $issue->projectid;
-			$proissueanc = anchor ("issue/home/{$issue->projectid}", $pro);
-			print "<li>{$proissueanc} <span class='codepot-open-issue-count'>{$issue->issue_count}</span></li>";
-		}
-*/
-
 		foreach ($issues as $issue) 
 		{
 			$pro = $issue->projectid;
@@ -329,10 +410,10 @@ foreach ($latest_projects as $project)
 			$sum = htmlspecialchars ($issue->summary);
 			print "<li><font color='blue'>{$owner}</font> | {$proissueanc} | {$anc} | {$type} {$status} - {$sum}</li>";
 		}
-
 		?>
 	</ul>
 	</div>
+-->
 	<?php endif; ?>
 
 	<?php if ($recently_resolved_issues && count($recently_resolved_issues) > 0): ?>

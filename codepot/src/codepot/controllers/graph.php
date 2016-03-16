@@ -141,7 +141,6 @@ class Graph extends Controller
 		print codepot_json_encode ($cloc);
 	}
 
-
 	function enjson_loc_by_file ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');
