@@ -1616,7 +1616,7 @@ class Code extends Controller
 					while ($month <= $month_end)
 					{
 						$date = sprintf ("%04d-%02d", $year, $month);
-	
+
 						if (!array_key_exists ($date, $stats)) 
 						{
 							// fill the holes
