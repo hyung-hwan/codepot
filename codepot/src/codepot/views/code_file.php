@@ -330,6 +330,16 @@ $(function () {
 			queue_pdf_rendering_in_progress (pdf_page_num);
 		});
 
+		$(document).keydown (function(event) {
+			if (event.keyCode == 37)
+			{
+				on_prev_pdf_page();
+			}
+			else if (event.keyCode == 39) 
+			{
+				on_next_pdf_page();
+			}
+		});
 	});
 
 <?php elseif ($is_odf_file): ?>
