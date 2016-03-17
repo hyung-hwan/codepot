@@ -366,7 +366,7 @@ foreach ($latest_projects as $project)
 <div id="site_home_result" class="codepot-static-container-view">
 
 	<?php if (count($open_issue_counts_per_project) > 0): ?>
-	<div id="site_home_result_open_issues_graph" style="overflow:hidden">
+	<div id="site_home_result_open_issues_graph" style="overflow:auto; padding-left:10px;">
 		<div id="site_home_open_issues_per_project" style="width:100%;height:400px;margin-bottom:1em;"></div>
 	</div>
 	<?php endif; ?>
