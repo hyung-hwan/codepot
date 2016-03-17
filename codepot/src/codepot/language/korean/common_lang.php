@@ -143,4 +143,6 @@ $lang['MSG_DISCARD_CHANGES?'] = '변경된 내용을 버리겠습니까?';
 
 $lang['FMT_TOTAL_OPEN_ISSUES_X'] = '전체 열린 이슈 <span class="codepot-open-issue-count">%d</span>개';
 $lang['FMT_YOUR_OPEN_ISSUES_X'] = '담당 열린 이슈 <span class="codepot-open-issue-count">%d</span>개';
+$lang['FMT_TOP_X_PROJECTS'] = '톱 %d 프로젝트';
+$lang['FMT_TOP_X_COMMITTERS'] = '톱 %d 커미터';
 ?>

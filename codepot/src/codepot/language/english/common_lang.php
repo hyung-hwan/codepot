@@ -142,4 +142,6 @@ $lang['MSG_DISCARD_CHANGES?'] = 'Do you want to discard changes?';
 
 $lang['FMT_TOTAL_OPEN_ISSUES_X'] = 'Total <span class="codepot-open-issue-count">%d</span> open issues';
 $lang['FMT_YOUR_OPEN_ISSUES_X'] = '<span class="codepot-open-issue-count">%d</span> open issues assigned to you';
+$lang['FMT_TOP_X_PROJECTS'] = 'Top %d projects';
+$lang['FMT_TOP_X_COMMITTERS'] = 'Top %d committers';
 ?>

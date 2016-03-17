@@ -324,7 +324,7 @@ $this->load->view (
 <?php if (count($commit_counts_per_project) > 0): ?>
 <div id="site_home_sidebar_top_projects_box" class="collapsible-box">
 	<div id="site_home_sidebar_top_projects_header" class="collapsible-box-header">
-		<?php print $this->lang->line('Top projects'); ?>
+		<?php printf ($this->lang->line('FMT_TOP_X_PROJECTS'), CODEPOT_MAX_TOP_PROJECTS); ?>
 	</div>
 
 	<div id="site_home_result_commits_per_project_graph" style="overflow:auto;">
@@ -336,7 +336,7 @@ $this->load->view (
 <?php if (count($commit_counts_per_user) > 0): ?>
 <div id="site_home_sidebar_top_committers_box" class="collapsible-box">
 	<div id="site_home_sidebar_top_committers_header" class="collapsible-box-header">
-		<?php print $this->lang->line('Top committers'); ?>
+		<?php printf ($this->lang->line('FMT_TOP_X_COMMITTERS'), CODEPOT_MAX_TOP_COMMITTERS); ?>
 	</div>
 
 	<div id="site_home_result_commits_per_user_graph" style="overflow:auto;">
