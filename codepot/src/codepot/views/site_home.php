@@ -159,7 +159,7 @@ function show_commits_per_project()
 				innerRadius: 0.1,
 				label: {
 					show: true,
-					radius: 7/10,
+					radius: 0.9,
 					formatter: labelFormatter,
 					background: { opacity: 0.8 }
 				}
@@ -201,7 +201,7 @@ function show_commits_per_user()
 				innerRadius: 0.1,
 				label: {
 					show: true,
-					radius: 7/10,
+					radius: 0.9,
 					formatter: labelFormatter,
 					background: { opacity: 0.8 }
 				}
@@ -328,7 +328,7 @@ $this->load->view (
 	</div>
 
 	<div id="site_home_result_commits_per_project_graph" style="overflow:auto;">
-		<div id="site_home_commits_per_project" style="width:100%;height:200px;"></div>
+		<div id="site_home_commits_per_project" style="width:100%;height:250px;"></div>
 	</div>
 </div>
 <?php endif; ?>
@@ -340,7 +340,7 @@ $this->load->view (
 	</div>
 
 	<div id="site_home_result_commits_per_user_graph" style="overflow:auto;">
-		<div id="site_home_commits_per_user" style="width:100%;height:200px;"></div>
+		<div id="site_home_commits_per_user" style="width:100%;height:250px;"></div>
 	</div>
 </div>
 <?php endif; ?>
