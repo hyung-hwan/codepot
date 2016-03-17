@@ -153,12 +153,12 @@ max_upload_size = "10000"
 max_latest_projects = "10"
 
 ;------------------------------------------------------------------------------
-; Maximum number of projects to show in the top projects graph
+; Maximum number of projects to show in the top projects graph (0 to hide)
 ;------------------------------------------------------------------------------
 max_top_projects = "10"
 
 ;------------------------------------------------------------------------------
-; Maximum number of committers to show in the top committers graph
+; Maximum number of committers to show in the top committers graph (0 to hide)
 ;------------------------------------------------------------------------------
 max_top_committers = "10"
 
