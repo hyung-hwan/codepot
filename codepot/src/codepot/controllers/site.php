@@ -84,10 +84,12 @@ class Site extends Controller
 		}
 
 		// get the issue for all users
+		/*
 		$issues = $this->issues->getMyIssues (
-			/*$login['id']*/ '', $this->issuehelper->_get_open_status_array($this->lang));
+			'', $this->issuehelper->_get_open_status_array($this->lang));
 		$recently_resolved_issues = $this->issues->getMyIssues (
 			'', $this->issuehelper->_get_resolved_status_array($this->lang), 168);
+		*/
 
 		$open_issue_counts_per_project = $this->issues->countIssuesPerProject (
 			'', $this->issuehelper->_get_open_status_array($this->lang), 0);
@@ -102,7 +104,8 @@ class Site extends Controller
 				$login['id'], $this->issuehelper->_get_open_status_array($this->lang), 0);
 		}
 
-		if ($issues === FALSE || $recently_resolved_issues === FALSE || $open_issue_counts_per_project === FALSE)
+		if (/*$issues === FALSE || $recently_resolved_issues === FALSE ||*/
+		    $open_issue_counts_per_project === FALSE || $your_open_issue_counts_per_project === FALSE)
 		{
 			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
@@ -114,8 +117,8 @@ class Site extends Controller
 		$data['latest_projects'] = $latest_projects;
 		$data['log_entries'] = $log_entries;
 		$data['site'] = $site;
-		$data['issues'] = $issues;
-		$data['recently_resolved_issues'] = $recently_resolved_issues;
+		/*$data['issues'] = $issues;
+		$data['recently_resolved_issues'] = $recently_resolved_issues;*/
 		$data['open_issue_counts_per_project'] = $open_issue_counts_per_project;
 		$data['your_open_issue_counts_per_project'] = $your_open_issue_counts_per_project;
 		$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
