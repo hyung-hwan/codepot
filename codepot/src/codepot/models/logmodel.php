@@ -214,6 +214,70 @@ class LogModel extends Model
 			return TRUE;
 		}
 	}
+
+	function countCodeCommitsPerProject ($userid, $hour_limit = 0, $count_limit = 0)
+	{
+		$this->db->trans_begin ();
+		if (strlen($userid) > 0) $this->db->where ('userid', $userid);
+
+		if ($hour_limit > 0)
+		{
+			//$this->db->where ("updatedon >= SYSDATE() - INTERVAL {$hour_limit} HOUR");
+			$this->db->where ("createdon >= CURRENT_TIMESTAMP - INTERVAL '{$hour_limit}' HOUR");
+		}
+		
+		$this->db->where ('type', 'code');
+		$this->db->where ('action', 'commit');
+
+		if ($count_limit > 0) $this->db->limit ($count_limit);
+
+		$this->db->select ('projectid, COUNT(id) AS commit_count');
+		$this->db->group_by ('projectid');
+		if ($count_limit > 0)  $this->db->order_by ('commit_count', 'desc');
+		$query = $this->db->get ('log');
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$this->db->trans_commit();
+
+		return $query->result ();
+	}
+
+	function countCodeCommitsPerUser ($projectid, $hour_limit = 0, $count_limit = 0)
+	{
+		$this->db->trans_begin ();
+		if (strlen($projectid) > 0) $this->db->where ('projectid', $projectid);
+
+		if ($hour_limit > 0)
+		{
+			//$this->db->where ("updatedon >= SYSDATE() - INTERVAL {$hour_limit} HOUR");
+			$this->db->where ("createdon >= CURRENT_TIMESTAMP - INTERVAL '{$hour_limit}' HOUR");
+		}
+
+		$this->db->where ('type', 'code');
+		$this->db->where ('action', 'commit');
+
+		if ($count_limit > 0) $this->db->limit ($count_limit);
+
+		$this->db->select ('userid, COUNT(id) AS commit_count');
+		$this->db->group_by ('userid');
+		if ($count_limit > 0) $this->db->order_by ('commit_count', 'desc');
+		$query = $this->db->get ('log');
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$this->db->trans_commit();
+
+		return $query->result ();
+	}
 }
 
 ?>

@@ -333,10 +333,12 @@ $(function () {
 		$(document).keydown (function(event) {
 			if (event.keyCode == 37)
 			{
+				// left-arrow
 				on_prev_pdf_page();
 			}
 			else if (event.keyCode == 39) 
 			{
+				// right-arrow
 				on_next_pdf_page();
 			}
 		});
