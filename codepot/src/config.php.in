@@ -41,6 +41,8 @@ function load_ini ($file)
 		array ('sysadmin_userids',             'string',     ''),
 		array ('max_upload_size',              'string',     '10000'), // kbytes
 		array ('max_latest_projects',          'integer',    10),
+		array ('max_top_projects',             'integer',    10),
+		array ('max_top_committers',           'integer',    10),
 		array ('max_projects_per_page',        'integer',    50),
 		array ('max_issues_per_page',          'integer',    50),
 		array ('max_logs_per_page',            'integer',    50),
