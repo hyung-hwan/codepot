@@ -104,8 +104,15 @@ class Site extends Controller
 				$login['id'], $this->issuehelper->_get_open_status_array($this->lang), 0);
 		}
 
-		$commit_counts_per_project = $this->logs->countCodeCommitsPerProject ('', 0, CODEPOT_MAX_TOP_PROJECTS);
-		$commit_counts_per_user = $this->logs->countCodeCommitsPerUser ('', 0, CODEPOT_MAX_TOP_COMMITTERS);
+		if (CODEPOT_MAX_TOP_PROJECTS > 0)
+			$commit_counts_per_project = $this->logs->countCodeCommitsPerProject ('', 0, CODEPOT_MAX_TOP_PROJECTS);
+		else
+			$commit_counts_per_project = array();
+
+		if (CODEPOT_MAX_TOP_COMMITTERS > 0)
+			$commit_counts_per_user = $this->logs->countCodeCommitsPerUser ('', 0, CODEPOT_MAX_TOP_COMMITTERS);
+		else
+			$commit_counts_per_user = array();
 
 		if (/*$issues === FALSE || $recently_resolved_issues === FALSE ||*/
 		    $open_issue_counts_per_project === FALSE ||
