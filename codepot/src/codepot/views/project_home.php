@@ -228,7 +228,7 @@ foreach ($urls as $url)
 				print '<td class="object">';
 				print anchor (	
 					"code/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
-					"r{$x['rev']}");
+					"#R{$x['rev']}");
 				print '</td>';
 
 				print '</tr>';
@@ -293,7 +293,8 @@ foreach ($urls as $url)
 				{
 					$hex = $this->converter->AsciiToHex ($log['message']);
 					$uri = "/issue/show/{$log['projectid']}/{$hex}";
-					$trimmed =  $this->lang->line('Issue') . " {$log['message']}";
+					//$trimmed =  $this->lang->line('Issue') . " {$log['message']}";
+					$trimmed = "#I{$log['message']}";
 				}
 
 				if ($uri != '')

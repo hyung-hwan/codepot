@@ -28,7 +28,9 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.time.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.pie.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
+
 
 <script type="text/javascript">
 function render_wiki()
@@ -44,6 +46,10 @@ function render_wiki()
 	prettyPrint ();
 }
 
+function labelFormatter(label, series) 
+{
+	return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" + label + "<br/>" + series.data[0][1] + "(" + Math.round(series.percent) + "%)</div>";
+}
 
 <?php if (count($open_issue_counts_per_project) > 0): ?>
 function show_open_issues_per_project()
@@ -126,6 +132,90 @@ function show_open_issues_per_project()
 }
 <?php endif; ?>
 
+<?php if (count($commit_counts_per_project) > 0): ?>
+function show_commits_per_project()
+{
+	var commits_per_project_data = [
+	<?php
+		$first = TRUE;
+		foreach ($commit_counts_per_project as $commit)
+		{
+			if ($commit->commit_count > 0)
+			{
+				if ($first) $first = FALSE;
+				else print "\n,";
+				printf ("{ label: '%s', data: %d}", $commit->projectid, $commit->commit_count);
+			}
+		}
+	?>
+	];
+
+	var options =
+	{
+		series: {
+			shadowSize: 0,
+			pie: { 
+				show: true, 
+				innerRadius: 0.1,
+				label: {
+					show: true,
+					radius: 7/10,
+					formatter: labelFormatter,
+					background: { opacity: 0.8 }
+				}
+			}
+		},
+		legend: {
+			show: false
+		}
+	};
+
+	var commit_graph_plot = $.plot($("#site_home_commits_per_project"), commits_per_project_data, options);
+}
+<?php endif; ?>
+
+<?php if (count($commit_counts_per_user) > 0): ?>
+function show_commits_per_user()
+{
+	var commits_per_user_data = [
+	<?php
+		$first = TRUE;
+		foreach ($commit_counts_per_user as $commit)
+		{
+			if ($commit->commit_count > 0)
+			{
+				if ($first) $first = FALSE;
+				else print "\n,";
+				printf ("{ label: '%s', data: %d}", $commit->userid, $commit->commit_count);
+			}
+		}
+	?>
+	];
+
+	var options =
+	{
+		series: {
+			shadowSize: 0,
+			pie: { 
+				show: true, 
+				innerRadius: 0.1,
+				label: {
+					show: true,
+					radius: 7/10,
+					formatter: labelFormatter,
+					background: { opacity: 0.8 }
+				}
+			}
+		},
+		legend: {
+			show: false
+		}
+	};
+
+	var commit_graph_plot = $.plot($("#site_home_commits_per_user"), commits_per_user_data, options);
+}
+<?php endif; ?>
+
 $(function () {
 	render_wiki ();
 
@@ -145,6 +235,21 @@ $(function () {
 <?php if (count($open_issue_counts_per_project) > 0): ?>
 	show_open_issues_per_project();
 <?php endif; ?>
+
+<?php if (count($commit_counts_per_project) > 0): ?>
+	$("#site_home_sidebar_top_projects_box").accordion ({
+		collapsible: true 
+	});
+	show_commits_per_project();
+<?php endif; ?>
+
+<?php if (count($commit_counts_per_user) > 0): ?>
+	$("#site_home_sidebar_top_committers_box").accordion ({
+		collapsible: true 
+	});
+	show_commits_per_user();
+<?php endif; ?>
+
 });
 </script>
 
@@ -191,172 +296,197 @@ $this->load->view (
 <div class="codepot-sidebar" id="site_home_sidebar">
 
 <div id="site_home_sidebar_latest_projects_box" class="collapsible-box">
-<div id="site_home_sidebar_latest_projects_header" class="collapsible-box-header">
-	<?php print $this->lang->line('Latest projects'); ?>
+	<div id="site_home_sidebar_latest_projects_header" class="collapsible-box-header">
+		<?php print $this->lang->line('Latest projects'); ?>
+	</div>
+
+	<ul id="site_home_sidebar_latest_projects_list" class="collapsible-box-list">
+	<?php
+	foreach ($latest_projects as $project)
+	{
+		if (strcasecmp ($project->name, $project->id) != 0)
+			$cap = "{$project->name} ($project->id)";
+		else $cap = $project->name;
+
+		$sum = $project->summary;
+		//$sum = preg_replace("/(.{15}).+/u", "$1…", $project->summary);
+		$sum = htmlspecialchars ($sum);
+
+		$anc = anchor ("project/home/{$project->id}", 
+			htmlspecialchars($cap), "title='$sum'");
+		print "<li>{$anc}</li>";
+	}
+	?>
+	</ul>
+
 </div>
 
-<ul id="site_home_sidebar_latest_projects_list" class="collapsible-box-list">
-<?php
-foreach ($latest_projects as $project)
-{
-	if (strcasecmp ($project->name, $project->id) != 0)
-		$cap = "{$project->name} ($project->id)";
-	else $cap = $project->name;
+<?php if (count($commit_counts_per_project) > 0): ?>
+<div id="site_home_sidebar_top_projects_box" class="collapsible-box">
+	<div id="site_home_sidebar_top_projects_header" class="collapsible-box-header">
+		<?php print $this->lang->line('Top projects'); ?>
+	</div>
 
-	$sum = $project->summary;
-	//$sum = preg_replace("/(.{15}).+/u", "$1…", $project->summary);
-	$sum = htmlspecialchars ($sum);
-
-	$anc = anchor ("project/home/{$project->id}", 
-		htmlspecialchars($cap), "title='$sum'");
-	print "<li>{$anc}</li>";
-}
-?>
-</ul>
-
+	<div id="site_home_result_commits_per_project_graph" style="overflow:auto;">
+		<div id="site_home_commits_per_project" style="width:100%;height:200px;"></div>
+	</div>
 </div>
+<?php endif; ?>
+
+<?php if (count($commit_counts_per_user) > 0): ?>
+<div id="site_home_sidebar_top_committers_box" class="collapsible-box">
+	<div id="site_home_sidebar_top_committers_header" class="collapsible-box-header">
+		<?php print $this->lang->line('Top committers'); ?>
+	</div>
+
+	<div id="site_home_result_commits_per_user_graph" style="overflow:auto;">
+		<div id="site_home_commits_per_user" style="width:100%;height:200px;"></div>
+	</div>
+</div>
+<?php endif; ?>
 
 <div id="site_home_sidebar_log_box" class="collapsible-box">
-<div id="site_home_sidebar_log_header" class="collapsible-box-header">
-<span><?php print $this->lang->line('Change log'); ?></span>
-<span id="site_home_sidebar_log_all_span"><a href='#' id="site_home_sidebar_log_all_button"><?php print $this->lang->line('All'); ?></a></span>
-</div>
+	<div id="site_home_sidebar_log_header" class="collapsible-box-header">
+	<span><?php print $this->lang->line('Change log'); ?></span>
+	<span id="site_home_sidebar_log_all_span"><a href='#' id="site_home_sidebar_log_all_button"><?php print $this->lang->line('All'); ?></a></span>
+	</div>
 
-<div id="site_home_sidebar_log_table_container" class="collapsible-box-panel">
-<table id="site_home_sidebar_log_table" class="collapsible-box-table">
-<?php 
-	$xdot = $this->converter->AsciiToHex ('.');
-	foreach ($log_entries as $log)
-	{
-		if (CODEPOT_DATABASE_STORE_GMT)
-			$createdon = $log['createdon'] . ' +0000';
-		else
-			$createdon = $log['createdon'];
-
-		if ($log['type'] == 'code')
+	<div id="site_home_sidebar_log_table_container" class="collapsible-box-panel">
+	<table id="site_home_sidebar_log_table" class="collapsible-box-table">
+	<?php 
+		$xdot = $this->converter->AsciiToHex ('.');
+		foreach ($log_entries as $log)
 		{
-			$x = $log['message'];
+			if (CODEPOT_DATABASE_STORE_GMT)
+				$createdon = $log['createdon'] . ' +0000';
+			else
+				$createdon = $log['createdon'];
 
-			print '<tr class="odd">';
-			print '<td class="date">';
-			print strftime ('%m-%d', strtotime($createdon));
-			print '</td>';
-			print '<td class="projectid">';
-			/*
-			print anchor (
-				"code/file/{$x['repo']}/{$xdot}/{$x['rev']}", 
-				$x['repo']);
-			*/
-			print anchor ("project/home/{$x['repo']}", $x['repo']);
-			print '</td>';
-			print '<td class="object">';
-			print anchor (	
-				"code/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
-				"r{$x['rev']}");
-			print '</td>';
-
-			print '</tr>';
-
-			print '<tr class="even">';
-
-			print '<td></td>';
-			print '<td colspan="2" class="details">';
-			print '<span class="description">';
-
-			if ($log['action'] == 'revpropchange')
+			if ($log['type'] == 'code')
 			{
-				$fmt = $this->lang->line ('MSG_LOG_REVPROP_CHANGE_BY');
-				//print htmlspecialchars (sprintf($fmt, $x['propname'], $x['author']));
-				printf (
-					htmlspecialchars ($fmt),
-					htmlspecialchars ($x['propname']),
-					anchor ("/site/userlog/{$x['author']}", htmlspecialchars ($x['author'])));
+				$x = $log['message'];
+
+				print '<tr class="odd">';
+				print '<td class="date">';
+				print strftime ('%m-%d', strtotime($createdon));
+				print '</td>';
+				print '<td class="projectid">';
+				/*
+				print anchor (
+					"code/file/{$x['repo']}/{$xdot}/{$x['rev']}", 
+					$x['repo']);
+				*/
+				print anchor ("project/home/{$x['repo']}", $x['repo']);
+				print '</td>';
+				print '<td class="object">';
+				print anchor (	
+					"code/revision/{$x['repo']}/{$xdot}/{$x['rev']}", 
+					"#R{$x['rev']}");
+				print '</td>';
+
+				print '</tr>';
+
+				print '<tr class="even">';
+
+				print '<td></td>';
+				print '<td colspan="2" class="details">';
+				print '<span class="description">';
+
+				if ($log['action'] == 'revpropchange')
+				{
+					$fmt = $this->lang->line ('MSG_LOG_REVPROP_CHANGE_BY');
+					//print htmlspecialchars (sprintf($fmt, $x['propname'], $x['author']));
+					printf (
+						htmlspecialchars ($fmt),
+						htmlspecialchars ($x['propname']),
+						anchor ("/site/userlog/{$x['author']}", htmlspecialchars ($x['author'])));
+				}
+				else
+				{
+					$fmt = $this->lang->line (
+						'MSG_LOG_'.strtoupper($log['action']).'_BY');
+					//print htmlspecialchars (sprintf($fmt, $x['author']));
+					printf (
+						htmlspecialchars ($fmt),
+						anchor ("/site/userlog/{$x['author']}", htmlspecialchars ($x['author'])));
+				}
+				print '</span>';
+
+				if ($log['action'] != 'revpropchange')
+				{
+					print '<div class="codepot-plain-text-view"><pre>';
+					$sm = strtok (trim ($x['message']), "\r\n");
+					print htmlspecialchars ($sm);
+					print '</pre></div>';
+				}
+				print '</td>';
+				print '</tr>';
 			}
 			else
 			{
+				print '<tr class="odd">';
+				print '<td class="date">';
+				print strftime ('%m-%d', strtotime($createdon));
+				print '</td>';
+
+				print '<td class="project">';
+				print anchor ("/project/home/{$log['projectid']}", $log['projectid']);
+				print '</td>';
+
+				print '<td class="object">';
+				$uri = '';
+				if ($log['type'] == 'project')
+				{
+					$uri = "/project/home/{$log['projectid']}";
+					$trimmed = preg_replace("/(.{15}).+/u", "$1…", $log['message']);
+				}
+				else if ($log['type'] == 'wiki')
+				{
+					$hex = $this->converter->AsciiToHex ($log['message']);
+					$uri = "/wiki/show_r/{$log['projectid']}/{$hex}";
+					$trimmed = preg_replace("/(.{15}).+/u", "$1…", $log['message']);
+				}
+				else if ($log['type'] == 'file')
+				{
+					$hex = $this->converter->AsciiToHex ($log['message']);
+					$uri = "/file/show/{$log['projectid']}/{$hex}";
+					$trimmed = preg_replace("/(.{15}).+/u", "$1…", $log['message']);
+				}
+				else if ($log['type'] == 'issue')
+				{
+					$hex = $this->converter->AsciiToHex ($log['message']);
+					$uri = "/issue/show/{$log['projectid']}/{$hex}";
+					//$trimmed = $this->lang->line('Issue') . " {$log['message']}";
+					$trimmed = "#I{$log['message']}";
+				}
+
+				if ($uri != '' && $trimmed != '')
+					print anchor ($uri, htmlspecialchars($trimmed));
+				else
+					print htmlspecialchars($trimmed);
+				print '</td>';
+
+				print '</tr>';
+
+				print '<tr class="even">';
+				print '<td></td>';
+				print '<td colspan="2" class="details">';
+				print '<span class="description">';
 				$fmt = $this->lang->line (
 					'MSG_LOG_'.strtoupper($log['action']).'_BY');
-				//print htmlspecialchars (sprintf($fmt, $x['author']));
+				//print htmlspecialchars (sprintf($fmt, $log['userid']));
 				printf (
 					htmlspecialchars ($fmt),
-					anchor ("/site/userlog/{$x['author']}", htmlspecialchars ($x['author'])));
-			}
-			print '</span>';
+					anchor ("/site/userlog/{$log['userid']}", htmlspecialchars ($log['userid'])));
+				print '</span>';
+				print '</td>';
 
-			if ($log['action'] != 'revpropchange')
-			{
-				print '<div class="codepot-plain-text-view"><pre>';
-				$sm = strtok (trim ($x['message']), "\r\n");
-				print htmlspecialchars ($sm);
-				print '</pre></div>';
+				print '</tr>';
 			}
-			print '</td>';
-			print '</tr>';
 		}
-		else
-		{
-			print '<tr class="odd">';
-			print '<td class="date">';
-			print strftime ('%m-%d', strtotime($createdon));
-			print '</td>';
-
-			print '<td class="project">';
-			print anchor ("/project/home/{$log['projectid']}", $log['projectid']);
-			print '</td>';
-
-			print '<td class="object">';
-			$uri = '';
-			if ($log['type'] == 'project')
-			{
-				$uri = "/project/home/{$log['projectid']}";
-				$trimmed = preg_replace("/(.{15}).+/u", "$1…", $log['message']);
-			}
-			else if ($log['type'] == 'wiki')
-			{
-				$hex = $this->converter->AsciiToHex ($log['message']);
-				$uri = "/wiki/show_r/{$log['projectid']}/{$hex}";
-				$trimmed = preg_replace("/(.{15}).+/u", "$1…", $log['message']);
-			}
-			else if ($log['type'] == 'file')
-			{
-				$hex = $this->converter->AsciiToHex ($log['message']);
-				$uri = "/file/show/{$log['projectid']}/{$hex}";
-				$trimmed = preg_replace("/(.{15}).+/u", "$1…", $log['message']);
-			}
-			else if ($log['type'] == 'issue')
-			{
-				$hex = $this->converter->AsciiToHex ($log['message']);
-				$uri = "/issue/show/{$log['projectid']}/{$hex}";
-				$trimmed = $this->lang->line('Issue') . " {$log['message']}";
-			}
-
-			if ($uri != '' && $trimmed != '')
-				print anchor ($uri, htmlspecialchars($trimmed));
-			else
-				print htmlspecialchars($trimmed);
-			print '</td>';
-
-			print '</tr>';
-
-			print '<tr class="even">';
-			print '<td></td>';
-			print '<td colspan="2" class="details">';
-			print '<span class="description">';
-			$fmt = $this->lang->line (
-				'MSG_LOG_'.strtoupper($log['action']).'_BY');
-			//print htmlspecialchars (sprintf($fmt, $log['userid']));
-			printf (
-				htmlspecialchars ($fmt),
-				anchor ("/site/userlog/{$log['userid']}", htmlspecialchars ($log['userid'])));
-			print '</span>';
-			print '</td>';
-
-			print '</tr>';
-		}
-	}
-?>
-</table>
-</div>
+	?>
+	</table>
+	</div>
 </div> <!-- box -->
 
 </div> <!-- site_home_sidebar -->
