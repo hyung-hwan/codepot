@@ -28,8 +28,6 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.time.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.pie.min.js')?>"></script>
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
 
 <script type="text/javascript">
@@ -47,12 +45,11 @@ function render_wiki()
 }
 
 
+<?php if (count($open_issue_counts_per_project) > 0): ?>
 function show_open_issues_per_project()
 {
 	var open_issues_per_project_data = [
 	<?php
-	if ($issues && count($issues) > 0)
-	{
 		$first = TRUE;
 		foreach ($open_issue_counts_per_project as $issue)
 		{
@@ -63,14 +60,11 @@ function show_open_issues_per_project()
 				printf ("['%s', %d]", $issue->projectid, $issue->issue_count);
 			}
 		}
-	}
 	?>
 	];
 
 	var your_open_issues_per_project_data = [
 	<?php
-	if ($issues && count($issues) > 0)
-	{
 		$first = TRUE;
 		foreach ($your_open_issue_counts_per_project as $issue)
 		{
@@ -81,7 +75,6 @@ function show_open_issues_per_project()
 				printf ("['%s', %d]", $issue->projectid, $issue->issue_count);
 			}
 		}
-	}
 	?>
 	];
 
@@ -110,7 +103,7 @@ function show_open_issues_per_project()
 			}
 		},
 
-		//grid: { hoverable: true, clickable: true },
+		grid: { hoverable: true, clickable: true },
 
 		xaxes: [
 			{ mode: "categories",
@@ -122,24 +115,19 @@ function show_open_issues_per_project()
 		yaxes: { }
 	};
 
-	$.plot($("#site_home_open_issues_per_project"), dataset, options);
-}
+	var issue_graph_view = $("#site_home_open_issues_per_project");
+	var issue_graph_plot = $.plot(issue_graph_view, dataset, options);
 
+	issue_graph_view.bind("plotclick", function (event, pos, item) {
+		if (item) {
+				$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '/issue/home/' + item.series.data[item.dataIndex][0]));
+		}
+	});
+}
+<?php endif; ?>
 
 $(function () {
 	render_wiki ();
-
-<?php if ($issues && count($issues) > 0): ?>
-	$("#site_home_result_open_issues").accordion ({
-		collapsible: true 
-	}); 
-<?php endif; ?>
-
-<?php if ($recently_resolved_issues && count($recently_resolved_issues) > 0): ?>
-	$("#site_home_result_resolved_issues").accordion ({
-		collapsible: true 
-	});
-<?php endif; ?>
 
 	$("#site_home_sidebar_latest_projects_box").accordion ({
 		collapsible: true 
@@ -154,7 +142,7 @@ $(function () {
 		return false;
 	});
 
-<?php if ($issues && count($issues) > 0): ?>
+<?php if (count($open_issue_counts_per_project) > 0): ?>
 	show_open_issues_per_project();
 <?php endif; ?>
 });
@@ -377,73 +365,9 @@ foreach ($latest_projects as $project)
 
 <div id="site_home_result" class="codepot-static-container-view">
 
-	<div id="site_home_result_open_issues_graph" style="overflow:auto; display:block;">
-	<?php if ($issues && count($issues) > 0): ?>
-	<div id="site_home_open_issues_per_project" style="width:100%;height:400px;margin-bottom:1em;">
-	</div>
-	</div>
-
-<!--
-	<div id="site_home_result_open_issues" class="collapsible-box">
-	<div id="site_home_result_open_issues_header" class="collapsible-box-header">
-		<?php print $this->lang->line('Open issues')?>
-	</div>
-
-	<ul id="site_home_result_open_issues_list" class="collapsible-box-list">
-		<?php 
-		foreach ($issues as $issue) 
-		{
-			$pro = $issue->projectid;
-			$xid = $this->converter->AsciiToHex ((string)$issue->id);
-			$owner = $issue->owner;
-
-			$proissueanc = anchor ("issue/home/{$issue->projectid}", $pro);
-			$anc = anchor ("issue/show/{$issue->projectid}/{$xid}", '#' . htmlspecialchars($issue->id));
-
-			$status = htmlspecialchars(
-				array_key_exists($issue->status, $issue_status_array)?
-				$issue_status_array[$issue->status]: $issue->status);
-			$type = htmlspecialchars(
-				array_key_exists($issue->type, $issue_type_array)?
-				$issue_type_array[$issue->type]: $issue->type);
-		
-			$sum = htmlspecialchars ($issue->summary);
-			print "<li><font color='blue'>{$owner}</font> | {$proissueanc} | {$anc} | {$type} {$status} - {$sum}</li>";
-		}
-		?>
-	</ul>
-	</div>
--->
-	<?php endif; ?>
-
-	<?php if ($recently_resolved_issues && count($recently_resolved_issues) > 0): ?>
-	<div id="site_home_result_resolved_issues" class="collapsible-box">
-	<div id="site_home_result_resolved_issues_header" class="collapsible-box-header">
-		<?php print $this->lang->line('Recently resolved issues')?>
-	</div>
-	<ul id="site_home_result_resolved_issues_list" class="collapsible-box-list">
-		<?php 
-		foreach ($recently_resolved_issues as $issue) 
-		{
-			$pro = $issue->projectid;
-			$xid = $this->converter->AsciiToHex ((string)$issue->id);
-			$owner = $issue->owner;
-
-			$proissueanc = anchor ("issue/home/{$issue->projectid}", $pro);
-			$anc = anchor ("issue/show/{$issue->projectid}/{$xid}", '#' . htmlspecialchars($issue->id));
-
-			$status = htmlspecialchars(
-				array_key_exists($issue->status, $issue_status_array)?
-				$issue_status_array[$issue->status]: $issue->status);
-			$type = htmlspecialchars(
-				array_key_exists($issue->type, $issue_type_array)?
-				$issue_type_array[$issue->type]: $issue->type);
-		
-			$sum = htmlspecialchars ($issue->summary);
-			print "<li><font color='blue'>{$owner}</font> | {$proissueanc} | {$anc} | {$type} {$status} - {$sum}</li>";
-		}
-		?>
-	</ul>
+	<?php if (count($open_issue_counts_per_project) > 0): ?>
+	<div id="site_home_result_open_issues_graph" style="overflow:hidden">
+		<div id="site_home_open_issues_per_project" style="width:100%;height:400px;margin-bottom:1em;"></div>
 	</div>
 	<?php endif; ?>
 
@@ -451,7 +375,7 @@ foreach ($latest_projects as $project)
 	<pre id="site_home_result_wiki_text" style="visibility: hidden"><?php print htmlspecialchars($site->text); ?></pre>
 	</div> <!-- site_home_text -->
 
-</div> <! -- site_home_result -->
+</div> <!-- site_home_result -->
 
 
 </div> <!-- site_home_mainarea -->
@@ -460,8 +384,13 @@ foreach ($latest_projects as $project)
 
 </div> <!-- site_home_content -->
 
+<!-- /////////////////////////////////////////////////////////////////////// -->
+
 <?php $this->load->view ('footer'); ?>
 
+<!-- /////////////////////////////////////////////////////////////////////// -->
+ 
 
 </body>
+
 </html>
