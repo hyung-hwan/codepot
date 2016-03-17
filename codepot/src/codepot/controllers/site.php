@@ -104,8 +104,15 @@ class Site extends Controller
 				$login['id'], $this->issuehelper->_get_open_status_array($this->lang), 0);
 		}
 
+		// TODO: make count_limit configurable instead of using 20
+		$commit_counts_per_project = $this->logs->countCodeCommitsPerProject ('', 0, 20);
+		$commit_counts_per_user = $this->logs->countCodeCommitsPerUser ('', 0, 20);
+
 		if (/*$issues === FALSE || $recently_resolved_issues === FALSE ||*/
-		    $open_issue_counts_per_project === FALSE || $your_open_issue_counts_per_project === FALSE)
+		    $open_issue_counts_per_project === FALSE ||
+		    $your_open_issue_counts_per_project === FALSE ||
+		    $commit_counts_per_project === FALSE ||
+		    $commit_counts_per_user === FALSE)
 		{
 			$data['login'] = $login;
 			$data['message'] = 'DATABASE ERROR';
@@ -121,6 +128,8 @@ class Site extends Controller
 		$data['recently_resolved_issues'] = $recently_resolved_issues;*/
 		$data['open_issue_counts_per_project'] = $open_issue_counts_per_project;
 		$data['your_open_issue_counts_per_project'] = $your_open_issue_counts_per_project;
+		$data['commit_counts_per_project'] = $commit_counts_per_project;
+		$data['commit_counts_per_user'] = $commit_counts_per_user;
 		$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
 		$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
 		$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
