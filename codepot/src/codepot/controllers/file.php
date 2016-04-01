@@ -298,8 +298,9 @@ class File extends Controller
 							$d = $this->input->post("file_new_file_desc_{$i}");
 							if ($d === FALSE || ($d = trim($d)) == '')
 							{
-								$status = "error - no short description for {$_FILES[$fid]['name']}";
-								break;
+								//$status = "error - no short description for {$_FILES[$fid]['name']}";
+								//break;
+								$d = '';
 							}
 
 							if (strpbrk($_FILES[$fid]['name'], CODEPOT_DISALLOWED_LETTERS_IN_FILENAME) !== FALSE)
@@ -381,8 +382,9 @@ class File extends Controller
 						$d = $this->input->post("file_add_file_desc_{$i}");
 						if ($d === FALSE || ($d = trim($d)) == '')
 						{
-							$status = "error - no short description for {$_FILES[$fid]['name']}";
-							break;
+							//$status = "error - no short description for {$_FILES[$fid]['name']}";
+							//break;
+							$d = '';
 						}
 
 						if (strpbrk($_FILES[$fid]['name'], CODEPOT_DISALLOWED_LETTERS_IN_FILENAME) !== FALSE)
@@ -470,8 +472,9 @@ class File extends Controller
 						{
 							if (($d = trim($d)) == '')
 							{
-								$status = "error - no short description for {$n}";
-								break;
+								//$status = "error - no short description for {$n}";
+								//break;
+								$d = '';
 							}
 
 							array_push ($edit_files, array ('name' => $n, 'desc' => $d));
