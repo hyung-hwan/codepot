@@ -1009,6 +1009,9 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 		</ul>
 
 		<?php
+			$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($issue->owner));
+			print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' /> ";
+
 			if (!empty($related_code_revisions))
 			{
 				print '<ul id="issue_show_coderev_list" class="codepot-horizontal-list">';
