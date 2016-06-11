@@ -280,7 +280,10 @@ $(function () {
 						var form_data = new FormData();
 
 						form_data.append ('code_new_message', $('#code_folder_mainarea_new_message').val());
-						form_data.append ('code_new_item_unzip', $('#code_folder_mainarea_new_item_unzip').val());
+						if ($('#code_folder_mainarea_new_item_unzip').is(':checked'))
+							form_data.append ('code_new_item_unzip', $('#code_folder_mainarea_new_item_unzip').val());
+						else
+							form_data.append ('code_new_item_unzip', '');
 
 						var f_no = 0, d_no = 0, ef_no = 0;
 						for (var i = 0; i <= new_item_no; i++)
