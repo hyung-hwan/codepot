@@ -273,7 +273,13 @@ class Issue extends Controller
 				$issue->type = $this->input->post('issue_new_type');
 				$issue->status = $this->issuehelper->STATUS_NEW;
 				$issue->priority = $this->issuehelper->PRIORITY_OTHER;
-				if ($this->projects->projectHasMember($project->id, $login['id']))
+
+				$owner_candidate = $this->input->post('issue_new_owner');
+				if ($this->projects->projectHasMember($project->id, $owner_candidate))
+				{
+					$issue->owner = $owner_candidate;
+				}
+				else if ($this->projects->projectHasMember($project->id, $login['id']))
 				{
 					// let the current user be the issue owner if he/she is a
 					// project memeber.

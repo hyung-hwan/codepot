@@ -173,6 +173,7 @@ $(function () {
 
 						form_data.append ('issue_new_file_count', f_no);
 						form_data.append ('issue_new_type', $('#issue_home_new_type').val());
+						form_data.append ('issue_new_owner', $('#issue_home_new_owner').val());
 						form_data.append ('issue_new_summary', $('#issue_home_new_summary').val());
 						form_data.append ('issue_new_description', $('#issue_home_new_description').val());
 
@@ -398,6 +399,16 @@ else
 			$issue_type_array,
 			set_value('issue_home_new_type', ''),
 			'id="issue_home_new_type"'
+		);
+		print ' ';
+
+		$tmpmemb = array();
+		foreach ($project->members as $m) $tmpmemb[$m] = $m;
+		print form_dropdown (
+			'issue_home_new_owner', 
+			$tmpmemb,
+			set_value('issue_home_new_owner', (in_array($login['id'], $project->members)? $login['id']: '')),
+			'id="issue_home_new_owner"'
 		);
 		?>
 
