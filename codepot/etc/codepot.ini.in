@@ -297,6 +297,11 @@ commit_review_notification = "yes"
 commit_notification_url = ""
 
 ;------------------------------------------------------------------------------
+; Send notification upon new issue registration if yes
+;------------------------------------------------------------------------------
+issue_notification = "yes"
+
+;------------------------------------------------------------------------------
 ; Codepot sets this revision property to assign a tag to a specific revision. 
 ;------------------------------------------------------------------------------
 svn_tag_property = "codepot:tag"
