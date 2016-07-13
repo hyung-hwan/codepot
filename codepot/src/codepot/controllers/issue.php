@@ -266,6 +266,8 @@ class Issue extends Controller
 			//}
 			else
 			{
+				$issue_url_base = $this->input->post('issue_url_base');
+
 				$issue = new stdClass();
 				$issue->projectid = $projectid;
 				$issue->summary = $this->input->post('issue_new_summary');
@@ -332,13 +334,28 @@ class Issue extends Controller
 
 					if ($status == '')
 					{
-						if ($this->issues->createWithFiles ($login['id'], $issue, $attached_files, $this->upload) === FALSE)
+						$issue_sno = $this->issues->createWithFiles ($login['id'], $issue, $attached_files, $this->upload);
+						if ($issue_sno === FALSE)
 						{
 							$status = 'error - ' . $this->issues->getErrorMessage();
 						}
 						else
 						{
 							$status = 'ok';
+
+							if (CODEPOT_ISSUE_NOTIFICATION)
+							{
+								// TODO: message localization
+								$email_subject =  sprintf (
+									'New issue #%d for %s by %s in %s', 
+									$issue_sno, $issue->owner, $login['id'], $projectid
+								);
+
+								$email_message = $issue_url_base . '/' . $this->converter->AsciiToHex((string)$issue_sno) . "\r\n" . $issue->summary;
+								$this->projects->emailMessageToMembers (
+									$projectid, $this->login, $email_subject, $email_message
+								);
+							}
 						}
 					}
 				}
