@@ -176,6 +176,7 @@ $(function () {
 						form_data.append ('issue_new_owner', $('#issue_home_new_owner').val());
 						form_data.append ('issue_new_summary', $('#issue_home_new_summary').val());
 						form_data.append ('issue_new_description', $('#issue_home_new_description').val());
+						form_data.append ('issue_url_base', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/issue/show/{$project->id}"; ?>'));
 
 						$('#issue_home_new_form').dialog('disable');
 						$.ajax({
