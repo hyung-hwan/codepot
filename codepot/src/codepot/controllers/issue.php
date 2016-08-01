@@ -698,6 +698,8 @@ class Issue extends Controller
 			}
 			else
 			{
+				$issue_url_base = $this->input->post('issue_url_base');
+
 				$change = new stdClass();
 				$change->type = $this->input->post('issue_change_type');
 				$change->status = $this->input->post('issue_change_status');
@@ -705,13 +707,27 @@ class Issue extends Controller
 				$change->priority = $this->input->post('issue_change_priority');
 				$change->comment = $this->input->post('issue_change_comment');
 
-				if ($this->issues->change ($login['id'], $project, $issueid, $change, $is_nonmember) === FALSE)
+				if ($this->issues->change ($login['id'], $project, $issueid, $change, $is_nonmember, $old_state) === FALSE)
 				{
 					$status = 'error - ' . $this->issues->getErrorMessage();
 				}
 				else
 				{
 					$status = 'ok';
+
+					if (CODEPOT_ISSUE_NOTIFICATION && $old_state->owner != $change->owner)
+					{
+						// TODO: message localization
+						$email_subject =  sprintf (
+							'Issue #%d - owner change from %s to %s in %s', 
+							$issueid, $old_state->owner, $change->owner, $projectid
+						);
+
+						$email_message = $issue_url_base . '/' . $this->converter->AsciiToHex((string)$issueid) . "\r\n" . $email_subject;
+						$this->projects->emailMessageToMembers (
+							$projectid, $this->login, $email_subject, $email_message
+						);
+					}
 				}
 			}
 		}

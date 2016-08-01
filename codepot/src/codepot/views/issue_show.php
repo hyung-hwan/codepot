@@ -694,6 +694,8 @@ $(function () {
 
 						var form_data = new FormData();
 
+						form_data.append ('issue_url_base', codepot_merge_path('<?php print site_url(); ?>', '<?php print "/issue/show/{$project->id}"; ?>'));
+
 						form_data.append ('issue_change_type', $('#issue_change_type').val());
 						form_data.append ('issue_change_status', $('#issue_change_status').val());
 						form_data.append ('issue_change_priority', $('#issue_change_priority').val());
