@@ -707,6 +707,7 @@ class Issue extends Controller
 				$change->priority = $this->input->post('issue_change_priority');
 				$change->comment = $this->input->post('issue_change_comment');
 
+				$old_state = NULL;
 				if ($this->issues->change ($login['id'], $project, $issueid, $change, $is_nonmember, $old_state) === FALSE)
 				{
 					$status = 'error - ' . $this->issues->getErrorMessage();
@@ -714,8 +715,7 @@ class Issue extends Controller
 				else
 				{
 					$status = 'ok';
-
-					if (CODEPOT_ISSUE_NOTIFICATION && $old_state->owner != $change->owner)
+					if (CODEPOT_ISSUE_NOTIFICATION && $old_state != NULL && $old_state->owner != $change->owner)
 					{
 						// TODO: message localization
 						$email_subject =  sprintf (

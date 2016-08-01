@@ -995,7 +995,14 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 </div>
 
 <div id='issue_show_state' class='collapsible-box'>
-	<div id='issue_show_metadata_header' class='collapsible-box-header'><?php print $this->lang->line('State')?></div>
+
+	<div id='issue_show_metadata_header' class='collapsible-box-header'>
+		<?php
+		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($issue->owner));
+		print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' /> ";
+		print htmlspecialchars($issue->owner);
+		?>
+	</div>
 	<div id='issue_show_metadata_body' class='codepot-metadata-collapsible-body'>
 		<ul id='issue_show_metadata_list' class='codepot-horizontal-list'>
 			<li><?php print $this->lang->line('Created on')?> <?php print codepot_dbdatetodispdate($issue->createdon); ?></li>
@@ -1011,8 +1018,6 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 		</ul>
 
 		<?php
-			$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($issue->owner));
-			print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' /> ";
 
 			if (!empty($related_code_revisions))
 			{
@@ -1099,8 +1104,8 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 		print '<div class="codepot-issue-start-topline">';
 			printf ('<div class="codepot-issue-change-date">%s</div>',  codepot_dbdatetodispdate($new->updatedon));
 			print '<div class="codepot-issue-comment-updater">';
-			$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($new->updatedby));
-			print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' /> ";
+			//$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($new->updatedby));
+			//print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' /> ";
 			print htmlspecialchars($new->updatedby);
 			print '</div>';
 
@@ -1124,8 +1129,8 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 		print '<div class="codepot-issue-change-topline">';
 		printf ('<div class="codepot-issue-change-date">%s</div>',  codepot_dbdatetodispdate($new->updatedon));
 		print '<div class="codepot-issue-comment-updater">';
-		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($new->updatedby));
-		print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' /> ";
+		//$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($new->updatedby));
+		//print "<img src='{$user_icon_url}' class='codepot-committer-icon-24x24' /> ";
 		print htmlspecialchars($new->updatedby);
 		print '</div>';
 
