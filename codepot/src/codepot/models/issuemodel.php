@@ -307,7 +307,6 @@ class IssueModel extends Model
 			$old_state = $result[0];
 			if ($change->comment == '' || $disallow_state_change)
 			{
-
 				if ($old_state->type == $change->type &&
 				    $old_state->status == $change->status &&
 				    $old_state->owner == $change->owner &&
@@ -328,6 +327,7 @@ class IssueModel extends Model
 				}
 			}
 		}
+		else $old_state = NULL;
 
 		$this->db->set ('projectid', $project->id);
 		$this->db->set ('id', $id);
