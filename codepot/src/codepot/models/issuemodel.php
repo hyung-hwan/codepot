@@ -269,7 +269,7 @@ class IssueModel extends Model
 		return $result[0];
 	}
 
-	function change ($userid, $project, $id, $change, $disallow_state_change)
+	function change ($userid, $project, $id, $change, $disallow_state_change, &$old_state)
 	{
 		$now = codepot_nowtodbdate();
 
@@ -289,29 +289,29 @@ class IssueModel extends Model
 		$maxsno = (empty($result) || $result[0] == NULL)? 0: $result[0]->maxsno;
 		$newsno = $maxsno + 1;
 
-		if ($change->comment == '' || $disallow_state_change)
+		$this->db->where ('projectid', $project->id);
+		$this->db->where ('id', $id);
+		$this->db->where ('sno', $maxsno);
+		$this->db->select('type,status,owner,priority');
+		$query = $this->db->get ('issue_change');
+		if ($this->db->trans_status() === FALSE) 
 		{
-			$this->db->where ('projectid', $project->id);
-			$this->db->where ('id', $id);
-			$this->db->where ('sno', $maxsno);
-			$this->db->select('type,status,owner,priority');
-			$query = $this->db->get ('issue_change');
-			if ($this->db->trans_status() === FALSE) 
-			{
-				$this->errmsg = $this->db->_error_message(); 
-				$this->db->trans_rollback ();
-				return FALSE;
-			}
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
 
-			$result = $query->result();
-			if (!empty($result))
+		$result = $query->result();
+		if (!empty($result))
+		{
+			$old_state = $result[0];
+			if ($change->comment == '' || $disallow_state_change)
 			{
-				$c = $result[0];
 
-				if ($c->type == $change->type &&
-				    $c->status == $change->status &&
-				    $c->owner == $change->owner &&
-				    $c->priority == $change->priority)
+				if ($old_state->type == $change->type &&
+				    $old_state->status == $change->status &&
+				    $old_state->owner == $change->owner &&
+				    $old_state->priority == $change->priority)
 				{
 					if ($change->comment == '')
 					{
