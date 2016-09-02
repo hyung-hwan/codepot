@@ -61,42 +61,42 @@ textarea.codepot-issue-edit-comment {
 	vertical-align: text-top;
 }
 
-#issue_home_result_table tr.new td.status,
-#issue_home_result_table tr.new td.summary {
+#issue_home_result_table tr.new td.status/*,
+#issue_home_result_table tr.new td.summary*/ {
 	background-color: #ffccbb;
 	background-color: rgba(255, 204, 187, 0.5);
 }
 
-#issue_home_result_table tr.accepted td.status,
-#issue_home_result_table tr.accepted td.summary {
+#issue_home_result_table tr.accepted td.status/*,
+#issue_home_result_table tr.accepted td.summary*/ {
 }
 
-#issue_home_result_table tr.rejected td.status,
-#issue_home_result_table tr.rejected td.summary {
+#issue_home_result_table tr.rejected td.status/*,
+#issue_home_result_table tr.rejected td.summary*/ {
 	background-color: #ffeedd;
 	background-color: rgba(255, 238, 221, 0.5);
 }
 
-#issue_home_result_table tr.started td.status,
-#issue_home_result_table tr.started td.summary {
+#issue_home_result_table tr.started td.status/*,
+#issue_home_result_table tr.started td.summary*/ {
 	background-color: #ddeeff;
 	background-color: rgba(221, 238, 255, 0.5);
 }
 
-#issue_home_result_table tr.stalled td.status,
-#issue_home_result_table tr.stalled td.summary {
+#issue_home_result_table tr.stalled td.status/*,
+#issue_home_result_table tr.stalled td.summary*/ {
 	background-color: #bbccff;
 	background-color: rgba(187, 204, 255, 0.5);
 }
 
-#issue_home_result_table tr.resolved td.status,
-#issue_home_result_table tr.resolved td.summary {
+#issue_home_result_table tr.resolved td.status/*,
+#issue_home_result_table tr.resolved td.summary*/ {
 	background-color: #ddffdd;
 	background-color: rgba(221, 255, 221, 0.5);
 }
 
-#issue_home_result_table tr.other td.status,
-#issue_home_result_table tr.other td.summary {
+#issue_home_result_table tr.other td.status/*,
+#issue_home_result_table tr.other td.summary*/ {
 	background-color: #ddeeff;
 	background-color: rgba(221, 238, 255, 0.5);
 }
@@ -111,6 +111,21 @@ textarea.codepot-issue-edit-comment {
 
 #issue_home_result_table td.summary {
 	white-space: normal;
+}
+
+#issue_home_result_table td.summary:hover {
+	background-color: #F0F0F0 !important;
+}
+
+#issue_home_result_table td.summary a,
+#issue_home_result_table td.summary a:visited,
+#issue_home_result_table td.summary a:focus {
+	color: inherit;
+	white-space: pre-wrap; /* css-3 */
+	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
 }
 
 #issue_home_result_pages {

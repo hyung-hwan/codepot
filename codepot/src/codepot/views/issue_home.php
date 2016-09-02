@@ -376,7 +376,7 @@ else
 		print '</td>';
 
 		print '<td class="summary">';
-		print htmlspecialchars($issue->summary);
+		print anchor ("issue/show/{$project->id}/{$hexid}", htmlspecialchars($issue->summary));
 		print '</td>';
 
 		print '</tr>';
