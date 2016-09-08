@@ -1134,7 +1134,7 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 		if (strcmp($new->updatedby, $new->createdby) == 0)
 			printf ('%s', htmlspecialchars($new->updatedby));
 		else
-			printf ('%s (%s)', htmlspecialchars($new->updatedby), htmlspecialchars($new->createdby));
+			printf ('%s (%s)', htmlspecialchars($new->createdby), htmlspecialchars($new->updatedby));
 		print '</div>';
 
 		print '<div class="codepot-issue-comment-actions">';
