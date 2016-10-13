@@ -158,6 +158,12 @@ $this->load->view (
 			print '</tt></td>';
 
 			print '<td class="commit-message-td">';
+			if ($h['review_count'] > 0)
+			{
+				$tmp = sprintf ('<span class="codepot-history-review-count">%d</span>', $h['review_count']);
+				print  anchor("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}#code_revision_result_comments", $tmp);
+				print ' ';
+			}
 			print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", htmlspecialchars($h['msg']), "class='commit-message'");
 			//print '<pre>';
 			//print htmlspecialchars($h['msg']);
