@@ -81,6 +81,30 @@ class CodeModel extends Model
 		return $result;
 	}
 
+	function countReviews ($projectid, $revision)
+	{
+		$this->db->trans_begin ();
+
+		$this->db->where ('projectid', (string)$projectid);
+		$this->db->where ('rev', $revision);
+		$this->db->select ('count(*) as count');
+		$query = $this->db->get ('code_review');
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->errmsg = $this->db->_error_message(); 
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
+
+		$result = $query->result();
+		$num = empty($result)? 0:
+			isset($result[0]->COUNT)? $result[0]->COUNT: $result[0]->count;
+
+		$this->db->trans_commit();
+		return $num;
+	}
+
+
 	function insertReview ($projectid, $revision, $userid, $comment)
 	{
 		// TODO: check if userid can do this..

@@ -920,6 +920,7 @@ class Code extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
+		$this->load->model ('CodeModel', 'code');
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
@@ -960,17 +961,25 @@ class Code extends Controller
 			}
 			else
 			{
+
 				if (array_key_exists('history', $file))
 				{
-					// Inject the codepot defined tag.
+					// Inject the codepot defined tag and review count
 					foreach ($file['history'] as &$h)
 					{
 						if (array_key_exists('rev', $h))
 						{
 							$h['tag'] = $this->subversion->getRevProp ($projectid, $h['rev'], CODEPOT_SVN_TAG_PROPERTY);
 							if ($h['tag'] === FALSE) $h['tag'] = '';
+
+							$h['review_count'] = $this->code->countReviews ($projectid, $h['rev']);
+							if ($h['review_count'] === FALSE) $h['review_count'] = 0;
 						}
-						else $h['tag'] = '';
+						else 
+						{
+							$h['tag'] = '';
+							$h['review_count'] = 0;
+						}
 					}
 				}
 
@@ -983,6 +992,8 @@ class Code extends Controller
 					$this->subversion->getPrevRev ($projectid, $path, $rev);
 				$data['next_revision'] =
 					$this->subversion->getNextRev ($projectid, $path, $rev);
+
+				$data['review_count'] = 
 
 				$this->load->view ($this->VIEW_HISTORY, $data);
 			}

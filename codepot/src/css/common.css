@@ -606,7 +606,8 @@ pre, code, tt {
 	margin: 0px !important;
 }
 
-span.codepot-open-issue-count {
+span.codepot-open-issue-count,
+span.codepot-history-review-count {
 	-moz-border-radius: 45%;
 	-webkit-border-radius: 45%;
 	border-radius: 30%;
