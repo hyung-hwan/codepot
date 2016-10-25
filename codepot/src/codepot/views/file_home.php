@@ -309,17 +309,21 @@ $this->load->view (
 				if ($q != 0) return $q;
 			}
 
-			return ($cx > $cy)? -1:
-				  ($cx < $cy)? 1: 0;
+			return ($cx > $cy)? 1:
+			       ($cx < $cy)? -1: 0;
 		}
 
 		function comp_files ($a, $b)
 		{
 			//$cmp = version_compare ($b->tag, $a->tag);
-			$cmp = comp_tag ($b->tag, $a->tag);
+			$cmp = comp_tag ($b->tag, $a->tag); // descending
 			if ($cmp == 0)
 			{
-				$cmp = strcmp ($a->name, $b->name);
+				$cmp = comp_tag ($a->name, $b->name); // ascending
+				if ($cmp == 0)
+				{
+					$cmp = strcmp ($a->filename, $b->filename);
+				}
 			}
 			return $cmp;
 		}
