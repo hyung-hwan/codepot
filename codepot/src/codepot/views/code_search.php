@@ -50,7 +50,13 @@ $(function() {
 	$('#code_search_recursively').button();
 	$('#code_search_in_name').button();
 	$('#code_search_is_regex').button();
-	$('.code_search_option').tooltip();
+	$('.code_search_option').tooltip({
+		position: {
+			my: "left top",
+			at: "right-5 bottom-5",
+			collision: "none"
+		}
+	});
 
 	$('#code_search_wildcard').text($('input[name=search_wildcard_pattern]').val());
 
@@ -173,11 +179,13 @@ $this->load->view (
 			'id'      => 'code_search_invertedly',
 			'class'   => 'code_search_option',
 			'value'   => 'Y',
-			'checked' => ($invertedly == 'Y'),
-			'title'   => $this->lang->line('CODE_SEARCH_INVERTEDLY')
+			'checked' => ($invertedly == 'Y')/*,
+			'title'   => $this->lang->line('CODE_SEARCH_INVERTEDLY')*/
 		));
 		print form_label('v', 'code_search_invertedly',
-			array('class'=>'code_search_option', 'id'=>'code_search_invertedly_label')
+			array('class' => 'code_search_option',
+			      'id' => 'code_search_invertedly_label',
+			      'title' => $this->lang->line('CODE_SEARCH_INVERTEDLY'))
 		);
 
 		print form_checkbox(array(
@@ -185,11 +193,13 @@ $this->load->view (
 			'id'      => 'code_search_case_insensitively',
 			'class'   => 'code_search_option',
 			'value'   => 'Y',
-			'checked' => ($case_insensitively == 'Y'),
-			'title'   => $this->lang->line('CODE_SEARCH_CASE_INSENSITIVELY')
+			'checked' => ($case_insensitively == 'Y')/*,
+			'title'   => $this->lang->line('CODE_SEARCH_CASE_INSENSITIVELY')*/
 		));
 		print form_label('i', 'code_search_case_insensitively', 
-			array('class'=>'code_search_option', 'id'=>'code_search_case_insensitively_label')
+			array('class' => 'code_search_option',
+			      'id' => 'code_search_case_insensitively_label',
+			      'title' => $this->lang->line('CODE_SEARCH_CASE_INSENSITIVELY'))
 		);
 
 		print form_checkbox(array(
@@ -197,11 +207,13 @@ $this->load->view (
 			'id'      => 'code_search_recursively',
 			'class'   => 'code_search_option',
 			'value'   => 'Y',
-			'checked' => ($recursively == 'Y'),
-			'title'   => $this->lang->line('CODE_SEARCH_RECURSIVELY')
+			'checked' => ($recursively == 'Y')/*,
+			'title'   => $this->lang->line('CODE_SEARCH_RECURSIVELY')*/
 		));
 		print form_label('r', 'code_search_recursively', 
-			array('class'=>'code_search_option', 'id'=>'code_search_recursively_label')
+			array('class' => 'code_search_option',
+			      'id' => 'code_search_recursively_label',
+			      'title' => $this->lang->line('CODE_SEARCH_RECURSIVELY'))
 		);
 
 		print form_checkbox(array(
@@ -209,11 +221,13 @@ $this->load->view (
 			'id'      => 'code_search_in_name',
 			'class'   => 'code_search_option',
 			'value'   => 'Y',
-			'checked' => ($in_name == 'Y'),
-			'title'   => $this->lang->line('CODE_SEARCH_IN_NAME')
+			'checked' => ($in_name == 'Y')/*,
+			'title'   => $this->lang->line('CODE_SEARCH_IN_NAME')*/
 		));
 		print form_label('n', 'code_search_in_name', 
-			array('class'=>'code_search_option', 'id'=>'code_search_in_name_label')
+			array('class' => 'code_search_option',
+			      'id' => 'code_search_in_name_label',
+			      'title' => $this->lang->line('CODE_SEARCH_IN_NAME'))
 		);
 
 		print form_checkbox(array(
@@ -221,11 +235,13 @@ $this->load->view (
 			'id'      => 'code_search_is_regex',
 			'class'   => 'code_search_option',
 			'value'   => 'Y',
-			'checked' => ($is_regex == 'Y'),
-			'title'   => $this->lang->line('CODE_SEARCH_IS_REGEX')
+			'checked' => ($is_regex == 'Y')/*,
+			'title'   => $this->lang->line('CODE_SEARCH_IS_REGEX')*/
 		));
 		print form_label('x', 'code_search_is_regex', 
-			array('class'=>'code_search_option', 'id'=>'code_search_is_regex_label')
+			array('class' => 'code_search_option',
+			      'id' => 'code_search_is_regex_label',
+			      'title'   => $this->lang->line('CODE_SEARCH_IS_REGEX'))
 		);
 
 		print '<a id="code_search_wildcard" href="#"></a>';
