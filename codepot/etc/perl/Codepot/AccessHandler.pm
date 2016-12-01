@@ -65,6 +65,8 @@ sub get_config
 		ldap_admin_password => $cfg->param ('ldap_admin_password'),
 		ldap_userid_search_base => $cfg->param ('ldap_userid_search_base'),
 		ldap_userid_search_filter => $cfg->param ('ldap_userid_search_filter'),
+		ldap_insider_attribute_name => $cfg->param ('ldap_insider_attribute_name'),
+		ldap_insider_attribute_value => $cfg->param ('ldap_insider_attribute_value'),
 
 		database_hostname => $cfg->param ('database_hostname'),
 		database_port => $cfg->param ("database_port"),
@@ -120,15 +122,15 @@ sub authenticate_ldap
 
 		my $res = $ldap->bind ($f_rootdn, password => $f_rootpw);
 		if ($res->code != LDAP_SUCCESS) 
-		{ 	
+		{
 			$r->log_error ("Cannot bind LDAP as $f_rootdn - " . $res->error());
 			$ldap->unbind();
 			return -1; 
 		}
-		
+
 		$res = $ldap->search (base => $f_basedn, scope => 'sub', filter => $f_filter);
 		if ($res->code != LDAP_SUCCESS) 
-		{ 	
+		{
 			$ldap->unbind();
 			return 0;
 		}
@@ -156,8 +158,30 @@ sub authenticate_ldap
 		return 0;
 	}
 
+	my $authenticated = 1;
+	if ($cfg->{ldap_insider_attribute_name} ne '' && $cfg->{ldap_insider_attribute_value} ne '')
+	{
+		my $f_filter = '(' . $cfg->{ldap_insider_attribute_name} . '=*)';
+		$res = $ldap->search (base => $binddn, scope => 'base', filter => $f_filter, [ $cfg->{ldap_insider_attribute_name} ]);
+		if ($res->code == LDAP_SUCCESS) 
+		{
+			foreach my $entry ($res->entries)
+			{
+				my @va = $entry->get_value($cfg->{ldap_insider_attribute_name});
+				foreach my $v (@va)
+				{
+					if (lc($v)  eq lc($cfg->{ldap_insider_attribute_value}))
+					{
+						$authenticated = 2;
+						last;
+					}
+				}
+			}
+		}
+	}
+
 	$ldap->unbind();
-	return 1;
+	return $authenticated;
 }
 
 sub authenticate_database
@@ -357,11 +381,18 @@ sub __handler
 	}
 
 	# authentication successful. 
-	if ($is_method_r && $public >= 1 && lc($cfg->{svn_read_access}) eq 'authenticated')
+	if ($is_method_r && $public >= 1)
 	{
-		# grant read access to an authenticated user regardless of membership 
-		# this applies to a public project only
-		return Apache2::Const::OK;
+		if (lc($cfg->{svn_read_access}) eq 'authenticated')
+		{
+			# grant read access to an authenticated user regardless of membership 
+			# this applies to a public project only
+			return Apache2::Const::OK;
+		}
+		elsif (lc($cfg->{svn_read_access}) eq 'authenticated-insider')
+		{
+			if ($auth >= 2) { return Apache2::Const::OK; }
+		}
 	}
 
 	($member, $errmsg) = is_project_member ($dbh, $cfg->{database_prefix}, $repo, $userid, $qc);
