@@ -92,9 +92,25 @@ language = "auto"
 index_page = "index.php"
 
 ;------------------------------------------------------------------------------
-; When set to yes, viewing pages require a user to sign in.
+; When set to yes, viewing pages requires a user to sign in.
 ;------------------------------------------------------------------------------
-singin_compulsory = "no"
+signin_compulsory = "no"
+
+;------------------------------------------------------------------------------
+; Code read access is limited to the specified user type. The types 
+; include anonymous, authenticated, member. This applies to a public project 
+; only. Write access to any projects and read access to a non-public project
+; require membership regardless of this item.
+;------------------------------------------------------------------------------
+code_read_access = "anonymous"
+
+;------------------------------------------------------------------------------
+; File read access is limited to the specified user type. The types 
+; include anonymous, authenticated, member. This applies to a public project 
+; only. Write access to any projects and read access to a non-public project
+; require membership regardless of this item.
+;------------------------------------------------------------------------------
+file_read_access = "anonymous"
 
 ;------------------------------------------------------------------------------
 ; When set to yes, non-http access is diverted to https using 

@@ -7,6 +7,8 @@ define ('CODEPOT_WWW_DIR',   '@WWWDIR@');
 define ('CODEPOT_LOG_DIR',   '@LOGDIR@/'); // this requires a trailing slash
 define ('CODEPOT_CACHE_DIR', '@CACHEDIR@');
 
+define ('CODEPOT_SIGNIN_REDIR_PATH', 'main/signin/');
+
 function load_ini ($file)
 {
 	if (defined('INI_SCANNER_RAW'))
@@ -31,6 +33,9 @@ function load_ini ($file)
 		array ('index_page',                   'string',     'index.php'),
 
 		array ('signin_compulsory',            'boolean',    FALSE),
+		array ('code_read_access',             'string',     'anonymous'),
+		array ('file_read_access',             'string',     'anonymous'),
+
 		array ('https_compulsory',             'boolean',    FALSE),
 		array ('https_url',                    'string',     'https://${SERVER_NAME}${REQUEST_URI}'),
 		array ('api_base_url',                 'string',     'http://127.0.0.1'),
@@ -108,6 +113,7 @@ function load_ini ($file)
 		array ('svn_restriction_allowed_subdir_depth_min', 'integer',     0),
 		array ('svn_restriction_allowed_subdir_depth_max', 'integer',     0),
 
+		
 		// this item is used by the codepot-user command.
 		array ('codepot_user_executor',                    'string',      'root'),
 	);

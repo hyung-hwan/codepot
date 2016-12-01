@@ -186,7 +186,6 @@ www_DATA = \
 	pdf.worker.min.js \
 	webodf.js
 
-
 EXTRA_DIST = $(www_DATA)
 all: all-recursive
 

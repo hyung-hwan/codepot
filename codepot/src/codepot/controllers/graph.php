@@ -37,7 +37,7 @@ class Graph extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		//$path = $this->converter->HexToAscii ($path);
@@ -62,7 +62,7 @@ class Graph extends Controller
 			if ($project->public !== 'Y' && $login['id'] == '')
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 			}
 
 			$data['project'] = $project;

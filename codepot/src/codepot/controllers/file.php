@@ -19,6 +19,57 @@ class File extends Controller
 		$this->lang->load ('file', CODEPOT_LANG);
 	}
 
+	private function _can_read ($pm, $projectid, $login)
+	{
+		if ($login['sysadmin?']) return TRUE;
+
+		$userid = $login['id'];
+		if ($pm->projectIsPublic($projectid)) 
+		{
+			if (strcasecmp(CODEPOT_FILE_READ_ACCESS, 'anonymous') == 0) return TRUE;
+			else if (strcasecmp(CODEPOT_FILE_READ_ACCESS, 'authenticated') == 0)
+			{
+				if ($userid != '') return TRUE;
+			}
+			else if (strcasecmp(CODEPOT_FILE_READ_ACCESS, 'member') == 0)
+			{
+				if ($userid != '' && $pm->projectHasMember($projectid, $userid)) return TRUE;
+			}
+		}
+		else
+		{
+			// non-public project.
+			if ($userid != '' && $pm->projectHasMember($projectid, $userid)) return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	private function _can_write ($pm, $projectid, $login)
+	{
+		if ($login['sysadmin?']) return TRUE;
+
+		$userid = $login['id'];
+		if ($userid != '' && $pm->projectHasMember($projectid, $userid)) return TRUE;
+		return FALSE;
+	}
+
+	private function _redirect_to_signin ($conv, $login, $project = NULL)
+	{
+		$userid = $login['id'];
+		if ($userid == '')
+		{
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $conv->AsciiTohex(current_url()));
+		}
+		else
+		{
+			$data['login'] = $login;
+			$data['project'] = $project;
+			$data['message'] = 'Disallowed';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+	}
+
 	function home ($projectid = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
@@ -26,7 +77,10 @@ class File extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		{
+			$this->_redirect_to_signin($this->converter, $login);
+			return;
+		}
 		$data['login'] = $login;
 
 		$project = $this->projects->get ($projectid);
@@ -44,10 +98,11 @@ class File extends Controller
 		}
 		else
 		{
-			if ($project->public !== 'Y' && $login['id'] == '')
+			if (!$this->_can_read ($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				$this->_redirect_to_signin($this->converter, $login, $project);
+				return;
 			}
 
 			$files = $this->files->getAll ($login['id'], $project);
@@ -73,7 +128,10 @@ class File extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		{
+			$this->_redirect_to_signin($this->converter, $login);
+			return;
+		}
 		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
@@ -93,10 +151,11 @@ class File extends Controller
 		}
 		else
 		{
-			if ($project->public !== 'Y' && $login['id'] == '')
+			if (!$this->_can_read ($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				$this->_redirect_to_signin($this->converter, $login, $project);
+				return;
 			}
 
 			$file = $this->files->get ($login['id'], $project, $name);
@@ -129,7 +188,10 @@ class File extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		{
+			$this->_redirect_to_signin($this->converter, $login);
+			return;
+		}
 		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
@@ -149,10 +211,11 @@ class File extends Controller
 		}
 		else
 		{
-			if ($project->public !== 'Y' && $login['id'] == '')
+			if (!$this->_can_read ($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				$this->_redirect_to_signin($this->converter, $login, $project);
+				return;
 			}
 
 			$file = $this->files->fetchFile ($login['id'], $project, $name);
@@ -260,10 +323,11 @@ class File extends Controller
 			{
 				$status = "error - no such project {$projectid}";
 			}
-			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			//else if (!$login['sysadmin?'] && 
+			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			else if (!$this->_can_write ($this->projects, $projectid, $login))
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - disallowed";
 			}
 			else
 			{
@@ -362,10 +426,11 @@ class File extends Controller
 			{
 				$status = "error - no such project {$projectid}";
 			}
-			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			//else if (!$login['sysadmin?'] && 
+			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			else if (!$this->_can_write ($this->projects, $projectid, $login))
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - disallowed";
 			}
 			else
 			{
@@ -444,10 +509,11 @@ class File extends Controller
 			{
 				$status = "error - no such project {$projectid}";
 			}
-			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			//else if (!$login['sysadmin?'] && 
+			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			else if (!$this->_can_write ($this->projects, $projectid, $login))
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - disallowed";
 			}
 			else
 			{
@@ -528,10 +594,11 @@ class File extends Controller
 			{
 				$status = "error - no such project {$projectid}";
 			}
-			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			//else if (!$login['sysadmin?'] && 
+			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			else if (!$this->_can_write ($this->projects, $projectid, $login))
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - disallowed";
 			}
 			else
 			{
@@ -539,7 +606,6 @@ class File extends Controller
 				$file->name = $this->input->post('file_edit_name');
 				$file->tag = $this->input->post('file_edit_tag');
 				$file->description = $this->input->post('file_edit_description');
-
 
 				if ($file->name === FALSE || ($file->name = trim($file->name)) == '')
 				{
@@ -594,10 +660,11 @@ class File extends Controller
 			{
 				$status = "error - no such project {$projectid}";
 			}
-			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			//else if (!$login['sysadmin?'] && 
+			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			else if (!$this->_can_write ($this->projects, $projectid, $login))
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - disallowed";
 			}
 			else
 			{
@@ -623,8 +690,6 @@ class File extends Controller
 
 		print $status;
 	}
-
-
 }
 
 ?>
