@@ -76,6 +76,7 @@ class DbLoginModel extends LoginModel
 			return FALSE;
 		}
 
+		// TODO: implement $insider like LdapLoginModel
 		return parent::authenticate ($userid, $user->passwd, $user->email);
 	}
 

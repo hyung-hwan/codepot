@@ -102,11 +102,73 @@ class LdapLoginModel extends LoginModel
 			}
 		}
 
+		$insider = FALSE;
+		if (CODEPOT_LDAP_INSIDER_ATTRIBUTE_NAME != '' && CODEPOT_LDAP_INSIDER_ATTRIBUTE_VALUE != '')
+		{
+			$filter = '(' . CODEPOT_LDAP_INSIDER_ATTRIBUTE_NAME . '=*)';
+			$r = @ldap_search ($ldap, $f_userid, $filter, array(CODEPOT_LDAP_INSIDER_ATTRIBUTE_NAME));
+			if ($r !== FALSE)
+			{
+
+				/* SAMPLE LDAP RESULT
+				array(2) {
+				  ["count"]=>  int(1)
+				  [0]=>
+				  array(4) {
+				    ["mssfu30posixmemberof"]=>
+				    array(4) {
+					 ["count"]=>
+					 int(3)
+					 [0]=>
+					 string(36) "CN=group01,OU=Groups,DC=abiyo,DC=net"
+					 [1]=>
+					 string(36) "CN=group02,OU=Groups,DC=abiyo,DC=net"
+					 [2]=>
+					 string(45) "CN=group03,OU=Groups,DC=abiyo,DC=net"
+				    }
+				    [0]=>
+				    string(20) "mssfu30posixmemberof"
+				    ["count"]=>
+				    int(1)
+				    ["dn"]=>
+				    string(37) "CN=user01,CN=Users,DC=abiyo,DC=net"
+				  }
+				}
+				*/
+				$e = @ldap_get_entries($ldap, $r);
+				if ($e !== FALSE && array_key_exists('count', $e) && ($ec = $e['count']) > 0)
+				{
+					for ($i = 0; $i < $ec; $i++)
+					{
+						if (array_key_exists($i, $e) &&
+						    array_key_exists(CODEPOT_LDAP_INSIDER_ATTRIBUTE_NAME, $e[$i]))
+						{
+							$va = $e[$i][CODEPOT_LDAP_INSIDER_ATTRIBUTE_NAME];
+
+							if (array_key_exists('count', $va) && ($vac = $va['count']) > 0)
+							{
+								for ($j = 0; $j < $vac; $j++)
+								{
+									if (strcasecmp($va[$j], CODEPOT_LDAP_INSIDER_ATTRIBUTE_VALUE) == 0) 
+									{
+										$insider = TRUE;
+										break;
+									}
+								}
+							}
+						}
+						if ($insider) break;
+					}
+				}
+			}
+		}
 
 		//@ldap_unbind ($ldap);
 		@ldap_close ($ldap);
+if ($insider) error_log ("$userid is insider");
+else error_log ("$userid is NOT insider");
 
-		return parent::authenticate ($userid, $password, $email);
+		return parent::authenticate ($userid, $password, $email, $insider);
 	}
 
 	function queryUserInfo ($userid)
