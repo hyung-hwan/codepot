@@ -76,6 +76,8 @@ ldap_admin_password = "admin-password"
 ldap_userid_search_filter = "(uid=${userid})"
 ldap_userid_search_base = "ou=users,dc=codepot,dc=org"
 ldap_mail_attribute_name = ""
+ldap_insider_attribute_name = ""
+ldap_insider_attribute_value = ""
 
 ;------------------------------------------------------------------------------
 ; default langage to use. set it to 'auto' to detect it automatically.
@@ -98,17 +100,19 @@ signin_compulsory = "no"
 
 ;------------------------------------------------------------------------------
 ; Code read access is limited to the specified user type. The types 
-; include anonymous, authenticated, member. This applies to a public project 
-; only. Write access to any projects and read access to a non-public project
-; require membership regardless of this item.
+; include anonymous, authenticated, authenticated-insider, member. 
+; This applies to a public project only. Write access to any projects
+; and read access to a non-public project require membership regardless
+; of this item.
 ;------------------------------------------------------------------------------
 code_read_access = "anonymous"
 
 ;------------------------------------------------------------------------------
 ; File read access is limited to the specified user type. The types 
-; include anonymous, authenticated, member. This applies to a public project 
-; only. Write access to any projects and read access to a non-public project
-; require membership regardless of this item.
+; include anonymous, authenticated, authenticated-insider, member. 
+; This applies to a public project only. Write access to any projects
+; and read access to a non-public project require membership regardless
+; of this item.
 ;------------------------------------------------------------------------------
 file_read_access = "anonymous"
 
