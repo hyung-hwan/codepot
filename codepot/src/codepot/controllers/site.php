@@ -37,7 +37,7 @@ class Site extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		$this->load->model ('SiteModel', 'sites');
 		$this->load->model ('ProjectModel', 'projects');
@@ -149,7 +149,7 @@ class Site extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		$this->load->model ('SiteModel', 'sites');
 
@@ -173,7 +173,7 @@ class Site extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		$this->load->model ('SiteModel', 'sites');
 
@@ -280,7 +280,7 @@ class Site extends Controller
 
 		$login = $this->login->getUser ();
 		if ($login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		if (!$login['sysadmin?'])
 		{
@@ -305,7 +305,7 @@ class Site extends Controller
 
 		$login = $this->login->getUser ();
 		if ($login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		$site = $this->sites->get ($siteid);
 		if ($site === FALSE)
@@ -397,7 +397,7 @@ class Site extends Controller
 
 		$login = $this->login->getUser ();
 		if ($login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		$site = $this->sites->get ($siteid);
 		if ($site === FALSE)
@@ -566,7 +566,7 @@ class Site extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		$data['login'] = $login;
 
@@ -588,7 +588,7 @@ class Site extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		$data['login'] = $login;
 

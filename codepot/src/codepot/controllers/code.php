@@ -26,6 +26,57 @@ class Code extends Controller
 		$this->lang->load ('code', CODEPOT_LANG); 
 	}
 
+	private function _can_read ($pm, $projectid, $login)
+	{
+		if ($login['sysadmin?']) return TRUE;
+
+		$userid = $login['id'];
+		if ($pm->projectIsPublic($projectid)) 
+		{
+			if (strcasecmp(CODEPOT_CODE_READ_ACCESS, 'anonymous') == 0) return TRUE;
+			else if (strcasecmp(CODEPOT_CODE_READ_ACCESS, 'authenticated') == 0)
+			{
+				if ($userid != '') return TRUE;
+			}
+			else if (strcasecmp(CODEPOT_CODE_READ_ACCESS, 'member') == 0)
+			{
+				if ($userid != '' && $pm->projectHasMember($projectid, $userid)) return TRUE;
+			}
+		}
+		else
+		{
+			// non-public project.
+			if ($userid != '' && $pm->projectHasMember($projectid, $userid)) return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	private function _can_write ($pm, $projectid, $login)
+	{
+		if ($login['sysadmin?']) return TRUE;
+
+		$userid = $login['id'];
+		if ($userid != '' && $pm->projectHasMember($projectid, $userid)) return TRUE;
+		return FALSE;
+	}
+
+	private function _redirect_to_signin ($conv, $login, $project = NULL)
+	{
+		$userid = $login['id'];
+		if ($userid == '')
+		{
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $conv->AsciiTohex(current_url()));
+		}
+		else
+		{
+			$data['login'] = $login;
+			$data['project'] = $project;
+			$data['message'] = 'Disallowed';
+			$this->load->view ($this->VIEW_ERROR, $data);
+		}
+	}
+
 	function home ($projectid = '', $subdir = '', $rev = SVN_REVISION_HEAD)
 	{
 		return $this->file ($projectid, $subdir, $rev);
@@ -39,7 +90,11 @@ class Code extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		{
+			$this->_redirect_to_signin($this->converter, $login);
+			return;
+		}
+
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
@@ -61,10 +116,12 @@ class Code extends Controller
 		}
 		else
 		{
-			if ($project->public !== 'Y' && $login['id'] == '')
+			//if ($project->public !== 'Y' && $login['id'] == '')
+			if (!$this->_can_read ($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				$this->_redirect_to_signin($this->converter, $login, $project);
+				return;
 			}
 
 			$file = $this->subversion->getFile ($projectid, $path, $rev);
@@ -173,7 +230,10 @@ class Code extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		{
+			$this->_redirect_to_signin($this->converter, $login);
+			return;
+		}
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
@@ -195,10 +255,12 @@ class Code extends Controller
 		}
 		else
 		{
-			if ($project->public !== 'Y' && $login['id'] == '')
+			//if ($project->public !== 'Y' && $login['id'] == '')
+			if (!$this->_can_read ($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				$this->_redirect_to_signin($this->converter, $login, $project);
+				return;
 			}
 
 			$file = $this->subversion->getBlame ($projectid, $path, $rev);
@@ -251,7 +313,10 @@ class Code extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		{
+			$this->_redirect_to_signin($this->converter, $login);
+			return;
+		}
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
@@ -273,10 +338,12 @@ class Code extends Controller
 		}
 		else
 		{
-			if ($project->public !== 'Y' && $login['id'] == '')
+			//if ($project->public !== 'Y' && $login['id'] == '')
+			if (!$this->_can_read ($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				$this->_redirect_to_signin($this->converter, $login, $project);
+				return;
 			}
 
 			$file = $this->subversion->getFile ($projectid, $path, $rev);
@@ -447,10 +514,11 @@ class Code extends Controller
 			{
 				$status = "error - no such project {$projectid}";
 			}
-			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			//else if (!$login['sysadmin?'] && 
+			//        $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			else if (!$this->_can_write ($this->projects, $projectid, $login))
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - disallowed";
 			}
 			else
 			{
@@ -515,10 +583,11 @@ class Code extends Controller
 			{
 				$status = "error - no such project {$projectid}";
 			}
-			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			//else if (!$login['sysadmin?'] && 
+			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			else if (!$this->_can_write ($this->projects, $projectid, $login))
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - disallowed";
 			}
 			else
 			{
@@ -574,10 +643,12 @@ class Code extends Controller
 		}
 		else
 		{
-			if ($project->public !== 'Y' && $login['id'] == '')
+			//if ($project->public !== 'Y' && $login['id'] == '')
+			if (!$this->_can_read ($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				$this->_redirect_to_signin($this->converter, $login, $project);
+				return;
 			}
 
 			$tag = $this->converter->HexToAscii ($tag);
@@ -623,10 +694,11 @@ class Code extends Controller
 			{
 				$status = "error - no such project {$projectid}";
 			}
-			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			//else if (!$login['sysadmin?'] && 
+			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			else if (!$this->_can_write ($this->projects, $projectid, $login))
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - disallowed";
 			}
 			else if ($login['id'] != $this->subversion->getRevProp($projectid, $rev, 'svn:author'))
 			{
@@ -681,10 +753,11 @@ class Code extends Controller
 			{
 				$status = "error - no such project {$projectid}";
 			}
-			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			//else if (!$login['sysadmin?'] && 
+			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			else if (!$this->_can_write ($this->projects, $projectid, $login))
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - disallowed";
 			}
 			//else if ($login['id'] != $this->subversion->getRevProp($projectid, $rev, 'svn:author'))
 			//{
@@ -744,10 +817,11 @@ class Code extends Controller
 			{
 				$status = "error - no such project {$projectid}";
 			}
-			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			//else if (!$login['sysadmin?'] && 
+			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			else if (!$this->_can_write ($this->projects, $projectid, $login))
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - disallowed";
 			}
 			else
 			{
@@ -812,10 +886,11 @@ class Code extends Controller
 			{
 				$status = "error - no such project {$projectid}";
 			}
-			else if (!$login['sysadmin?'] && 
-			         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			//else if (!$login['sysadmin?'] && 
+			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
+			else if (!$this->_can_write ($this->projects, $projectid, $login))
 			{
-				$status = "error - not a member {$login['id']}";
+				$status = "error - disallowed";
 			}
 			else
 			{
@@ -924,7 +999,10 @@ class Code extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		{
+			$this->_redirect_to_signin($this->converter, $login);
+			return;
+		}
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
@@ -946,10 +1024,12 @@ class Code extends Controller
 		}
 		else
 		{
-			if ($project->public !== 'Y' && $login['id'] == '')
+			//if ($project->public !== 'Y' && $login['id'] == '')
+			if (!$this->_can_read ($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				$this->_redirect_to_signin($this->converter, $login, $project);
+				return;
 			}
 
 			$file = $this->subversion->getHistory ($projectid, $path, $rev);
@@ -993,8 +1073,6 @@ class Code extends Controller
 				$data['next_revision'] =
 					$this->subversion->getNextRev ($projectid, $path, $rev);
 
-				$data['review_count'] = 
-
 				$this->load->view ($this->VIEW_HISTORY, $data);
 			}
 		}
@@ -1008,7 +1086,10 @@ class Code extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		{
+			$this->_redirect_to_signin($this->converter, $login);
+			return;
+		}
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
@@ -1035,10 +1116,12 @@ class Code extends Controller
 		}
 		else
 		{
-			if ($project->public !== 'Y' && $login['id'] == '')
+			//if ($project->public !== 'Y' && $login['id'] == '')
+			if (!$this->_can_read ($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				$this->_redirect_to_signin($this->converter, $login, $project);
+				return;
 			}
 
 			$file = $this->subversion->getRevHistory ($projectid, $path, $rev);
@@ -1156,7 +1239,10 @@ class Code extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		{
+			$this->_redirect_to_signin($this->converter, $login);
+			return;
+		}
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
@@ -1178,10 +1264,12 @@ class Code extends Controller
 		}
 		else
 		{
-			if ($project->public !== 'Y' && $login['id'] == '')
+			//if ($project->public !== 'Y' && $login['id'] == '')
+			if (!$this->_can_read ($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				$this->_redirect_to_signin($this->converter, $login, $project);
+				return;
 			}
 
 			$file = $this->subversion->getDiff ($projectid, $path, $rev1, $rev2, $full);
@@ -1248,7 +1336,10 @@ class Code extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		{
+			$this->_redirect_to_signin($this->converter, $login);
+			return;
+		}
 		$data['login'] = $login;
 
 		$path = $this->converter->HexToAscii ($path);
@@ -1270,10 +1361,12 @@ class Code extends Controller
 		}
 		else
 		{
-			if ($project->public !== 'Y' && $login['id'] == '')
+			//if ($project->public !== 'Y' && $login['id'] == '')
+			if (!$this->_can_read ($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				$this->_redirect_to_signin($this->converter, $login, $project);
+				return;
 			}
 
 			$file = $this->subversion->getFile ($projectid, $path, $rev);
@@ -1414,10 +1507,13 @@ class Code extends Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
-	
+
 		$login = $this->login->getUser ();
 		if ((CODEPOT_SIGNIN_COMPULSORY || CODEPOT_SIGNIN_FOR_CODE_SEARCH) && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+		{
+			$this->_redirect_to_signin($this->converter, $login);
+			return;
+		}
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -1436,10 +1532,12 @@ class Code extends Controller
 		}
 		else
 		{
-			if ($project->public !== 'Y' && $login['id'] == '')
+			//if ($project->public !== 'Y' && $login['id'] == '')
+			if (!$this->_can_read ($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				$this->_redirect_to_signin($this->converter, $login, $project);
+				return 0;
 			}
 
 			$this->_search_code ($project, $login);
@@ -1465,7 +1563,8 @@ class Code extends Controller
 		}
 
 		$project = $this->projects->get ($projectid);
-		if ($project === FALSE || ($project->public !== 'Y' && $login['id'] == ''))
+		//if ($project === FALSE || ($project->public !== 'Y' && $login['id'] == ''))
+		if ($project === FALSE || !$this->_can_read ($this->projects, $projectid, $login))
 		{
 			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
 			return;
@@ -1476,7 +1575,6 @@ class Code extends Controller
 		$path = $this->converter->HexToAscii ($path);
 		if ($path == '.') $path = ''; /* treat a period specially */
 		$path = $this->_normalize_path ($path);
-
 
 		if ($type == 'cloc-file')
 		{

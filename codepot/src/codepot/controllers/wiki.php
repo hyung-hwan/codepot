@@ -31,7 +31,7 @@ class Wiki extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$project = $this->projects->get ($projectid);
@@ -52,7 +52,7 @@ class Wiki extends Controller
 			if ($project->public !== 'Y' && $login['id'] == '')
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 			}
 
 			$wikis = $this->wikis->getAll ($login['id'], $project);
@@ -78,7 +78,7 @@ class Wiki extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		if ($name == '')
@@ -108,7 +108,7 @@ class Wiki extends Controller
 			if ($project->public !== 'Y' && $login['id'] == '')
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 			}
 
 			$link = $this->wikihelper->parseLink (
@@ -186,7 +186,7 @@ class Wiki extends Controller
 
 		$login = $this->login->getUser ();
 		if ($login['id'] == '') 
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$name = $this->converter->HexToAscii ($name);
@@ -319,7 +319,7 @@ class Wiki extends Controller
 			if ($project->public !== 'Y' && $login['id'] == '')
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 			}
 
 			$att = $this->wikis->getAttachment ($login['id'], $project, $wikiname, $name);
@@ -406,7 +406,7 @@ class Wiki extends Controller
 			if ($project->public !== 'Y' && $login['id'] == '')
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 			}
 
 			$att = $this->issues->getFile ($login['id'], $project, $issueid, $filename);
@@ -472,7 +472,7 @@ class Wiki extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		if ($target == '')
 		{
@@ -519,7 +519,7 @@ class Wiki extends Controller
 	{
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		if ($wikiname == '' || $filename == '')
 		{
