@@ -28,7 +28,7 @@ class Issue extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		$project = $this->projects->get ($projectid);
@@ -49,7 +49,7 @@ class Issue extends Controller
 			if ($project->public !== 'Y' && $login['id'] == '')
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 			}
 
 			if ($filter == '')
@@ -150,7 +150,7 @@ class Issue extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		if ($hexid == '')
@@ -827,7 +827,7 @@ class Issue extends Controller
 			if ($project->public !== 'Y' && $login['id'] == '')
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 			}
 
 			$att = $this->wikis->getAttachment ($login['id'], $project, $wikiname, $name);
@@ -914,7 +914,7 @@ class Issue extends Controller
 			if ($project->public !== 'Y' && $login['id'] == '')
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 			}
 
 			$att = $this->issues->getFile ($login['id'], $project, $issueid, $filename);
@@ -985,7 +985,7 @@ class Issue extends Controller
 		//
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		if ($issueid == '' || $filename == '')
 		{

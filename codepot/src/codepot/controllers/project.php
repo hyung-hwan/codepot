@@ -32,7 +32,7 @@ class Project extends Controller
 	
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
 		if ($filter == '')
@@ -125,7 +125,7 @@ class Project extends Controller
 
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '') 
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		$data['login'] = $login;
 
@@ -147,7 +147,7 @@ class Project extends Controller
 			if ($project->public !== 'Y' && $login['id'] == '')
 			{
 				// non-public projects require sign-in.
-				redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+				redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 			}
 
 			$log_entries = $this->logs->getEntries (
@@ -275,7 +275,7 @@ class Project extends Controller
 
 		$login = $this->login->getUser ();
 		if ($login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		$project = new stdClass();
 		$project->id = $projectid;
@@ -295,7 +295,7 @@ class Project extends Controller
 
 		$login = $this->login->getUser ();
 		if ($login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -394,7 +394,7 @@ class Project extends Controller
 
 		$login = $this->login->getUser ();
 		if ($login['id'] == '')
-			redirect ("main/signin/" . $this->converter->AsciiTohex(current_url()));
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
