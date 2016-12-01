@@ -25,6 +25,7 @@ class LoginModel extends Model
 			$userid = '';
 			$email = '';
 			$issysadmin = FALSE;
+			$isinsider = FALSE;
 			$settings = NULL;
 		}
 		else
@@ -37,6 +38,9 @@ class LoginModel extends Model
 
 			$issysadmin = $this->session->userdata('sysadmin?');
 			if ($issysadmin === NULL) $issysadmin = FALSE;
+
+			$isinsider = $this->session->userdata('insider?');
+			if ($isinsider === NULL) $isinsider = FALSE;
 
 			$settings = $this->session->userdata('user_settings');
 			if ($settings !== NULL) 
@@ -57,11 +61,12 @@ class LoginModel extends Model
 			'id' => $userid, 
 			'email' => $email,
 			'sysadmin?' => $issysadmin,
+			'insider?' => $isinsider,
 			'settings' => $settings
 		);
 	}
 
-	function authenticate ($userid, $password, $email = '')
+	function authenticate ($userid, $password, $email = '', $insider = NULL)
 	{
 		//$server = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'];
 		$server = $_SERVER['HTTP_HOST'];
@@ -82,7 +87,8 @@ class LoginModel extends Model
 				'userid' => $userid,
 				'server' => $server,
 				'email' => $email,
-				'sysadmin?' => $sysadmin
+				'sysadmin?' => $sysadmin,
+				'insider?' => $insider
 			)
 		);
 

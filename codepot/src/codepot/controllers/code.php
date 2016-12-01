@@ -28,15 +28,20 @@ class Code extends Controller
 
 	private function _can_read ($pm, $projectid, $login)
 	{
-		if ($login['sysadmin?']) return TRUE;
-
 		$userid = $login['id'];
+
+		if ($userid != '' && $login['sysadmin?']) return TRUE;
+
 		if ($pm->projectIsPublic($projectid)) 
 		{
 			if (strcasecmp(CODEPOT_CODE_READ_ACCESS, 'anonymous') == 0) return TRUE;
 			else if (strcasecmp(CODEPOT_CODE_READ_ACCESS, 'authenticated') == 0)
 			{
 				if ($userid != '') return TRUE;
+			}
+			else if (strcasecmp(CODEPOT_CODE_READ_ACCESS, 'authenticated-insider') == 0)
+			{
+				if ($userid != '' && $login['insider?']) return TRUE;
 			}
 			else if (strcasecmp(CODEPOT_CODE_READ_ACCESS, 'member') == 0)
 			{
