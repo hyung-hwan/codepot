@@ -65,7 +65,7 @@ sub get_config
 		ldap_admin_password => $cfg->param ('ldap_admin_password'),
 		ldap_userid_search_base => $cfg->param ('ldap_userid_search_base'),
 		ldap_userid_search_filter => $cfg->param ('ldap_userid_search_filter'),
-		ldap_insider_attribute_name => $cfg->param ('ldap_insider_attribute_name'),
+		ldap_insider_attribute_names => $cfg->param ('ldap_insider_attribute_names'),
 		ldap_insider_attribute_value => $cfg->param ('ldap_insider_attribute_value'),
 
 		database_hostname => $cfg->param ('database_hostname'),
@@ -159,23 +159,38 @@ sub authenticate_ldap
 	}
 
 	my $authenticated = 1;
-	if ($cfg->{ldap_insider_attribute_name} ne '' && $cfg->{ldap_insider_attribute_value} ne '')
+	if ($cfg->{ldap_insider_attribute_names} ne '' && $cfg->{ldap_insider_attribute_value} ne '')
 	{
-		my $f_filter = '(' . $cfg->{ldap_insider_attribute_name} . '=*)';
-		$res = $ldap->search (base => $binddn, scope => 'base', filter => $f_filter, [ $cfg->{ldap_insider_attribute_name} ]);
-		if ($res->code == LDAP_SUCCESS) 
+		my $attr_str =  $cfg->{ldap_insider_attribute_names};
+		$attr_str =~ s/^\s+|\s+$//g;
+		my @attrs = split (/\s+/, $attr_str);
+
+		if (scalar(@attrs) > 0)
 		{
-			foreach my $entry ($res->entries)
+			#my $f_filter = '(' . $cfg->{ldap_insider_attribute_name} . '=*)';
+			my $f_filter = '(objectClass=*)';
+
+			$res = $ldap->search (base => $binddn, scope => 'base', filter => $f_filter, @attrs);
+			if ($res->code == LDAP_SUCCESS) 
 			{
-				my @va = $entry->get_value($cfg->{ldap_insider_attribute_name});
-				foreach my $v (@va)
+			search_loop:
+				foreach my $entry ($res->entries)
 				{
-					if (lc($v)  eq lc($cfg->{ldap_insider_attribute_value}))
+					foreach my $a (@attrs)
 					{
-						$authenticated = 2;
-						last;
+						my @va = $entry->get_value($a);
+						foreach my $v (@va)
+						{
+							if (lc($v) eq lc($cfg->{ldap_insider_attribute_value}))
+							{
+								 $authenticated = 2;
+								 last search_loop;
+							}
+						}
+						if ($authenticated >= 2) last;
 					}
 				}
+				$res->abandon();
 			}
 		}
 	}

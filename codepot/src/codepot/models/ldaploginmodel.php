@@ -88,8 +88,9 @@ class LdapLoginModel extends LoginModel
 		$email = '';
 		if (CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME != '')
 		{
-			$filter = '(' . CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME . '=*)';
-			$r = @ldap_search ($ldap, $f_userid, $filter, array(CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME));
+			//$filter = '(' . CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME . '=*)';
+			$filter = '(objectClass=*)';
+			$r = @ldap_read ($ldap, $f_userid, $filter, array(CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME));
 			if ($r !== FALSE)
 			{
 				$e = @ldap_get_entries($ldap, $r);
@@ -103,61 +104,66 @@ class LdapLoginModel extends LoginModel
 		}
 
 		$insider = FALSE;
-		if (CODEPOT_LDAP_INSIDER_ATTRIBUTE_NAME != '' && CODEPOT_LDAP_INSIDER_ATTRIBUTE_VALUE != '')
+		if (CODEPOT_LDAP_INSIDER_ATTRIBUTE_NAMES != '' && CODEPOT_LDAP_INSIDER_ATTRIBUTE_VALUE != '')
 		{
-			$filter = '(' . CODEPOT_LDAP_INSIDER_ATTRIBUTE_NAME . '=*)';
-			$r = @ldap_search ($ldap, $f_userid, $filter, array(CODEPOT_LDAP_INSIDER_ATTRIBUTE_NAME));
-			if ($r !== FALSE)
+			$attr_str = trim(CODEPOT_LDAP_INSIDER_ATTRIBUTE_NAMES);
+			$attrs = preg_split ("/[[:space:]]+/", $attr_str);
+
+			if (count($attrs) > 0)
 			{
-
-				/* SAMPLE LDAP RESULT
-				array(2) {
-				  ["count"]=>  int(1)
-				  [0]=>
-				  array(4) {
-				    ["mssfu30posixmemberof"]=>
-				    array(4) {
-					 ["count"]=>
-					 int(3)
-					 [0]=>
-					 string(36) "CN=group01,OU=Groups,DC=abiyo,DC=net"
-					 [1]=>
-					 string(36) "CN=group02,OU=Groups,DC=abiyo,DC=net"
-					 [2]=>
-					 string(45) "CN=group03,OU=Groups,DC=abiyo,DC=net"
-				    }
-				    [0]=>
-				    string(20) "mssfu30posixmemberof"
-				    ["count"]=>
-				    int(1)
-				    ["dn"]=>
-				    string(37) "CN=user01,CN=Users,DC=abiyo,DC=net"
-				  }
-				}
-				*/
-				$e = @ldap_get_entries($ldap, $r);
-				if ($e !== FALSE && array_key_exists('count', $e) && ($ec = $e['count']) > 0)
+				$filter = '(objectClass=*)';
+				$r = @ldap_read ($ldap, $f_userid, $filter, $attrs);
+				if ($r !== FALSE)
 				{
-					for ($i = 0; $i < $ec; $i++)
+					/* SAMPLE LDAP RESULT
+					array(2) {
+					  ["count"]=>  int(1)
+					  [0]=>
+					  array(4) {
+					    ["mssfu30posixmemberof"]=>
+					    array(4) {
+						 ["count"]=>
+						 int(3)
+						 [0]=>
+						 string(36) "CN=group01,OU=Groups,DC=abiyo,DC=net"
+						 [1]=>
+						 string(36) "CN=group02,OU=Groups,DC=abiyo,DC=net"
+						 [2]=>
+						 string(45) "CN=group03,OU=Groups,DC=abiyo,DC=net"
+					    }
+					    [0]=>
+					    string(20) "mssfu30posixmemberof"
+					    ["count"]=>
+					    int(1)
+					    ["dn"]=>
+					    string(37) "CN=user01,CN=Users,DC=abiyo,DC=net"
+					  }
+					}
+					*/
+					$e = @ldap_get_entries($ldap, $r);
+					if ($e !== FALSE && array_key_exists('count', $e) && ($ec = $e['count']) > 0)
 					{
-						if (array_key_exists($i, $e) &&
-						    array_key_exists(CODEPOT_LDAP_INSIDER_ATTRIBUTE_NAME, $e[$i]))
+						for ($i = 0; $i < $ec; $i++)
 						{
-							$va = $e[$i][CODEPOT_LDAP_INSIDER_ATTRIBUTE_NAME];
-
-							if (array_key_exists('count', $va) && ($vac = $va['count']) > 0)
+							foreach ($attrs as $a)
 							{
-								for ($j = 0; $j < $vac; $j++)
+								if (array_key_exists($i, $e) && array_key_exists($a, $e[$i]))
 								{
-									if (strcasecmp($va[$j], CODEPOT_LDAP_INSIDER_ATTRIBUTE_VALUE) == 0) 
+									$va = $e[$i][$a];
+									if (array_key_exists('count', $va) && ($vac = $va['count']) > 0)
 									{
-										$insider = TRUE;
-										break;
+										for ($j = 0; $j < $vac; $j++)
+										{
+											if (strcasecmp($va[$j], CODEPOT_LDAP_INSIDER_ATTRIBUTE_VALUE) == 0) 
+											{
+												$insider = TRUE;
+												break 3;
+											}
+										}
 									}
 								}
 							}
 						}
-						if ($insider) break;
 					}
 				}
 			}
@@ -165,9 +171,6 @@ class LdapLoginModel extends LoginModel
 
 		//@ldap_unbind ($ldap);
 		@ldap_close ($ldap);
-if ($insider) error_log ("$userid is insider");
-else error_log ("$userid is NOT insider");
-
 		return parent::authenticate ($userid, $password, $email, $insider);
 	}
 

@@ -65,6 +65,9 @@ database_store_gmt = "yes"
 ; after having bound with ldap_admin_binddn and ldap_admin_password.
 ; The binddn found is used for subsequent binding for authentication.
 ; ldap_userid_format is unused in this mode.
+;
+; if you want to specify multiple attributes in ldap_insider_attribute_names
+; separate them with a space.
 ;------------------------------------------------------------------------------
 ldap_server_uri = "ldap://127.0.0.1:389"
 ldap_server_protocol_version = "3"
@@ -76,7 +79,7 @@ ldap_admin_password = "admin-password"
 ldap_userid_search_filter = "(uid=${userid})"
 ldap_userid_search_base = "ou=users,dc=codepot,dc=org"
 ldap_mail_attribute_name = ""
-ldap_insider_attribute_name = ""
+ldap_insider_attribute_names = "mssfu30posixmemberof memberof"
 ldap_insider_attribute_value = ""
 
 ;------------------------------------------------------------------------------
