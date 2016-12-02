@@ -66,7 +66,7 @@ function render_wiki()
 	});
 
 	$("#project_home_sidebar_log_all_button").button ().click (function () {
-		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", "/project/log/" + "<?php print $project->id; ?>"));
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", "/project/log/" + "<?php print $project->id; ?>" + "/" + "<?php print $this->converter->AsciiToHex(''); ?>" + "/"));
 		return false;
 	});
 }

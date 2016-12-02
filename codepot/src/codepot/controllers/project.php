@@ -179,7 +179,7 @@ class Project extends Controller
 		}
 	}
 
-	function _edit_project ($project, $mode, $login)
+	private function _edit_project ($project, $mode, $login)
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
@@ -327,7 +327,7 @@ class Project extends Controller
 		}
 	}
 
-	function _delete_project ($project, $login)
+	private function _delete_project ($project, $login)
 	{
 		$this->load->helper ('form');
 		$this->load->library ('form_validation');
@@ -426,11 +426,19 @@ class Project extends Controller
 		}
 	}
 
-	function log ($projectid = '', $offset = 0)
+	function log ($projectid = '', $userid = '!', $offset = 0)
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
 		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '') 
+		{
+			redirect ('main/signin');
+			return;
+		}
+
+		if ($userid == '') $userid = $login['id'];
+		else $userid = $this->converter->HexToAscii ($userid);
 
 		$project = $this->projects->get ($projectid);
 		if ($project === FALSE)
@@ -451,8 +459,8 @@ class Project extends Controller
 		{
 			$this->load->library ('pagination');
 			$this->load->model ('LogModel', 'logs');
-		
-			$num_log_entries = $this->logs->getNumEntries ($projectid);
+
+			$num_log_entries = $this->logs->getNumEntries ($projectid, $userid);
 			if ($num_log_entries === FALSE)
 			{
 				$data['login'] = $login;
@@ -462,14 +470,15 @@ class Project extends Controller
 				return;
 			}
 
-			$pagecfg['base_url'] = site_url() . "/project/log/{$projectid}/";
+			$xuserid = $this->converter->AsciiToHex($userid);
+			$pagecfg['base_url'] = site_url() . "/project/log/{$projectid}/{$xuserid}/";
 			$pagecfg['total_rows'] = $num_log_entries;
 			$pagecfg['per_page'] = CODEPOT_MAX_LOGS_PER_PAGE; 
-			$pagecfg['uri_segment'] = 4;
+			$pagecfg['uri_segment'] = 5;
 			$pagecfg['first_link'] = $this->lang->line('First');
 			$pagecfg['last_link'] = $this->lang->line('Last');
-	
-			$log_entries = $this->logs->getEntries ($offset, $pagecfg['per_page'], $projectid);
+
+			$log_entries = $this->logs->getEntries ($offset, $pagecfg['per_page'], $projectid, $userid);
 			if ($log_entries === FALSE)
 			{
 				$data['login'] = $login;
@@ -493,7 +502,7 @@ class Project extends Controller
 	function enjson_catalog ($filter = '', $offset = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
-	
+
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 		{
