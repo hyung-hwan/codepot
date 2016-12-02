@@ -27,13 +27,17 @@ class User extends Controller
 		return $this->home ();
 	}
 
-	function home ()
+	function home ($userid = '')
 	{
 		$login = $this->login->getUser ();
-		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '') 
+		{
 			redirect ('main/signin');
+			return;
+		}
 
-		if ($login['id'] == '')
+		if ($userid == '') $userid = $login['id'];
+		if ($userid == '')
 		{
 			redirect ('site/home');
 			return;
@@ -45,10 +49,10 @@ class User extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('IssueModel', 'issues');
 
-		$projects = $this->projects->getMyProjects ($login['id']);
+		$projects = $this->projects->getMyProjects ($userid);
 
 		$issues = $this->issues->getMyIssues (
-			$login['id'], $this->issuehelper->_get_open_status_array($this->lang));
+			$userid, $this->issuehelper->_get_open_status_array($this->lang));
 		if ($projects === FALSE || $issues === FALSE)
 		{
 			$data['login'] = $login;

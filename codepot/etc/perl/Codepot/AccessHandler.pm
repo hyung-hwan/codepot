@@ -187,7 +187,6 @@ sub authenticate_ldap
 								 last search_loop;
 							}
 						}
-						if ($authenticated >= 2) last;
 					}
 				}
 				$res->abandon();
