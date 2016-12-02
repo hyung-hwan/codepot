@@ -37,9 +37,9 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 		$site = $page[$type];
 		print htmlspecialchars($site->name);
 	}
-	else if ($type == 'user')
+	else if ($type == 'user' || $type == 'user-other')
 	{
-		$user = $page[$type];
+		$user = $page['user'];
 		print htmlspecialchars($user->id);
 	}
 	else print htmlspecialchars(CODEPOT_DEFAULT_SITE_NAME);
@@ -123,9 +123,25 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 	else if ($type == 'user')
 	{
 		$menuitems = array (
-			array ("user/home", $con->lang->line('Overview')),
-			array ("user/log", $con->lang->line('Log')),
+			array ("user/home/{$user->xid}", $con->lang->line('Overview')),
+			array ("user/log/{$user->xid}", $con->lang->line('Log')),
 			array ("user/settings", $con->lang->line('Settings'))
+		);
+
+		foreach ($menuitems as $item)
+		{
+			$menuid = substr ($item[0], strpos($item[0], '/') + 1);
+			$extra = ($menuid == $id)? 'class="selected button"': 'class="button"';
+			$menulink = $item[0];
+
+			print anchor ($menulink, $item[1], $extra);
+		}
+	}
+	else if ($type == 'user-other')
+	{
+		$menuitems = array (
+			array ("user/home/{$user->xid}", $con->lang->line('Overview')),
+			array ("user/log/{$user->xid}", $con->lang->line('Log'))
 		);
 
 		foreach ($menuitems as $item)
