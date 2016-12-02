@@ -217,22 +217,40 @@ $this->load->view (
 			if ($log['action'] == 'revpropchange')
 			{
 				$fmt = $this->lang->line ('MSG_LOG_REVPROP_CHANGE_BY');
-				//print htmlspecialchars (sprintf($fmt, $code['propname'], $code['author']));
-				printf (
-					htmlspecialchars ($fmt),
-					htmlspecialchars ($code['propname']),
-					anchor ("/user/log/{$xauthor}", htmlspecialchars ($code['author'])));
-				//$code['action']
+
+				if ($pagetype == 'project')
+				{
+					printf (
+						htmlspecialchars ($fmt),
+						htmlspecialchars ($code['propname']),
+						anchor ("/project/log/{$log['projectid']}/{$xauthor}", htmlspecialchars ($code['author'])));
+				}
+				else
+				{
+					printf (
+						htmlspecialchars ($fmt),
+						htmlspecialchars ($code['propname']),
+						anchor ("/user/log/{$xauthor}", htmlspecialchars ($code['author'])));
+				}
+				
 			}
 			else
 			{
 				$fmt = $this->lang->line (
 					'MSG_LOG_'.strtoupper($log['action']).'_BY');
 
-				//print htmlspecialchars (sprintf($fmt, $code['author']));
-				printf (
-					htmlspecialchars ($fmt),
-					anchor ("/user/log/{$xauthor}", htmlspecialchars ($code['author'])));
+				if ($pagetype == 'project')
+				{
+					printf (
+						htmlspecialchars ($fmt),
+						anchor ("/project/log/{$log['projectid']}/{$xauthor}", htmlspecialchars ($code['author'])));
+				}
+				else
+				{
+					printf (
+						htmlspecialchars ($fmt),
+						anchor ("/user/log/{$xauthor}", htmlspecialchars ($code['author'])));
+				}
 			}
 			print '</span>';
 
@@ -288,7 +306,10 @@ $this->load->view (
 				'MSG_LOG_'.strtoupper($log['action']).'_BY');
 
 			$xuserid = $this->converter->AsciiToHex($log['userid']);
-			printf ($fmt, anchor ("/user/log/{$xuserid}", htmlspecialchars($log['userid'])));
+			if ($pagetype == 'project')
+				printf ($fmt, anchor ("/project/log/{$log['projectid']}/{$xuserid}", htmlspecialchars($log['userid'])));
+			else
+				printf ($fmt, anchor ("/user/log/{$xuserid}", htmlspecialchars($log['userid'])));
 			print '</span>';
 		}
 
