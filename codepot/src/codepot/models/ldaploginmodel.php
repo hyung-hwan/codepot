@@ -240,11 +240,10 @@ class LdapLoginModel extends LoginModel
 		}
 
 		$email = '';
-
 		if (CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME != '')
 		{
-			$filter = '(' . CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME . '=*)';
-			$r = @ldap_search ($ldap, $f_userid, $filter, array(CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME));
+			$filter = '(objectClass=*)';
+			$r = @ldap_read ($ldap, $f_userid, $filter, array(CODEPOT_LDAP_MAIL_ATTRIBUTE_NAME));
 			if ($r !== FALSE)
 			{
 				$e = @ldap_get_entries($ldap, $r);

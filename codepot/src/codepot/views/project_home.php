@@ -176,7 +176,12 @@ $this->load->view (
 		print "<li>{$icon_src}{$m}</li>";
 		*/
 		$user_icon_url = codepot_merge_path (site_url(), '/user/icon/' . $this->converter->AsciiToHex($m));
-		print "<li><img src='{$user_icon_url}' class='user_icon_img' />{$m}</li>";
+		//print "<li><img src='{$user_icon_url}' class='user_icon_img' />{$m}</li>";
+		$user_home_url = "/user/home/" . $this->converter->AsciiToHex($m);
+		print "<li>";
+		print anchor ($user_home_url,  "<img src='{$user_icon_url}' class='user_icon_img' />{$m}");
+		print "</li>";
+
 	}
 ?>
 </ul>

@@ -66,6 +66,7 @@ $(function () {
 if (isset($project)) 
 { 
 	$pagetype = 'project';
+	$pageobjname = 'project';
 	$pageid = ''; 
 	$pageobj = $project; 
 	$banner = NULL;
@@ -75,6 +76,7 @@ else if (isset($site))
 	if ($login['sysadmin?'])
 	{
 		$pagetype = 'site';
+		$pageobjname = 'site';
 		$pageid = 'log';
 		$pageobj = $site; 
 		$banner = NULL;
@@ -82,6 +84,7 @@ else if (isset($site))
 	else
 	{
 		$pagetype = '';
+		$pageobjname = '';
 		$pageid = '';
 		$pageobj = NULL;
 		$banner = $site->name;
@@ -90,31 +93,35 @@ else if (isset($site))
 else if (isset($user)) 
 { 
 	$pagetype = 'user';
+	$pageobjname = 'user';
 	$pageid = ''; 
 	$pageobj = $user; 
 	$banner = NULL;
+
+	if ($user->id != $login['id']) $pagetype = 'user-other';
 }
 else 
 { 
 	$pagetype = '';
+	$pageobjname = '';
 	$pageid = '';
 	$pageobj = NULL; 
 	$banner = NULL;
 }
 
 $this->load->view (
-        'projectbar',
-        array (
+	'projectbar',
+	array (
 		'banner' => $banner,
 
 		'page' => array (
 			'type' => $pagetype,
 			'id' => $pageid,
-			$pagetype => $pageobj	
+			$pageobjname => $pageobj
 		),
 
-                'ctxmenuitems' => array ()
-        )
+		'ctxmenuitems' => array ()
+	)
 );
 ?>
 
@@ -205,6 +212,8 @@ $this->load->view (
 
 			print '<td class="details">';
 			print '<span class="description">';
+
+			$xauthor = $this->converter->AsciiToHex ($code['author']);
 			if ($log['action'] == 'revpropchange')
 			{
 				$fmt = $this->lang->line ('MSG_LOG_REVPROP_CHANGE_BY');
@@ -212,7 +221,7 @@ $this->load->view (
 				printf (
 					htmlspecialchars ($fmt),
 					htmlspecialchars ($code['propname']),
-					anchor ("/site/userlog/{$code['author']}", htmlspecialchars ($code['author'])));
+					anchor ("/user/log/{$xauthor}", htmlspecialchars ($code['author'])));
 				//$code['action']
 			}
 			else
@@ -223,7 +232,7 @@ $this->load->view (
 				//print htmlspecialchars (sprintf($fmt, $code['author']));
 				printf (
 					htmlspecialchars ($fmt),
-					anchor ("/site/userlog/{$code['author']}", htmlspecialchars ($code['author'])));
+					anchor ("/user/log/{$xauthor}", htmlspecialchars ($code['author'])));
 			}
 			print '</span>';
 
@@ -278,7 +287,8 @@ $this->load->view (
 			$fmt = $this->lang->line (
 				'MSG_LOG_'.strtoupper($log['action']).'_BY');
 
-			printf ($fmt, anchor ("/site/userlog/{$log['userid']}", htmlspecialchars($log['userid'])));
+			$xuserid = $this->converter->AsciiToHex($log['userid']);
+			printf ($fmt, anchor ("/user/log/{$xuserid}", htmlspecialchars($log['userid'])));
 			print '</span>';
 		}
 

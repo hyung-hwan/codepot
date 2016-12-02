@@ -66,7 +66,6 @@ class LogModel extends Model
 		$commits = array ();
 		foreach ($result as $row)
 		{
-
 			/* $row->project must be equal to $repo */
 			$commits[$count]['createdon'] = $row->createdon;
 			$commits[$count]['type'] = $row->type;

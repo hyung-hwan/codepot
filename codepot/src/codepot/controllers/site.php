@@ -493,15 +493,20 @@ class Site extends Controller
 		$this->load->view ($this->VIEW_LOG, $data);
 	}
 
+/*
 	function userlog ($userid = '', $offset = 0)
 	{
+		if ($userid != '') 
+			$dec_userid = $this->converter->HexToAscii($userid);
+		else $dec_userid = $userid;
+
 		$login = $this->login->getUser ();
 
 		$this->load->library ('pagination');
 		$this->load->model ('LogModel', 'logs');
 		$this->load->model ('SiteModel', 'sites');
 
-                $site = $this->sites->get ($this->config->config['language']);
+		$site = $this->sites->get ($this->config->config['language']);
 		if ($site === FALSE)
 		{
 			$data['login'] = $login;
@@ -511,7 +516,7 @@ class Site extends Controller
 		}
 		if ($site === NULL && CODEPOT_DEFAULT_SITE_LANGUAGE != '') 
 		{
-                	$site = $this->sites->get (CODEPOT_DEFAULT_SITE_LANGUAGE);
+			$site = $this->sites->get (CODEPOT_DEFAULT_SITE_LANGUAGE);
 			if ($site === FALSE)
 			{
 				$data['login'] = $login;
@@ -527,7 +532,7 @@ class Site extends Controller
 			$this->logs->purge ();
 		}
 
-		$num_log_entries = $this->logs->getNumEntries ('', $userid);
+		$num_log_entries = $this->logs->getNumEntries ('', $dec_userid);
 		if ($num_log_entries === FALSE)
 		{
 			$data['login'] = $login;
@@ -536,14 +541,14 @@ class Site extends Controller
 			return;
 		}
 
-		$pagecfg['base_url'] = site_url() . "/site/userlog/$userid/";
+		$pagecfg['base_url'] = site_url() . "/site/userlog/{$userid}/";
 		$pagecfg['total_rows'] = $num_log_entries;
 		$pagecfg['per_page'] = CODEPOT_MAX_LOGS_PER_PAGE; 
 		$pagecfg['uri_segment'] = 4;
 		$pagecfg['first_link'] = $this->lang->line('First');
 		$pagecfg['last_link'] = $this->lang->line('Last');
 
-		$log_entries = $this->logs->getEntries ($offset, $pagecfg['per_page'], '', $userid);
+		$log_entries = $this->logs->getEntries ($offset, $pagecfg['per_page'], '', $dec_userid);
 		if ($log_entries === FALSE)
 		{
 			$data['login'] = $login;
@@ -561,6 +566,7 @@ class Site extends Controller
 
 		$this->load->view ($this->VIEW_LOG, $data);
 	}
+*/
 
 	function wiki ($xlink = '')
 	{
