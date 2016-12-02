@@ -80,7 +80,7 @@ function load_ini ($file)
 		array ('ldap_userid_search_filter',    'string',     '(uid=${userid})'),
 		array ('ldap_userid_search_base',      'string',     ''),
 		array ('ldap_mail_attribute_name',     'string',     ''),
-		array ('ldap_insider_attribute_name',  'string',     ''),
+		array ('ldap_insider_attribute_names', 'string',     ''),
 		array ('ldap_insider_attribute_value', 'string',     ''),
 
 		array ('svnrepo_dir',                  'string',      CODEPOT_DEPOT_DIR.'/svnrepo'),

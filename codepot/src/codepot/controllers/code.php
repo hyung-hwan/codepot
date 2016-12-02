@@ -30,11 +30,18 @@ class Code extends Controller
 	{
 		$userid = $login['id'];
 
-		if ($userid != '' && $login['sysadmin?']) return TRUE;
+		if ($userid != '')
+		{
+			if ($login['sysadmin?']) return TRUE;
+			if ($pm->projectHasMember($projectid, $userid)) return TRUE;
+		}
 
 		if ($pm->projectIsPublic($projectid)) 
 		{
-			if (strcasecmp(CODEPOT_CODE_READ_ACCESS, 'anonymous') == 0) return TRUE;
+			if (strcasecmp(CODEPOT_CODE_READ_ACCESS, 'anonymous') == 0) 
+			{
+				return TRUE;
+			}
 			else if (strcasecmp(CODEPOT_CODE_READ_ACCESS, 'authenticated') == 0)
 			{
 				if ($userid != '') return TRUE;
@@ -43,15 +50,10 @@ class Code extends Controller
 			{
 				if ($userid != '' && $login['insider?']) return TRUE;
 			}
-			else if (strcasecmp(CODEPOT_CODE_READ_ACCESS, 'member') == 0)
-			{
-				if ($userid != '' && $pm->projectHasMember($projectid, $userid)) return TRUE;
-			}
-		}
-		else
-		{
-			// non-public project.
-			if ($userid != '' && $pm->projectHasMember($projectid, $userid)) return TRUE;
+			//else if (strcasecmp(CODEPOT_CODE_READ_ACCESS, 'member') == 0)
+			//{
+			//	if ($userid != '' && $pm->projectHasMember($projectid, $userid)) return TRUE;
+			//}
 		}
 
 		return FALSE;
@@ -59,10 +61,13 @@ class Code extends Controller
 
 	private function _can_write ($pm, $projectid, $login)
 	{
-		if ($login['sysadmin?']) return TRUE;
-
 		$userid = $login['id'];
-		if ($userid != '' && $pm->projectHasMember($projectid, $userid)) return TRUE;
+		if ($userid != '')
+		{
+			if ($login['sysadmin?']) return TRUE;
+			if ($pm->projectHasMember($projectid, $userid)) return TRUE;
+		}
+
 		return FALSE;
 	}
 
