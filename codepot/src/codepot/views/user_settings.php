@@ -29,6 +29,7 @@
 <?php
 $user = new stdClass();
 $user->id = $login['id'];
+$user->xid = $this->converter->AsciiToHex($user->id);
 
 $this->load->view (
 	'projectbar',

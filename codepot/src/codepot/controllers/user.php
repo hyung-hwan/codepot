@@ -37,6 +37,7 @@ class User extends Controller
 		}
 
 		if ($userid == '') $userid = $login['id'];
+		else $userid = $this->converter->HexToAscii ($userid);
 		if ($userid == '')
 		{
 			redirect ('site/home');
@@ -63,6 +64,7 @@ class User extends Controller
 		{
 			$data['login'] = $login;
 			$data['projects'] = $projects;
+			$data['target_userid'] = $userid;
 			$data['issues'] = $issues;
 			$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
 			$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
@@ -71,48 +73,18 @@ class User extends Controller
 		}
 	}
 
-	function issue ()
+	function log ($userid = '', $offset = 0)
 	{
 		$login = $this->login->getUser ();
-		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
-			redirect ('main/signin');
-
-		if ($login['id'] == '')
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '') 
 		{
-			redirect ('site/home');
+			redirect ('main/signin');
 			return;
 		}
 
-		$this->load->library ('IssueHelper', 'issuehelper');
-		$this->lang->load ('issue', CODEPOT_LANG);
-
-		$this->load->model ('ProjectModel', 'projects');
-		$this->load->model ('IssueModel', 'issues');
-
-		$issues = $this->issues->getMyIssues (
-			$login['id'], $this->issuehelper->_get_open_status_array($this->lang));
-		if ($issues === FALSE)
-		{
-			$data['login'] = $login;
-			$data['message'] = 'DATABASE ERROR';
-			$this->load->view ($this->VIEW_ERROR, $data);
-		}
-		else
-		{
-			$data['login'] = $login;
-			$data['issues'] = $issues;
-			$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
-			$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
-			$data['issue_priority_array'] = $this->issuehelper->_get_priority_array($this->lang);
-			$this->load->view ($this->VIEW_ISSUE, $data);
-		}
-	}
-
-	function log ($offset = 0)
-	{
-		$login = $this->login->getUser ();
-
-		if ($login['id'] == '')
+		if ($userid == '') $userid = $login['id'];
+		else $userid = $this->converter->HexToAscii ($userid);
+		if ($userid == '')
 		{
 			redirect ('site/home');
 			return;
@@ -121,9 +93,10 @@ class User extends Controller
 		$this->load->model ('ProjectModel', 'projects');
 
 		$user = new stdClass();
-		$user->id = $login['id'];
+		$user->id = $userid;
+		$user->xid = $this->converter->AsciiToHex($userid);
 
-		$myprojs = $this->projects->getMyProjects ($login['id']);
+		$myprojs = $this->projects->getMyProjects ($user->id);
 		if ($myprojs === FALSE)
 		{
 			$data['login'] = $login;
@@ -145,7 +118,7 @@ class User extends Controller
 			for ($i = 0; $i < $numprojs; $i++) 
 				$projids[$i] = $myprojs[$i]->id;
 
-			$num_log_entries = $this->logs->getNumEntries ($projids);
+			$num_log_entries = $this->logs->getNumEntries ($projids, $userid);
 			if ($num_log_entries === FALSE)
 			{
 				$data['login'] = $login;
@@ -155,14 +128,14 @@ class User extends Controller
 				return;
 			}
 
-			$pagecfg['base_url'] = site_url() . "/user/log/";
+			$pagecfg['base_url'] = site_url() . "/user/log/{$user->xid}/";
 			$pagecfg['total_rows'] = $num_log_entries;
 			$pagecfg['per_page'] = CODEPOT_MAX_LOGS_PER_PAGE; 
-			$pagecfg['uri_segment'] = 3;
+			$pagecfg['uri_segment'] = 4;
 			$pagecfg['first_link'] = $this->lang->line('First');
 			$pagecfg['last_link'] = $this->lang->line('Last');
-	
-			$log_entries = $this->logs->getEntries ($offset, $pagecfg['per_page'], $projids);
+
+			$log_entries = $this->logs->getEntries ($offset, $pagecfg['per_page'], $projids, $userid);
 			if ($log_entries === FALSE)
 			{
 				$data['login'] = $login;
@@ -290,7 +263,6 @@ class User extends Controller
 
 	function icon ($userid = '')
 	{
-	// TODO: ETag, If-None-Match???
 		$userid_len = strlen($userid);
 		if ($userid_len > 0)
 		{

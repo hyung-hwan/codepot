@@ -392,23 +392,25 @@ $this->load->view (
 				print '<td colspan="2" class="details">';
 				print '<span class="description">';
 
+				$xauthor = $this->converter->AsciiToHex($x['author']);
+
 				if ($log['action'] == 'revpropchange')
 				{
 					$fmt = $this->lang->line ('MSG_LOG_REVPROP_CHANGE_BY');
 					//print htmlspecialchars (sprintf($fmt, $x['propname'], $x['author']));
+
 					printf (
 						htmlspecialchars ($fmt),
 						htmlspecialchars ($x['propname']),
-						anchor ("/site/userlog/{$x['author']}", htmlspecialchars ($x['author'])));
+						anchor ("/user/log/{$xauthor}", htmlspecialchars ($x['author'])));
 				}
 				else
 				{
 					$fmt = $this->lang->line (
 						'MSG_LOG_'.strtoupper($log['action']).'_BY');
-					//print htmlspecialchars (sprintf($fmt, $x['author']));
 					printf (
 						htmlspecialchars ($fmt),
-						anchor ("/site/userlog/{$x['author']}", htmlspecialchars ($x['author'])));
+						anchor ("/user/log/{$xauthor}", htmlspecialchars ($x['author'])));
 				}
 				print '</span>';
 
@@ -474,10 +476,10 @@ $this->load->view (
 				print '<span class="description">';
 				$fmt = $this->lang->line (
 					'MSG_LOG_'.strtoupper($log['action']).'_BY');
-				//print htmlspecialchars (sprintf($fmt, $log['userid']));
+				$xuserid = $this->converter->AsciiToHex ($log['userid']);
 				printf (
 					htmlspecialchars ($fmt),
-					anchor ("/site/userlog/{$log['userid']}", htmlspecialchars ($log['userid'])));
+					anchor ("/user/log/{$xuserid}", htmlspecialchars ($log['userid'])));
 				print '</span>';
 				print '</td>';
 

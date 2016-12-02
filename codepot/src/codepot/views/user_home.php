@@ -41,7 +41,17 @@ $(function () {
 
 <?php
 $user = new stdClass();
-$user->id = $login['id'];
+if ($target_userid == $login['id'])
+{
+	$user->id = $login['id'];
+	$projectbar_type = 'user';
+}
+else
+{
+	$user->id = $target_userid;
+	$projectbar_type = 'user-other';
+}
+$user->xid = $this->converter->AsciiTohex($user->id);
 
 $this->load->view (
 	'projectbar',
@@ -49,7 +59,7 @@ $this->load->view (
 		'banner' => NULL,
 
 		'page' => array (
-			'type' => 'user',
+			'type' => $projectbar_type,
 			'id' => 'issues',
 			'user' => $user,
 		),
