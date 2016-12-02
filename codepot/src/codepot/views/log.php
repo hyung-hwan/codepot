@@ -132,7 +132,10 @@ $this->load->view (
 <div class="codepot-title-band" id="log_title_band">
 
 	<div class="title">
-	<?php print  anchor ("site/log", $this->lang->line ('Change log')) ?>
+	<?php 
+		print anchor ("site/log", $this->lang->line ('Change log'));
+		if ($pagetype == 'project' && $target_userid != '') printf ('(%s)', htmlspecialchars ($target_userid));
+	?>
 	</div>
 
 	<div class="actions">

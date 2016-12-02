@@ -492,6 +492,7 @@ class Project extends Controller
 
 			$data['project'] = $project;
 			$data['login'] = $login;
+			$data['target_userid'] = $userid;
 			$data['log_entries'] = $log_entries;
 			$data['page_links'] = $this->pagination->create_links ();
 
