@@ -60,9 +60,9 @@ function show_projectbar ($con, $banner, $page, $ctxmenuitems)
 	{
 		if (isset($site)) print htmlspecialchars($site->summary);
 	}
-	else if ($type == 'user')
+	else if ($type == 'user' || $type == 'user-other')
 	{
-		// anything?
+		if (isset($user)) print htmlspecialchars($user->summary);
 	}
 	else 
 	{

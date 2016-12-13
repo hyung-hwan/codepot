@@ -73,6 +73,7 @@ $lang['New'] = 'Baru';
 $lang['New directory'] = 'Direktori baru';
 $lang['New file'] = 'File baru';
 $lang['OK'] = 'OK';
+$lang['Oneliner about me'] = 'Oneliner about me';
 $lang['Open issues'] = 'Open issues';
 $lang['Other projects'] = 'Proyek lain';
 $lang['Overview'] = 'Ringkasan';

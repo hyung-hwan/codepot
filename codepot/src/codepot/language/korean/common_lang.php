@@ -73,6 +73,7 @@ $lang['New'] = '신규';
 $lang['New directory'] = 'New directory';
 $lang['New file'] = 'New file';
 $lang['OK'] = '확인';
+$lang['Oneliner about me'] = '짧은 인사말';
 $lang['Open issues'] = '미처리이슈';
 $lang['Other projects'] = '다른 프로젝트';
 $lang['Overview'] = '개요';

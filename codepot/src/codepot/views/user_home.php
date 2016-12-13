@@ -40,18 +40,15 @@ $(function () {
 <!---------------------------------------------------------------------------->
 
 <?php
-$user = new stdClass();
-if ($target_userid == $login['id'])
+
+if ($user->id == $login['id'])
 {
-	$user->id = $login['id'];
 	$projectbar_type = 'user';
 }
 else
 {
-	$user->id = $target_userid;
 	$projectbar_type = 'user-other';
 }
-$user->xid = $this->converter->AsciiTohex($user->id);
 
 $this->load->view (
 	'projectbar',

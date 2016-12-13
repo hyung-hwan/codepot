@@ -49,6 +49,14 @@ class User extends Controller
 
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('IssueModel', 'issues');
+		$this->load->model ('UserModel', 'users');
+
+		$user = new stdClass();
+		$user->id = $userid;
+		$user->xid = $this->converter->AsciiToHex($user->id);
+		$user->summary = '';
+		$settings = $this->users->fetchSettings ($user->id);
+		if ($settings !== FALSE) $user->summary = $settings->user_summary;
 
 		$projects = $this->projects->getMyProjects ($userid);
 
@@ -64,7 +72,7 @@ class User extends Controller
 		{
 			$data['login'] = $login;
 			$data['projects'] = $projects;
-			$data['target_userid'] = $userid;
+			$data['user'] = $user;
 			$data['issues'] = $issues;
 			$data['issue_type_array'] = $this->issuehelper->_get_type_array($this->lang);
 			$data['issue_status_array'] = $this->issuehelper->_get_status_array($this->lang);
@@ -91,10 +99,14 @@ class User extends Controller
 		}
 
 		$this->load->model ('ProjectModel', 'projects');
+		$this->load->model ('UserModel', 'users');
 
 		$user = new stdClass();
 		$user->id = $userid;
-		$user->xid = $this->converter->AsciiToHex($userid);
+		$user->xid = $this->converter->AsciiToHex($user->id);
+		$user->summary = '';
+		$settings = $this->users->fetchSettings ($user->id);
+		if ($settings !== FALSE) $user->summary = $settings->user_summary;
 
 		$myprojs = $this->projects->getMyProjects ($user->id);
 		if ($myprojs === FALSE)
@@ -174,6 +186,13 @@ class User extends Controller
 		$data['login'] = $login;
 		$data['message'] = '';
 
+		$user = new stdClass();
+		$user->id = $login['id'];
+		$user->xid = $this->converter->AsciiToHex($user->id);
+		$user->summary = '';
+		$settings = $this->users->fetchSettings ($user->id);
+		if ($settings !== FALSE) $user->summary = $settings->user_summary;
+
 		$icon_fname = FALSE;
 		$uploaded_fname = FALSE;
 
@@ -186,8 +205,9 @@ class User extends Controller
 				if (strpos ($fname, ':') !== FALSE)
 				{
 					$data['message'] = $this->lang->line ('FILE_MSG_NAME_NO_COLON');
-					$data['file'] = $file;
-					$this->load->view ($this->VIEW_EDIT, $data);
+					$data['settings'] = $settings;
+					$data['user'] = $user;
+					$this->load->view ($this->VIEW_SETTINGS, $data);
 					return;
 				}
 
@@ -216,7 +236,6 @@ class User extends Controller
 				}
 			}
 
-			
 			//
 			// make sure that these field also exist in the database
 			// also change the sanity check in LoginModel/getUser()
@@ -224,6 +243,7 @@ class User extends Controller
 			//
 			$settings->code_hide_line_num = $this->input->post('code_hide_line_num');
 			$settings->code_hide_metadata = $this->input->post('code_hide_metadata');
+			$settings->user_summary = $this->input->post('user_summary');
 
 			/* $uploaded_fname will be renamed to this name in users->storeSettings() */
 			$settings->icon_name = $icon_fname; 
@@ -233,14 +253,20 @@ class User extends Controller
 				@unlink (CODEPOT_USERICON_DIR . '/' . $uploaded_fname);
 				$data['message'] = 'DATABASE ERROR';
 				$data['settings'] = $settings;
+				$data['user'] = $user;
 				$this->load->view ($this->VIEW_SETTINGS, $data);
 			}
 			else
 			{
 				$this->login->setUserSettings ($settings);
 
+				// force change user->summary when the new settings has
+				// been saved successfully.
+				$user->summary = $settings->user_summary;
+
 				$data['message'] = 'SETTINGS STORED SUCCESSFULLY';
 				$data['settings'] = $settings;
+				$data['user'] = $user;
 				$this->load->view ($this->VIEW_SETTINGS, $data);
 			}
 		}
@@ -254,9 +280,11 @@ class User extends Controller
 				$settings->code_hide_line_num = ' ';
 				$settings->code_hide_metadata = ' ';
 				$settings->icon_name = '';
+				$settings->user_summary = '';
 			}
 
 			$data['settings'] = $settings;
+			$data['user'] = $user;
 			$this->load->view ($this->VIEW_SETTINGS, $data);
 		}
 	}
