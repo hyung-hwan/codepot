@@ -350,6 +350,54 @@ foreach ($urls as $url)
 	</div> <!-- project_home_result_wiki -->
 </div>
 
+<?php if (isset($login['id']) && $login['id'] != ''): ?>
+<div id='project_home_new_form'>
+	<div style='line-height: 2em;'>
+		<?php
+		print form_dropdown (
+			'project_home_new_type', 
+			$project_type_array,
+			set_value('project_home_new_type', ''),
+			'id="project_home_new_type"'
+		);
+		print ' ';
+
+		$tmpmemb = array();
+		foreach ($project->members as $m) $tmpmemb[$m] = $m;
+		print form_dropdown (
+			'project_home_new_owner', 
+			$tmpmemb,
+			set_value('project_home_new_owner', (in_array($login['id'], $project->members)? $login['id']: '')),
+			'id="project_home_new_owner"'
+		);
+		?>
+
+		<input type='text' id='project_home_new_summary' name='project_home_new_summary' size='50' placeholder='<?php print $this->lang->line('Summary'); ?>'/>
+	</div>
+
+	<div id='project_home_new_description_tabs' style='width:100%;'>
+		<ul>
+			<li><a href='#project_home_new_description_input'><?php print $this->lang->line('Description'); ?></a></li>
+			<li><a href='#project_home_new_description_preview'><?php print $this->lang->line('Preview'); ?></a></li>
+		</ul>
+
+		<div id='project_home_new_description_input'>
+			<textarea type='textarea' id='project_home_new_description' name='project_home_new_description' rows=24 cols=100 style='width:100%;'></textarea>
+
+			<div style='margin-top: 0.1em;'>
+			<?php print $this->lang->line('Attachments'); ?>
+			<input type='file' id='project_home_new_files' name='project_home_new_files' multiple='' autocomplete='off' style='color: transparent;' />
+			<table id='project_home_new_file_table'></table>
+			</div>
+		</div>
+		<div id='project_home_new_description_preview' class='codepot-styled-text-preview'>
+		</div>
+	</div>
+</div>
+<?php endif; ?>
+
+<div id='project_home_alert'></div>
+
 </div> <!-- project_home_mainarea -->
 
 

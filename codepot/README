@@ -27,6 +27,7 @@ UPGRADING FROM 0.2.0
   mysql> ALTER TABLE issue_change ADD COLUMN(createdon datetime not null, createdby varchar(32) not null);
   mysql> UPDATE issue_change SET createdby=updatedby, createdon=updatedon;
   mysql> create the issue_coderev table according to the definition found in codepot.mysql
+  mysql> ALTER TABLE user_settings ADD COLUMN(user_summary VARCHAR(255) NULL);
 
 INSTALLATION ON CENTOS
 
