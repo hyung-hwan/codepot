@@ -56,7 +56,7 @@ class User extends Controller
 		$user->xid = $this->converter->AsciiToHex($user->id);
 		$user->summary = '';
 		$settings = $this->users->fetchSettings ($user->id);
-		if ($settings !== FALSE) $user->summary = $settings->user_summary;
+		if ($settings !== FALSE && $settings !== NULL) $user->summary = $settings->user_summary;
 
 		$projects = $this->projects->getMyProjects ($userid);
 
@@ -106,7 +106,7 @@ class User extends Controller
 		$user->xid = $this->converter->AsciiToHex($user->id);
 		$user->summary = '';
 		$settings = $this->users->fetchSettings ($user->id);
-		if ($settings !== FALSE) $user->summary = $settings->user_summary;
+		if ($settings !== FALSE && $settings !== NULL) $user->summary = $settings->user_summary;
 
 		$myprojs = $this->projects->getMyProjects ($user->id);
 		if ($myprojs === FALSE)
@@ -191,7 +191,7 @@ class User extends Controller
 		$user->xid = $this->converter->AsciiToHex($user->id);
 		$user->summary = '';
 		$settings = $this->users->fetchSettings ($user->id);
-		if ($settings !== FALSE) $user->summary = $settings->user_summary;
+		if ($settings !== FALSE && $settings !== NULL) $user->summary = $settings->user_summary;
 
 		$icon_fname = FALSE;
 		$uploaded_fname = FALSE;
