@@ -282,7 +282,8 @@ CREATE TABLE user_settings (
 	userid              VARCHAR(32) PRIMARY KEY,
 	code_hide_line_num  CHAR(1) NOT NULL,
 	code_hide_metadata  CHAR(1) NOT NULL,
-	icon_name           VARCHAR(255) UNIQUE NULL
+	icon_name           VARCHAR(255) UNIQUE NULL,
+	user_summary        VARCHAR(255) NULL
 );
 
 CREATE TABLE user_account (

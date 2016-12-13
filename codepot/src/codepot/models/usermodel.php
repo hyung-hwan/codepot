@@ -55,6 +55,7 @@ class UserModel extends Model
 			$this->db->set ('code_hide_line_num', (string)$settings->code_hide_line_num);
 			$this->db->set ('code_hide_metadata', (string)$settings->code_hide_metadata);
 			if ($icon_name_set) $this->db->set ('icon_name', (string)$settings->icon_name);
+			$this->db->set ('user_summary', (string)$settings->user_summary);
 			$this->db->insert ('user_settings');
 		}
 		else
@@ -63,6 +64,7 @@ class UserModel extends Model
 			$this->db->set ('code_hide_line_num', (string)$settings->code_hide_line_num);
 			$this->db->set ('code_hide_metadata', (string)$settings->code_hide_metadata);
 			if ($icon_name_set) $this->db->set ('icon_name', (string)$settings->icon_name);
+			$this->db->set ('user_summary', (string)$settings->user_summary);
 			$this->db->update ('user_settings');
 		}
 

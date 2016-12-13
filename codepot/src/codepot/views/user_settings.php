@@ -27,10 +27,6 @@
 <!---------------------------------------------------------------------------->
 
 <?php
-$user = new stdClass();
-$user->id = $login['id'];
-$user->xid = $this->converter->AsciiToHex($user->id);
-
 $this->load->view (
 	'projectbar',
 	array (
@@ -71,6 +67,8 @@ $this->load->view (
 	?>
 	<?php print  $this->lang->line('USER_MSG_HIDE_METADATA')?>
 
+	<hr style="height:1px; border:none; background-color:#CCCCCC;" />
+
 	<div class='form_input_field'>
 		<?php print form_label($this->lang->line('Icon').': ', 'icon_img_file_name')?>
 		<?php
@@ -80,6 +78,13 @@ $this->load->view (
 		<?php print form_error('icon_img_file_name');?>
 		(.png, max. 100x100)
 	</div>
+
+	<hr style="height:1px; border:none; background-color:#CCCCCC;" />
+
+	<?php print form_label($this->lang->line('Oneliner about me').': ', 'user_summary')?>
+	<input type="text" name="user_summary" size="50" value="<?php print addslashes($settings->user_summary); ?>" />
+
+	<hr style="height:1px; border:none; background-color:#CCCCCC;" />
 
 	<div class="buttons">
 		<?php print form_submit('settings', $this->lang->line('OK'))?>
