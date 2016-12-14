@@ -168,4 +168,33 @@ class Graph extends Controller
 		$cloc = $cloc = $this->subversion->clocRevByFile ($projectid, $path, $rev);
 		print codepot_json_encode ($cloc);
 	}
+
+
+	function enjson_revision_graph ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
+	{
+		$this->load->model ('ProjectModel', 'projects');
+
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+		{
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
+			return;
+		}
+
+		$project = $this->projects->get ($projectid);
+		if ($project === FALSE || ($project->public !== 'Y' && $login['id'] == ''))
+		{
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
+			return;
+		}
+
+		$this->load->model ('SubversionModel', 'subversion');
+
+		$path = $this->converter->HexToAscii ($path);
+		if ($path == '.') $path = ''; /* treat a period specially */
+		$path = $this->_normalize_path ($path);
+
+		$rg = $this->subversion->revisionGraph ($projectid, $path, $rev);
+		print codepot_json_encode ($rg);
+	}
 }
