@@ -37,6 +37,9 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/d3.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/CodeFlower.js')?>"></script>
 
+<script type="text/javascript" src="<?php print base_url_make('/js/vis.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/vis.min.css')?>" />
+
 <?php
 	$file_count = count($file['content']);
 
@@ -196,6 +199,67 @@ function show_loc_by_file_graph (response)
 
 	$("#code_folder_loc_by_file_button").button("enable");
 	$("#code_folder_loc_by_file_spin" ).removeClass ("fa-cog fa-spin");
+}
+
+function show_revision_graph (response)
+{
+	var data = $.parseJSON(response);
+	if (data == null)
+	{
+		show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
+	}
+	else if (data.nodes.length <= 0)
+	{
+		show_alert ('No data to show', "<?php print $this->lang->line('Info')?>");
+	}
+	else
+	{
+		var options = {
+			autoResize: true,
+			height: '500px',
+			width: '100%',
+			layout: {
+				hierarchical: {
+					enabled: true,
+					levelSeparation: 150,
+					nodeSpacing: 200,
+					treeSpacing: 400,
+					direction: 'LR', //'LR' 'UD', 'DU', 'RL'
+					sortMethod: 'directed' // 'hubsize'
+				}
+			},
+			edges: {
+				smooth: {
+				    type: 'cubicBezier',
+				    forceDirection: 'horizontal', // 'vertical',
+				    roundness: 0.4
+				}
+			},
+			physics: true
+		};
+
+		var i, j;
+
+		j = data.nodes.length;
+		for (i = 0; i < j; i++)
+		{
+			data.nodes[i].shape = 'box';
+		}
+
+		j = data.edges.length;
+		for (i = 0; i < j; i++)
+		{
+			data.edges[i].length = 60;
+			data.edges[i].width = 1;
+			data.edges[i].arrows = 'to';
+			data.edges[i].font = { color: 'red' };
+		}
+
+		var network = new vis.Network(document.getElementById('code_folder_result_revision_graph'), data, options);
+	}
+
+	$("#code_folder_revision_graph_button").button("enable");
+	$("#code_folder_revision_graph_spin" ).removeClass ("fa-cog fa-spin");
 }
 
 function render_readme()
@@ -662,7 +726,12 @@ $(function () {
 				"<?php print site_url(); ?>", 
 				"/graph/enjson_loc_by_lang/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
 			context: document.body,
-			success: show_loc_by_lang_graph
+			success: show_loc_by_lang_graph,
+			error: function (xhr, ajaxOptions, thrownError) {
+				show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
+				$("#code_folder_loc_by_lang_button").button("enable");
+				$("#code_folder_loc_by_lang_spin" ).removeClass ("fa-cog fa-spin");
+			}
 		});
 
 		return false;
@@ -676,7 +745,31 @@ $(function () {
 				"<?php print site_url(); ?>", 
 				"/graph/enjson_loc_by_file/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
 			context: document.body,
-			success: show_loc_by_file_graph
+			success: show_loc_by_file_graph,
+			error: function (xhr, ajaxOptions, thrownError) {
+				show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
+				$("#code_folder_loc_by_file_button").button("enable");
+				$("#code_folder_loc_by_file_spin" ).removeClass ("fa-cog fa-spin");
+			}
+		});
+
+		return false;
+	});
+
+	$("#code_folder_revision_graph_button").button().click (function () {
+		$("#code_folder_revision_graph_button").button("disable");
+		$("#code_folder_revision_graph_spin").addClass ("fa-cog fa-spin");
+		var ajax_req = $.ajax ({
+			url: codepot_merge_path (
+				"<?php print site_url(); ?>", 
+				"/graph/enjson_revision_graph/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
+			context: document.body,
+			success: show_revision_graph,
+			error: function (xhr, ajaxOptions, thrownError) {
+				show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
+				$("#code_folder_revision_graph_button").button("enable");
+				$("#code_folder_revision_graph_spin" ).removeClass ("fa-cog fa-spin");
+			}
 		});
 
 		return false;
@@ -875,6 +968,11 @@ $this->load->view (
 		print $this->lang->line('File'); 
 		print '</a>';
 
+		print '<a id="code_folder_revision_graph_button" href="#">';
+		print '<i id="code_folder_revision_graph_spin" class="fa"></i>';
+		print $this->lang->line('CODE_REVISION_GRAPH'); 
+		print '</a>';
+
 		if ($show_search)
 		{
 			print '<a id="code_folder_search_button" href="#">';
@@ -921,6 +1019,7 @@ $this->load->view (
 <div id="code_folder_graph" class="graph">
 	<div id="code_folder_result_loc_by_lang_graph"></div>
 	<div id="code_folder_result_loc_by_file_graph"></div>
+	<div id="code_folder_result_revision_graph"></div>
 </div>
 
 <div id="code_folder_search">

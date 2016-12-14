@@ -351,9 +351,10 @@ foreach ($urls as $url)
 </div>
 
 <?php if (isset($login['id']) && $login['id'] != ''): ?>
+<!--
 <div id='project_home_new_form'>
 	<div style='line-height: 2em;'>
-		<?php
+		<?php/*
 		print form_dropdown (
 			'project_home_new_type', 
 			$project_type_array,
@@ -369,7 +370,7 @@ foreach ($urls as $url)
 			$tmpmemb,
 			set_value('project_home_new_owner', (in_array($login['id'], $project->members)? $login['id']: '')),
 			'id="project_home_new_owner"'
-		);
+		);*/
 		?>
 
 		<input type='text' id='project_home_new_summary' name='project_home_new_summary' size='50' placeholder='<?php print $this->lang->line('Summary'); ?>'/>
@@ -394,6 +395,7 @@ foreach ($urls as $url)
 		</div>
 	</div>
 </div>
+-->
 <?php endif; ?>
 
 <div id='project_home_alert'></div>
