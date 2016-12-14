@@ -686,8 +686,7 @@ class SubversionModel extends Model
 		}
 		else if ($info[0]['kind'] == SVN_NODE_DIR)
 		{
-			$fileinfo['fullpath'] = substr (
-				$info[0]['url'], strlen($info[0]['repos']));
+			$fileinfo['fullpath'] = substr ($info[0]['url'], strlen($info[0]['repos']));
 			$fileinfo['name'] =  $info[0]['path'];
 			$fileinfo['type'] = 'dir';
 			$fileinfo['size'] = 0;
@@ -1544,7 +1543,6 @@ class SubversionModel extends Model
 	function clocRevByFile ($projectid, $path, $rev)
 	{
 		// this function composes the data as CodeFlower requires
-
 		$stack = array();
 		$cloc = new stdClass();
 
@@ -1636,6 +1634,166 @@ class SubversionModel extends Model
 		}
 
 		return $cloc;
+	}
+
+	function _add_rg_node (&$nodeids, &$nodes, $name)
+	{
+		if (array_key_exists($name, $nodeids)) return $nodeids[$name];
+		$nid = count($nodeids);
+		array_push ($nodes, array ('id' => $nid, 'label' => $name));
+		$nodeids[$name] = $nid;
+		return $nid;
+	}
+
+	function _add_rg_edge (&$edges, $from, $to, $label)
+	{
+		array_push ($edges, array ('from' => $from, 'to' => $to, 'label' => $label));
+	}
+
+	function revisionGraph ($projectid, $path, $rev)
+	{
+		// this function is almost blind translation of svn-graph.pl
+
+		/* we should get the history from the entire project */
+		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
+
+		$startpath = $path;
+		$interesting = array ("{$startpath}:1" => 1);
+		$tracking = array ($startpath => 1);
+
+		$codeline_changes_forward = array ();
+		$codeline_changes_back = array ();
+		$copysource = array ();
+		$copydest = array ();
+
+		$nodeids = array ();
+		$nodes = array ();
+		$edges = array ();
+
+		$log = @svn_log ($orgurl, 1, $rev, 0, SVN_DISCOVER_CHANGED_PATHS);
+		if ($log === FALSE || count($log) <= 0) return FALSE;
+
+		foreach ($log as $l)
+		{
+			$deleted = array();
+			$currev = $l['rev'];
+
+			foreach ($l['paths'] as $p)
+			{
+				$curpath = $p['path'];
+				if ($p['action'] == 'D' && array_key_exists($curpath, $tracking))
+				{
+					/* when an item is moved, D and A are listed in order.
+					 * [20] => Array
+					   (
+						[rev] => 21
+						[author] => khinsanwai
+						[msg] => Mov tags/1.0.0 to tags/ATI_POC/1.0.0
+						[date] => 2013-09-18T06:39:41.553616Z
+						[paths] => Array
+							 (
+								[0] => Array
+								    (
+									   [action] => D
+									   [path] => /tags/1.0.0
+								    )
+								[1] => Array
+								    (
+									   [action] => A
+									   [path] => /tags/ATI_POC/1.0.0
+									   [copyfrom] => /tags/1.0.0
+									   [rev] => 20
+								    )
+							 )
+						)
+					 */
+//print ("{$curpath}:{$tracking[$curpath]} [label=\"{$curpath}:{$tracking[$curpath]}\\nDelete in {$currev}\", color=red];\n");
+
+					$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$curpath}:{$tracking[$curpath]}");
+					$id2 = $this->_add_rg_node ($nodeids, $nodes, "<<deleted>>");
+					$this->_add_rg_edge ($edges, $id1, $id2, "deleted");
+
+					// i can't simply remove the item from the tracking list.
+					//unset ($tracking[$curpath]);
+					//$deleted["{$curpath}:{$tracking[$curpath]}"] = $id1;
+					continue;
+				}
+
+				if (array_key_exists('copyfrom', $p))
+				{
+					$copyfrom_path = $p['copyfrom'];
+					if (array_key_exists($copyfrom_path, $tracking))
+					{
+						$copyfrom_rev = $tracking[$copyfrom_path];
+						if (array_key_exists ("{$copyfrom_path}:{$copyfrom_rev}", $interesting))
+						{
+							$interesting["{$curpath}:{$currev}"]  = 1;
+							$tracking[$curpath] = $currev;
+//print ("{$copyfrom_path}:{$copyfrom_rev} -> {$curpath}:{$currev} [label=\"copy at {$currev}\", color=green];\n");
+
+							$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$copyfrom_path}:{$copyfrom_rev}");
+							$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$curpath}:{$currev}");
+							$this->_add_rg_edge ($edges, $id1, $id2, "copied");
+
+							$copysource["{$copyfrom_path}:{$copyfrom_rev}"] = 1;
+							$copydest["{$curpath}:{$currev}"] = 1;
+						}
+					}
+				}
+
+				do
+				{
+					if (array_key_exists($curpath, $tracking) && $tracking[$curpath] != $currev)
+					{
+						$codeline_changes_forward["{$curpath}:{$tracking[$curpath]}"] = "{$curpath}:{$currev}";
+						$codeline_changes_back["{$curpath}:{$currev}"] = "{$curpath}:{$tracking[$curpath]}";
+						$interesting["{$curpath}:{$currev}"] = 1;
+						$tracking[$curpath] = $currev;
+					}
+
+					if ($curpath == '/') break;
+					$curpath = dirname ($curpath);
+				}
+				while (1);
+			}
+
+			/*foreach ($deleted as $d => $v)
+			{
+				$id2 = $this->_add_rg_node ($nodeids, $nodes, "<<deleted>>");
+				$this->_add_rg_edge ($edges, $id1, $id2, "deleted");
+			}*/
+		}
+
+		foreach ($codeline_changes_forward as $k => $v)
+		{
+			if (array_key_exists ($k, $codeline_changes_back) && !array_key_exists($k, $copysource)) continue;
+
+			if (!array_key_exists ($k, $codeline_changes_back) || array_key_exists($k, $copysource))
+			{
+				if (array_key_exists($k, $codeline_changes_forward))
+				{
+					$nextchange = $codeline_changes_forward[$k];
+					$changecount = 1;
+					while (1)
+					{
+						if (array_key_exists($nextchange, $copysource) || !array_key_exists($nextchange, $codeline_changes_forward))
+						{
+//print "{$k} -> {$nextchange} [label={$changecount} change(s)]\n";
+							$id1 = $this->_add_rg_node ($nodeids, $nodes, $k);
+							$id2 = $this->_add_rg_node ($nodeids, $nodes, $nextchange);
+							$this->_add_rg_edge ($edges, $id1, $id2, "{$changecount} change(s)");
+							break;
+						}
+						$changecount++;
+						if (!array_key_exists($nextchange, $codeline_changes_forward)) break;
+						$nextchange = $codeline_changes_forward[$nextchange];
+					}
+				}
+				
+			}
+		}
+
+		return array ('nodes' => $nodes, 'edges' => $edges);
 	}
 
 	function zipSubdir ($projectid, $path, $rev, $topdir)
