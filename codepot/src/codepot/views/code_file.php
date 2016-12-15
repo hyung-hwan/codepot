@@ -83,6 +83,8 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
+<script type="text/javascript" src="<?php print base_url_make('/js/vis.min.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/vis.min.css')?>" />
 
 <?php
 
@@ -231,6 +233,88 @@ function showRawCode()
 }
 <?php endif; ?>
 
+var revision_network = null;
+
+function show_revision_graph (response)
+{
+	var data = $.parseJSON(response);
+	if (data == null)
+	{
+		show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
+	}
+	else if (data.nodes.length <= 0)
+	{
+		show_alert ('No data to show', "<?php print $this->lang->line('Info')?>");
+	}
+	else
+	{
+		var options = {
+			autoResize: false,
+			height: '500px',
+			width: '100%',
+			clickToUse: true,
+			layout: {
+				hierarchical: {
+					enabled: true,
+					//levelSeparation: 150,
+					//nodeSpacing: 200,
+					//treeSpacing: 300,
+					direction: 'LR', //'LR' 'UD', 'DU', 'RL'
+					sortMethod: 'directed' // 'hubsize'
+				}
+			},
+			edges: {
+				smooth: {
+				    type: 'cubicBezier',
+				    forceDirection: 'horizontal', // 'vertical',
+				    roundness: 0.4
+				}
+			},
+			physics: {
+				enabled: true
+			}
+		};
+
+		var i, j;
+
+		j = data.nodes.length;
+		for (i = 0; i < j; i++)
+		{
+			data.nodes[i].shape = 'box';
+		}
+
+		j = data.edges.length;
+		for (i = 0; i < j; i++)
+		{
+			data.edges[i].length = 60;
+			data.edges[i].width = 1;
+			data.edges[i].arrows = 'to';
+			data.edges[i].font = { color: 'red' };
+		}
+
+		if (revision_network === null)
+		{
+			revision_network = new vis.Network(document.getElementById('code_file_result_revision_graph'), data, options);
+			$('#code_file_result_revision_graph').resizable({
+				create: function (event, ui)  {
+					revision_network.setSize (ui.size.width - 10, ui.size.height - 10);
+					revision_network.redraw();
+				},
+				resize: function (event, ui)  {
+					revision_network.setSize (ui.size.width - 10, ui.size.height - 10);
+					revision_network.redraw();
+				}
+			});
+		}
+		else
+		{
+			revision_network.setData (data);
+		}
+	}
+
+	$("#code_file_revision_graph_button").button("enable");
+	$("#code_file_revision_graph_spin" ).removeClass ("fa-cog fa-spin");
+}
 
 $(function () {
 
@@ -241,7 +325,7 @@ $(function () {
 
 <?php if (!$is_special_stream): ?>
 	$("#code_file_loc_info").hide();
-	btn = $("#code_file_mainarea_loc_button").button().click (function () {
+	btn = $("#code_file_loc_button").button().click (function () {
 		if ($("#code_file_loc_info").is(":visible"))
 		{
 			$("#code_file_loc_info").hide("blind",{},200);
@@ -255,8 +339,27 @@ $(function () {
 	});
 
 	
-	$("#code_file_mainarea_edit_button").button();
+	$("#code_file_edit_button").button();
 <?php endif; ?>
+
+	$("#code_file_revision_graph_button").button().click (function () {
+		$("#code_file_revision_graph_button").button("disable");
+		$("#code_file_revision_graph_spin").addClass ("fa-cog fa-spin");
+		var ajax_req = $.ajax ({
+			url: codepot_merge_path (
+				"<?php print site_url(); ?>", 
+				"/graph/enjson_revision_graph/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
+			context: document.body,
+			success: show_revision_graph,
+			error: function (xhr, ajaxOptions, thrownError) {
+				show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
+				$("#code_file_revision_graph_button").button("enable");
+				$("#code_file_revision_graph_spin" ).removeClass ("fa-cog fa-spin");
+			}
+		});
+
+		return false;
+	});
 
 <?php if ($file['created_rev'] != $file['head_rev']): ?>
 	$("#code_file_headrev_button").button().click (function() {
@@ -474,9 +577,9 @@ $this->load->view (
 			if ((isset($login['id']) && $login['id'] != '') )
 			{
 				print ' ';
-				print anchor ("code/edit/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Edit'), 'id="code_file_mainarea_edit_button"');
+				print anchor ("code/edit/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Edit'), 'id="code_file_edit_button"');
 			}
-			print anchor ("#", "LOC", "id=code_file_mainarea_loc_button");
+			print anchor ("#", "LOC", "id=code_file_loc_button");
 		}
 		?>
 	</div>
@@ -514,6 +617,12 @@ $this->load->view (
 		//print anchor ('', $download_anchor_text, 'id="code_file_download_button"');
 		print anchor ("code/fetch/{$project->id}/${hex_headpath}{$revreq}", $download_anchor_text, 'id="code_file_download_button"');
 		if (!$is_special_stream) print anchor ('#', $this->lang->line('Enstyle'), 'id="code_file_style_button"');
+
+		print '<a id="code_file_revision_graph_button" href="#">';
+		print '<i id="code_file_revision_graph_spin" class="fa"></i>';
+		print $this->lang->line('CODE_REVISION_GRAPH'); 
+		print '</a>';
+	
 		print '</div>';
 
 		print '<div class="metadata-commit-date">';
@@ -548,6 +657,10 @@ $this->load->view (
 		}
 		?>
 	</div>
+</div>
+
+<div id="code_folder_graph" class="graph">
+	<div id="code_file_result_revision_graph"></div>
 </div>
 
 <div style="display:none">

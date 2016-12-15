@@ -1123,10 +1123,8 @@ class SubversionModel extends Model
 			)
 		*/
 
-		$fileinfo['fullpath'] = substr (
-			$info1[0]['url'], strlen($info1[0]['repos']));
-		$fileinfo['against']['fullpath'] = substr (
-			$info2[0]['url'], strlen($info2[0]['repos']));
+		$fileinfo['fullpath'] = substr ($info1[0]['url'], strlen($info1[0]['repos']));
+		$fileinfo['against']['fullpath'] = substr ($info2[0]['url'], strlen($info2[0]['repos']));
 
 		fclose($errors);
 
