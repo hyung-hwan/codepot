@@ -296,10 +296,6 @@ function show_revision_graph (response)
 		{
 			revision_network = new vis.Network(document.getElementById('code_file_result_revision_graph'), data, options);
 			$('#code_file_result_revision_graph').resizable({
-				create: function (event, ui)  {
-					revision_network.setSize (ui.size.width - 10, ui.size.height - 10);
-					revision_network.redraw();
-				},
 				resize: function (event, ui)  {
 					revision_network.setSize (ui.size.width - 10, ui.size.height - 10);
 					revision_network.redraw();
