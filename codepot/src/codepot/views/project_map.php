@@ -37,6 +37,7 @@ function show_alert (outputMsg, titleMsg)
 
 var revision_network = null;
 var revision_network_data = null;
+var revision_rendering_progress = null;
 
 function resize_window()
 {
@@ -122,8 +123,9 @@ function show_project_user_relation_graph (response)
 
 		if (revision_network === null)
 		{
-			revision_network = new vis.Network(document.getElementById('project_user_relation_graph'), data, options);
+			revision_network_progress = $('#project_map_progress');
 			revision_network_data = data;
+			revision_network = new vis.Network(document.getElementById('project_user_relation_graph'), data, options);
 
 			revision_network.on ('doubleClick', function (props) {
 				if (props.nodes.length > 0)
@@ -143,6 +145,18 @@ function show_project_user_relation_graph (response)
 						}
 					}
 				}
+			});
+
+			revision_network.on ('startStabilizing', function (params) {
+				$("#project_map_refresh_button").button("disable");
+			});
+			revision_network.on ('stabilizationProgress', function (params) {
+  				var prog = params.iterations/params.total;
+                		revision_network_progress.text (Math.round(prog*100)+'%');
+			});
+			revision_network.on ('stabilizationIterationsDone', function (params) {
+                		revision_network_progress.text ('');
+				$("#project_map_refresh_button").button("enable");
 			});
 		}
 		else
@@ -228,6 +242,7 @@ $this->load->view (
 	<div class="title"><?php print $this->lang->line('Graph');?></div>
 
 	<div class="actions">
+		<span id="project_map_progress"></span>
 		<input type="text" id="project_map_filter" placeholder="<?php print $this->lang->line('Username'); ?>" />
 		<a id="project_map_refresh_button" href='#'><i id="project_map_refresh_spin" class="fa"></i><?php print $this->lang->line('Refresh')?></a>
 	</div>
