@@ -166,6 +166,7 @@ www_DATA = \
 	project_catalog.php \
 	project_delete.php \
 	project_edit.php \
+	project_map.php \
 	project_home.php \
 	projectbar.php \
 	site_catalog.php \
