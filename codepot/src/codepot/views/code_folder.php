@@ -201,6 +201,8 @@ function show_loc_by_file_graph (response)
 	$("#code_folder_loc_by_file_spin" ).removeClass ("fa-cog fa-spin");
 }
 
+var revision_network = null;
+
 function show_revision_graph (response)
 {
 	var data = $.parseJSON(response);
@@ -215,15 +217,16 @@ function show_revision_graph (response)
 	else
 	{
 		var options = {
-			autoResize: true,
+			autoResize: false,
 			height: '500px',
 			width: '100%',
+			clickToUse: true,
 			layout: {
 				hierarchical: {
 					enabled: true,
-					levelSeparation: 150,
-					nodeSpacing: 200,
-					treeSpacing: 400,
+					//levelSeparation: 150,
+					//nodeSpacing: 200,
+					//treeSpacing: 300,
 					direction: 'LR', //'LR' 'UD', 'DU', 'RL'
 					sortMethod: 'directed' // 'hubsize'
 				}
@@ -235,7 +238,9 @@ function show_revision_graph (response)
 				    roundness: 0.4
 				}
 			},
-			physics: true
+			physics: {
+				enabled: true
+			}
 		};
 
 		var i, j;
@@ -255,7 +260,24 @@ function show_revision_graph (response)
 			data.edges[i].font = { color: 'red' };
 		}
 
-		var network = new vis.Network(document.getElementById('code_folder_result_revision_graph'), data, options);
+		if (revision_network === null)
+		{
+			revision_network = new vis.Network(document.getElementById('code_folder_result_revision_graph'), data, options);
+			$('#code_folder_result_revision_graph').resizable({
+				create: function (event, ui)  {
+					revision_network.setSize (ui.size.width - 10, ui.size.height - 10);
+					revision_network.redraw();
+				},
+				resize: function (event, ui)  {
+					revision_network.setSize (ui.size.width - 10, ui.size.height - 10);
+					revision_network.redraw();
+				}
+			});
+		}
+		else
+		{
+			revision_network.setData (data);
+		}
 	}
 
 	$("#code_folder_revision_graph_button").button("enable");
