@@ -1634,7 +1634,7 @@ class SubversionModel extends Model
 		return $cloc;
 	}
 
-	function _add_rg_node (&$nodeids, &$nodes, $name)
+	private function _add_rg_node (&$nodeids, &$nodes, $name)
 	{
 		if (array_key_exists($name, $nodeids)) return $nodeids[$name];
 		$nid = count($nodeids);
@@ -1643,7 +1643,7 @@ class SubversionModel extends Model
 		return $nid;
 	}
 
-	function _add_rg_edge (&$edges, $from, $to, $label)
+	private function _add_rg_edge (&$edges, $from, $to, $label)
 	{
 		array_push ($edges, array ('from' => $from, 'to' => $to, 'label' => $label));
 	}

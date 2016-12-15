@@ -189,7 +189,8 @@ $this->load->view (
 		),
 
 		'ctxmenuitems' => array (
-			array ("project/create", '<i class="fa fa-plus"></i> ' . $this->lang->line('New'), 'project_catalog_new')
+			array ("project/create", '<i class="fa fa-plus"></i> ' . $this->lang->line('New'), 'project_catalog_new'),
+			array ("project/map", $this->lang->line('Graph'), 'project_catalog_map')
 		)
 	)
 ); 

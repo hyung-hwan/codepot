@@ -8,6 +8,7 @@ class Project extends Controller
 	var $VIEW_DELETE = 'project_delete';
 	var $VIEW_CATALOG = 'project_catalog';
 	var $VIEW_LOG = 'log';
+	var $VIEW_MAP = 'project_map';
 
 	function Project ()
 	{
@@ -117,6 +118,18 @@ class Project extends Controller
 		}
 	}
 
+	function map ()
+	{
+		$this->load->model ('ProjectModel', 'projects');
+	
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
+		$data['login'] = $login;
+
+		$this->load->view ($this->VIEW_MAP, $data);
+	}
+
 	function home ($projectid = "")
 	{
 		$this->load->model ('ProjectModel', 'projects');
@@ -126,7 +139,6 @@ class Project extends Controller
 		$login = $this->login->getUser ();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '') 
 			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
-
 		$data['login'] = $login;
 
 		$project = $this->projects->get ($projectid);

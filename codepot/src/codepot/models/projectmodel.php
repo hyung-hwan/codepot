@@ -438,13 +438,15 @@ class ProjectModel extends Model
 		$this->db->trans_start ();
 
 		$this->db->limit ($limit);
-		$this->db->order_by ('createdon', 'desc');	
+		$this->db->order_by ('createdon', 'desc');
 		$query = $this->db->get ('project');
 
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() === FALSE) return FALSE;
 		return $query->result ();
 	}
+
+
 
 	function _scandir ($dir)
 	{
@@ -588,6 +590,47 @@ class ProjectModel extends Model
 		if (empty($recipients)) return FALSE;
 		mail ($recipients, $subject, base64_encode($message), $additional_headers);
 		return TRUE;
+	}
+
+	private function _add_rg_node (&$nodeids, &$nodes, $name, $type)
+	{
+		if (array_key_exists($name, $nodeids)) return $nodeids[$name];
+		$nid = count($nodeids);
+		array_push ($nodes, array ('id' => $nid, 'label' => $name, '_type' => $type));
+		$nodeids[$name] = $nid;
+		return $nid;
+	}
+
+	private function _add_rg_edge (&$edges, $from, $to, $label)
+	{
+		array_push ($edges, array ('from' => $from, 'to' => $to, 'label' => $label));
+	}
+
+	function getAllProjectUserRelationGraph ()
+	{
+		$this->db->trans_start ();
+
+		$this->db->select ('project.id,project_membership.userid');
+		$this->db->join ('project_membership', 'project_membership.projectid = project.id');
+		$query = $this->db->get ('project');
+
+		$this->db->trans_complete ();
+
+		if ($this->db->trans_status() === FALSE) return FALSE;
+		$result = $query->result ();
+
+		$nodes = array();
+		$nodeids = array();
+		$edges = array();
+
+		foreach ($result as $r)
+		{
+			$id1 = $this->_add_rg_node ($nodeids, $nodes, $r->id, 'project');
+			$id2 = $this->_add_rg_node ($nodeids, $nodes, $r->userid, 'user');
+			$this->_add_rg_edge ($edges, $id1, $id2, "");
+		}
+
+		return array ('nodes' => $nodes, 'edges' => $edges);
 	}
 }
 
