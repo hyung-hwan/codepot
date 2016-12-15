@@ -197,4 +197,19 @@ class Graph extends Controller
 		$rg = $this->subversion->revisionGraph ($projectid, $path, $rev);
 		print codepot_json_encode ($rg);
 	}
+
+	function enjson_project_user_relation_graph ()
+	{
+		$this->load->model ('ProjectModel', 'projects');
+
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+		{
+			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
+			return;
+		}
+
+		$rel = $this->projects->getAllProjectUserRelationGraph();
+		print codepot_json_encode($rel);
+	}
 }
