@@ -158,6 +158,10 @@ function show_project_user_relation_graph (response)
                 		revision_network_progress.text ('');
 				$("#project_map_refresh_button").button("enable");
 			});
+			revision_network.on ('stabilized', function (params) {
+                		revision_network_progress.text ('');
+				$("#project_map_refresh_button").button("enable");
+			});
 		}
 		else
 		{
