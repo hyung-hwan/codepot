@@ -606,30 +606,60 @@ class ProjectModel extends Model
 		array_push ($edges, array ('from' => $from, 'to' => $to, 'label' => $label));
 	}
 
-	function getAllProjectUserRelationGraph ()
+	function getProjectUserRelationGraph ($filter)
 	{
-		$this->db->trans_start ();
+		$this->db->trans_begin ();
 
 		$this->db->select ('project.id,project_membership.userid');
+		if ($filter != '') $this->db->where ('userid', $filter);
 		$this->db->join ('project_membership', 'project_membership.projectid = project.id');
 		$query = $this->db->get ('project');
 
-		$this->db->trans_complete ();
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->db->trans_rollback ();
+			return FALSE;
+		}
 
-		if ($this->db->trans_status() === FALSE) return FALSE;
 		$result = $query->result ();
 
 		$nodes = array();
 		$nodeids = array();
 		$edges = array();
 
-		foreach ($result as $r)
+		if (count($result) > 0)
 		{
-			$id1 = $this->_add_rg_node ($nodeids, $nodes, $r->id, 'project');
-			$id2 = $this->_add_rg_node ($nodeids, $nodes, $r->userid, 'user');
-			$this->_add_rg_edge ($edges, $id1, $id2, "");
+			foreach ($result as $r)
+			{
+				$id1 = $this->_add_rg_node ($nodeids, $nodes, $r->id, 'project');
+				$id2 = $this->_add_rg_node ($nodeids, $nodes, $r->userid, 'user');
+				$this->_add_rg_edge ($edges, $id1, $id2, "");
+			}
+
+			if ($filter != '')
+			{
+				$this->db->select ('project.id,project_membership.userid');
+				$this->db->where_in ('id', array_keys($nodeids));
+				$this->db->where ('userid <>', $filter);
+				$this->db->join ('project_membership', 'project_membership.projectid = project.id');
+				$query = $this->db->get ('project');
+				if ($this->db->trans_status() === FALSE) 
+				{
+					$this->db->trans_rollback ();
+					return FALSE;
+				}
+
+				$result = $query->result ();
+				foreach ($result as $r)
+				{
+					$id1 = $this->_add_rg_node ($nodeids, $nodes, $r->id, 'project');
+					$id2 = $this->_add_rg_node ($nodeids, $nodes, $r->userid, 'user');
+					$this->_add_rg_edge ($edges, $id1, $id2, "");
+				}
+			}
 		}
 
+		$this->db->trans_commit ();
 		return array ('nodes' => $nodes, 'edges' => $edges);
 	}
 }
