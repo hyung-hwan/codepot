@@ -41,7 +41,7 @@ var revision_network_data = null;
 function resize_window()
 {
 	var footer = $("#codepot_footer");
-	var mainarea = $("#project_map_mainarea");
+	var titleband = $("#project_map_title_band");
 	var code = $("#project_user_relation_graph");
 
 	if (revision_network !== null)
@@ -51,12 +51,14 @@ function resize_window()
 		//revision_network.redraw();
 	}
 
-	var ioff = mainarea.offset();
+	var ioff = titleband.offset();
 	var foff = footer.offset();
+
+	ioff.top += titleband.outerHeight() + 5;
 
 	if (revision_network !== null)
 	{
-		revision_network.setSize (footer.innerWidth() - 10, foff.top - ioff.top - 10);
+		revision_network.setSize (footer.innerWidth() - 10, foff.top - ioff.top- 10);
 		revision_network.redraw();
 		revision_network.fit();
 	}
@@ -82,19 +84,7 @@ function show_project_user_relation_graph (response)
 			clickToUse: false,
 			layout: {
 				hierarchical: {
-					enabled: true,
-					//levelSeparation: 150,
-					//nodeSpacing: 200,
-					//treeSpacing: 300,
-					//direction: 'LR', //'LR' 'UD', 'DU', 'RL'
-					sortMethod: 'hubsize' // 'directed' 
-				}
-			},
-			edges: {
-				smooth: {
-				    type: 'cubicBezier',
-				    forceDirection: 'horizontal', // 'vertical',
-				    roundness: 0.4
+					enabled: false,
 				}
 			},
 			physics: {
@@ -102,30 +92,32 @@ function show_project_user_relation_graph (response)
 			}
 		};
 
-		var i, j;
-
-		j = data.nodes.length;
-		for (i = 0; i < j; i++)
+		for (var i = 0, j = data.nodes.length; i < j; i++)
 		{
 			if (data.nodes[i]._type == 'project')
 			{
 				data.nodes[i].shape = 'box';
-				//data.nodes[i].label = '<a href="xxx">' + codepot_htmlspecialchars(data.nodes[i].label) + '</a>';
 			}
 			else
 			{
-				data.nodes[i].shape = 'ellipse';
-				data.nodes[i].color =  { border: '#FF7777', background: '#DACACA' };
+				//data.nodes[i].shape = 'ellipse';
+				//data.nodes[i].color =  { border: '#777799', background: '#DACACA' };
+				data.nodes[i].shape = 'image';
+				data.nodes[i].image = codepot_merge_path('<?php print site_url(); ?>', '/user/icon/' + codepot_string_to_hex(data.nodes[i].label));
 			}
 		}
 
-		j = data.edges.length;
-		for (i = 0; i < j; i++)
+		for (var i = 0, j = data.edges.length; i < j; i++)
 		{
-			data.edges[i].length = 60;
+			//data.edges[i].length = 500;
 			data.edges[i].width = 1;
-			data.edges[i].arrows = 'to';
 			data.edges[i].font = { color: 'red' };
+			data.edges[i].color = { 
+				color:'#5577CC',
+				highlight:'pink',
+				hover: '#5577CC',
+				opacity:1.0
+			};
 		}
 
 		if (revision_network === null)
@@ -133,11 +125,10 @@ function show_project_user_relation_graph (response)
 			revision_network = new vis.Network(document.getElementById('project_user_relation_graph'), data, options);
 			revision_network_data = data;
 
-			revision_network.on ('click', function (props) {
+			revision_network.on ('doubleClick', function (props) {
 				if (props.nodes.length > 0)
 				{
-					var i, j;
-					for (i = 0, j = revision_network_data.nodes.length; i < j; i++)
+					for (var i = 0, j = revision_network_data.nodes.length; i < j; i++)
 					{
 						if (revision_network_data.nodes[i].id == props.nodes[0])
 						{
@@ -162,23 +153,38 @@ function show_project_user_relation_graph (response)
 
 	$(window).resize(resize_window);
 	resize_window ();
+
+	$("#project_map_refresh_button").button("enable");
+	$("#project_map_refresh_spin").removeClass ("fa-cog fa-spin");
 }
 
-
-
 $(function () { 
-	var ajax_req = $.ajax ({
-		url: codepot_merge_path (
-			"<?php print site_url(); ?>", 
-			"/graph/enjson_project_user_relation_graph"),
-		context: document.body,
-		success: show_project_user_relation_graph,
-		error: function (xhr, ajaxOptions, thrownError) {
-			show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
-			//$("#code_folder_revision_graph_button").button("enable");
-			//$("#code_folder_revision_graph_spin" ).removeClass ("fa-cog fa-spin");
-		}
+	$("#project_map_refresh_button").button().click (function () {
+		$("#project_map_refresh_button").button("disable");
+		$("#project_map_refresh_spin").addClass ("fa-cog fa-spin");
+
+		var filter = $("#project_map_filter").val();
+		filter = filter.trim();
+
+		var graph_url = graph_url = codepot_merge_path ("<?php print site_url(); ?>", "/graph/enjson_project_user_relation_graph");
+		if(filter.length > 0) graph_url += "/" + codepot_string_to_hex(filter);
+
+		var ajax_req = $.ajax ({
+			url: graph_url,
+			context: document.body,
+			success: show_project_user_relation_graph,
+			error: function (xhr, ajaxOptions, thrownError) {
+				show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
+				$("#project_map_refresh_button").button("enable");
+				$("#project_map_refresh_spin").removeClass ("fa-cog fa-spin");
+			}
+		});
+
+		return false;
 	});
+
+	$("#project_map_refresh_button").trigger ('click');
+
 });
 </script>
 
@@ -218,6 +224,17 @@ $this->load->view (
 
 <div class="mainarea" id="project_map_mainarea">
 
+<div class="codepot-title-band" id="project_map_title_band">
+	<div class="title"><?php print $this->lang->line('Graph');?></div>
+
+	<div class="actions">
+		<input type="text" id="project_map_filter" placeholder="<?php print $this->lang->line('Username'); ?>" />
+		<a id="project_map_refresh_button" href='#'><i id="project_map_refresh_spin" class="fa"></i><?php print $this->lang->line('Refresh')?></a>
+	</div>
+
+	<div style='clear: both'></div>
+</div>
+
 <div class="result" id="project_map_result">
 
 <div id="project_user_relation_graph">
@@ -225,7 +242,7 @@ $this->load->view (
 
 </div> <!-- project_map_result -->
 
-<div id='code_folder_alert'></div>
+<div id='project_map_alert'></div>
 
 </div> <!-- project_map_mainarea -->
 

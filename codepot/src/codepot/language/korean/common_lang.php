@@ -88,6 +88,7 @@ $lang['Projects'] = '프로젝트';
 $lang['Public'] = '공개';
 $lang['Purge'] = '정화하기';
 $lang['Recently resolved issues'] = '최근해결이슈';
+$lang['Refresh'] = '재갱신';
 $lang['Rename'] = '이름변경';
 $lang['Return'] = '복귀';
 $lang['Repository'] = '저장소';

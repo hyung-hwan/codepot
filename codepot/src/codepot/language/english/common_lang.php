@@ -88,6 +88,7 @@ $lang['Projects'] = 'Projects';
 $lang['Public'] = 'Public';
 $lang['Purge'] = 'Purge';
 $lang['Recently resolved issues'] = 'Recently resolved issues';
+$lang['Refresh'] = 'Refresh';
 $lang['Rename'] = 'Rename';
 $lang['Repository'] = 'Repository';
 $lang['Return'] = 'Return';
