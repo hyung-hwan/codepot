@@ -168,7 +168,7 @@ var GraphApp = (function()
 
 				this.graph.on ('startStabilizing', function () 
 				{
-					self.refresh_button.button ("enable");
+					self.refresh_button.button ("disable");
 				});
 				this.graph.on ('stabilizationProgress', function (params) 
 				{
@@ -236,7 +236,6 @@ var GraphApp = (function()
 				return false;
 			});
 		}
-
 	};
 
 	App.prototype.triggerRefresh = function ()
@@ -267,7 +266,8 @@ var GraphApp = (function()
 
 /* ---------------------------------------------------------------------- */
 
-$(function () { 
+$(function () 
+{
 	var graph_app = new GraphApp (
 		'project_map_graph', 'project_map_refresh_button', 
 		'project_map_refresh_spin', 'project_map_progress', 
