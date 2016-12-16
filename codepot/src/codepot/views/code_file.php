@@ -244,7 +244,7 @@ function show_revision_graph (response)
 	}
 	else if (data.nodes.length <= 0)
 	{
-		show_alert ('No data to show', "<?php print $this->lang->line('Info')?>");
+		show_alert ('No data to show', "<?php print $this->lang->line('Error')?>");
 	}
 	else
 	{

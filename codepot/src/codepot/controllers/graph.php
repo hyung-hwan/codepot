@@ -198,7 +198,7 @@ class Graph extends Controller
 		print codepot_json_encode ($rg);
 	}
 
-	function enjson_project_user_relation_graph ($filter = '')
+	function enjson_project_members ($filter = '')
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
@@ -210,7 +210,7 @@ class Graph extends Controller
 		}
 
 		$filter = $this->converter->HexToAscii ($filter);
-		$rel = $this->projects->getProjectUserRelationGraph($filter);
+		$rel = $this->projects->getProjectMembers($filter);
 		print codepot_json_encode($rel);
 	}
 }
