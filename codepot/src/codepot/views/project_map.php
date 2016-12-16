@@ -17,192 +17,266 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/vis.min.css')?>" />
 
 <script type="text/javascript">
-
-function show_alert (outputMsg, titleMsg) 
+var GraphApp = (function() 
 {
-	$('#project_map_alert').html(outputMsg).dialog({
-		title: titleMsg,
-		resizable: true,
-		modal: true,
-		width: 'auto',
-		height: 'auto',
-		buttons: {
-			"<?php print $this->lang->line('OK')?>": function () {
-				$(this).dialog("close");
-			}
-		}
-	});
-}
-
-
-var revision_network = null;
-var revision_network_data = null;
-var revision_rendering_progress = null;
-
-function resize_window()
-{
-	var footer = $("#codepot_footer");
-	var titleband = $("#project_map_title_band");
-	var code = $("#project_user_relation_graph");
-
-	if (revision_network !== null)
+	// -------------------------------------------------------------------
+	// PRIVATE DATA
+	// -------------------------------------------------------------------
+	var graph_options = 
 	{
-		// make it low so that the footer gets places at the right place.
-		revision_network.setSize (300, 300);
-		//revision_network.redraw();
-	}
-
-	var ioff = titleband.offset();
-	var foff = footer.offset();
-
-	ioff.top += titleband.outerHeight() + 5;
-
-	if (revision_network !== null)
-	{
-		revision_network.setSize (footer.innerWidth() - 10, foff.top - ioff.top- 10);
-		revision_network.redraw();
-		revision_network.fit();
-	}
-}
-
-function show_project_user_relation_graph (response)
-{
-	var data = $.parseJSON(response);
-	if (data == null)
-	{
-		show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
-	}
-	else if (data.nodes.length <= 0)
-	{
-		show_alert ('No data to show', "<?php print $this->lang->line('Info')?>");
-	}
-	else
-	{
-		var options = {
-			autoResize: false,
-			height: '300px',
-			width: '300px',
-			clickToUse: false,
-			layout: {
-				hierarchical: {
-					enabled: false,
-				}
-			},
-			physics: {
-				enabled: true
-			}
-		};
-
-		for (var i = 0, j = data.nodes.length; i < j; i++)
+		autoResize: false,
+		height: '300px',
+		width: '300px',
+		clickToUse: false,
+		layout: 
 		{
-			if (data.nodes[i]._type == 'project')
+			hierarchical: 
 			{
-				data.nodes[i].shape = 'box';
+				enabled: false,
 			}
-			else
-			{
-				//data.nodes[i].shape = 'ellipse';
-				//data.nodes[i].color =  { border: '#777799', background: '#DACACA' };
-				data.nodes[i].shape = 'image';
-				data.nodes[i].image = codepot_merge_path('<?php print site_url(); ?>', '/user/icon/' + codepot_string_to_hex(data.nodes[i].label));
-			}
+		},
+		physics:
+		{
+			enabled: true
+		}
+	};
+	var edge_font = { color: 'red' };
+	var edge_color = { color:'#5577CC', highlight:'pink', hover: '#5577CC', opacity:1.0 };
+
+	// -------------------------------------------------------------------
+	// CONSTRUCTOR
+	// -------------------------------------------------------------------
+	function App (graph_container_id, refresh_button_id, refresh_spin_id, refresh_progress_id, filter_id, header_id, footer_id, alert_container_id)
+	{
+		if (this.constructor != App)
+		{
+			return new App(refresh_button_id, refresh_spin_id);
 		}
 
-		for (var i = 0, j = data.edges.length; i < j; i++)
-		{
-			//data.edges[i].length = 500;
-			data.edges[i].width = 1;
-			data.edges[i].font = { color: 'red' };
-			data.edges[i].color = { 
-				color:'#5577CC',
-				highlight:'pink',
-				hover: '#5577CC',
-				opacity:1.0
-			};
-		}
+		this.graph_container = $('#' + graph_container_id);
+		this.refresh_button_inited = false;
+		this.refresh_button = $('#' + refresh_button_id);
+		this.refresh_spin = $('#' + refresh_spin_id);
+		this.refresh_progress = $('#' + refresh_progress_id);
+		this.filter = $('#' + filter_id);
+		this.header = $('#' + header_id);
+		this.footer = $('#' + footer_id);
+		this.alert_container = $('#' + alert_container_id);
+		this.url_base = codepot_merge_path ("<?php print site_url(); ?>", "/graph/enjson_project_members");
+		this.ajax_req = null;
 
-		if (revision_network === null)
-		{
-			revision_network_progress = $('#project_map_progress');
-			revision_network_data = data;
-			revision_network = new vis.Network(document.getElementById('project_user_relation_graph'), data, options);
+		this.graph = null;
+		this.data = null;
 
-			revision_network.on ('doubleClick', function (props) {
-				if (props.nodes.length > 0)
+		return this;
+	}
+
+	// -------------------------------------------------------------------
+	// PRIVATE FUNCTIONS
+	// -------------------------------------------------------------------
+	function show_alert (outputMsg, titleMsg) 
+	{
+		this.alert_container.html(outputMsg).dialog({
+			title: titleMsg,
+			resizable: true,
+			modal: true,
+			width: 'auto',
+			height: 'auto',
+			buttons: {
+				"<?php print $this->lang->line('OK')?>": function () 
 				{
-					for (var i = 0, j = revision_network_data.nodes.length; i < j; i++)
-					{
-						if (revision_network_data.nodes[i].id == props.nodes[0])
-						{
-							if (revision_network_data.nodes[i]._type == 'project')
-							{
-								$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '/project/home/' + revision_network_data.nodes[i].label));
-							}
-							else
-							{
-								$(location).attr ('href', codepot_merge_path('<?php print site_url(); ?>', '/user/home/' + codepot_string_to_hex(revision_network_data.nodes[i].label)));
-							}
-						}
-					}
+					$(this).dialog("close");
 				}
-			});
+			}
+		});
+	}
 
-			revision_network.on ('startStabilizing', function (params) {
-				$("#project_map_refresh_button").button("disable");
-			});
-			revision_network.on ('stabilizationProgress', function (params) {
-  				var prog = params.iterations/params.total;
-                		revision_network_progress.text (Math.round(prog*100)+'%');
-			});
-			revision_network.on ('stabilizationIterationsDone', function (params) {
-                		revision_network_progress.text ('');
-				$("#project_map_refresh_button").button("enable");
-			});
-			revision_network.on ('stabilized', function (params) {
-                		revision_network_progress.text ('');
-				$("#project_map_refresh_button").button("enable");
-			});
+	function convert_data (data)
+	{
+		var ids = {};
+		var gd = { nodes: [], edges: [] };
+		var seq = 0;
+
+		for (var prid in data)
+		{
+			gd.nodes.push ({ __type: "p", id: seq, label: prid, shape: "box" });
+			ids[prid] = seq;
+			seq++;
+
+			for (var i = 0; i < data[prid].length; i++)
+			{
+				var uid = data[prid][i];
+
+				if (!(uid in ids))
+				{
+					var image_url = codepot_merge_path('<?php print site_url(); ?>', "/user/icon/" + codepot_string_to_hex(uid));
+					gd.nodes.push ({ __type: "u", id: seq, label: uid, shape: "image", image: image_url });
+					ids[uid] = seq;
+					seq++;
+				}
+
+				gd.edges.push ({ from: ids[prid], to: ids[uid], width: 1, font: edge_font, color: edge_color });
+			}
+		}
+
+		return gd;
+	}
+
+	function handle_double_click (nodeid)
+	{
+		for (var i = 0, j = this.data.nodes.length; i < j; i++)
+		{
+			if (this.data.nodes[i].id == nodeid)
+			{
+				if (this.data.nodes[i].__type == "p")
+				{
+					$(location).attr ("href", codepot_merge_path('<?php print site_url(); ?>', "/project/home/" + this.data.nodes[i].label));
+				}
+				else
+				{
+					$(location).attr ("href", codepot_merge_path('<?php print site_url(); ?>', "/user/home/" + codepot_string_to_hex(this.data.nodes[i].label)));
+				}
+				break;
+			}
+		}
+	}
+
+	function show_graph (response)
+	{
+		var data = $.parseJSON(response);
+
+		if (data == null)
+		{
+			show_alert.call (this, 'Invalid data received', "<?php print $this->lang->line('Error')?>");
+		}
+		else if (data.length <= 0)
+		{
+			show_alert.call (this, 'No data to show', "<?php print $this->lang->line('Error')?>");
 		}
 		else
 		{
-			revision_network.setData (data);
+			this.data = convert_data.call (this, data);
+			if (this.graph === null)
+			{
+				var self = this;
+
+				this.graph = new vis.Network(this.graph_container[0], this.data, graph_options);
+				this.graph.on ('doubleClick', function (props) 
+				{
+					if (props.nodes.length > 0) handle_double_click.call (self, props.nodes[0]);
+				});
+
+				this.graph.on ('startStabilizing', function () 
+				{
+					self.refresh_button.button ("enable");
+				});
+				this.graph.on ('stabilizationProgress', function (params) 
+				{
+					var prog = params.iterations / params.total;
+					self.refresh_progress.text (Math.round(prog*100)+'%');
+				});
+				this.graph.on ('stabilizationIterationsDone', function () 
+				{
+					self.refresh_progress.text ("");
+					self.refresh_button.button ("enable");
+				});
+				this.graph.on ('stabilized', function (params) 
+				{
+					self.refresh_progress.text ("");
+					self.refresh_button.button ("enable");
+				});
+			}
+			else
+			{
+				this.graph.setData (this.data);
+			}
+
+			this.resize ();
 		}
+
+
+		this.refresh_button.button("enable");
+		this.refresh_spin.removeClass ("fa-cog fa-spin");
+		this.ajax_req = null;
 	}
 
-	$(window).resize(resize_window);
-	resize_window ();
+	function handle_error (xhr, textStatus, thrownError) 
+	{
+		show_alert.call (this, xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
+		this.refresh_button.button("enable");
+		this.refresh_spin.removeClass ("fa-cog fa-spin");
+		this.ajax_req = null;
+	}
 
-	$("#project_map_refresh_button").button("enable");
-	$("#project_map_refresh_spin").removeClass ("fa-cog fa-spin");
-}
+	// -------------------------------------------------------------------
+	// PUBLIC FUNCTIONS
+	// -------------------------------------------------------------------
+	App.prototype.refresh = function (filter)
+	{
+		var url = this.url_base;
+		if(filter.length > 0) url += "/" + codepot_string_to_hex(filter);
+
+		this.refresh_button.button("disable");
+		this.refresh_spin.addClass ("fa-cog fa-spin");
+
+		if (this.ajax_req !== null) this.ajax_req.abort();
+		this.ajax_req = $.ajax ({url: url, context: this, success: show_graph, error: handle_error });
+	};
+
+	App.prototype.initRefresh = function ()
+	{
+		if (!this.refresh_button_inited)
+		{
+			this.refresh_button_inited = true;
+
+			var self = this;
+			this.refresh_button.button().click (function () 
+			{
+				self.refresh (self.filter.val().trim());
+				return false;
+			});
+		}
+
+	};
+
+	App.prototype.triggerRefresh = function ()
+	{
+		this.refresh_button.trigger ('click');
+	};
+
+	App.prototype.resize = function ()
+	{
+		if (this.graph !== null)
+		{
+			// make it low so that the footer gets places at the right place.
+			this.graph.setSize (300, 300);
+
+			var hoff = this.header.offset();
+			var foff = this.footer.offset();
+
+			hoff.top += this.header.outerHeight() + 5;
+
+			this.graph.setSize (this.footer.innerWidth() - 10, foff.top - hoff.top - 10);
+			this.graph.redraw();
+			this.graph.fit();
+		}
+	};
+
+	return App;
+})();
+
+/* ---------------------------------------------------------------------- */
 
 $(function () { 
-	$("#project_map_refresh_button").button().click (function () {
-		$("#project_map_refresh_button").button("disable");
-		$("#project_map_refresh_spin").addClass ("fa-cog fa-spin");
+	var graph_app = new GraphApp (
+		'project_map_graph', 'project_map_refresh_button', 
+		'project_map_refresh_spin', 'project_map_progress', 
+		'project_map_filter', 'project_map_title_band',
+		'codepot_footer', 'project_map_alert');
 
-		var filter = $("#project_map_filter").val();
-		filter = filter.trim();
-
-		var graph_url = graph_url = codepot_merge_path ("<?php print site_url(); ?>", "/graph/enjson_project_user_relation_graph");
-		if(filter.length > 0) graph_url += "/" + codepot_string_to_hex(filter);
-
-		var ajax_req = $.ajax ({
-			url: graph_url,
-			context: document.body,
-			success: show_project_user_relation_graph,
-			error: function (xhr, ajaxOptions, thrownError) {
-				show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
-				$("#project_map_refresh_button").button("enable");
-				$("#project_map_refresh_spin").removeClass ("fa-cog fa-spin");
-			}
-		});
-
-		return false;
-	});
-
-	$("#project_map_refresh_button").trigger ('click');
-
+	$(window).resize(function () { graph_app.resize(); });
+	graph_app.initRefresh ();
+	graph_app.triggerRefresh ();
 });
 </script>
 
@@ -256,7 +330,7 @@ $this->load->view (
 
 <div class="result" id="project_map_result">
 
-<div id="project_user_relation_graph">
+<div id="project_map_graph">
 </div>
 
 </div> <!-- project_map_result -->
