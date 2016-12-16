@@ -592,26 +592,15 @@ class ProjectModel extends Model
 		return TRUE;
 	}
 
-	private function _add_rg_node (&$nodeids, &$nodes, $name, $type)
-	{
-		if (array_key_exists($name, $nodeids)) return $nodeids[$name];
-		$nid = count($nodeids);
-		array_push ($nodes, array ('id' => $nid, 'label' => $name, '_type' => $type));
-		$nodeids[$name] = $nid;
-		return $nid;
-	}
-
-	private function _add_rg_edge (&$edges, $from, $to, $label)
-	{
-		array_push ($edges, array ('from' => $from, 'to' => $to, 'label' => $label));
-	}
-
-	function getProjectUserRelationGraph ($filter)
+	function getProjectMembers ($userid_filter)
 	{
 		$this->db->trans_begin ();
 
 		$this->db->select ('project.id,project_membership.userid');
-		if ($filter != '') $this->db->where ('userid', $filter);
+		if (is_array($userid_filter) && count($userid_filter) > 0)
+			$this->db->where_in ('userid', $userid_filter);
+		else if ($userid_filter != '') 
+			$this->db->where ('userid', $userid_filter);
 		$this->db->join ('project_membership', 'project_membership.projectid = project.id');
 		$query = $this->db->get ('project');
 
@@ -622,25 +611,26 @@ class ProjectModel extends Model
 		}
 
 		$result = $query->result ();
-
-		$nodes = array();
-		$nodeids = array();
-		$edges = array();
+		$data = array();
 
 		if (count($result) > 0)
 		{
 			foreach ($result as $r)
 			{
-				$id1 = $this->_add_rg_node ($nodeids, $nodes, $r->id, 'project');
-				$id2 = $this->_add_rg_node ($nodeids, $nodes, $r->userid, 'user');
-				$this->_add_rg_edge ($edges, $id1, $id2, "");
+				if (array_key_exists ($r->id, $data))
+					array_push ($data[$r->id], $r->userid);
+				else
+					$data[$r->id] = array ($r->userid);
 			}
 
-			if ($filter != '')
+			if ((is_array($userid_filter) && count($userid_filter) > 0) || $userid_filter != '')
 			{
 				$this->db->select ('project.id,project_membership.userid');
-				$this->db->where_in ('id', array_keys($nodeids));
-				$this->db->where ('userid <>', $filter);
+				$this->db->where_in ('id', array_keys($data));
+				if (is_array($userid_filter) && count($userid_filter) > 0)
+					$this->db->where_not_in ('userid <>', $userid_filter);
+				else
+					$this->db->where ('userid <>', $userid_filter);
 				$this->db->join ('project_membership', 'project_membership.projectid = project.id');
 				$query = $this->db->get ('project');
 				if ($this->db->trans_status() === FALSE) 
@@ -652,15 +642,16 @@ class ProjectModel extends Model
 				$result = $query->result ();
 				foreach ($result as $r)
 				{
-					$id1 = $this->_add_rg_node ($nodeids, $nodes, $r->id, 'project');
-					$id2 = $this->_add_rg_node ($nodeids, $nodes, $r->userid, 'user');
-					$this->_add_rg_edge ($edges, $id1, $id2, "");
+					if (array_key_exists ($r->id, $data))
+						array_push ($data[$r->id], $r->userid);
+					else
+						$data[$r->id] = array ($r->userid);
 				}
 			}
 		}
 
 		$this->db->trans_commit ();
-		return array ('nodes' => $nodes, 'edges' => $edges);
+		return $data;
 	}
 }
 
