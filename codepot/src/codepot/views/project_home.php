@@ -219,8 +219,7 @@ foreach ($urls as $url)
 		$xdot = $this->converter->AsciiToHex ('.');
 		foreach ($log_entries as $log)
 		{
-
-			$createdon_mmdd = codepot_dbdatetodispdate ($log['createdon'], 'Y-m-d');
+			$createdon = codepot_dbdatetodispdate ($log['createdon'], 'Y-m-d H:i');
 
 			if ($log['type'] == 'code')
 			{
@@ -228,7 +227,7 @@ foreach ($urls as $url)
 				print '<tr class="odd">';
 				print '<td class="date">';
 				
-				print $createdon_mmdd;
+				print $createdon;
 				print '</td>';
 				print '<td class="object">';
 				print anchor (	
@@ -271,7 +270,7 @@ foreach ($urls as $url)
 			{
 				print '<tr class="odd">';
 				print '<td class="date">';
-				print $createdon_mmdd;
+				print $createdon;
 				print '</td>';
 
 				print '<td class="object">';
