@@ -1002,7 +1002,7 @@ $this->load->view (
 
 		print '<div class="metadata-commit-date">';
 		printf ('[%s] ', $file['created_rev']);
-		print strftime ('%Y-%m-%d %H:%M:%S %z', strtotime($file['last_changed_date']));
+		print codepot_unixtimetodispdate(strtotime($file['last_changed_date']));
 		print '</div>';
 		?>
 		<div style='clear: both;'></div>
@@ -1207,7 +1207,7 @@ $this->load->view (
 				print htmlspecialchars($f['last_author']);
 				print '</td>';
 				print '<td><tt>';
-				print strftime('%Y-%m-%d', $f['time_t']);
+				print codepot_unixtimetodispdate ($f['time_t'], 'Y-m-d');
 				print '</tt></td>';
 				print '<td></td>';
 				print '<td></td>';
@@ -1243,7 +1243,7 @@ $this->load->view (
 				print htmlspecialchars($f['last_author']);
 				print '</td>';
 				print '<td><tt>';
-				print strftime('%Y-%m-%d', $f['time_t']);
+				print codepot_unixtimetodispdate ($f['time_t'], 'Y-m-d');
 				print '</tt></td>';
 
 				print '<td>';
