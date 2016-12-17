@@ -220,7 +220,7 @@ foreach ($urls as $url)
 		foreach ($log_entries as $log)
 		{
 
-			$createdon_mmdd = codepot_dbdatetodispdate ($log['createdon'], 'm-d');
+			$createdon_mmdd = codepot_dbdatetodispdate ($log['createdon'], 'Y-m-d');
 
 			if ($log['type'] == 'code')
 			{
