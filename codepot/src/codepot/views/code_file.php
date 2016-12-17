@@ -623,7 +623,7 @@ $this->load->view (
 
 		print '<div class="metadata-commit-date">';
 		printf ('[%s] ', $file['created_rev']);
-		print strftime ('%Y-%m-%d %H:%M:%S %z', $file['time_t']);
+		print codepot_unixtimetodispdate ($file['time_t']);
 		print '</div>';
 		?>
 		<div style='clear: both'></div>

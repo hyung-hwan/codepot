@@ -58,19 +58,38 @@ if ( ! function_exists('codepot_unixtimetodbdate'))
 	}
 }
 
+if ( ! function_exists('codepot_unixtimetodispdate'))
+{
+	function codepot_unixtimetodispdate($unixtime, $format = NULL, $timezone = NULL)
+	{
+		if ($timezone != NULL && function_exists('date_create'))
+		{
+			$d = @date_create ('@' . $unixtime);
+			if ($d !== FALSE)
+			{
+				$tz = @timezone_open ($timezone);
+				if ($tz !== FALSE)
+				{
+					@date_timezone_set ($d, $tz);
+					$ts = @date_format ($d, ($format == NULL? 'Y-m-d H:i:s O': $format));
+					if ($ts !== FALSE) return $ts;
+				}
+			}
+		}
+
+		// display time is in the local time zone or in the given time zone.
+		// if DateTime is not available, $timezone is ignored.
+		return date(($format == NULL? 'Y-m-d H:i:s O': $format), $unixtime);
+	}
+}
+
 if ( ! function_exists('codepot_dbdatetodispdate'))
 {
-	function codepot_dbdatetodispdate($dbdate, $format = NULL)
+	function codepot_dbdatetodispdate($dbdate, $format = NULL, $timezone = NULL)
 	{
-		// display time is in the local time zone.
-		if (CODEPOT_DATABASE_STORE_GMT)
-		{
-			return strftime(($format == NULL? '%Y-%m-%d %H:%M:%S %z': $format), strtotime($dbdate . ' +0000'));
-		}
-		else
-		{
-			return strftime(($format == NULL? '%Y-%m-%d %H:%M:%S %z': $format), strtotime($dbdate));
-		}
+		if (CODEPOT_DATABASE_STORE_GMT) $dbdate .= ' +0000';
+		$unixtime = strtotime($dbdate);
+		return codepot_unixtimetodispdate ($unixtime, $format, $timezone);
 	}
 }
 
@@ -127,7 +146,7 @@ if ( !function_exists ('codepot_json_encode'))
 					$json .= sprintf("\\u%04x", ($c1 - 192) * 64 + $c2 - 128);
 					continue;
 				}
-			   
+
 				# Triple
 				$c3 = ord($string[++$i]);
 				if( ($c1 & 16) === 0 )
@@ -183,7 +202,7 @@ if ( !function_exists ('codepot_delete_files'))
 			}
 		}
 		@closedir($current_dir);
-	
+
 		if ($del_dir == TRUE /*&& $level > 0*/)
 		{
 			@rmdir($path);
@@ -276,8 +295,6 @@ if ( !function_exists ('codepot_unzip_file'))
 		$zip = new ZipArchive();
 		if ($zip->open ($path) === FALSE) return FALSE;
 
-		
-
 		if ($zip->extractTo ($output_dir) === FALSE)
 		{
 			$zip->close ();
@@ -289,7 +306,7 @@ if ( !function_exists ('codepot_unzip_file'))
 		{
 			array_push ($names, $zip->getNameIndex($i));
 		}
-		
+
 		$zip->close ();
 		return $names;
 	}
@@ -346,7 +363,7 @@ if ( !function_exists ('codepot_find_matching_sequences'))
 	{
 		$stack = array ();
 		$result = array ();
-	
+
 		if (is_array($old) && is_array($new))
 		{
 			$old_size = count($old);
@@ -361,14 +378,14 @@ if ( !function_exists ('codepot_find_matching_sequences'))
 		{
 			return FALSE;
 		}
-	
+
 		// push the whole range for the initial search.
 		array_push ($stack, array (0, 0, $old_size, 0, $new_size));
-	
+
 		while (count($stack) > 0)
 		{
 			$item = array_pop($stack);
-	
+
 			if ($item[0] == 0)
 			{
 				$old_seg_pos = $item[1];
@@ -403,8 +420,7 @@ if ( !function_exists ('codepot_find_matching_sequences'))
 				array_push ($result, array_slice ($item, 1, 3));
 			}
 		}
-	
-	
+
 		return $result;
 	}
 }
@@ -535,10 +551,10 @@ if ( ! function_exists('codepot_readfile'))
 				header ("HTTP/1.0 505 Internal server error");
 				return;
 			}
-	
+
 			$begin = 0;
 			$end = $size; 
-	
+
 			if (isset($_SERVER['HTTP_RANGE'])) 
 			{ 
 				if (preg_match('/bytes=\h*(\d+)-(\d*)[\D.*]?/i', $_SERVER['HTTP_RANGE'], $matches))
@@ -547,9 +563,9 @@ if ( ! function_exists('codepot_readfile'))
 					if (!empty($matches[2])) $end = intval($matches[2]) + 1; 
 				}
 			}
-	
+
 			if ($end < $begin) $end = $begin;
-	
+
 			if ($begin > 0 || $end < $size)
 			{
 				header('HTTP/1.0 206 Partial Content');
@@ -558,7 +574,7 @@ if ( ! function_exists('codepot_readfile'))
 			{
 				header('HTTP/1.0 200 OK'); 
 			}
-	
+
 			header("Content-Type: $mimeType");
 			header('Cache-Control: public, must-revalidate, max-age=0');
 			header('Pragma: no-cache'); 
@@ -570,16 +586,16 @@ if ( ! function_exists('codepot_readfile'))
 			header("Last-Modified: $time");
 			header('Connection: close'); 
 			flush ();
-	
+
 			$cur = $begin;
 			fseek ($fm, $begin, 0);
-	
+
 			while (!feof($fm) && $cur < $end && (connection_status()==0)) 
 			{ 
 				$len =  min(1024*16,$end-$cur);
 				$x = fread ($fm, $len);
 				if ($x === FALSE) break;
-	
+
 				print $x;
 				$cur += $len;
 			}
@@ -588,6 +604,4 @@ if ( ! function_exists('codepot_readfile'))
 		}
 	}
 
-
 }
-

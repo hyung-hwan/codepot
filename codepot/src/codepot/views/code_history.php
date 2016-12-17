@@ -154,7 +154,7 @@ $this->load->view (
 			print '</td>';
 
 			print '<td class="commit-date-td"><tt>';
-			print strftime('%Y-%m-%d', strtotime($h['date']));
+			print codepot_unixtimetodispdate(strtotime($h['date']), 'Y-m-d');
 			print '</tt></td>';
 
 			print '<td class="commit-message-td">';

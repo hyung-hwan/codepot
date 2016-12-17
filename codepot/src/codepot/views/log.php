@@ -177,14 +177,9 @@ $this->load->view (
 	{
 		if ($log['type'] == 'code') $code = $log['message'];
 
-		if (CODEPOT_DATABASE_STORE_GMT)
-			$createdon = $log['createdon'] . ' +0000';
-		else
-			$createdon = $log['createdon'];
-
-		$tzoff = strftime ('%z', strtotime($createdon));
-		$date = strftime ('%Y-%m-%d', strtotime($createdon));
-		$time = strftime ('%H:%M:%S', strtotime($createdon));
+		$tzoff = codepot_dbdatetodispdate ($log['createdon'], 'O');
+		$date = codepot_dbdatetodispdate ($log['createdon'], 'Y-m-d');
+		$time = codepot_dbdatetodispdate ($log['createdon'], 'H:i:s');
 
 		if ($curdate != $date)
 		{
