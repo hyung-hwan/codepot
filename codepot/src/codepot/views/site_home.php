@@ -383,8 +383,7 @@ $this->load->view (
 
 				print '<tr class="even">';
 
-				print '<td></td>';
-				print '<td colspan="2" class="details">';
+				print '<td colspan="3" class="details">';
 				print '<span class="description">';
 
 				$xauthor = $this->converter->AsciiToHex($x['author']);
@@ -466,8 +465,7 @@ $this->load->view (
 				print '</tr>';
 
 				print '<tr class="even">';
-				print '<td></td>';
-				print '<td colspan="2" class="details">';
+				print '<td colspan="3" class="details">';
 				print '<span class="description">';
 				$fmt = $this->lang->line (
 					'MSG_LOG_'.strtoupper($log['action']).'_BY');

@@ -10,22 +10,22 @@
 }
 
 #site_home_sidebar_log_table td {
-	padding-left: 0.5em;
-	padding-top: 0.25em;
-	padding-bottom: 0.25em;
 }
 
 #site_home_sidebar_log_table tr.odd {
 	background-color: #bbccef;
 }
 
+#site_home_sidebar_log_table tr.odd td {
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
 #site_home_sidebar_log_table tr.odd td.date {
-	width: 1%;
 	white-space: nowrap;
 }
 
 #site_home_sidebar_log_table tr.odd td.project {
-	width: 1%;
 	white-space: nowrap;
 }
 
@@ -35,6 +35,12 @@
 
 #site_home_sidebar_log_table tr.even {
 	background-color: inherit;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+#site_home_sidebar_log_table tr.even td.details {
+	padding-left: 2em;
 }
 
 #site_home_sidebar_log_table tr.even td.details .description {
