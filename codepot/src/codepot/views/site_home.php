@@ -357,18 +357,13 @@ $this->load->view (
 		$xdot = $this->converter->AsciiToHex ('.');
 		foreach ($log_entries as $log)
 		{
-			if (CODEPOT_DATABASE_STORE_GMT)
-				$createdon = $log['createdon'] . ' +0000';
-			else
-				$createdon = $log['createdon'];
-
 			if ($log['type'] == 'code')
 			{
 				$x = $log['message'];
 
 				print '<tr class="odd">';
 				print '<td class="date">';
-				print strftime ('%m-%d', strtotime($createdon));
+				print codepot_dbdatetodispdate ($log['createdon'], 'Y-m-d');
 				print '</td>';
 				print '<td class="projectid">';
 				/*
@@ -428,7 +423,7 @@ $this->load->view (
 			{
 				print '<tr class="odd">';
 				print '<td class="date">';
-				print strftime ('%m-%d', strtotime($createdon));
+				print codepot_dbdatetodispdate ($log['createdon'], 'Y-m-d');
 				print '</td>';
 
 				print '<td class="project">';

@@ -665,7 +665,7 @@ $history = $file['history'];
 
 		print '<div class="metadata-commit-date">';
 		printf ('[%s] ', $history['rev']);
-		print strftime ('%Y-%m-%d %H:%M:%S %z', strtotime($history['date']));
+		print codepot_unixtimetodispdate (strtotime($history['date']));
 		print '</div>';
 		?>
 		
