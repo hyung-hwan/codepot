@@ -5,7 +5,7 @@ use strict;
 use Config::Simple;
 use DBI;
 use File::Basename;
-use POSIX qw(strftime);
+use POSIX;
 
 use SVN::Core;
 use SVN::Repos;
@@ -39,7 +39,8 @@ sub get_config
 		database_password => $cfg->param ("database_password"),
 		database_name => $cfg->param ("database_name"),
 		database_driver => $cfg->param ("database_driver"),
-		database_prefix => $cfg->param ("database_prefix")
+		database_prefix => $cfg->param ("database_prefix"),
+		database_store_gmt => $cfg->param ("database_store_gmt")
 	};
 
 	return $config;
@@ -141,7 +142,7 @@ sub find_issue_reference_in_commit_message
 
 sub write_revprop_change_log
 {
-	my ($dbh, $prefix, $projectid, $revision, $userid, $propname, $action) = @_;
+	my ($dbh, $prefix, $projectid, $revision, $userid, $propname, $action, $store_gmt) = @_;
 
 #+------+---------+-----------+---------------------------+---------------------+---------------+-----------------+
 #| id   | type    | projectid | message                   | createdon           | action        | userid          |
@@ -149,12 +150,21 @@ sub write_revprop_change_log
 #| 1610 | code    | codepot   | svn,codepot,98,svn:log,M  | 2014-05-16 22:27:36 | revpropchange | hyunghwan.chung | 
 
 	my $message = "svn,$projectid,$revision,$propname,$action";
-	my $createdon = strftime ('%Y-%m-%d %H:%M:%S', localtime());
+	my $timestamp;
+
+	if (($store_gmt =~ /^\d+?$/ && int($store_gmt) != 0) || (lc($store_gmt) eq 'yes'))
+	{
+		$timestamp = POSIX::strftime ('%Y-%m-%d %H:%M:%S', gmtime());
+	}
+	else
+	{
+		$timestamp = POSIX::strftime ('%Y-%m-%d %H:%M:%S', localtime());
+	}
 
 	$dbh->begin_work ();
 
 	my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}log${QC} (${QC}type${QC},${QC}projectid${QC},${QC}message${QC},${QC}createdon${QC},${QC}action${QC},${QC}userid${QC}) VALUES (?,?,?,?,?,?)");
-	if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'revpropchange', $userid))
+	if (!$query || !$query->execute ('code', $projectid, $message, $timestamp, 'revpropchange', $userid))
 	{
 		my $errstr = $dbh->errstr();
 		if ($query) { $query->finish (); }
@@ -209,7 +219,7 @@ if (!defined($dbh))
 my $raw_commit_message = get_commit_message();
 
 find_issue_reference_in_commit_message ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $raw_commit_message);
-write_revprop_change_log ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $USER, $PROPNAME, $ACTION);
+write_revprop_change_log ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $USER, $PROPNAME, $ACTION, $cfg->{database_store_gmt});
 close_database ($dbh);
 
 exit (0);

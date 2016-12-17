@@ -57,6 +57,8 @@ CREATE TABLE "cpot_project_membership" (
 	UNIQUE ("projectid", "userid"),
 	CONSTRAINT membership_projectid FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id") ON DELETE CASCADE 
 );
+CREATE INDEX cpot_projectid_index ON "cpot_project_membership"("projectid");
+CREATE INDEX cpot_userid_index ON "cpot_project_membership"("userid");
 
 CREATE TABLE "cpot_wiki" (
 	"projectid"  VARCHAR(32)   NOT NULL,

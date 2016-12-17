@@ -28,6 +28,8 @@ UPGRADING FROM 0.2.0
   mysql> UPDATE issue_change SET createdby=updatedby, createdon=updatedon;
   mysql> create the issue_coderev table according to the definition found in codepot.mysql
   mysql> ALTER TABLE user_settings ADD COLUMN(user_summary VARCHAR(255) NULL);
+  mysql> CREATE INDEX projectid_index on project_membership(projectid);
+  mysql> CREATE INDEX userid_index on project_membership(userid);
 
 INSTALLATION ON CENTOS
 

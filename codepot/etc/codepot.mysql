@@ -36,6 +36,8 @@ CREATE TABLE project_membership (
 	userid    VARCHAR(32) NOT NULL,
 	priority  INTEGER     NOT NULL,
 	UNIQUE KEY membership (projectid, userid),
+	KEY userid_index (userid),
+	KEY projectid_index (projectid),
 	CONSTRAINT membership_projectid FOREIGN KEY (projectid) REFERENCES project(id) 
 		ON DELETE CASCADE ON UPDATE CASCADE
 ) charset=utf8 engine=InnoDB;

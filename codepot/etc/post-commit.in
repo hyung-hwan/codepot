@@ -5,7 +5,7 @@ use strict;
 use Config::Simple;
 use DBI;
 use File::Basename;
-use POSIX qw(strftime);
+use POSIX;
 
 use SVN::Core;
 use SVN::Repos;
@@ -53,6 +53,7 @@ sub get_config
 		database_name => $cfg->param ("database_name"),
 		database_driver => $cfg->param ("database_driver"),
 		database_prefix => $cfg->param ("database_prefix"),
+		database_store_gmt => $cfg->param ("database_store_gmt"),
 
 		email_sender => $cfg->param ("email_sender"),
 		commit_notification => $cfg->param ("commit_notification"),
@@ -157,7 +158,7 @@ sub find_issue_reference_in_commit_message
 
 sub write_commit_log
 {
-	my ($dbh, $prefix, $projectid, $revision, $userid) = @_;
+	my ($dbh, $prefix, $projectid, $revision, $userid, $store_gmt) = @_;
 
 #+------+---------+-----------+---------------------------+---------------------+---------------+-----------------+
 #| id   | type    | projectid | message                   | createdon           | action        | userid          |
@@ -165,21 +166,30 @@ sub write_commit_log
 #|  895 | code    | codepot   | svn,codepot,72            | 2011-10-10 14:26:43 | commit        | hyunghwan.chung | 
 
 	my $message = "svn,$projectid,$revision";
+	my $timestamp;
 
+	if (($store_gmt =~ /^\d+?$/ && int($store_gmt) != 0) || (lc($store_gmt) eq 'yes'))
+	{
+		$timestamp = POSIX::strftime ('%Y-%m-%d %H:%M:%S', gmtime());
+	}
+	else
+	{
+		$timestamp = POSIX::strftime ('%Y-%m-%d %H:%M:%S', localtime());
+	}
 
 	# the PHP side is executing ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS.FF.
 	# do i have to do it here or  use the database time (CURRENT_TIMESTAMP) instead?
 	# make sure that you have the same time between the app server and the data server.
 	# to minize side-effect of using the time of data server.
-	#my $createdon = strftime ('%Y-%m-%d %H:%M:%S', localtime());
+	#my $createdon = POSIX::strftime ('%Y-%m-%d %H:%M:%S', localtime());
 
 	$dbh->begin_work ();
 
 	#my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}log${QC} (${QC}type${QC},${QC}projectid${QC},${QC}message${QC},${QC}createdon${QC},${QC}action${QC},${QC}userid${QC}) VALUES (?,?,?,?,?,?)");
 	#if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'commit', $userid))
 
-	my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}log${QC} (${QC}type${QC},${QC}projectid${QC},${QC}message${QC},${QC}createdon${QC},${QC}action${QC},${QC}userid${QC}) VALUES (?,?,?,CURRENT_TIMESTAMP,?,?)");
-	if (!$query || !$query->execute ('code', $projectid, $message, 'commit', $userid))
+	my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}log${QC} (${QC}type${QC},${QC}projectid${QC},${QC}message${QC},${QC}createdon${QC},${QC}action${QC},${QC}userid${QC}) VALUES (?,?,?,?,?,?)");
+	if (!$query || !$query->execute ('code', $projectid, $message, $timestamp, 'commit', $userid))
 	{
 		my $errstr = $dbh->errstr();
 		if ($query) { $query->finish (); }
@@ -191,7 +201,6 @@ sub write_commit_log
 	$dbh->commit ();
 	return (0, undef);
 }
-
 
 sub get_author
 {
@@ -458,7 +467,7 @@ if (!defined($dbh))
 my $raw_commit_message = get_commit_message();
 
 find_issue_reference_in_commit_message ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $raw_commit_message);
-write_commit_log ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $AUTHOR);
+write_commit_log ($dbh, $cfg->{database_prefix}, $REPOBASE, $REV, $AUTHOR, $cfg->{database_store_gmt});
 
 if (lc($cfg->{commit_notification}) eq 'yes')
 {

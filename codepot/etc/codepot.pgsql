@@ -55,6 +55,8 @@ CREATE TABLE project_membership (
 	CONSTRAINT membership_projectid FOREIGN KEY (projectid) REFERENCES project(id) 
 		ON DELETE CASCADE ON UPDATE CASCADE
 );
+CREATE INDEX projectid_index ON project_membership(projectid);
+CREATE INDEX userid_index ON project_membership(userid);
 
 CREATE TABLE wiki (
 	projectid  VARCHAR(32)   NOT NULL,

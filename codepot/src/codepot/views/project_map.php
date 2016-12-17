@@ -124,6 +124,8 @@ var GraphApp = (function()
 
 	function handle_double_click (nodeid)
 	{
+		// TODO: store node-id to name mapping and use it
+		//       instead of iterating in a loop.
 		for (var i = 0, j = this.data.nodes.length; i < j; i++)
 		{
 			if (this.data.nodes[i].id == nodeid)
@@ -193,7 +195,6 @@ var GraphApp = (function()
 
 			this.resize ();
 		}
-
 
 		this.refresh_button.button("enable");
 		this.refresh_spin.removeClass ("fa-cog fa-spin");
