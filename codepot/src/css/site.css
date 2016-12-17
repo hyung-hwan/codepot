@@ -17,8 +17,8 @@
 }
 
 #site_home_sidebar_log_table tr.odd td {
-	padding-top: 6px;
-	padding-bottom: 6px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 #site_home_sidebar_log_table tr.odd td.date {

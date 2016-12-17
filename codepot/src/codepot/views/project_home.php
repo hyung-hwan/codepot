@@ -240,8 +240,7 @@ foreach ($urls as $url)
 
 				print '<tr class="even">';
 
-				print '<td></td>';
-				print '<td colspan="1" class="details">';
+				print '<td colspan="2" class="details">';
 				print '<span class="description">';
 				if ($log['action'] == 'revpropchange')
 				{
@@ -311,8 +310,7 @@ foreach ($urls as $url)
 				print '</tr>';
 
 				print '<tr class="even">';
-				print '<td></td>';
-				print '<td colspan="1" class="details">';
+				print '<td colspan="2" class="details">';
 				print '<span class="description">';
 				$fmt = $this->lang->line (
 					'MSG_LOG_'.strtoupper($log['action']).'_BY');

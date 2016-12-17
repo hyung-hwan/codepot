@@ -10,18 +10,23 @@
 	color: #1C94C4;
 }
 
+#project_home_sidebar_log_table  {
+	width: 100%;
+}
+
 #project_home_sidebar_log_table td {
-	padding-left: 0.5em;
-	padding-top: 0.25em;
-	padding-bottom: 0.25em;
 }
 
 #project_home_sidebar_log_table tr.odd {
 	background-color: #bbccef;
 }
 
+#project_home_sidebar_log_table tr.odd td {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
 #project_home_sidebar_log_table tr.odd td.date {
-	width: 1%;
 	white-space: nowrap;
 }
 
@@ -31,6 +36,10 @@
 
 #project_home_sidebar_log_table tr.even {
 	background-color: inherit;
+}
+
+#project_home_sidebar_log_table tr.even td.details {
+	padding-left: 2em;
 }
 
 #project_home_sidebar_log_table tr.even td.details .description {
