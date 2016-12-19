@@ -1227,6 +1227,10 @@ ul.codepot-horizontal-list li {
 }
 
 /* === signin panel === */
+#taskbar_signinout_form {
+	margin: 0;
+}
+
 #taskbar_signinout_form fieldset {
 	margin: 0;
 	padding: 0;
