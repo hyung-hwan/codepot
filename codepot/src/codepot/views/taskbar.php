@@ -5,6 +5,26 @@ function show_taskbar ($con, $login)
 	print '<div class="taskbar">';
 	print "\n";
 
+	print '<div class="boxa">';
+	print '<ul>';
+	print '<li>';
+	print anchor ('site/home', $con->lang->line('Home'));
+	print '</li>';
+	print '<li>';
+	print anchor ('project/catalog', $con->lang->line('Projects'));
+	print '</li>';
+	print '<li><span class="ui-widget">';
+	print " <input id='taskbar_project_to_find' placeholder='{$con->lang->line('Project ID')}' size=40>";
+	print '</span></li>';
+	if ($login['sysadmin?'])
+	{
+		print '<li>';
+		print anchor ('site/catalog', $con->lang->line('Administration'));
+		print '</li>';
+	}
+	print '</ul>';
+
+	print '</div>'; // boxa
 	print '<div class="boxb">';
 
 	if (isset($login['id']) && $login['id'] != '')
@@ -66,26 +86,7 @@ function show_taskbar ($con, $login)
 	}
 	print '</div>'; // boxb
 
-	print '<div class="boxa">';
-	print '<ul>';
-	print '<li>';
-	print anchor ('site/home', $con->lang->line('Home'));
-	print '</li>';
-	print '<li>';
-	print anchor ('project/catalog', $con->lang->line('Projects'));
-	print '</li>';
-	print '<li><span class="ui-widget">';
-	print " <input id='taskbar_project_to_find' placeholder='{$con->lang->line('Project ID')}' size=40>";
-	print '</span></li>';
-	if ($login['sysadmin?'])
-	{
-		print '<li>';
-		print anchor ('site/catalog', $con->lang->line('Administration'));
-		print '</li>';
-	}
-	print '</ul>';
-
-	print '</div>'; // boxa
+	
 
 	print '</div>';
 }

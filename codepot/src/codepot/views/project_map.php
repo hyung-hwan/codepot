@@ -283,7 +283,7 @@ var GraphApp = (function()
 	{
 		if (this.graph !== null)
 		{
-			// make it low so that the footer gets places at the right place.
+			// make it small so that the footer gets places at the right place.
 			this.graph.setSize (300, 300);
 
 			var hoff = this.header.offset();
