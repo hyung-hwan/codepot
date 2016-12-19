@@ -144,7 +144,9 @@ var GraphApp = (function()
 
 	function show_graph (response)
 	{
-		var data = $.parseJSON(response);
+		var data;
+		try { data = $.parseJSON(response); } // TODO: for jquery 3.0 or later, JSON.parse() should be used.
+		catch (e) { data = null; }
 
 		if (data == null)
 		{

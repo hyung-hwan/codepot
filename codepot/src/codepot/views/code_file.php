@@ -237,7 +237,10 @@ var revision_network = null;
 
 function show_revision_graph (response)
 {
-	var data = $.parseJSON(response);
+	var data;
+	try { data = $.parseJSON(response); } 
+	catch (e) { data = null; }
+
 	if (data == null)
 	{
 		show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
@@ -252,7 +255,7 @@ function show_revision_graph (response)
 			autoResize: false,
 			height: '500px',
 			width: '100%',
-			clickToUse: true,
+			clickToUse: false,
 			layout: {
 				hierarchical: {
 					enabled: true,
