@@ -388,3 +388,10 @@
 #project_list_mainarea_result_my_issues {
 	padding: 0;
 }
+
+/*----------------------------------------------- 
+ * project map view 
+ *-----------------------------------------------*/
+#project_map_filter {
+	text-align: left;
+}
