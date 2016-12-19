@@ -67,6 +67,8 @@ var GraphApp = (function()
 		this.graph = null;
 		this.data = null;
 
+		this.initial_uids = null;
+
 		return this;
 	}
 
@@ -121,6 +123,19 @@ var GraphApp = (function()
 		return gd;
 	}
 
+	function get_all_unique_uids (data)
+	{
+		var uids = {};
+		for (var prid in data)
+		{
+			for (var i = 0; i < data[prid].length; i++)
+			{
+				uids[data[prid][i]] = 1;
+			}
+		}
+		return Object.keys(uids);
+	}
+
 	function handle_double_click (nodeid)
 	{
 		// TODO: store node-id to name mapping and use it
@@ -158,6 +173,12 @@ var GraphApp = (function()
 		}
 		else
 		{
+			if (this.initial_uids == null || this.initial_uids.length <= 0)
+			{
+				this.initial_uids = get_all_unique_uids.call (this, data);
+				this.filter.autocomplete('option', 'source', this.initial_uids);
+			}
+
 			this.data = convert_data.call (this, data);
 			if (this.graph === null)
 			{
@@ -225,6 +246,12 @@ var GraphApp = (function()
 		// not a real button. button() for styling only
 		this.filter.button().bind ('keyup', function(e) {
 			if (e.keyCode == 13) self.triggerRefresh ();
+		});
+
+		this.filter.autocomplete  ({
+			minLength: 1, // is this too small?
+			delay: 500,
+			source: [] // to be set upon the first data load
 		});
 	};
 
