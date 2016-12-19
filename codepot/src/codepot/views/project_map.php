@@ -54,7 +54,6 @@ var GraphApp = (function()
 		}
 
 		this.graph_container = $('#' + graph_container_id);
-		this.refresh_button_inited = false;
 		this.refresh_button = $('#' + refresh_button_id);
 		this.refresh_spin = $('#' + refresh_spin_id);
 		this.refresh_progress = $('#' + refresh_progress_id);
@@ -212,6 +211,21 @@ var GraphApp = (function()
 	// -------------------------------------------------------------------
 	// PUBLIC FUNCTIONS
 	// -------------------------------------------------------------------
+	App.prototype.initWidgets = function ()
+	{
+		var self = this;
+		this.refresh_button.button().click (function () 
+		{
+			self.refresh (self.filter.val().trim());
+			return false;
+		});
+
+		// not a real button. button() for styling only
+		this.filter.button().bind ('keyup', function(e) {
+			if (e.keyCode == 13) self.triggerRefresh ();
+		});
+	};
+
 	App.prototype.refresh = function (filter)
 	{
 		var url = this.url_base;
@@ -222,21 +236,6 @@ var GraphApp = (function()
 
 		if (this.ajax_req !== null) this.ajax_req.abort();
 		this.ajax_req = $.ajax ({url: url, context: this, success: show_graph, error: handle_error });
-	};
-
-	App.prototype.initRefresh = function ()
-	{
-		if (!this.refresh_button_inited)
-		{
-			this.refresh_button_inited = true;
-
-			var self = this;
-			this.refresh_button.button().click (function () 
-			{
-				self.refresh (self.filter.val().trim());
-				return false;
-			});
-		}
 	};
 
 	App.prototype.triggerRefresh = function ()
@@ -275,8 +274,8 @@ $(function ()
 		'project_map_filter', 'project_map_title_band',
 		'codepot_footer', 'project_map_alert');
 
+	graph_app.initWidgets ();
 	$(window).resize(function () { graph_app.resize(); });
-	graph_app.initRefresh ();
 	graph_app.triggerRefresh ();
 });
 </script>
