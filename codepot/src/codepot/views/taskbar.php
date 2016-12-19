@@ -92,144 +92,235 @@ function show_taskbar ($con, $login)
 ?>
 
 <script type="text/javascript">
-
-
-function ready_to_signinout()
+var TaskbarApp = (function ()
 {
-<?php if (isset($login['id']) && $login['id'] != ''): ?>
-	// signed in already. can signout anytime.
-	return true;
-<?php else: ?>
-	// not signed-in yet. both username and password must be filled.
-	return $("#taskbar_user_name").val() != "" && $("#taskbar_user_pass").val();
-<?php endif; ?>
-}
+	// -------------------------------------------------------------------
+	// PRIVATE DATA
+	// -------------------------------------------------------------------
+	var signin_url = codepot_merge_path('<?php print site_url() ?>', "/main/xhr_signin");
+	var project_find_url_base = codepot_merge_path("<?php print site_url(); ?>", "/project/enjson_quickfind/");
 
-var taskbar_signin_in_progress = 0;
+	// -------------------------------------------------------------------
+	// CONSTRUCTOR
+	// -------------------------------------------------------------------
+	function App ()
+	{
+		if (this.constructor != App)
+		{
+			return new App ();
+		}
+
+		this.user_name = $("#taskbar_user_name");
+		this.user_pass = $("#taskbar_user_pass");
+		this.signinout_form = $("#taskbar_signinout_form");
+		this.signinout_button = $("#taskbar_signinout_button");
+		this.signin_container = $("#taskbar_signin_container");
+		this.signin_error = $("#taskbar_signin_error");
+		this.signin_in_progress = false;
+		this.signin_ajax = null;
+
+		this.project_to_find = $("#taskbar_project_to_find");
+		this.project_find_ajax = null;
+
+		return this;
+	}
+
+	// -------------------------------------------------------------------
+	// PRIVATE FUNCTIONS
+	// -------------------------------------------------------------------
+	function ready_to_signinout()
+	{
+	<?php if (isset($login['id']) && $login['id'] != ''): ?>
+		// signed in already. can signout anytime.
+		return true;
+	<?php else: ?>
+		// not signed-in yet. both username and password must be filled.
+		return this.user_name.val() != "" && this.user_pass.val();
+	<?php endif; ?>
+	}
+
+	function signinout_on_success (data, textStatus, jqXHR)
+	{
+		this.signin_in_progress = false;
+		this.signin_ajax = null;
+		this.signin_container.dialog('enable');
+
+		if (data == 'ok') 
+		{
+			this.signin_container.dialog('close');
+			// refresh the page to the head revision
+			$(location).attr ('href', '<?php print current_url(); ?>');
+		}
+		else
+		{
+			this.signin_error.text('<?php print $this->lang->line('MSG_SIGNIN_FAILURE')?>');
+		}
+	}
+
+	function signinout_on_error (jqXHR, textStatus, errorThrown) 
+	{ 
+		this.signin_in_progress = false;
+		this.signin_ajax = null;
+		this.signin_container.dialog('enable');
+
+		var errmsg = textStatus;
+		if (errmsg == '' && errorThrown != null) errmsg += " - " + errorThrown;
+		if (errmsg == '') errmsg = 'Unknown error';
+		this.signin_error.text(errmsg);
+	}
+
+	function do_signinout ()
+	{
+		if (this.signin_in_progress) return;
+
+		if (!!window.FormData)
+		{
+			// FormData is supported
+			var user_name = this.user_name.val();
+			var user_pass = this.user_pass.val();
+			if (user_name == '' || user_pass == '') return;
+
+			this.signin_error.text ('');
+			this.signin_in_progress = true;
+
+			var form_data = new FormData();
+			form_data.append ('user_name', user_name);
+			form_data.append ('user_pass', user_pass);
+
+			this.signin_container.dialog('disable');
+
+			this.signin_ajax = $.ajax({
+				url: signin_url,
+				type: 'POST',
+				data: form_data,
+				mimeType: 'multipart/form-data',
+				contentType: false,
+				processData: false,
+				cache: false,
+				context: this,
+				success: signinout_on_success,
+				error: signinout_on_error
+			});
+		}
+		else
+		{
+			this.signin_error.text('NOT SUPPORTED');
+		}
+	}
+
+	function cancel_signinout ()
+	{
+		if (this.signin_in_progress) 
+		{
+			this.signin_ajax.abort();
+			this.signin_ajax = null;
+			this.signin_in_progress = false;
+			return;
+		}
+
+		this.signin_container.dialog('close');
+	}
+
+	function trigger_signinout ()
+	{
+		var buttons = this.signin_container.dialog("option", "buttons");
+		buttons[Object.keys(buttons)[0]](); // trigger the first button
+	}
+
+	function signinout_button_on_click ()
+	{
+	<?php if (isset($login['id']) && $login['id'] != ''): ?>
+		if (ready_to_signinout.call(this)) this.signinout_form.submit();
+	<?php else: ?>
+		this.signin_container.dialog('open');
+	<?php endif; ?>
+	}
+
+	function get_project_candidates (request, response)
+	{
+		var term = codepot_string_to_hex(request.term);
+		if (this.project_find_ajax != null) { this.project_find_ajax.abort(); }
+
+		this.project_find_ajax = $.ajax({
+			url: project_find_url_base + term,
+			dataType: "json",
+			success: function(data, textStatus, jqXHR) 
+			{ 
+				this.project_find_ajax = null;
+				response (data);  // call the bacllback function for autocompletion
+			},
+			error: function(jqXHR, textStatus, errorThrown)
+			{
+				// on error, do nothing special
+				this.project_find_ajax = null;
+			}
+		});
+	}
+
+	// -------------------------------------------------------------------
+	// PUBLIC FUNCTIONS
+	// -------------------------------------------------------------------
+	App.prototype.initWidgets = function ()
+	{
+		var self = this;
+
+		this.signin_container.dialog ({
+			title: '<?php print $this->lang->line('Sign in'); ?>',
+			resizable: true,
+			autoOpen: false,
+			modal: true,
+			width: 'auto',
+			height: 'auto',
+			buttons: {
+				'<?php print $this->lang->line('OK')?>': function () { 
+					do_signinout.call (self);
+				},
+				'<?php print $this->lang->line('Cancel')?>': function () {
+					cancel_signinout.call (self);
+				}
+			},
+			beforeClose: function() { 
+				// if signin is in progress, prevent dialog closing
+				return !self.signin_in_progress;
+			}
+		});
+
+		this.user_name.button().bind ('keyup', function(e) {
+			if (e.keyCode == 13) trigger_signinout.call (self);
+		});
+
+		this.user_pass.button().bind ('keyup', function(e) {
+			if (e.keyCode == 13) trigger_signinout.call (self);
+		});
+
+		this.signinout_button.button().click (function() {
+			signinout_button_on_click.call (self);
+			return false;
+		});
+
+		// it's not a real button. button() call only for styling purpose
+		this.project_to_find.button().autocomplete ({
+			minLength: 1, // is this too small?
+			delay: 1000,
+
+			source: function (request, response) {
+				get_project_candidates.call (self, request, response);
+			},
+
+			select: function(event, ui) {
+				$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", "/project/home/" + ui.item.id));
+				//ui.item.value , ui.item.id ,  this.value
+			}
+		});
+	}
+
+	return App;
+})();
+/////////////////////////////////////////////////////////////////////////
 
 $(function () {
-	$('#taskbar_signin_container').dialog ({
-		title: '<?php print $this->lang->line('Sign in'); ?>',
-		resizable: true,
-		autoOpen: false,
-		modal: true,
-		width: 'auto',
-		height: 'auto',
-		buttons: {
-			'<?php print $this->lang->line('OK')?>': function () {
-				if (taskbar_signin_in_progress) return;
-
-				if (!!window.FormData)
-				{
-					// FormData is supported
-
-					var user_name = $('#taskbar_user_name').val();
-					var user_pass = $('#taskbar_user_pass').val();
-					if (user_name == '' || user_pass == '') return;
-
-					taskbar_signin_in_progress = true;
-
-					var form_data = new FormData();
-					form_data.append ('user_name', user_name);
-					form_data.append ('user_pass', user_pass);
-
-					$('#taskbar_signin_container').dialog('disable');
-					$.ajax({
-						url: codepot_merge_path('<?php print site_url() ?>', '<?php print "/main/xhr_signin"; ?>'),
-						type: 'POST',
-						data: form_data,
-						mimeType: 'multipart/form-data',
-						contentType: false,
-						processData: false,
-						cache: false,
-
-						success: function (data, textStatus, jqXHR) { 
-							taskbar_signin_in_progress = false;
-
-							$('#taskbar_signin_container').dialog('enable');
-							if (data == 'ok') 
-							{
-								$('#taskbar_signin_container').dialog('close');
-								// refresh the page to the head revision
-								$(location).attr ('href', '<?php print current_url(); ?>');
-							}
-							else
-							{
-								$('#taskbar_signin_error').text(codepot_htmlspecialchars('<?php print $this->lang->line('MSG_SIGNIN_FAILURE')?>'));
-							}
-						},
-
-						error: function (jqXHR, textStatus, errorThrown) { 
-							taskbar_signin_in_progress = false;
-							$('#taskbar_signin_container').dialog('enable');
-							var errmsg = '';
-							if (errmsg == '' && errorThrown != null) errmsg = errorThrown;
-							if (errmsg == '' && textStatus != null) errmsg = textStatus;
-							if (errmsg == '') errmsg = 'Unknown error';
-							$('#taskbar_signin_error').text(codepot_htmlspecialchars(errmsg));
-						}
-					});
-				}
-				else
-				{
-					$('#taskbar_signin_error').text('NOT SUPPORTED');
-				}
-
-			},
-			'<?php print $this->lang->line('Cancel')?>': function () {
-				if (taskbar_signin_in_progress) return;
-				$('#taskbar_signin_container').dialog('close');
-			}
-		},
-
-		beforeClose: function() { 
-			// if importing is in progress, prevent dialog closing
-			return !taskbar_signin_in_progress;
-		}
-	});
-
-	$("#taskbar_user_name").button().bind ('keyup', function(e) {
-		if (e.keyCode == 13) 
-		{
-			var buttons = $("#taskbar_signin_container").dialog("option", "buttons");
-			buttons[Object.keys(buttons)[0]](); // trigger the first button
-		}
-	});
-	$("#taskbar_user_pass").button().bind ('keyup', function(e) {
-		if (e.keyCode == 13) 
-		{
-			var buttons = $("#taskbar_signin_container").dialog("option", "buttons");
-			buttons[Object.keys(buttons)[0]](); // trigger the first button
-		}
-	});
-
-	$("#taskbar_signinout_button").button().click (function() {
-		<?php if (isset($login['id']) && $login['id'] != ''): ?>
-		if (ready_to_signinout()) $("#taskbar_signinout_form").submit();
-		<?php else: ?>
-		$('#taskbar_signin_container').dialog('open');
-		<?php endif; ?>
-		return false;
-	});
-
-	$("#taskbar_project_to_find").button().autocomplete({
-		minLength: 1, // is this too small?
-		delay: 1000,
-		source: function (request, response) {
-
-			var term = codepot_string_to_hex(request.term);
-
-			$.ajax({
-				url: codepot_merge_path("<?php print site_url(); ?>", "/project/enjson_quickfind/" + term),
-				dataType: "json",
-				success: function(data) { response(data); },
-			});
-		},
-		select: function( event, ui ) {
-			$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", "/project/home/" + ui.item.id));
-			//ui.item.value , ui.item.id ,  this.value
-		}
-	});
+	var taskbar_app = new TaskbarApp ();
+	taskbar_app.initWidgets ();
 });
 
 </script> 
@@ -237,5 +328,3 @@ $(function () {
 <?php
 show_taskbar ($this, $login);
 ?>
-
-
