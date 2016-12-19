@@ -67,7 +67,8 @@ var GraphApp = (function()
 		this.graph = null;
 		this.data = null;
 
-		this.initial_uids = null;
+		this.filter_value_used = "";
+		this.initial_uids = [];
 
 		return this;
 	}
@@ -123,9 +124,14 @@ var GraphApp = (function()
 		return gd;
 	}
 
-	function get_all_unique_uids (data)
+	function get_all_unique_uids (data, existing)
 	{
 		var uids = {};
+
+		if (existing != null)
+		{
+			for (var i = 0; i < existing.length; i++) uids[existing[i]] = 1;
+		}
 		for (var prid in data)
 		{
 			for (var i = 0; i < data[prid].length; i++)
@@ -173,11 +179,9 @@ var GraphApp = (function()
 		}
 		else
 		{
-			if (this.initial_uids == null || this.initial_uids.length <= 0)
-			{
-				this.initial_uids = get_all_unique_uids.call (this, data);
-				this.filter.autocomplete('option', 'source', this.initial_uids);
-			}
+			if (this.filter_value_used == '') this.initial_uids.length = 0;
+			this.initial_uids = get_all_unique_uids.call (this, data, this.initial_uids);
+			this.filter.autocomplete('option', 'source', this.initial_uids);
 
 			this.data = convert_data.call (this, data);
 			if (this.graph === null)
@@ -237,6 +241,7 @@ var GraphApp = (function()
 	App.prototype.initWidgets = function ()
 	{
 		var self = this;
+
 		this.refresh_button.button().click (function () 
 		{
 			self.refresh (self.filter.val().trim());
@@ -244,14 +249,16 @@ var GraphApp = (function()
 		});
 
 		// not a real button. button() for styling only
-		this.filter.button().bind ('keyup', function(e) {
+		this.filter.button().bind ('keyup', function(e) 
+		{
 			if (e.keyCode == 13) self.triggerRefresh ();
 		});
 
 		this.filter.autocomplete  ({
 			minLength: 1, // is this too small?
 			delay: 500,
-			source: [] // to be set upon the first data load
+			source: [], // to be set upon data load
+			select: function(event, ui) { self.refresh (ui.item.value); }
 		});
 	};
 
@@ -259,7 +266,7 @@ var GraphApp = (function()
 	{
 		var url = this.url_base;
 		if(filter.length > 0) url += "/" + codepot_string_to_hex(filter);
-
+		this.filter_value_used = filter;
 		this.refresh_button.button("disable");
 		this.refresh_spin.addClass ("fa-cog fa-spin");
 
