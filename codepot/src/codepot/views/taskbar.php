@@ -244,6 +244,7 @@ var TaskbarApp = (function ()
 		this.project_find_ajax = $.ajax({
 			url: project_find_url_base + term,
 			dataType: "json",
+			context: this,
 			success: function(data, textStatus, jqXHR) 
 			{ 
 				this.project_find_ajax = null;
