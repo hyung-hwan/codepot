@@ -395,15 +395,18 @@ function show_commits_per_user_graph(log)
 
 function show_all_graphs (response)
 {
-	var log = $.parseJSON(response);
-	if (log == null)
+	var data;
+	try { data = $.parseJSON(response); } 
+	catch (e) { data = null; }
+
+	if (data == null)
 	{
 		alert ('Invalid data received');
 	}
-	else if (log.length > 0)
+	else if (data.length > 0)
 	{
-		show_commits_per_month_graph (log);
-		show_commits_per_user_graph (log);
+		show_commits_per_month_graph (data);
+		show_commits_per_user_graph (data);
 	}
 	else
 	{
