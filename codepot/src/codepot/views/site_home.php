@@ -352,7 +352,7 @@ $this->load->view (
 	</div>
 
 	<div id="site_home_sidebar_log_table_container" class="collapsible-box-panel">
-	<table id="site_home_sidebar_log_table" class="collapsible-box-table">
+	<table id="site_home_sidebar_log_table" class="collapsible-box-table codepot-full-width-table">
 	<?php 
 		$xdot = $this->converter->AsciiToHex ('.');
 		foreach ($log_entries as $log)

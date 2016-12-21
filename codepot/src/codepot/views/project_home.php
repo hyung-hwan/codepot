@@ -212,7 +212,7 @@ foreach ($urls as $url)
 
 <?php 
 	print '<div id="project_home_sidebar_log_table_container" class="collapsible-box-panel">';
-	print '<table id="project_home_sidebar_log_table" class="collapsible-box-table">';
+	print '<table id="project_home_sidebar_log_table" class="collapsible-box-table codepot-full-width-table">';
 
 	if (count($log_entries) > 0)
 	{
