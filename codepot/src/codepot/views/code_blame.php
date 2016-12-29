@@ -350,7 +350,10 @@ $this->load->view (
 			$author = $line['author'];
 			//$author_to_show = str_pad ($author, 9, ' ', STR_PAD_RIGHT);
 			//$author_to_show = substr($author_to_show, 0, 9);
-			$author_to_show = $author;
+			//$author_to_show = $author;
+
+			$author_home_url = codepot_merge_path (site_url(), '/user/home/' . $this->converter->AsciiToHex($author));
+			$author_to_show = "<a href='{$author_home_url}'>" . htmlspecialchars($author) . "</a>";
 		}
 		else
 		{

@@ -255,7 +255,7 @@
 
 #code_history_result_table td.commit-revision-td {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	justify-content: space-between;
 	vertical-align: middle;
 	line-height: 1.2em;
@@ -271,7 +271,7 @@
 
 #code_history_result_table .commit-revision-and-datetime {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	justify-content: flex-start;
 	vertical-align: middle;
 }
@@ -299,7 +299,7 @@
 
 #code_history_result_table .commit-actions {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	justify-content: flex-end;
 	vertical-align: middle;
 }
