@@ -139,12 +139,6 @@ $this->load->view (
 				print "<div class='commit-author-icon'>";
 				print "<a href='{$user_home_url}'><img src='{$user_icon_url}' class='commit-author-icon' /></a>";
 				print "</div>";
-
-				print '<div class="commit-author-id">';
-				print "<a href='{$user_home_url}'>";
-				print htmlspecialchars($h['author']);
-				print '</a>';
-				print '</div>';
 			}
 			print '</td>';
 
@@ -184,7 +178,15 @@ $this->load->view (
 			print codepot_unixtimetodispdate(strtotime($h['date']));
 			print '</tt>';
 			print '</div>';
+
+			print '<div class="commit-author-id">';
+			print "<a href='{$user_home_url}'>";
+			print htmlspecialchars($h['author']);
+			print '</a>';
 			print '</div>';
+
+			print '</div>';
+
 
 			print '<div class="commit-actions">';
 			if ($file['type'] == 'file')
