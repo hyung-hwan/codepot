@@ -156,7 +156,7 @@ $this->load->view (
 			print '<td class="commit-revision-td">';
 
 			print '<div class="commit-revision-and-datetime">';
-			print '<div class="commit-revision">';
+			print '<div class="codepot-buttoned-anchor">';
 			print '<tt>';
 			print anchor ("code/file/{$project->id}/{$xfullpath}/{$h['rev']}", $h['rev']);
 			if (!empty($h['tag']))
@@ -175,7 +175,7 @@ $this->load->view (
 			print '</tt>';
 			print '</div>';
 
-			print '<div class="commit-author-id">';
+			print '<div class="codepot-buttoned-anchor">';
 			print "<a href='{$user_home_url}'>";
 			print htmlspecialchars($h['author']);
 			print '</a>';
@@ -188,10 +188,10 @@ $this->load->view (
 			if ($file['type'] == 'file')
 			{
 				print anchor ("code/blame/{$project->id}/{$xfullpath}/{$h['rev']}", 
-					'<div class="commit-action-item"><i class="fa fa-bomb"></i> ' . $this->lang->line('Blame') . '</div>');
+					'<div class="codepot-buttoned-anchor"><i class="fa fa-bomb"></i> ' . $this->lang->line('Blame') . '</div>');
 				
 				print anchor ("code/diff/{$project->id}/{$xfullpath}/{$h['rev']}",
-					'<div class="commit-action-item"><i class="fa fa-server"></i> ' . $this->lang->line('Difference') . '</div>'); 
+					'<div class="codepot-buttoned-anchor"><i class="fa fa-server"></i> ' . $this->lang->line('Difference') . '</div>'); 
 			}
 			print '</div>';
 			print '</td>';

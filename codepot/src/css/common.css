@@ -1072,6 +1072,32 @@ pre.codepot-line-numbered span.codepot-line-number-clear {
 	border-radius: 3px;
 }
 
+.codepot-buttoned-anchor {
+	background-color:  #008CBA;
+	border: 1px solid #008CBA;
+	color: white;
+	padding: 0px 5px 0px 5px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 0.9em;
+	font-weight: bold;
+	border-radius: 2px;
+	transition-duration: 0.4s;
+}
+
+.codepot-buttoned-anchor:hover {
+	background-color: #00BCFA;
+}
+
+.codepot-buttoned-anchor a,
+.codepot-buttoned-anchor a:hover,
+.codepot-buttoned-anchor a:visited,
+a.codepot-buttoned-anchor,
+a.codepot-buttoned-anchor:hover ,
+a.codepot-buttoned-anchor:visited {
+	color: white !important;
+}
 
 /* === list === */
 ul.codepot-horizontal-list {
@@ -1086,7 +1112,6 @@ ul.codepot-horizontal-list li {
 	margin: 0 0.2em 0 0.2em;
 	float: left;
 }
-
 
 .codepot-hashed-revision-number {
 	/* #RXXXX */

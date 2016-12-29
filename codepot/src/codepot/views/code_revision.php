@@ -739,6 +739,7 @@ $history = $file['history'];
 				*/
 				$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
 				$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
+				$blame_anchor_text = '<i class="fa fa-bomb"></i> ' . $this->lang->line('Blame');
 
 				$rowclasses = array ('odd', 'even');
 				$rowcount = 0;
@@ -749,18 +750,22 @@ $history = $file['history'];
 
 					$xpar = $this->converter->AsciiToHex ($p['path']);
 
-					print "<td class='{$p['action']}'>";
+					print "<td class='{$p['action']}' >";
 					print anchor ("code/file/{$project->id}/{$xpar}/{$history['rev']}", htmlspecialchars($p['path']));
 					print '</td>';
 
 					print '<td>';
-					//print anchor ("code/blame/{$project->id}/{$xpar}/{$history['rev']}", $this->lang->line('Blame'));
-					//print ' ';
+					print '<ul id="code_revision_action_list" class="codepot-horizontal-list">';
+					print '<li class="codepot-buttoned-anchor">';
 					print anchor ("code/diff/{$project->id}/{$xpar}/{$history['rev']}", $diff_anchor_text);
-					print '</td>';
-
-					print '<td>';
+					print '</li>';
+					print '<li class="codepot-buttoned-anchor">';
 					print anchor ("code/fulldiff/{$project->id}/{$xpar}/{$history['rev']}", $fulldiff_anchor_text);
+					print '</li>';
+					print '<li class="codepot-buttoned-anchor">';
+					print anchor ("code/blame/{$project->id}/{$xpar}/{$history['rev']}", $blame_anchor_text);
+					print '</li>';
+					print '</ul>';
 					print '</td>';
 
 					print '</tr>';

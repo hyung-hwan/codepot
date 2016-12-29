@@ -276,59 +276,11 @@
 	vertical-align: middle;
 }
 
-
-#code_history_result_table .commit-revision,
-#code_history_result_table .commit-author-id {
-	background-color:  #008CBA;
-	border: 1px solid #008CBA;
-	color: white;
-	padding: 0px 5px 0px 5px;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	font-size: 0.9em;
-	font-weight: bold;
-	border-radius: 2px;
-	transition-duration: 0.4s;
-}
-
-#code_history_result_table .commit-revision:hover,
-#code_history_result_table .commit-author-id:hover {
-	background-color: #00BCFA;
-}
-
 #code_history_result_table .commit-actions {
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: flex-end;
 	vertical-align: middle;
-}
-
-#code_history_result_table .commit-revision a, 
-#code_history_result_table .commit-revision a:hover, 
-#code_history_result_table .commit-revision a:visited,
-#code_history_result_table .commit-author-id a, 
-#code_history_result_table .commit-author-id a:hover, 
-#code_history_result_table .commit-author-id a:visited {
-	color: white
-}
-
-#code_history_result_table .commit-action-item {
-	background-color:  #008CBA;
-	border: 1px solid #008CBA;
-	color: white;
-	padding: 0px 5px 0px 5px;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	font-size: 0.9em;
-	font-weight: bold;
-	border-radius: 2px;
-	transition-duration: 0.4s;
-}
-
-#code_history_result_table .commit-action-item:hover {
-	background-color: #00BCFA;
 }
 
 /*----------------------------------------------- 
@@ -372,6 +324,7 @@
 #code_revision_result_properties_table td {
 	white-space: pre-wrap;
 	padding-left: 22px;
+	vertical-align: middle;
 }
 
 #code_revision_result_files_table td.M,
