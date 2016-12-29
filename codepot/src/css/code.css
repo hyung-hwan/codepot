@@ -224,8 +224,9 @@
 
 #code_history_result_table td.commit-author-td {
 	width: 1%;
-	vertical-align: middle;
+	vertical-align: top;
 	text-align: center;
+	padding-right: 1em;
 }
 
 #code_history_result_table img.commit-author-icon {

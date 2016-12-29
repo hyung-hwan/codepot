@@ -110,10 +110,6 @@ $this->load->view (
 
 <div id="code_history_result" class="codepot-relative-container-view">
 	<table id="code_history_result_table" class="codepot-full-width-table codepot-spacious-table">
-	<tr class='codepot-full-width-table-header'>
-		<th><?php print $this->lang->line('Committer')?></th>
-		<th><?php print $this->lang->line('Details') ?></th>
-	</tr>
 	<?php 
 		$rowclasses = array ('even', 'odd');
 		$history = $file['history'];
