@@ -222,6 +222,24 @@
 	background-color: #AABBFF;
 }
 
+#code_history_result_table td.commit-author-td {
+	width: 1%;
+}
+
+#code_history_result_table img.commit-author-icon {
+	width: 3em;
+	height: 3em;
+}
+
+#code_history_result_table .commit-author-id {
+	font-weight: bold;
+	font-size: 0.9em;
+}
+
+#code_history_result_table td.commit-message-td {
+	vertical-align: middle;
+}
+
 #code_history_result_table td.commit-message-td:hover {
 	background-color: #F0F0F0;
 }
@@ -235,6 +253,78 @@
 	white-space: -pre-wrap; /* Opera 4-6 */    
 	white-space: -o-pre-wrap; /* Opera 7 */    
 	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
+}
+
+#code_history_result_table td.commit-revision-td {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	vertical-align: middle;
+	line-height: 1.2em;
+}
+
+#code_history_result_table td.commit-revision-td:hover {
+	background-color: #F0F0F0;
+}
+
+#code_history_result_table td.commit-revision-td div {
+	margin-right: 1em;
+}
+
+#code_history_result_table .commit-revision-and-datetime {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	vertical-align: middle;
+}
+
+#code_history_result_table .commit-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	vertical-align: middle;
+}
+
+#code_history_result_table .commit-revision {
+	background-color:  #008CBA;
+	border: 1px solid #008CBA;
+	color: white;
+	padding: 0px 5px 0px 5px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 0.9em;
+	font-weight: bold;
+	border-radius: 2px;
+	transition-duration: 0.4s;
+}
+
+#code_history_result_table .commit-revision:hover {
+	background-color: #00BCFA;
+}
+
+#code_history_result_table .commit-revision a, 
+#code_history_result_table .commit-revision a:hover, 
+#code_history_result_table .commit-revision a:visited {
+	color: white
+}
+
+#code_history_result_table .commit-action-item {
+	background-color:  #008CBA;
+	border: 1px solid #008CBA;
+	color: white;
+	padding: 0px 5px 0px 5px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 0.9em;
+	font-weight: bold;
+	border-radius: 2px;
+	transition-duration: 0.4s;
+}
+
+#code_history_result_table .commit-action-item:hover {
+	background-color: #00BCFA;
 }
 
 /*----------------------------------------------- 
