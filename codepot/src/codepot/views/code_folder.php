@@ -51,7 +51,6 @@
 		$revreqroot = '';
 
 		$history_path = "/code/history/{$project->id}/{$hex_headpath}";
-
 	}
 	else
 	{
@@ -104,6 +103,195 @@ function show_tooltip(id, x, y, contents) {
 		opacity: 0.80
 	}).appendTo("body").fadeIn(200);
 }
+
+
+var RevGraphApp = (function ()
+{
+	// -------------------------------------------------------------------
+	// CONSTRUCTOR
+	// -------------------------------------------------------------------
+	function App ()
+	{
+		if (this.constructor != App)
+		{
+			return new App ();
+		}
+
+		this.window = $(window);
+		this.graph_container = $("#code_folder_revision_graph_container");
+		this.graph_canvas = $("#code_folder_revision_graph");
+		this.graph_button = $("#code_folder_revision_graph_button");
+		this.graph_spin = $("#code_folder_revision_graph_spin");
+
+		this.graph_ajax = null;
+		this.revision_network = null;
+
+		return this;
+	}
+
+	// -------------------------------------------------------------------
+	// PRIVATE FUNCTIONS
+	// -------------------------------------------------------------------
+	function on_graph_success (response, textStatus, jqXHR)
+	{
+		var data;
+		try { data = $.parseJSON(response); } 
+		catch (e) { data = null; }
+
+		if (data == null)
+		{
+			show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
+		}
+		else if (data.nodes.length <= 0)
+		{
+			show_alert ('No data to show', "<?php print $this->lang->line('Error')?>");
+		}
+		else
+		{
+			var options = {
+				autoResize: false,
+				height: '500px',
+				width: '100%',
+				clickToUse: false,
+				layout: {
+					hierarchical: {
+						enabled: true,
+						//levelSeparation: 150,
+						//nodeSpacing: 200,
+						//treeSpacing: 300,
+						direction: 'LR', //'LR' 'UD', 'DU', 'RL'
+						sortMethod: 'directed' // 'hubsize'
+					}
+				},
+				edges: {
+					smooth: {
+					    type: 'cubicBezier',
+					    forceDirection: 'horizontal', // 'vertical',
+					    roundness: 0.4
+					}
+				},
+				physics: {
+					enabled: true
+				}
+			};
+
+			var i, j;
+
+			j = data.nodes.length;
+			for (i = 0; i < j; i++)
+			{
+				data.nodes[i].shape = 'box';
+			}
+
+			j = data.edges.length;
+			for (i = 0; i < j; i++)
+			{
+				data.edges[i].length = 60;
+				data.edges[i].width = 1;
+				data.edges[i].arrows = 'to';
+				data.edges[i].font = { color: 'red' };
+			}
+
+			if (this.revision_network === null)
+			{
+				this.revision_network = new vis.Network(this.graph_canvas[0], data, options);
+			}
+			else
+			{
+				this.revision_network.setData (data);
+			}
+
+			this.graph_container.dialog("option", "height", (this.window.height() * 90 / 100));
+			this.graph_container.dialog("option", "width", (this.window.width() * 90 / 100));
+			this.graph_container.dialog ({
+				position: {
+					my: "center center",
+					at: "center center",
+					of: this.window
+				}
+			});
+			on_graph_container_resize.call (this);
+		}
+
+		this.graph_button.button("enable");
+		this.graph_spin.removeClass ("fa-cog fa-spin");
+	}
+
+	function on_graph_error (jqXHR, textStatus, errorThrown) 
+	{
+		show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
+		this.graph_button.button("enable");
+		this.graph_spin.removeClass ("fa-cog fa-spin");
+	}
+
+	function open_revision_graph()
+	{
+		this.graph_button.button ("disable");
+		this.graph_spin.addClass ("fa-cog fa-spin");
+		this.graph_container.dialog ("open");
+
+		if (this.graph_ajax != null) this.graph_ajax.abort();
+		this.graph_ajax = $.ajax ({
+			url: codepot_merge_path (
+				"<?php print site_url(); ?>", 
+				"/graph/enjson_revision_graph/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
+			context: this,
+			success: on_graph_success,
+			error: on_graph_error
+		});
+	}
+
+	function on_graph_container_resize()
+	{
+		if (this.revision_network != null)
+		{
+			this.revision_network.setSize (this.graph_container.width(), this.graph_container.height());
+			this.revision_network.redraw();
+			this.revision_network.fit();
+		}
+	}
+
+	// -------------------------------------------------------------------
+	// PUBLIC FUNCTIONS
+	// -------------------------------------------------------------------
+	App.prototype.initWidgets = function () 
+	{
+		var self = this;
+
+		this.graph_container.dialog ({
+			title: '<?php print $this->lang->line('Revision')?>',
+			resizable: true,
+			autoOpen: false,
+			width: 'auto',
+			height: 'auto',
+			modal: true,
+			buttons: {
+				'<?php print $this->lang->line('Close')?>': function () {
+					if (this.graph_ajax != null) return;
+					self.graph_container.dialog('close');
+				}
+			},
+
+			beforeClose: function() { 
+				return this.graph_ajax == null;
+			},
+		});
+
+		this.graph_container.on ("dialogresize", function (evt, ui) {
+			on_graph_container_resize.call (self);
+		});
+
+		this.graph_button.button().click (function ()
+		{
+			open_revision_graph.call (self);
+			return false;
+		});
+	};
+
+	return App;
+})();
+
+
 
 function show_loc_by_lang_graph (response)
 {
@@ -160,25 +348,25 @@ function show_loc_by_lang_graph (response)
 			yaxes: { }
 		};
 
-		$("#code_folder_result_loc_by_lang_graph").width(550).height(400);
-		$.plot($("#code_folder_result_loc_by_lang_graph"), dataset, options);
+		$("#code_folder_loc_by_lang_graph").width(550).height(400);
+		$.plot($("#code_folder_loc_by_lang_graph"), dataset, options);
 
-		var code_folder_result_loc_by_lang_graph_previous_point = null;
+		var code_folder_loc_by_lang_graph_previous_point = null;
 
-		$("#code_folder_result_loc_by_lang_graph").bind("plothover", function (event, pos, item) {
+		$("#code_folder_loc_by_lang_graph").bind("plothover", function (event, pos, item) {
 			if (item) 
 			{
-				if (code_folder_result_loc_by_lang_graph_previous_point != item.datapoint) 
+				if (code_folder_loc_by_lang_graph_previous_point != item.datapoint) 
 				{
-					code_folder_result_loc_by_lang_graph_previous_point = item.datapoint;
-					$("#code_folder_result_loc_by_lang_graph_tooltip").remove();
-					show_tooltip("code_folder_result_loc_by_lang_graph_tooltip", item.pageX, item.pageY - 20, item.datapoint[1]);
+					code_folder_loc_by_lang_graph_previous_point = item.datapoint;
+					$("#code_folder_loc_by_lang_graph_tooltip").remove();
+					show_tooltip("code_folder_loc_by_lang_graph_tooltip", item.pageX, item.pageY - 20, item.datapoint[1]);
 				}
 			} 
 			else 
 			{
-				$("#code_folder_result_loc_by_lang_graph_tooltip").remove();
-				code_folder_result_loc_by_lang_graph_previous_point = null;
+				$("#code_folder_loc_by_lang_graph_tooltip").remove();
+				code_folder_loc_by_lang_graph_previous_point = null;
 			}
 		});
 	}
@@ -199,94 +387,12 @@ function show_loc_by_file_graph (response)
 	}
 	else
 	{
-		var f = new CodeFlower("#code_folder_result_loc_by_file_graph", 550, 400);
+		var f = new CodeFlower("#code_folder_loc_by_file_graph", 550, 400);
 		f.update (loc);
 	}
 
 	$("#code_folder_loc_by_file_button").button("enable");
 	$("#code_folder_loc_by_file_spin" ).removeClass ("fa-cog fa-spin");
-}
-
-var revision_network = null;
-
-function show_revision_graph (response)
-{
-	var data;
-	try { data = $.parseJSON(response); } 
-	catch (e) { data = null; }
-
-	if (data == null)
-	{
-		show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
-	}
-	else if (data.nodes.length <= 0)
-	{
-		show_alert ('No data to show', "<?php print $this->lang->line('Error')?>");
-	}
-	else
-	{
-		var options = {
-			autoResize: false,
-			height: '500px',
-			width: '100%',
-			clickToUse: false,
-			layout: {
-				hierarchical: {
-					enabled: true,
-					//levelSeparation: 150,
-					//nodeSpacing: 200,
-					//treeSpacing: 300,
-					direction: 'LR', //'LR' 'UD', 'DU', 'RL'
-					sortMethod: 'directed' // 'hubsize'
-				}
-			},
-			edges: {
-				smooth: {
-				    type: 'cubicBezier',
-				    forceDirection: 'horizontal', // 'vertical',
-				    roundness: 0.4
-				}
-			},
-			physics: {
-				enabled: true
-			}
-		};
-
-		var i, j;
-
-		j = data.nodes.length;
-		for (i = 0; i < j; i++)
-		{
-			data.nodes[i].shape = 'box';
-		}
-
-		j = data.edges.length;
-		for (i = 0; i < j; i++)
-		{
-			data.edges[i].length = 60;
-			data.edges[i].width = 1;
-			data.edges[i].arrows = 'to';
-			data.edges[i].font = { color: 'red' };
-		}
-
-		if (revision_network === null)
-		{
-			revision_network = new vis.Network(document.getElementById('code_folder_result_revision_graph'), data, options);
-			$('#code_folder_result_revision_graph').resizable({
-				resize: function (event, ui)  {
-					revision_network.setSize (ui.size.width - 10, ui.size.height - 10);
-					revision_network.redraw();
-				}
-			});
-		}
-		else
-		{
-			revision_network.setData (data);
-		}
-	}
-
-	$("#code_folder_revision_graph_button").button("enable");
-	$("#code_folder_revision_graph_spin" ).removeClass ("fa-cog fa-spin");
 }
 
 function render_readme()
@@ -783,24 +889,9 @@ $(function () {
 		return false;
 	});
 
-	$("#code_folder_revision_graph_button").button().click (function () {
-		$("#code_folder_revision_graph_button").button("disable");
-		$("#code_folder_revision_graph_spin").addClass ("fa-cog fa-spin");
-		var ajax_req = $.ajax ({
-			url: codepot_merge_path (
-				"<?php print site_url(); ?>", 
-				"/graph/enjson_revision_graph/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
-			context: document.body,
-			success: show_revision_graph,
-			error: function (xhr, ajaxOptions, thrownError) {
-				show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
-				$("#code_folder_revision_graph_button").button("enable");
-				$("#code_folder_revision_graph_spin" ).removeClass ("fa-cog fa-spin");
-			}
-		});
 
-		return false;
-	});
+	var rev_graph_app = new RevGraphApp ();
+	rev_graph_app.initWidgets ();
 
 <?php if ($show_search): ?>
 	$('#code_search_invertedly').button();
@@ -1044,9 +1135,12 @@ $this->load->view (
 </div>
 
 <div id="code_folder_graph" class="graph">
-	<div id="code_folder_result_loc_by_lang_graph"></div>
-	<div id="code_folder_result_loc_by_file_graph"></div>
-	<div id="code_folder_result_revision_graph"></div>
+	<div id="code_folder_loc_by_lang_graph"></div>
+	<div id="code_folder_loc_by_file_graph"></div>
+
+	<div id="code_folder_revision_graph_container">
+		<div id="code_folder_revision_graph"></div>
+	</div>
 </div>
 
 <div id="code_folder_search">

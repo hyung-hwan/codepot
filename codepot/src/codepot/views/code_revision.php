@@ -729,7 +729,7 @@ $history = $file['history'];
 	<div id="code_revision_result_files" class="collapsible-box">
 		<div class="collapsible-box-header"><?php print $this->lang->line('Files')?></div>
 		<div id="code_revision_result_files_table_container" class="collapsible-box-panel">
-			<table id="code_revision_result_files_table" class="codepot-fit-width-table codepot-spacious-table">
+			<table id="code_revision_result_files_table" class="codepot-fit-width-table">
 				<?php 
 				/*
 				print '<tr class="heading">';
