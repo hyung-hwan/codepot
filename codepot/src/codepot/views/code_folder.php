@@ -89,42 +89,26 @@ function show_alert (outputMsg, titleMsg)
 	});
 }
 
-function show_tooltip(id, x, y, contents) {
-	$('<div id="' + id + '">' + contents + '</div>').css( {
-		position: 'absolute',
-		display: 'none',
-		top: y + 5,
-		left: x + 5,
-		border: '1px solid #fdd',
-		padding: '2px',
-		'background-color': '#fee',
-		'font-size': '0.8em',
-		'font-family': 'inherit',
-		opacity: 0.80
-	}).appendTo("body").fadeIn(200);
-}
-
-
-var RevGraphApp = (function ()
+var GraphApp = (function ()
 {
 	// -------------------------------------------------------------------
 	// CONSTRUCTOR
 	// -------------------------------------------------------------------
-	function App ()
+	function App (top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
 	{
-		if (this.constructor != App)
-		{
-			return new App ();
-		}
+		//if (this.constructor != App)
+		//{
+		//	return new App (top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_title);
+		//}
 
-		this.window = $(window);
-		this.graph_container = $("#code_folder_revision_graph_container");
-		this.graph_canvas = $("#code_folder_revision_graph");
-		this.graph_button = $("#code_folder_revision_graph_button");
-		this.graph_spin = $("#code_folder_revision_graph_spin");
-
+		this.top_container = top_container;
+		this.graph_container = graph_container;
+		this.graph_canvas = graph_canvas;
+		this.graph_button = graph_button;
+		this.graph_spin = graph_spin;
 		this.graph_ajax = null;
-		this.revision_network = null;
+		this.graph_url = graph_url;
+		this.graph_title = graph_title;
 
 		return this;
 	}
@@ -142,79 +126,30 @@ var RevGraphApp = (function ()
 		{
 			show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
 		}
-		else if (data.nodes.length <= 0)
+		/* else if (data.nodes.length <= 0)
 		{
 			show_alert ('No data to show', "<?php print $this->lang->line('Error')?>");
-		}
+		} */
 		else
 		{
-			var options = {
-				autoResize: false,
-				height: '500px',
-				width: '100%',
-				clickToUse: false,
-				layout: {
-					hierarchical: {
-						enabled: true,
-						//levelSeparation: 150,
-						//nodeSpacing: 200,
-						//treeSpacing: 300,
-						direction: 'LR', //'LR' 'UD', 'DU', 'RL'
-						sortMethod: 'directed' // 'hubsize'
-					}
-				},
-				edges: {
-					smooth: {
-					    type: 'cubicBezier',
-					    forceDirection: 'horizontal', // 'vertical',
-					    roundness: 0.4
-					}
-				},
-				physics: {
-					enabled: true
-				}
-			};
+			this.renderGraph (data);
 
-			var i, j;
-
-			j = data.nodes.length;
-			for (i = 0; i < j; i++)
-			{
-				data.nodes[i].shape = 'box';
-			}
-
-			j = data.edges.length;
-			for (i = 0; i < j; i++)
-			{
-				data.edges[i].length = 60;
-				data.edges[i].width = 1;
-				data.edges[i].arrows = 'to';
-				data.edges[i].font = { color: 'red' };
-			}
-
-			if (this.revision_network === null)
-			{
-				this.revision_network = new vis.Network(this.graph_canvas[0], data, options);
-			}
-			else
-			{
-				this.revision_network.setData (data);
-			}
-
-			this.graph_container.dialog("option", "height", (this.window.height() * 90 / 100));
-			this.graph_container.dialog("option", "width", (this.window.width() * 90 / 100));
+			this.graph_container.dialog("option", "height", (this.top_container.height() * 90 / 100));
+			this.graph_container.dialog("option", "width", (this.top_container.width() * 90 / 100));
 			this.graph_container.dialog ({
 				position: {
 					my: "center center",
 					at: "center center",
-					of: this.window
+					of: this.top_container
 				}
 			});
-			on_graph_container_resize.call (this);
+
+			this.resizeGraph ();
 		}
 
 		this.graph_button.button("enable");
 		this.graph_spin.removeClass ("fa-cog fa-spin");
+		this.graph_ajax = null;
 	}
 
 	function on_graph_error (jqXHR, textStatus, errorThrown) 
@@ -222,9 +157,10 @@ var RevGraphApp = (function ()
 		show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
 		this.graph_button.button("enable");
 		this.graph_spin.removeClass ("fa-cog fa-spin");
+		this.graph_ajax = null;
 	}
 
-	function open_revision_graph()
+	function open_graph()
 	{
 		this.graph_button.button ("disable");
 		this.graph_spin.addClass ("fa-cog fa-spin");
@@ -232,23 +168,11 @@ var RevGraphApp = (function ()
 
 		if (this.graph_ajax != null) this.graph_ajax.abort();
 		this.graph_ajax = $.ajax ({
-			url: codepot_merge_path (
-				"<?php print site_url(); ?>", 
-				"/graph/enjson_revision_graph/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
+			url: this.graph_url,
 			context: this,
 			success: on_graph_success,
 			error: on_graph_error
 		});
-	}
-
-	function on_graph_container_resize()
-	{
-		if (this.revision_network != null)
-		{
-			this.revision_network.setSize (this.graph_container.width(), this.graph_container.height());
-			this.revision_network.redraw();
-			this.revision_network.fit();
-		}
 	}
 
 	// -------------------------------------------------------------------
@@ -259,7 +183,7 @@ var RevGraphApp = (function ()
 		var self = this;
 
 		this.graph_container.dialog ({
-			title: '<?php print $this->lang->line('Revision')?>',
+			title: this.graph_title,
 			resizable: true,
 			autoOpen: false,
 			width: 'auto',
@@ -267,44 +191,185 @@ var RevGraphApp = (function ()
 			modal: true,
 			buttons: {
 				'<?php print $this->lang->line('Close')?>': function () {
-					if (this.graph_ajax != null) return;
+					if (self.graph_ajax != null) return;
 					self.graph_container.dialog('close');
 				}
 			},
 
-			beforeClose: function() { 
-				return this.graph_ajax == null;
+			beforeClose: function() {
+				return self.graph_ajax == null;
 			},
 		});
 
 		this.graph_container.on ("dialogresize", function (evt, ui) {
-			on_graph_container_resize.call (self);
+			self.resizeGraph ();
 		});
 
 		this.graph_button.button().click (function ()
 		{
-			open_revision_graph.call (self);
+			open_graph.call (self);
 			return false;
 		});
 	};
+
+	// -------------------------------------------------------------------
+	// VIRTUAL FUNCTIONS
+	// -------------------------------------------------------------------
+	App.prototype.renderGraph = function (json) 
+	{
+		/* SHOULD BE IMPLEMENTED BY INHERITER */
+	}
+
+	App.prototype.resizeGraph = function ()
+	{
+		/* SHOULD BE IMPLEMENTED BY INHERITER */
+	}
+
+	return App;
+})();
+
+var RevGraphApp = (function ()
+{
+	function App (top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
+	{
+		GraphApp.call (this, top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
+		this.revision_network = null;
+		return this;
+	}
+	App.prototype = Object.create (GraphApp.prototype);
+	App.prototype.constructor = App;
+
+	App.prototype.renderGraph = function (data)
+	{
+		var options = {
+			autoResize: false,
+			height: '400px',
+			width: '90%',
+			clickToUse: false,
+			layout: {
+				hierarchical: {
+					enabled: true,
+					//levelSeparation: 150,
+					//nodeSpacing: 200,
+					//treeSpacing: 300,
+					direction: 'LR', //'LR' 'UD', 'DU', 'RL'
+					sortMethod: 'directed' // 'hubsize'
+				}
+			},
+			edges: {
+				smooth: {
+				    type: 'cubicBezier',
+				    forceDirection: 'horizontal', // 'vertical',
+				    roundness: 0.4
+				}
+			},
+			physics: {
+				enabled: true
+			}
+		};
+
+		var i, j;
+
+		j = data.nodes.length;
+		for (i = 0; i < j; i++)
+		{
+			data.nodes[i].shape = 'box';
+		}
+
+		j = data.edges.length;
+		for (i = 0; i < j; i++)
+		{
+			data.edges[i].length = 60;
+			data.edges[i].width = 1;
+			data.edges[i].arrows = 'to';
+			data.edges[i].font = { color: 'red' };
+		}
+
+		if (this.revision_network === null)
+		{
+			this.revision_network = new vis.Network(this.graph_canvas[0], data, options);
+		}
+		else
+		{
+			this.revision_network.setData (data);
+		}
+	}
+
+	App.prototype.resizeGraph = function ()
+	{
+		if (this.revision_network != null)
+		{
+			this.revision_network.setSize (this.graph_container.width(), this.graph_container.height());
+			this.revision_network.redraw();
+			this.revision_network.fit();
+		}
+	}
 
 	return App;
 })();
 
 
-
-function show_loc_by_lang_graph (response)
+var LocLangApp = (function ()
 {
-	var loc;
-	try { loc = $.parseJSON(response); } 
-	catch (e) { loc = null; }
-
-	if (loc == null)
+	function App (top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
 	{
-		show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
+		GraphApp.call (this, top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
+		this.tooltip = null;
+		this.plot_last_point = null;
+		this.plot_dataset = null;
+		this.plot_options = null;
+		return this;
 	}
-	else
+
+	App.prototype = Object.create (GraphApp.prototype);
+	App.prototype.constructor = App;
+
+	function show_tooltip(id, x, y, contents) 
 	{
+		var gco = this.graph_container.offset();
+
+		if (this.tooltip != null) this.tooltip.remove();
+
+		this.tooltip = $('<div id="' + id + '">' + contents + '</div>').css( {
+			position: 'absolute',
+			display: 'none',
+			top: y - gco.top,
+			left: x - gco.left,
+			border: '1px solid #fdd',
+			padding: '2px',
+			'background-color': '#fee',
+			'font-size': '0.8em',
+			'font-family': 'inherit',
+			opacity: 0.80
+		});
+		this.tooltip.appendTo(this.graph_container).fadeIn(200);
+	}
+
+	function on_plot_hover (item)
+	{
+		if (item) 
+		{
+			if (this.plot_last_point != item.datapoint) 
+			{
+				this.plot_last_point = item.datapoint;
+				show_tooltip.call (this, "code_folder_loc_by_lang_tooltip", item.pageX, item.pageY, item.datapoint[1]);
+			}
+		} 
+		else  
+		{
+			if (this.plot_last_point != null) this.plot_last_point = null;
+			if (this.tooltip != null) 
+			{
+				this.tooltip.remove();
+				this.tooltip = null;
+			}
+		}
+	}
+
+	App.prototype.renderGraph = function (loc)
+	{
+		var self = this;
+
 		var blank = [];
 		for (var key in loc) blank.push ([ key, loc[key][1]] );
 
@@ -322,7 +387,6 @@ function show_loc_by_lang_graph (response)
 		];
 
 		var options = {
-
 			series: {
 				stack: true,
 				shadowSize: 0,
@@ -348,52 +412,69 @@ function show_loc_by_lang_graph (response)
 			yaxes: { }
 		};
 
-		$("#code_folder_loc_by_lang_graph").width(550).height(400);
-		$.plot($("#code_folder_loc_by_lang_graph"), dataset, options);
+		//this.graph_canvas.width(550).height(400);
+		//$.plot(this.graph_canvas, dataset, options);
 
-		var code_folder_loc_by_lang_graph_previous_point = null;
+		this.plot_dataset = dataset;
+		this.plot_options = options;
+		this.plot_last_point = null;
 
-		$("#code_folder_loc_by_lang_graph").bind("plothover", function (event, pos, item) {
-			if (item) 
-			{
-				if (code_folder_loc_by_lang_graph_previous_point != item.datapoint) 
-				{
-					code_folder_loc_by_lang_graph_previous_point = item.datapoint;
-					$("#code_folder_loc_by_lang_graph_tooltip").remove();
-					show_tooltip("code_folder_loc_by_lang_graph_tooltip", item.pageX, item.pageY - 20, item.datapoint[1]);
-				}
-			} 
-			else 
-			{
-				$("#code_folder_loc_by_lang_graph_tooltip").remove();
-				code_folder_loc_by_lang_graph_previous_point = null;
-			}
+		this.graph_canvas.bind("plothover", function (event, pos, item) {
+			on_plot_hover.call (self, item);
 		});
 	}
 
-	$("#code_folder_loc_by_lang_button").button("enable");
-	$("#code_folder_loc_by_lang_spin" ).removeClass ("fa-cog fa-spin");
-}
+	App.prototype.resizeGraph = function ()
+	{
+		if (this.plot_dataset != null)
+		{
+			this.graph_canvas.width (this.graph_container.width() - 5);
+			this.graph_canvas.height (this.graph_container.height() - 10);
+			$.plot(this.graph_canvas, this.plot_dataset, this.plot_options);
+		}
+	}
+	return App;
+})();
 
-function show_loc_by_file_graph (response)
+
+var LocFileApp = (function ()
 {
-	var loc;
-	try { loc = $.parseJSON(response); } 
-	catch (e) { loc = null; }
-
-	if (loc == null)
+	function App (top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
 	{
-		show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
-	}
-	else
-	{
-		var f = new CodeFlower("#code_folder_loc_by_file_graph", 550, 400);
-		f.update (loc);
+		GraphApp.call (this, top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
+		this.cf = null;
+		this.loc_data = null;
+
+		var self = this;
+		this.graph_container.on ("dialogclose", function (evt) {
+			if (self.fc != null)
+			{
+				self.fc.cleanup ();
+				self.fc = null;
+			}
+		});
+		return this;
 	}
 
-	$("#code_folder_loc_by_file_button").button("enable");
-	$("#code_folder_loc_by_file_spin" ).removeClass ("fa-cog fa-spin");
-}
+	App.prototype = Object.create (GraphApp.prototype);
+	App.prototype.constructor = App;
+
+	App.prototype.renderGraph = function (loc)
+	{
+		this.loc_data = loc;
+	}
+
+	App.prototype.resizeGraph = function ()
+	{
+		if (this.fc == null) 
+		{
+			this.fc = new CodeFlower ("#code_folder_loc_by_file", this.graph_container.width() - 5, this.graph_container.height() - 10);
+			if (this.loc_data != null) this.fc.update (this.loc_data);
+		}
+	}
+	return App;
+})();
+
 
 function render_readme()
 {
@@ -850,48 +931,38 @@ $(function () {
 		return false;
 	});
 
-	$("#code_folder_loc_by_lang_button").button().click (function () {
-		$("#code_folder_loc_by_lang_button").button("disable");
-		$("#code_folder_loc_by_lang_spin").addClass ("fa-cog fa-spin");
-
-		var ajax_req = $.ajax ({
-			url: codepot_merge_path (
-				"<?php print site_url(); ?>", 
-				"/graph/enjson_loc_by_lang/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
-			context: document.body,
-			success: show_loc_by_lang_graph,
-			error: function (xhr, ajaxOptions, thrownError) {
-				show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
-				$("#code_folder_loc_by_lang_button").button("enable");
-				$("#code_folder_loc_by_lang_spin" ).removeClass ("fa-cog fa-spin");
-			}
-		});
-
-		return false;
-	});
-
-	$("#code_folder_loc_by_file_button").button().click (function () {
-		$("#code_folder_loc_by_file_button").button("disable");
-		$("#code_folder_loc_by_file_spin").addClass ("fa-cog fa-spin");
-		var ajax_req = $.ajax ({
-			url: codepot_merge_path (
-				"<?php print site_url(); ?>", 
-				"/graph/enjson_loc_by_file/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
-			context: document.body,
-			success: show_loc_by_file_graph,
-			error: function (xhr, ajaxOptions, thrownError) {
-				show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
-				$("#code_folder_loc_by_file_button").button("enable");
-				$("#code_folder_loc_by_file_spin" ).removeClass ("fa-cog fa-spin");
-			}
-		});
-
-		return false;
-	});
-
-
-	var rev_graph_app = new RevGraphApp ();
+	var rev_graph_app = new RevGraphApp (
+		$(window), 
+		$("#code_folder_revision_graph_container"),
+		$("#code_folder_revision_graph"),
+		$("#code_folder_revision_graph_button"),
+		$("#code_folder_revision_graph_spin"),
+		codepot_merge_path ("<?php print site_url(); ?>", "/graph/enjson_revision_graph/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
+		"<?php print $this->lang->line('Revision')?>"
+	);
 	rev_graph_app.initWidgets ();
+
+	var loc_by_lang_app = new LocLangApp (
+		$(window), 
+		$("#code_folder_loc_by_lang_container"),
+		$("#code_folder_loc_by_lang"),
+		$("#code_folder_loc_by_lang_button"),
+		$("#code_folder_loc_by_lang_spin"),
+		codepot_merge_path ("<?php print site_url(); ?>", "/graph/enjson_loc_by_lang/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
+		"LOC-<?php print $this->lang->line('Language')?>"
+	);
+	loc_by_lang_app.initWidgets ();
+
+	var loc_by_file_app = new LocFileApp (
+		$(window),
+		$("#code_folder_loc_by_file_container"),
+		$("#code_folder_loc_by_file"),
+		$("#code_folder_loc_by_file_button"),
+		$("#code_folder_loc_by_file_spin"),
+		codepot_merge_path ("<?php print site_url(); ?>", "/graph/enjson_loc_by_file/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
+		"LOC-<?php print $this->lang->line('File')?>"
+	);
+	loc_by_file_app.initWidgets ();
 
 <?php if ($show_search): ?>
 	$('#code_search_invertedly').button();
@@ -1135,8 +1206,13 @@ $this->load->view (
 </div>
 
 <div id="code_folder_graph" class="graph">
-	<div id="code_folder_loc_by_lang_graph"></div>
-	<div id="code_folder_loc_by_file_graph"></div>
+	<div id="code_folder_loc_by_lang_container">
+		<div id="code_folder_loc_by_lang"></div>
+	</div>
+
+	<div id="code_folder_loc_by_file_container">
+		<div id="code_folder_loc_by_file"></div>
+	</div>
 
 	<div id="code_folder_revision_graph_container">
 		<div id="code_folder_revision_graph"></div>
