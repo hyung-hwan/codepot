@@ -236,6 +236,7 @@
 
 #code_history_result_table td.commit-message-td {
 	vertical-align: middle;
+	line-height: 1.2em;
 }
 
 #code_history_result_table td.commit-message-td:hover {
