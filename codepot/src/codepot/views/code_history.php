@@ -193,6 +193,9 @@ $this->load->view (
 				print anchor ("code/diff/{$project->id}/{$xfullpath}/{$h['rev']}",
 					'<div class="codepot-buttoned-anchor"><i class="fa fa-server"></i> ' . $this->lang->line('Difference') . '</div>'); 
 			}
+
+			print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}",
+				'<div class="codepot-buttoned-anchor">' . $this->lang->line('Changes') . '</div>'); 
 			print '</div>';
 			print '</td>';
 			print '</tr>';
