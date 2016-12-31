@@ -1,5 +1,4 @@
 <?php
-$lang['CODE_COMMIT'] = '커밋';
 $lang['CODE_PROPERTIES'] = '속성';
 $lang['CODE_PROPERTY'] = '속성';
 $lang['CODE_REVISION_GRAPH'] = '리비전 그래프';
