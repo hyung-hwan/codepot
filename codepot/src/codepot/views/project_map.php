@@ -227,9 +227,9 @@ var GraphApp = (function()
 		this.ajax_req = null;
 	}
 
-	function handle_error (xhr, textStatus, thrownError) 
+	function handle_error (jqXHR, textStatus, errorThrown) 
 	{
-		show_alert.call (this, xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
+		show_alert.call (this, jqXHR.status + ' ' + errorThrown, "<?php print $this->lang->line('Error')?>");
 		this.refresh_button.button("enable");
 		this.refresh_spin.removeClass ("fa-cog fa-spin");
 		this.ajax_req = null;

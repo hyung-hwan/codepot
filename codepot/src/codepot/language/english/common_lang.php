@@ -14,7 +14,6 @@ $lang['Change'] = 'Change';
 $lang['Change log'] = 'Change log';
 $lang['Close'] = 'Close';
 $lang['Code'] = 'Code';
-$lang['Code changes'] = 'Code changes';
 $lang['Column'] = 'Column';
 $lang['Columns'] = 'Columns';
 $lang['Comment'] = 'Comment';
