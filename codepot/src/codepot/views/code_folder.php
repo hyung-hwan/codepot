@@ -94,7 +94,7 @@ var GraphApp = (function ()
 	// -------------------------------------------------------------------
 	// CONSTRUCTOR
 	// -------------------------------------------------------------------
-	function App (top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
+	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
 	{
 		//if (this.constructor != App)
 		//{
@@ -103,6 +103,7 @@ var GraphApp = (function ()
 
 		this.top_container = top_container;
 		this.graph_container = graph_container;
+		this.graph_msgdiv = graph_msgdiv;
 		this.graph_canvas = graph_canvas;
 		this.graph_button = graph_button;
 		this.graph_spin = graph_spin;
@@ -110,6 +111,8 @@ var GraphApp = (function ()
 		this.graph_url = graph_url;
 		this.graph_title = graph_title;
 
+		this.graph_msgdiv.hide();
+		this.graph_msgdiv.css ({'background-color': 'red', 'color': 'white', 'padding': '1em', 'float': 'left'});
 		return this;
 	}
 
@@ -124,12 +127,8 @@ var GraphApp = (function ()
 
 		if (data == null)
 		{
-			show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
+			this.showMessage ('Invalid data received');
 		}
-		/* else if (data.nodes.length <= 0)
-		{
-			show_alert ('No data to show', "<?php print $this->lang->line('Error')?>");
-		} */
 		else
 		{
 			this.renderGraph (data);
@@ -154,7 +153,7 @@ var GraphApp = (function ()
 
 	function on_graph_error (jqXHR, textStatus, errorThrown) 
 	{
-		show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
+		this.showMessage (jqXHR.status + ' ' + errorThrown);
 		this.graph_button.button("enable");
 		this.graph_spin.removeClass ("fa-cog fa-spin");
 		this.graph_ajax = null;
@@ -212,6 +211,23 @@ var GraphApp = (function ()
 		});
 	};
 
+
+	App.prototype.showMessage = function (msg)
+	{
+		this.graph_msgdiv.show();
+		this.graph_msgdiv.text (msg);
+		this.graph_msgdiv.position ({
+			my: "center",
+			at: "center",
+			of: this.graph_container
+		});
+	}
+
+	App.prototype.clearMessage = function()
+	{
+		this.graph_msgdiv.hide();
+	}
+
 	// -------------------------------------------------------------------
 	// VIRTUAL FUNCTIONS
 	// -------------------------------------------------------------------
@@ -230,9 +246,9 @@ var GraphApp = (function ()
 
 var RevGraphApp = (function ()
 {
-	function App (top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
+	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
 	{
-		GraphApp.call (this, top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
+		GraphApp.call (this, top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
 		this.revision_network = null;
 		return this;
 	}
@@ -241,6 +257,13 @@ var RevGraphApp = (function ()
 
 	App.prototype.renderGraph = function (data)
 	{
+		if (data.nodes.length <= 0)
+		{
+			this.showMessage ('No data to show');
+			return;
+		}
+
+		this.clearMessage ();
 		var options = {
 			autoResize: false,
 			height: '400px',
@@ -311,9 +334,9 @@ var RevGraphApp = (function ()
 
 var LocLangApp = (function ()
 {
-	function App (top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
+	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
 	{
-		GraphApp.call (this, top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
+		GraphApp.call (this, top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
 		this.tooltip = null;
 		this.plot_last_point = null;
 		this.plot_dataset = null;
@@ -369,6 +392,8 @@ var LocLangApp = (function ()
 	App.prototype.renderGraph = function (loc)
 	{
 		var self = this;
+
+		this.clearMessage ();
 
 		var blank = [];
 		for (var key in loc) blank.push ([ key, loc[key][1]] );
@@ -439,9 +464,9 @@ var LocLangApp = (function ()
 
 var LocFileApp = (function ()
 {
-	function App (top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
+	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
 	{
-		GraphApp.call (this, top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
+		GraphApp.call (this, top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
 		this.cf = null;
 		this.loc_data = null;
 
@@ -461,6 +486,7 @@ var LocFileApp = (function ()
 
 	App.prototype.renderGraph = function (loc)
 	{
+		this.clearMessage ();
 		this.loc_data = loc;
 	}
 
@@ -934,6 +960,7 @@ $(function () {
 	var rev_graph_app = new RevGraphApp (
 		$(window), 
 		$("#code_folder_revision_graph_container"),
+		$("#code_folder_revision_graph_error"),
 		$("#code_folder_revision_graph"),
 		$("#code_folder_revision_graph_button"),
 		$("#code_folder_revision_graph_spin"),
@@ -945,6 +972,7 @@ $(function () {
 	var loc_by_lang_app = new LocLangApp (
 		$(window), 
 		$("#code_folder_loc_by_lang_container"),
+		$("#code_folder_loc_by_lang_error"),
 		$("#code_folder_loc_by_lang"),
 		$("#code_folder_loc_by_lang_button"),
 		$("#code_folder_loc_by_lang_spin"),
@@ -956,6 +984,7 @@ $(function () {
 	var loc_by_file_app = new LocFileApp (
 		$(window),
 		$("#code_folder_loc_by_file_container"),
+		$("#code_folder_loc_by_file_error"),
 		$("#code_folder_loc_by_file"),
 		$("#code_folder_loc_by_file_button"),
 		$("#code_folder_loc_by_file_spin"),
@@ -1208,14 +1237,17 @@ $this->load->view (
 <div id="code_folder_graph" class="graph">
 	<div id="code_folder_loc_by_lang_container">
 		<div id="code_folder_loc_by_lang"></div>
+		<div id="code_folder_loc_by_lang_error"></div>
 	</div>
 
 	<div id="code_folder_loc_by_file_container">
 		<div id="code_folder_loc_by_file"></div>
+		<div id="code_folder_loc_by_file_error"></div>
 	</div>
 
 	<div id="code_folder_revision_graph_container">
 		<div id="code_folder_revision_graph"></div>
+		<div id="code_folder_revision_graph_error"></div>
 	</div>
 </div>
 

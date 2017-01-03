@@ -169,7 +169,6 @@ class Graph extends Controller
 		print codepot_json_encode ($cloc);
 	}
 
-
 	function enjson_revision_graph ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
 		$this->load->model ('ProjectModel', 'projects');

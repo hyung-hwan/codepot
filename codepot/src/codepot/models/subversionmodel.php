@@ -1648,7 +1648,7 @@ class SubversionModel extends Model
 		array_push ($edges, array ('from' => $from, 'to' => $to, 'label' => $label));
 	}
 
-	function revisionGraph ($projectid, $path, $rev)
+	function __revisionGraph ($projectid, $path, $rev)
 	{
 		// this function is almost blind translation of svn-graph.pl
 
@@ -1789,6 +1789,340 @@ class SubversionModel extends Model
 				}
 				
 			}
+		}
+
+		return array ('nodes' => $nodes, 'edges' => $edges);
+	}
+
+	private function _normalize_revision_changes (&$log)
+	{
+		$deleted = array();
+		$movedfrom = array();
+		$movedto = array();
+		$copiedfrom = array();
+		$copiedto = array();
+		$added = array();
+		$modified = array();
+
+		$copyinfo = array();
+		$currev = $log['rev'];
+
+		foreach ($log['paths'] as $p)
+		{
+			if (!array_key_exists('action', $p) || !array_key_exists('path', $p)) continue;
+
+			$action = $p['action'];
+			$path = $p['path'];
+
+			if ($action == 'A')
+			{
+				if (array_key_exists('copyfrom', $p))
+				{
+					// $path:$p['rev'] has been copied to $copyinfo:$currev 
+					$copyinfo[$p['copyfrom']] = array($path, $p['rev'], $currev);
+				}
+				else
+				{
+					$added[$path] = 1;
+				}
+			}
+			else if ($action == 'D')
+			{
+				$deleted[$path] = 1;
+			}
+			else if ($action == 'M')
+			{
+				$modified[$path] = 1;
+			}
+		}
+
+		foreach ($copyinfo as $op => $ci)
+		{
+			if (array_key_exists($op, $deleted))
+			{
+				/* moved */
+				$movedfrom[$ci[0]] = array($op, $ci[1], $ci[2]); // $ci[0] has been moved from $op:$ci[1]
+				$movedto[$op] = $ci; // $op:$ci[1] has been moved to $ci[0]:$ci[2]
+				unset ($deleted[$op]);
+			}
+			else
+			{
+				/* copied */
+				$copiedfrom[$ci[0]] = array($op, $ci[1], $ci[2]);
+				$copiedto[$op] = $ci;
+			}
+		}
+
+		$result = new stdClass();
+		$result->modified = $modified;
+		$result->deleted = $deleted;
+		$result->copiedfrom = $copiedfrom;
+		$result->copiedto = $copiedto;
+		$result->movedfrom = $movedfrom;
+		$result->movedto = $movedto;
+		$result->added = $added;
+
+		return $result;
+	}
+
+	private function _add_revision_transition (&$trans, $from, $to)
+	{
+		if (array_key_exists($from, $trans)) array_push ($trans[$from], $to);
+		else $trans[$from] = array ($to);
+	}
+
+	private function _add_revision_trackset (&$trackset, $trapath, $rev, $act)
+	{
+		if (array_key_exists($trapath, $trackset)) 
+		{
+			// keep array elements sorted by the revision number
+			$arr = &$trackset[$trapath];
+			$cnt = count($arr);
+			while ($cnt > 0)
+			{
+				$x = $arr[--$cnt];
+				if ($x[0] <= $rev) 
+				{
+					array_splice ($trackset[$trapath], $cnt + 1, 0, array(array($rev, $act)));
+					return;
+				}
+			}
+			array_splice ($trackset[$trapath], 0, 0, array(array($rev, $act)));
+		}
+		else $trackset[$trapath] = array(array($rev, $act));
+	}
+
+	private function _backtrack_revision (&$trackset, $trapath, $rev)
+	{
+		if (array_key_exists($trapath, $trackset))
+		{
+			$arr = $trackset[$trapath];
+
+			$cnt = count($arr);
+			while ($cnt > 0)
+			{
+				$br = $arr[--$cnt];
+				if ($br[0] < $rev)
+				{
+					if ($br[1] == 'D') return -1;
+					return $br[0];
+				}
+			}
+		}
+
+		return -1;
+	}
+
+	function revisionGraph ($projectid, $path, $rev)
+	{
+		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
+
+		$startpath = $path;
+
+		$nodeids = array ();
+		$nodes = array ();
+		$edges = array ();
+
+		$log = @svn_log ($orgurl, 1, $rev, 0, SVN_DISCOVER_CHANGED_PATHS);
+		if ($log === FALSE || count($log) <= 0) return FALSE;
+
+//print_r ($log);
+		$trackset = array ();
+		$delset =  array();
+		$trans = array();
+
+		$this->_add_revision_trackset ($trackset, $path, -1, '');
+		foreach ($log as $l)
+		{
+			$currev = $l['rev'];
+			$changes = $this->_normalize_revision_changes ($l);
+
+			/*
+			print "==== {$l['rev']} ====\n";
+			foreach ($changes->deleted as $op => $one) print "DELETED ===> $op\n";
+			foreach ($changes->added as $op => $one) print "ADDED ===> $op\n";
+			foreach ($changes->modified as $op => $one) print "MODIFIED ===> $op\n";
+			foreach ($changes->movedfrom as $np => $op) print "MOVED ===> {$op[0]},{$op[1]} -> $np\n";
+			foreach ($changes->copiedfrom as $np => $op) print "COPIED ===> {$op[0]},{$op[1]} -> $np\n";
+			//foreach ($changes->movedto as $op=> $np) print "MOVED ===> $op -> $np\n";
+			//foreach ($changes->copiedto as $op => $np) print "COPIED ===> $op -> $np\n";
+			*/
+
+//print_r ($changes);
+//print "---------------------------------\n";
+			foreach ($trackset as $trapath => $dummy)
+			{
+				if (array_key_exists($trapath, $changes->copiedto))
+				{
+					/* $trapath has been copied to a new file */
+					$newpath = $changes->copiedto[$trapath][0];
+					$oldrev = $changes->copiedto[$trapath][1];
+
+					$this->_add_revision_trackset ($trackset, $trapath, $oldrev, '');
+					$this->_add_revision_trackset ($trackset, $newpath, $currev, '');
+
+					$this->_add_revision_transition ($trans, "{$oldrev},{$trapath}", "CP,{$currev},{$newpath}");
+				}
+				else if (array_key_exists($trapath, $changes->copiedfrom))
+				{
+					/* something else has been copied to become $trapath */
+					$oldpath = $changes->copiedfrom[$trapath][0];
+					$oldrev = $changes->copiedfrom[$trapath][1];
+
+					$this->_add_revision_trackset ($trackset, $oldpath, $oldrev, '');
+					$this->_add_revision_trackset ($trackset, $trapath, $currev, '');
+
+					$this->_add_revision_transition ($trans, "{$oldrev},{$oldpath}", "CP,{$currev},{$trapath}");
+				}
+				else if (array_key_exists($trapath, $changes->movedto))
+				{
+					$newpath = $changes->movedto[$trapath][0];
+					$oldrev = $changes->movedto[$trapath][1];
+
+					$this->_add_revision_trackset ($trackset, $trapath, $oldrev, 'D');
+					$this->_add_revision_trackset ($trackset, $newpath, $currev, '');
+
+					$this->_add_revision_transition ($trans, "{$oldrev},{$trapath}", "MV,{$currev},{$newpath}");
+				}
+				else if (array_key_exists($trapath, $changes->movedfrom))
+				{
+
+					/* something else has been moved to become $trapath */
+					$oldpath = $changes->movedfrom[$trapath][0];
+					$oldrev = $changes->movedfrom[$trapath][1];
+
+					$this->_add_revision_trackset ($trackset, $oldpath, $oldrev, 'D');
+					$this->_add_revision_trackset ($trackset, $trapath, $currev, '');
+
+					$this->_add_revision_transition ($trans, "{$oldrev},{$oldpath}", "MV,{$currev},{$trapath}");
+				}
+				else if (array_key_exists($trapath, $changes->deleted))
+				{
+					$this->_add_revision_transition ($trans, "${currev},{$trapath}", "RM,-1,<<deleted>>");
+					$delset[$trapath] = 1;
+					$this->_add_revision_trackset ($trackset, $trapath, $currev, 'D');
+				}
+				else if (array_key_exists($trapath, $changes->added))
+				{
+					$this->_add_revision_trackset ($trackset, $trapath, $currev, '');
+
+					if (array_key_exists($trapath, $delset))
+					{
+						$this->_add_revision_transition ($trans, "-1,<<deleted>>", "AD,{$currev},{$trapath}");
+						unset ($delset[$trapath]);
+					}
+					else 
+					{
+						$this->_add_revision_transition ($trans, "-1,<<start>>", "AD,{$currev},{$trapath}");
+					}
+				}
+				else if (array_key_exists($trapath, $changes->modified))
+				{
+					$this->_add_revision_trackset ($trackset, $trapath, $currev, '');
+					$oldrev = $this->_backtrack_revision ($trackset, $trapath, $currev);
+					$this->_add_revision_transition ($trans, "{$oldrev},{$trapath}", "MF,{$currev},{$trapath}");
+				}
+			}
+		}
+
+//print_r ($trackset);
+//print_r ($trans);
+//print_r ($trackset);
+
+		$mf_cand = array();
+		foreach ($trans as $transfrom => $transtos)
+		{
+			$x = explode (',', $transfrom, 2);
+			$frompath = $x[1];
+			$fromrev = $x[0];
+
+			$numtranstos = count($transtos);
+			for ($i = 0; $i < $numtranstos; $i++)
+			{
+				$transto = $transtos[$i];
+
+				$x = explode (',', $transto, 3);
+				$act = $x[0];
+				$topath = $x[2];
+				$torev = $x[1];
+
+				switch ($act)
+				{
+					case 'CP':
+						$br = $this->_backtrack_revision ($trackset, $frompath, $fromrev);
+						if ($br >= 0)
+						{
+							$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$br}");
+							$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
+							$this->_add_rg_edge ($edges, $id1, $id2, '');
+						}
+
+						$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
+						$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}");
+						$this->_add_rg_edge ($edges, $id1, $id2, 'copied');
+						break;
+					case 'MV':
+						$br = $this->_backtrack_revision ($trackset, $frompath, $fromrev);
+						if ($br >= 0)
+						{
+							$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$br}");
+							$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
+							$this->_add_rg_edge ($edges, $id1, $id2, '');
+						}
+
+						$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
+						$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}");
+						$this->_add_rg_edge ($edges, $id1, $id2, 'moved');
+						break;
+					case 'RM':
+						$br = $this->_backtrack_revision ($trackset, $frompath, $fromrev);
+						if ($br >= 0)
+						{
+							$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$br}");
+							$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
+							$this->_add_rg_edge ($edges, $id1, $id2, '');
+						}
+
+						$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
+						$id2 = $this->_add_rg_node ($nodeids, $nodes, $topath);
+						$this->_add_rg_edge ($edges, $id1, $id2, 'deleted');
+						break;
+					case 'AD':
+						$id1 = $this->_add_rg_node ($nodeids, $nodes, $frompath);
+						$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}");
+						$this->_add_rg_edge ($edges, $id1, $id2, '');
+						break;
+					case 'MF':
+						/*
+						$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
+						$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}");
+						$this->_add_rg_edge ($edges, $id1, $id2, '');
+						*/
+						if (array_key_exists($frompath, $mf_cand))
+						{
+							$z = &$mf_cand[$frompath];
+							$z[1] = $topath;
+							$z[2] = $torev;
+							$z[3]++;
+						}
+						else
+						{
+							$mf_cand[$frompath] = array ($fromrev, $topath, $torev, 1);
+						}
+						break;
+				}
+			}
+		}
+
+		foreach ($mf_cand as $frompath => $ti)
+		{
+			$fromrev = $ti[0];
+			$topath = $ti[1];
+			$torev = $ti[2];
+			$num_changes = $ti[3];
+			$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
+			$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}");
+			$this->_add_rg_edge ($edges, $id1, $id2, "{$num_changes} change(s)");
 		}
 
 		return array ('nodes' => $nodes, 'edges' => $edges);
