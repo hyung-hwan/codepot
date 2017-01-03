@@ -233,28 +233,185 @@ function showRawCode()
 }
 <?php endif; ?>
 
-var revision_network = null;
-
-function show_revision_graph (response)
+var GraphApp = (function ()
 {
-	var data;
-	try { data = $.parseJSON(response); } 
-	catch (e) { data = null; }
+	// -------------------------------------------------------------------
+	// CONSTRUCTOR
+	// -------------------------------------------------------------------
+	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
+	{
+		//if (this.constructor != App)
+		//{
+		//	return new App (top_container, graph_container, graph_canvas, graph_button, graph_spin, graph_title);
+		//}
 
-	if (data == null)
-	{
-		show_alert ('Invalid data received', "<?php print $this->lang->line('Error')?>");
+		this.top_container = top_container;
+		this.graph_container = graph_container;
+		this.graph_msgdiv = graph_msgdiv;
+		this.graph_canvas = graph_canvas;
+		this.graph_button = graph_button;
+		this.graph_spin = graph_spin;
+		this.graph_ajax = null;
+		this.graph_url = graph_url;
+		this.graph_title = graph_title;
+
+		this.graph_msgdiv.hide();
+		this.graph_msgdiv.css ({'background-color': 'red', 'color': 'white', 'padding': '1em', 'float': 'left'});
+		return this;
 	}
-	else if (data.nodes.length <= 0)
+
+	// -------------------------------------------------------------------
+	// PRIVATE FUNCTIONS
+	// -------------------------------------------------------------------
+	function on_graph_success (response, textStatus, jqXHR)
 	{
-		show_alert ('No data to show', "<?php print $this->lang->line('Error')?>");
+		var data;
+		try { data = $.parseJSON(response); } 
+		catch (e) { data = null; }
+
+		if (data == null)
+		{
+			this.showMessage ('Invalid data received');
+		}
+		else
+		{
+			this.renderGraph (data);
+
+			this.graph_container.dialog("option", "height", (this.top_container.height() * 90 / 100));
+			this.graph_container.dialog("option", "width", (this.top_container.width() * 90 / 100));
+			this.graph_container.dialog ({
+				position: {
+					my: "center center",
+					at: "center center",
+					of: this.top_container
+				}
+			});
+
+			this.resizeGraph ();
+		}
+
+		this.graph_button.button("enable");
+		this.graph_spin.removeClass ("fa-cog fa-spin");
+		this.graph_ajax = null;
 	}
-	else
+
+	function on_graph_error (jqXHR, textStatus, errorThrown) 
 	{
+		this.showMessage (jqXHR.status + ' ' + errorThrown);
+		this.graph_button.button("enable");
+		this.graph_spin.removeClass ("fa-cog fa-spin");
+		this.graph_ajax = null;
+	}
+
+	function open_graph()
+	{
+		this.graph_button.button ("disable");
+		this.graph_spin.addClass ("fa-cog fa-spin");
+		this.graph_container.dialog ("open");
+
+		if (this.graph_ajax != null) this.graph_ajax.abort();
+		this.graph_ajax = $.ajax ({
+			url: this.graph_url,
+			context: this,
+			success: on_graph_success,
+			error: on_graph_error
+		});
+	}
+
+	// -------------------------------------------------------------------
+	// PUBLIC FUNCTIONS
+	// -------------------------------------------------------------------
+	App.prototype.initWidgets = function () 
+	{
+		var self = this;
+
+		this.graph_container.dialog ({
+			title: this.graph_title,
+			resizable: true,
+			autoOpen: false,
+			width: 'auto',
+			height: 'auto',
+			modal: true,
+			buttons: {
+				'<?php print $this->lang->line('Close')?>': function () {
+					if (self.graph_ajax != null) return;
+					self.graph_container.dialog('close');
+				}
+			},
+
+			beforeClose: function() {
+				return self.graph_ajax == null;
+			},
+		});
+
+		this.graph_container.on ("dialogresize", function (evt, ui) {
+			self.resizeGraph ();
+		});
+
+		this.graph_button.button().click (function ()
+		{
+			open_graph.call (self);
+			return false;
+		});
+	};
+
+
+	App.prototype.showMessage = function (msg)
+	{
+		this.graph_msgdiv.show();
+		this.graph_msgdiv.text (msg);
+		this.graph_msgdiv.position ({
+			my: "center",
+			at: "center",
+			of: this.graph_container
+		});
+	}
+
+	App.prototype.clearMessage = function()
+	{
+		this.graph_msgdiv.hide();
+	}
+
+	// -------------------------------------------------------------------
+	// VIRTUAL FUNCTIONS
+	// -------------------------------------------------------------------
+	App.prototype.renderGraph = function (json) 
+	{
+		/* SHOULD BE IMPLEMENTED BY INHERITER */
+	}
+
+	App.prototype.resizeGraph = function ()
+	{
+		/* SHOULD BE IMPLEMENTED BY INHERITER */
+	}
+
+	return App;
+})();
+
+var RevGraphApp = (function ()
+{
+	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
+	{
+		GraphApp.call (this, top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
+		this.revision_network = null;
+		return this;
+	}
+	App.prototype = Object.create (GraphApp.prototype);
+	App.prototype.constructor = App;
+
+	App.prototype.renderGraph = function (data)
+	{
+		if (data.nodes.length <= 0)
+		{
+			this.showMessage ('No data to show');
+			return;
+		}
+
+		this.clearMessage ();
 		var options = {
 			autoResize: false,
-			height: '500px',
-			width: '100%',
+			height: '400px',
+			width: '90%',
 			clickToUse: false,
 			layout: {
 				hierarchical: {
@@ -295,25 +452,29 @@ function show_revision_graph (response)
 			data.edges[i].font = { color: 'red' };
 		}
 
-		if (revision_network === null)
+		if (this.revision_network === null)
 		{
-			revision_network = new vis.Network(document.getElementById('code_file_result_revision_graph'), data, options);
-			$('#code_file_result_revision_graph').resizable({
-				resize: function (event, ui)  {
-					revision_network.setSize (ui.size.width - 10, ui.size.height - 10);
-					revision_network.redraw();
-				}
-			});
+			this.revision_network = new vis.Network(this.graph_canvas[0], data, options);
 		}
 		else
 		{
-			revision_network.setData (data);
+			this.revision_network.setData (data);
 		}
 	}
 
-	$("#code_file_revision_graph_button").button("enable");
-	$("#code_file_revision_graph_spin" ).removeClass ("fa-cog fa-spin");
-}
+	App.prototype.resizeGraph = function ()
+	{
+		if (this.revision_network != null)
+		{
+			this.revision_network.setSize (this.graph_container.width(), this.graph_container.height());
+			this.revision_network.redraw();
+			this.revision_network.fit();
+		}
+	}
+
+	return App;
+})();
+
 
 $(function () {
 
@@ -341,24 +502,18 @@ $(function () {
 	$("#code_file_edit_button").button();
 <?php endif; ?>
 
-	$("#code_file_revision_graph_button").button().click (function () {
-		$("#code_file_revision_graph_button").button("disable");
-		$("#code_file_revision_graph_spin").addClass ("fa-cog fa-spin");
-		var ajax_req = $.ajax ({
-			url: codepot_merge_path (
-				"<?php print site_url(); ?>", 
-				"/graph/enjson_revision_graph/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
-			context: document.body,
-			success: show_revision_graph,
-			error: function (xhr, ajaxOptions, thrownError) {
-				show_alert (xhr.status + ' ' + thrownError, "<?php print $this->lang->line('Error')?>");
-				$("#code_file_revision_graph_button").button("enable");
-				$("#code_file_revision_graph_spin" ).removeClass ("fa-cog fa-spin");
-			}
-		});
 
-		return false;
-	});
+	var rev_graph_app = new RevGraphApp (
+		$(window), 
+		$("#code_file_revision_graph_container"),
+		$("#code_file_revision_graph_error"),
+		$("#code_file_revision_graph"),
+		$("#code_file_revision_graph_button"),
+		$("#code_file_revision_graph_spin"),
+		codepot_merge_path ("<?php print site_url(); ?>", "/graph/enjson_revision_graph/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
+		"<?php print $this->lang->line('Revision')?>"
+	);
+	rev_graph_app.initWidgets ();
 
 <?php if ($file['created_rev'] != $file['head_rev']): ?>
 	$("#code_file_headrev_button").button().click (function() {
@@ -658,8 +813,11 @@ $this->load->view (
 	</div>
 </div>
 
-<div id="code_folder_graph" class="graph">
-	<div id="code_file_result_revision_graph"></div>
+<div id="code_file_graph" class="graph">
+	<div id="code_file_revision_graph_container">
+		<div id="code_file_revision_graph"></div>
+		<div id="code_file_revision_graph_error"></div>
+	</div>
 </div>
 
 <div style="display:none">

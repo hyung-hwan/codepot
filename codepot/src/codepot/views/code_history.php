@@ -92,22 +92,6 @@ $this->load->view (
 	<div style="clear: both;"></div>
 </div>
 
-
-<!-- <div class="graph" id="code_history_graph">
-<?php
-/*
-	$xfullpath = $this->converter->AsciiToHex (($fullpath == '')? '.': $fullpath);
-
-	$graph_url = codepot_merge_path (site_url(), "/code/graph/commits-by-users/{$project->id}/{$xfullpath}{$revreq}");
-	print "<img src='{$graph_url}' />";
-
-	$graph_url = codepot_merge_path (site_url(), "/code/graph/commit-share-by-users/{$project->id}/{$xfullpath}{$revreq}");
-	print "<img src='{$graph_url}' />";
-*/
-?>
-</div>  -->
-
-
 <div id="code_history_result" class="codepot-relative-container-view">
 	<table id="code_history_result_table" class="codepot-full-width-table codepot-spacious-table">
 	<?php 
