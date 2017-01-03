@@ -416,22 +416,25 @@ var RevGraphApp = (function ()
 			layout: {
 				hierarchical: {
 					enabled: true,
+
 					//levelSeparation: 150,
 					//nodeSpacing: 200,
 					//treeSpacing: 300,
 					direction: 'LR', //'LR' 'UD', 'DU', 'RL'
-					sortMethod: 'directed' // 'hubsize'
+					sortMethod: 'directed' // 'hubsize'*/
 				}
 			},
+
 			edges: {
 				smooth: {
-				    type: 'cubicBezier',
-				    forceDirection: 'horizontal', // 'vertical',
+				    //type: 'cubicBezier',
+				    //forceDirection: 'horizontal', // 'vertical',
 				    roundness: 0.4
 				}
 			},
 			physics: {
-				enabled: true
+				//enabled: true
+				enabled: false
 			}
 		};
 

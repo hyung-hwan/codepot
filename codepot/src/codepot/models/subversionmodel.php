@@ -659,16 +659,21 @@ class SubversionModel extends Model
 	function getRevHistory ($projectid, $path, $rev)
 	{
 		//$url = 'file:///'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
-		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
+		$url = $orgurl;
 
 		/* Compose a URL with a peg revision if a specific revision is given. However, 
 		 * It skips composition if the path indicates the project root. Read the comment
 		 * in getFile() to know more about this skipping.
 		 */
 		if ($rev != SVN_REVISION_HEAD && $path != '') $url = $url . '@' . $rev;
-
 		$info = @svn_info ($url, FALSE, $rev);
-		if ($info === FALSE || count($info) != 1) return FALSE;
+		if ($info === FALSE || count($info) != 1) 
+		{
+			$info = @svn_info ($orgurl, FALSE, $rev);
+			if ($info === FALSE || count($info) != 1) return FALSE;
+			$url = $orgurl;
+		}
 
 		$actual_rev = $rev;
 		if ($info[0]['kind'] == SVN_NODE_FILE) 
@@ -682,7 +687,6 @@ class SubversionModel extends Model
 				$fileinfo['fullpath'] = $info[0]['path'];
 
 			$actual_rev = $fileinfo['created_rev'];
-
 		}
 		else if ($info[0]['kind'] == SVN_NODE_DIR)
 		{
@@ -1913,18 +1917,20 @@ class SubversionModel extends Model
 		return -1;
 	}
 
-	function revisionGraph ($projectid, $path, $rev)
+	function revisionGraph ($projectid, $path, $rev = SVN_REVISION_HEAD)
 	{
-		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
-
-		$startpath = $path;
+		$h = $this->getHistory ($projectid, $path, $rev);
+		$log = &$h['history'];
+		if ($h['type'] == 'dir')
+		{
+			$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
+			$log = @svn_log ($url, 1, $rev, 0, SVN_DISCOVER_CHANGED_PATHS);
+			if ($log === FALSE || count($log) <= 0) return FALSE;
+		}
 
 		$nodeids = array ();
 		$nodes = array ();
 		$edges = array ();
-
-		$log = @svn_log ($orgurl, 1, $rev, 0, SVN_DISCOVER_CHANGED_PATHS);
-		if ($log === FALSE || count($log) <= 0) return FALSE;
 
 //print_r ($log);
 		$trackset = array ();
@@ -2107,6 +2113,7 @@ class SubversionModel extends Model
 						}
 						else
 						{
+							if ($fromrev <= -1) $fromrev = $torev;
 							$mf_cand[$frompath] = array ($fromrev, $topath, $torev, 1);
 						}
 						break;
