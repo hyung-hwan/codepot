@@ -1638,18 +1638,25 @@ class SubversionModel extends Model
 		return $cloc;
 	}
 
-	private function _add_rg_node (&$nodeids, &$nodes, $name)
+	private function _add_rg_node (&$nodeids, &$nodes, $name, $type = '')
 	{
-		if (array_key_exists($name, $nodeids)) return $nodeids[$name];
+		if (array_key_exists($name, $nodeids)) 
+		{
+			$nid = $nodeids[$name];
+			if ($type != '') $nodes[$nid]['_type'] .= $type;
+			return $nid;
+		}
+
 		$nid = count($nodeids);
-		array_push ($nodes, array ('id' => $nid, 'label' => $name));
+		array_push ($nodes, array ('id' => $nid, 'label' => $name, '_type' => $type));
 		$nodeids[$name] = $nid;
 		return $nid;
 	}
 
 	private function _add_rg_edge (&$edges, $from, $to, $label)
 	{
-		array_push ($edges, array ('from' => $from, 'to' => $to, 'label' => $label));
+		$edge = array ('from' => $from, 'to' => $to, 'label' => $label);
+		if (!in_array($edge, $edges)) array_push ($edges, $edge);
 	}
 
 	function __revisionGraph ($projectid, $path, $rev)
@@ -2059,12 +2066,12 @@ class SubversionModel extends Model
 						if ($br >= 0)
 						{
 							$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$br}");
-							$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
+							$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}", 'X');
 							$this->_add_rg_edge ($edges, $id1, $id2, '');
 						}
 
 						$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
-						$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}");
+						$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}", 'X');
 						$this->_add_rg_edge ($edges, $id1, $id2, 'copied');
 						break;
 					case 'MV':
@@ -2072,12 +2079,12 @@ class SubversionModel extends Model
 						if ($br >= 0)
 						{
 							$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$br}");
-							$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
+							$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}", 'X');
 							$this->_add_rg_edge ($edges, $id1, $id2, '');
 						}
 
 						$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
-						$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}");
+						$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}", 'X');
 						$this->_add_rg_edge ($edges, $id1, $id2, 'moved');
 						break;
 					case 'RM':
@@ -2085,18 +2092,18 @@ class SubversionModel extends Model
 						if ($br >= 0)
 						{
 							$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$br}");
-							$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
+							$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}", 'X');
 							$this->_add_rg_edge ($edges, $id1, $id2, '');
 						}
 
-						$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
-						$id2 = $this->_add_rg_node ($nodeids, $nodes, $topath);
-						$this->_add_rg_edge ($edges, $id1, $id2, 'deleted');
+						$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}", 'D');
+						//$id2 = $this->_add_rg_node ($nodeids, $nodes, $topath);
+						//$this->_add_rg_edge ($edges, $id1, $id2, 'deleted');
 						break;
 					case 'AD':
-						$id1 = $this->_add_rg_node ($nodeids, $nodes, $frompath);
-						$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}");
-						$this->_add_rg_edge ($edges, $id1, $id2, '');
+						//$id1 = $this->_add_rg_node ($nodeids, $nodes, $frompath);
+						$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}", 'A');
+						//$this->_add_rg_edge ($edges, $id1, $id2, '');
 						break;
 					case 'MF':
 						/*
@@ -2128,7 +2135,7 @@ class SubversionModel extends Model
 			$torev = $ti[2];
 			$num_changes = $ti[3];
 			$id1 = $this->_add_rg_node ($nodeids, $nodes, "{$frompath}:{$fromrev}");
-			$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}");
+			$id2 = $this->_add_rg_node ($nodeids, $nodes, "{$topath}:{$torev}", 'X');
 			$this->_add_rg_edge ($edges, $id1, $id2, "{$num_changes} change(s)");
 		}
 
