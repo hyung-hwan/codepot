@@ -268,7 +268,7 @@ var RevGraphApp = (function ()
 			autoResize: false,
 			height: '400px',
 			width: '90%',
-			clickToUse: false,
+			clickToUse: false /*,
 			layout: {
 				hierarchical: {
 					enabled: true,
@@ -276,8 +276,8 @@ var RevGraphApp = (function ()
 					//levelSeparation: 150,
 					//nodeSpacing: 200,
 					//treeSpacing: 300,
-					direction: 'LR', //'LR' 'UD', 'DU', 'RL'
-					sortMethod: 'directed' // 'hubsize'*/
+					//direction: 'LR' //'LR' 'UD', 'DU', 'RL'
+					//sortMethod: 'directed' // 'hubsize'
 				}
 			},
 
@@ -289,17 +289,36 @@ var RevGraphApp = (function ()
 				}
 			},
 			physics: {
-				//enabled: true
-				enabled: false
-			}
+				enabled: true
+			}*/
 		};
 
 		var i, j;
 
 		j = data.nodes.length;
+
 		for (i = 0; i < j; i++)
 		{
+			data.nodes[i].labelHighlightBold = false;
 			data.nodes[i].shape = 'box';
+			if (data.nodes[i]._type == '')
+			{
+				// no other nodes reache this node 
+				data.nodes[i].color = '#553322';
+				data.nodes[i].font = { color: 'white' };
+			}
+			else if (data.nodes[i]._type.indexOf('D') >= 0)
+			{
+				data.nodes[i].color = '#AA3344';
+				data.nodes[i].font = { color: 'white' };
+				data.nodes[i].label += '\n<<DELETED>>';
+			}
+			else if (data.nodes[i]._type.indexOf('A') >= 0)
+			{
+				data.nodes[i].color = '#227722';
+				data.nodes[i].font = { color: 'white' };
+				data.nodes[i].label += '\n<<NEW>>';
+			}
 		}
 
 		j = data.edges.length;
