@@ -11,12 +11,15 @@
 	$is_special_stream = FALSE;
 	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 	{
+		$octet_stream = TRUE;
 		foreach ($file['properties'] as $pn => $pv)
 		{
 			if ($pn == 'svn:mime-type')
 			{
 				if ($pv == 'application/octet-stream')
 				{
+					$octet_stream = TRUE;
+
 					$lower_fileext = strtolower($fileext);
 					if (in_array ($lower_fileext, array ('png', 'jpg', 'jpeg', 'gif', 'tif', 'bmp', 'ico')))
 					{
@@ -58,6 +61,7 @@
 				}
 			}
 		}
+		if ($octet_stream) $is_special_stream = TRUE;
 	}
 ?>
 
@@ -904,12 +908,15 @@ if ($login['settings'] != NULL &&
 
 		print '</pre>';
 
-		print '<div id="code_file_loc_info" class="codepot-infobox">';
-		print '<div class="title">LOC</div>';
-		/* TODO: show this if it's enabled in the user settings  */
-		$graph_url = codepot_merge_path (site_url(), "/code/graph/cloc-file/{$project->id}/{$hex_headpath}{$revreq}");
-		print "<img src='{$graph_url}' id='code_file_loc_info_locgraph' />";
-		print '</div>';
+		if (!$is_special_stream)
+		{
+			print '<div id="code_file_loc_info" class="codepot-infobox">';
+			print '<div class="title">LOC</div>';
+			/* TODO: show this if it's enabled in the user settings  */
+			$graph_url = codepot_merge_path (site_url(), "/code/graph/cloc-file/{$project->id}/{$hex_headpath}{$revreq}");
+			print "<img src='{$graph_url}' id='code_file_loc_info_locgraph' />";
+			print '</div>';
+		}
 	}
 ?>
 
