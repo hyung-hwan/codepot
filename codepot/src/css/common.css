@@ -1073,21 +1073,20 @@ pre.codepot-line-numbered span.codepot-line-number-clear {
 }
 
 .codepot-buttoned-anchor {
-	background-color:  #008CBA;
-	border: 1px solid #008CBA;
-	color: white;
+	background-color:  #456789;
+	/*border: 1px solid #008CBA;*/
+	color: #E9E9E9;
 	padding: 0px 5px 0px 5px;
 	text-align: center;
 	text-decoration: none;
 	display: inline-block;
-	font-size: 0.9em;
-	font-weight: bold;
+	/*font-size: 0.9em; */
 	border-radius: 2px;
 	transition-duration: 0.4s;
 }
 
 .codepot-buttoned-anchor:hover {
-	background-color: #00BCFA;
+	background-color: #884400;
 }
 
 .codepot-buttoned-anchor a,
@@ -1096,7 +1095,7 @@ pre.codepot-line-numbered span.codepot-line-number-clear {
 a.codepot-buttoned-anchor,
 a.codepot-buttoned-anchor:hover ,
 a.codepot-buttoned-anchor:visited {
-	color: white !important;
+	color: #E9E9E9 !important;
 }
 
 /* === list === */
