@@ -310,9 +310,12 @@ sub is_read_method
 sub __handler 
 {
 	my ($r, $cfg, $dbh) = @_;
-	my ($empty, $base, $repo, $dummy) = split ('/', $r->uri(), 4);
 	my $method = uc($r->method());
 	my $is_method_r = is_read_method ($method);
+
+	#my ($empty, $base, $repo, $dummy) = split ('/', $r->uri(), 4);
+	my @urisegs = split ('/', $r->uri());
+	my $repo = $urisegs[2];
 
 	my $author;
 	my $userid = undef;
