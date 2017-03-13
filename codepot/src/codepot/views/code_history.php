@@ -95,7 +95,7 @@ $this->load->view (
 <div id="code_history_result" class="codepot-relative-container-view">
 	<table id="code_history_result_table" class="codepot-full-width-table codepot-spacious-table">
 	<?php 
-		$rowclasses = array ('even', 'odd');
+
 		$history = $file['history'];
 		$history_count = count($history);
 		$curfullpath = $fullpath;
@@ -104,10 +104,7 @@ $this->load->view (
 			$h = $history[--$i];
 			$xfullpath = $this->converter->AsciiToHex (($fullpath == '')? '.': $fullpath);
 
-			$rowclass = $rowclasses[($history_count - $i) % 2];
-			//print "<tr class='{$rowclass}'>";
 			print "<tr>";
-
 			print '<td class="commit-author-td" rowspan=2>';
 			// Repository migration from googlecode revealed that it did not put 
 			// 'author' for initial project creation. So I've added the following check.
@@ -122,21 +119,6 @@ $this->load->view (
 			}
 			print '</td>';
 
-			print '<td class="commit-message-td">';
-			if ($h['review_count'] > 0)
-			{
-				$tmp = sprintf ('<span class="codepot-history-review-count">%d</span>', $h['review_count']);
-				print  anchor("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}#code_revision_result_comments", $tmp);
-				print ' ';
-			}
-			print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", htmlspecialchars($h['msg']), "class='commit-message'");
-			//print '<pre>';
-			//print htmlspecialchars($h['msg']);
-			//print '</pre>';
-			print '</td>';
-			print '</tr>';
-
-			print '<tr>';
 			print '<td class="commit-revision-td">';
 
 			print '<div class="commit-revision-and-datetime">';
@@ -159,14 +141,13 @@ $this->load->view (
 			print '</tt>';
 			print '</div>';
 
-			print '<div class="codepot-buttoned-anchor">';
+			//print '<div class="codepot-buttoned-anchor">';
+			print '<div style="font-weight: bold;">';
 			print "<a href='{$user_home_url}'>";
 			print htmlspecialchars($h['author']);
 			print '</a>';
 			print '</div>';
-
 			print '</div>';
-
 
 			print '<div class="commit-actions">';
 			if ($file['type'] == 'file')
@@ -181,6 +162,19 @@ $this->load->view (
 			print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}",
 				'<div class="codepot-buttoned-anchor">' . $this->lang->line('Changes') . '</div>'); 
 			print '</div>';
+			print '</td>';
+			print '</tr>';
+
+			print '<tr>';
+
+			print '<td class="commit-message-td">';
+			if ($h['review_count'] > 0)
+			{
+				$tmp = sprintf ('<span class="codepot-history-review-count">%d</span>', $h['review_count']);
+				print  anchor("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}#code_revision_result_comments", $tmp);
+				print ' ';
+			}
+			print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}", htmlspecialchars($h['msg']), "class='commit-message'");
 			print '</td>';
 			print '</tr>';
 
