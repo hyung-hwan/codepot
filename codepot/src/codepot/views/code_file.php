@@ -11,7 +11,7 @@
 	$is_special_stream = FALSE;
 	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
 	{
-		$octet_stream = TRUE;
+		$octet_stream = FALSE;
 		foreach ($file['properties'] as $pn => $pv)
 		{
 			if ($pn == 'svn:mime-type')
