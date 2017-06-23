@@ -364,19 +364,7 @@ class Wiki extends Controller
 					return;
 				}
 
-				header ('Content-Type: ' . mime_content_type($path));
-				header ('Content-Length: ' . $stat['size']);
-				header ('Content-Disposition: inline; filename=' . $name);
-				flush ();
-
-				$x = @readfile($path);
-				if ($x === FALSE)
-				{
-					$data['project'] = $project;
-					$data['message'] = sprintf (
-						$this->lang->line('MSG_FAILED_TO_READ_FILE'), $name);
-					$this->load->view ($this->VIEW_ERROR, $data);
-				}
+				codepot_readfile ($path, $name, mime_content_type($path), 'inline');
 			}
 		}
 	}
@@ -451,19 +439,7 @@ class Wiki extends Controller
 					return;
 				}
 
-				header ('Content-Type: ' . mime_content_type($path));
-				header ('Content-Length: ' . $stat['size']);
-				header ('Content-Disposition: inline; filename=' . $filename);
-				flush ();
-
-				$x = @readfile($path);
-				if ($x === FALSE)
-				{
-					$data['project'] = $project;
-					$data['message'] = sprintf (
-						$this->lang->line('MSG_FAILED_TO_READ_FILE'), $filename);
-					$this->load->view ($this->VIEW_ERROR, $data);
-				}
+				codepot_readfile ($path, $filename, mime_content_type($path), 'inline');
 			}
 		}
 	}

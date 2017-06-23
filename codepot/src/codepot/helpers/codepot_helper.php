@@ -519,7 +519,8 @@ if (!function_exists ('codepot_get_fa_file_type'))
 if ( ! function_exists('codepot_readfile'))
 {
 
-	function codepot_readfile ($location, $filename, $mimeType='application/octet-stream')
+	function codepot_readfile ($location, $filename, $mimeType='application/octet-stream', $disposition = 'attachment')
+
 	{ 
 		if(!file_exists($location))
 		{ 
@@ -535,8 +536,8 @@ if ( ! function_exists('codepot_readfile'))
 			header("Content-Type: $mimeType");
 			header('Cache-Control: public, must-revalidate, max-age=0');
 			header('Pragma: no-cache'); 
-			header('Content-Length: ' . $size);
-			header('Content-Disposition: attachment; filename=' . $filename);
+			header("Content-Length: $size");
+			header("Content-Disposition: $disposition; filename=$filename");
 			header('Content-Transfer-Encoding: binary');
 			header('Connection: close'); 
 			header("Last-Modified: $time");
@@ -581,7 +582,7 @@ if ( ! function_exists('codepot_readfile'))
 			header('Accept-Ranges: bytes');
 			header('Content-Length:' . ($end - $begin));
 			header("Content-Range: bytes $begin-" . ($end - 1) . "/$size");
-			header("Content-Disposition: attachment; filename=$filename");
+			header("Content-Disposition: $disposition; filename=$filename");
 			header("Content-Transfer-Encoding: binary");
 			header("Last-Modified: $time");
 			header('Connection: close'); 
