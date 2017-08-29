@@ -115,7 +115,7 @@ class User extends Controller
 			$data['message'] = 'DATABASE ERROR';
 			$this->load->view ($this->VIEW_ERROR, $data);
 		}
-		else if ($myprojs === NULL)
+		else if ($myprojs === NULL || count($myprojs) == 0)
 		{
 			$data['login'] = $login;
 			$data['message'] = 'NO PROJECTS';
@@ -127,6 +127,7 @@ class User extends Controller
 			$this->load->model ('LogModel', 'logs');
 
 			$numprojs = count($myprojs);
+			$projids = array();
 			for ($i = 0; $i < $numprojs; $i++) 
 				$projids[$i] = $myprojs[$i]->id;
 
@@ -134,7 +135,6 @@ class User extends Controller
 			if ($num_log_entries === FALSE)
 			{
 				$data['login'] = $login;
-				$data['project'] = $project;
 				$data['message'] = 'DATABASE ERROR';
 				$this->load->view ($this->VIEW_ERROR, $data);
 				return;
@@ -151,7 +151,6 @@ class User extends Controller
 			if ($log_entries === FALSE)
 			{
 				$data['login'] = $login;
-				$data['project'] = $project;
 				$data['message'] = 'DATABASE ERROR';
 				$this->load->view ($this->VIEW_ERROR, $data);
 				return;
