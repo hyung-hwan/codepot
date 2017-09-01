@@ -160,10 +160,12 @@ $this->load->view (
 			if ($file['type'] == 'file')
 			{
 				print anchor ("code/blame/{$project->id}/{$xfullpath}/{$h['rev']}", 
-					'<div class="codepot-buttoned-anchor"><i class="fa fa-bomb"></i> ' . $this->lang->line('Blame') . '</div>');
-				
+					sprintf('<img src="%s" class="codepot-buttoned-img-30" alt="%s" title="%s"/>', base_url_make('/css/images/iconmonstr-clipboard-6-240.png'), $this->lang->line('Blame'), 'Show code annotated with revision and author information'));
+				print '&nbsp;';
+
 				print anchor ("code/diff/{$project->id}/{$xfullpath}/{$h['rev']}",
-					'<div class="codepot-buttoned-anchor"><i class="fa fa-server"></i> ' . $this->lang->line('Difference') . '</div>'); 
+					sprintf('<img src="%s" class="codepot-buttoned-img-30" alt="%s" title="%s"/>', base_url_make('/css/images/iconmonstr-ethernet-1-240.png'), $this->lang->line('Difference'), 'Show differences'));
+				print '&nbsp;';
 			}
 
 			print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}",
