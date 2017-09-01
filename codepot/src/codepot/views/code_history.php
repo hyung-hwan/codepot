@@ -148,7 +148,9 @@ $this->load->view (
 			print '</a>';
 			print '</div>';
 			print '</div>';
+			print '</td>';
 
+			print '<td rowspan="2" style="vertical-align:middle; width: 1%">';
 			print '<div class="commit-actions">';
 			if ($file['type'] == 'file')
 			{
@@ -159,8 +161,13 @@ $this->load->view (
 					'<div class="codepot-buttoned-anchor"><i class="fa fa-server"></i> ' . $this->lang->line('Difference') . '</div>'); 
 			}
 
+			//print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}",
+			//	'<div class="codepot-buttoned-anchor">' . $this->lang->line('Changes') . '</div>'); 
 			print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}",
-				'<div class="codepot-buttoned-anchor">' . $this->lang->line('Changes') . '</div>'); 
+				sprintf('<img src="%s" class="codepot-buttoned-img-30" alt="%s"/>', base_url_make('/css/images/iconmonstr-script-4-240.png'), $this->lang->line('Changes')));
+			print '&nbsp;';
+			print anchor ("code/file/{$project->id}/{$xfullpath}/{$h['rev']}", 
+				sprintf('<img src="%s" class="codepot-buttoned-img-30" alt="%s"/>', base_url_make('/css/images/iconmonstr-sitemap-7-240.png'), $this->lang->line('Changes')));
 			print '</div>';
 			print '</td>';
 			print '</tr>';

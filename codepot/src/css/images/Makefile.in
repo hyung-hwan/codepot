@@ -170,6 +170,8 @@ www_DATA = \
 	filexml.png \
 	folder.png \
 	html.png \
+	iconmonstr-script-4-240.png \
+	iconmonstr-sitemap-7-240.png \
 	i-node.png \
 	l-node.png \
 	log.png \
