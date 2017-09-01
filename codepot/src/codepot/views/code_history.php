@@ -104,7 +104,7 @@ $this->load->view (
 			$h = $history[--$i];
 			$xfullpath = $this->converter->AsciiToHex (($fullpath == '')? '.': $fullpath);
 
-			print "<tr>";
+			print '<tr class="commit-info-top">';
 			print '<td class="commit-author-td" rowspan=2>';
 			// Repository migration from googlecode revealed that it did not put 
 			// 'author' for initial project creation. So I've added the following check.
@@ -119,38 +119,43 @@ $this->load->view (
 			}
 			print '</td>';
 
+
+			print '<td class="commit-basic-info-td">';
+
+			print '<table class="commit-basic-info-subtable"><tr>';
 			print '<td class="commit-revision-td">';
-
-			print '<div class="commit-revision-and-datetime">';
-			print '<div class="codepot-buttoned-anchor">';
-			print '<tt>';
+			print '<div class="commit-revision">';
 			print anchor ("code/file/{$project->id}/{$xfullpath}/{$h['rev']}", $h['rev']);
-			if (!empty($h['tag']))
-			{
-				print ' ';
-				print '<span class="left_arrow_indicator">';
-				print htmlspecialchars($h['tag']);
-				print '</span>';
-			}
-			print '</tt>';
 			print '</div>';
+			print '</td>';
 
+			print '<td class="commit-datetime-td">';
 			print '<div class="commit-datetime">';
-			print '<tt>';
 			print codepot_unixtimetodispdate(strtotime($h['date']));
-			print '</tt>';
 			print '</div>';
+			print '</td>';
 
-			//print '<div class="codepot-buttoned-anchor">';
-			print '<div style="font-weight: bold;">';
+			print '<td class="commit-author-text-td">';
+			print '<div class="commit-author-text">';
 			print "<a href='{$user_home_url}'>";
 			print htmlspecialchars($h['author']);
 			print '</a>';
 			print '</div>';
-			print '</div>';
 			print '</td>';
 
-			print '<td rowspan="2" style="vertical-align:middle; width: 1%">';
+			print '<td class="commit-tag-td">';
+			if (!empty($h['tag']))
+			{
+				print '<span class="left_arrow_indicator">';
+				print htmlspecialchars($h['tag']);
+				print '</span>';
+			}
+			print '</td>';
+			print '</tr></table>';
+
+			print '</td>';
+
+			print '<td rowspan="2" class="commit-actions-td">';
 			print '<div class="commit-actions">';
 			if ($file['type'] == 'file')
 			{
@@ -161,18 +166,16 @@ $this->load->view (
 					'<div class="codepot-buttoned-anchor"><i class="fa fa-server"></i> ' . $this->lang->line('Difference') . '</div>'); 
 			}
 
-			//print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}",
-			//	'<div class="codepot-buttoned-anchor">' . $this->lang->line('Changes') . '</div>'); 
 			print anchor ("code/revision/{$project->id}/{$xfullpath}/{$h['rev']}",
-				sprintf('<img src="%s" class="codepot-buttoned-img-30" alt="%s"/>', base_url_make('/css/images/iconmonstr-script-4-240.png'), $this->lang->line('Changes')));
+				sprintf('<img src="%s" class="codepot-buttoned-img-30" alt="%s" title="%s"/>', base_url_make('/css/images/iconmonstr-script-4-240.png'), $this->lang->line('Changes'), 'Show revision changes'));
 			print '&nbsp;';
 			print anchor ("code/file/{$project->id}/{$xfullpath}/{$h['rev']}", 
-				sprintf('<img src="%s" class="codepot-buttoned-img-30" alt="%s"/>', base_url_make('/css/images/iconmonstr-sitemap-7-240.png'), $this->lang->line('Changes')));
+				sprintf('<img src="%s" class="codepot-buttoned-img-30" alt="%s" title="%s"/>', base_url_make('/css/images/iconmonstr-sitemap-7-240.png'), $this->lang->line('Changes'), 'Show the repository'));
 			print '</div>';
 			print '</td>';
 			print '</tr>';
 
-			print '<tr>';
+			print '<tr class="commit-info-bottom">';
 
 			print '<td class="commit-message-td">';
 			if ($h['review_count'] > 0)

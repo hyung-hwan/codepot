@@ -222,25 +222,22 @@
 	background-color: #AABBFF;
 }
 
-#code_history_result_table td.commit-author-td {
-	width: 1%;
-	vertical-align: top;
-	text-align: center;
-	padding-right: 1em;
+#code_history_result_table tr {
+	border: none;
 }
 
-#code_history_result_table img.commit-author-icon {
-	width: 3em;
-	height: 3em;
+#code_history_result_table tr.commit-info-bottom {
+	border-bottom: 1px solid #F0F0F0;
 }
 
 #code_history_result_table td.commit-message-td {
 	vertical-align: middle;
 	line-height: 1.2em;
+	background-color: #F0F0F0;
 }
 
 #code_history_result_table td.commit-message-td:hover {
-	background-color: #F0F0F0;
+	background-color: #EAEAEA;
 }
 
 #code_history_result_table a.commit-message,
@@ -251,37 +248,72 @@
 	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
 	white-space: -pre-wrap; /* Opera 4-6 */    
 	white-space: -o-pre-wrap; /* Opera 7 */    
-	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
+	/*font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;*/
 }
 
-#code_history_result_table td.commit-revision-td {
-	display: flex;
-	flex-wrap: nowrap;
-	justify-content: space-between;
+#code_history_result_table td.commit-author-td {
+	width: 0.1%;
+	vertical-align: top;
+	text-align: center;
+	padding-right: 1em;
+}
+
+#code_history_result_table img.commit-author-icon {
+	width: 40px;
+	height: 40px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+#code_history_result_table .commit-basic-info-subtable {
+	margin: 0;
+	padding: 0;
+	border: collapse;
+}
+
+#code_history_result_table td.commit-revision-td,
+#code_history_result_table td.commit-datetime-td,
+#code_history_result_table td.commit-author-text-td {
+	width: 0.1%;
+	white-space: nowrap;
+	padding: 0 1em 0 0;
 	vertical-align: middle;
-	line-height: 1.2em;
+	font-size: 0.9em;
 }
 
-#code_history_result_table td.commit-revision-td:hover {
-	background-color: #F0F0F0;
-}
-
-#code_history_result_table td.commit-revision-td div {
-	margin-right: 1em;
-}
-
-#code_history_result_table .commit-revision-and-datetime {
-	display: flex;
-	flex-wrap: nowrap;
-	justify-content: flex-start;
+#code_history_result_table td.commit-tag-td {
+	width: 99%;
+	white-space: nowrap;
+	padding: 0 0 0 0;
 	vertical-align: middle;
+	font-size: 0.9em;
+}
+
+#code_history_result_table .commit-revision,
+#code_history_result_table .commit-datetime,
+#code_history_result_table .commit-author-text,
+#code_history_result_table .commit-tag {
+	border: 1px solid #FFFFFF;
+}
+
+#code_history_result_table .commit-revision:hover,
+#code_history_result_table .commit-author-text:hover {
+	border: 1px solid #CACACA;
+	/*background: #CACACA;*/
+}
+
+#code_history_result_table td.commit-actions-td {
+	vertical-align: middle;
+	text-align: center;
+	width: 1%;
+	vertical-align: top;
 }
 
 #code_history_result_table .commit-actions {
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: flex-end;
-	vertical-align: middle;
 }
 
 /*----------------------------------------------- 
