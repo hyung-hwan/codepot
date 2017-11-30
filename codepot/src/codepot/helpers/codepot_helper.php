@@ -531,13 +531,18 @@ if ( ! function_exists('codepot_readfile'))
 		$size = filesize($location);
 		$time = date('r',filemtime($location));
 
+		// some browser don't like a comma in Content-Disposition
+		$fn = $filename;
+		$fn = str_replace (',', '_', $fn);
+		$fn = str_replace (';', '_', $fn);
+
 		if ($size <= 0)
 		{
 			header("Content-Type: $mimeType");
 			header('Cache-Control: public, must-revalidate, max-age=0');
 			header('Pragma: no-cache'); 
 			header("Content-Length: $size");
-			header("Content-Disposition: $disposition; filename=$filename");
+			header("Content-Disposition: $disposition; filename=$fn");
 			header('Content-Transfer-Encoding: binary');
 			header('Connection: close'); 
 			header("Last-Modified: $time");
@@ -582,7 +587,7 @@ if ( ! function_exists('codepot_readfile'))
 			header('Accept-Ranges: bytes');
 			header('Content-Length:' . ($end - $begin));
 			header("Content-Range: bytes $begin-" . ($end - 1) . "/$size");
-			header("Content-Disposition: $disposition; filename=$filename");
+			header("Content-Disposition: $disposition; filename=$fn");
 			header("Content-Transfer-Encoding: binary");
 			header("Last-Modified: $time");
 			header('Connection: close'); 
