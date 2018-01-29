@@ -460,7 +460,7 @@ sub restrict_changes_in_topdirs
 
 		foreach my $topdir(@topdirs)
 		{
-			if ($affected_file =~ /\/${topdir}\/(.*)$/)
+			if ($affected_file =~ /^\/${topdir}\/(.*)$/)
 			{
 				# the affected file is located under the given directory.
 				my $affected_file_nodir = "${1}";
