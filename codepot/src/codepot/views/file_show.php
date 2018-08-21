@@ -562,10 +562,10 @@ $(function () {
 	var file_drag_event_handler = function(e) { return false; };
 	var file_drop_event_handler = function(e)
 	{
-		$('#file_show_add_file_form').dialog('close');
-		var files = e.originalEvent.dataTransfer.files;
-		populate_selected_files_for_adding_with (files);
-		$('#file_show_add_file_form').dialog('open');
+		var aff = $('#file_show_add_file_form');
+		aff.dialog('close');
+		populate_selected_files_for_adding_with(e.originalEvent.dataTransfer.files);
+		aff.dialog('open');
 		return false;
 	};
 
