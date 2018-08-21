@@ -77,7 +77,7 @@ function preview_edit_description (input_text)
 var populated_file_obj_for_adding = [];
 var populated_file_max_for_adding = 0;
 
-function populate_selected_files_for_adding ()
+function populate_selected_files_for_adding_with (files)
 {
 	var file_desc = {};
 	for (var n = 0; n < populated_file_max_for_adding; n++)
@@ -93,23 +93,24 @@ function populate_selected_files_for_adding ()
 	$('#file_show_add_file_table').empty();
 	populated_file_obj_for_adding = [];
 
-	var f = $('#file_show_add_files').get(0);
+	//var f = $('#file_show_add_files').get(0);
+	//var f = files_obj;
 	var f_no = 0;
-	for (var n = 0; n < f.files.length; n++)
+	for (var n = 0; n < files.length; n++)
 	{
-		if (f.files[n] != null) 
+		if (files[n] != null) 
 		{
-			var desc = file_desc[f.files[n].name];
+			var desc = file_desc[files[n].name];
 			if (desc == null) desc = '';
 
 			$('#file_show_add_file_table').append (
 				codepot_sprintf (
 					'<tr id="file_show_add_file_row_%d"><td><a href="#" id="file_show_add_file_cancel_%d" onClick="cancel_out_add_file(%d); return false;"><i class="fa fa-trash"></i></a></td><td>%s</td><td><input type="text" id="file_show_add_file_desc_%d" size="40" value="%s" /></td></tr>', 
-					f_no, f_no, f_no, codepot_htmlspecialchars(f.files[n].name), f_no, codepot_addslashes(desc)
+					f_no, f_no, f_no, codepot_htmlspecialchars(files[n].name), f_no, codepot_addslashes(desc)
 				)
 			);
 
-			populated_file_obj_for_adding[f_no] = f.files[n];
+			populated_file_obj_for_adding[f_no] = files[n];
 			f_no++;
 		}
 	}
@@ -117,6 +118,10 @@ function populate_selected_files_for_adding ()
 	populated_file_max_for_adding = f_no;
 }
 
+function populate_selected_files_for_adding ()
+{
+	return populate_selected_files_for_adding_with($('#file_show_add_files').get(0).files);
+}
 
 function cancel_out_add_file (no)
 {
@@ -553,6 +558,26 @@ $(function () {
 			return false;
 		}
 	);
+
+	var file_drag_event_handler = function(e) { return false; };
+	var file_drop_event_handler = function(e)
+	{
+		$('#file_show_add_file_form').dialog('close');
+		var files = e.originalEvent.dataTransfer.files;
+		populate_selected_files_for_adding_with (files);
+		$('#file_show_add_file_form').dialog('open');
+		return false;
+	};
+
+	var tmp = $('#file_show_content');
+	tmp.bind('dragover', file_drag_event_handler);
+	tmp.bind('dragend', file_drop_event_handler);
+	tmp.bind('drop', file_drop_event_handler);
+
+	var tmp = $('#file_show_add_file_form').dialog();
+	tmp.bind('dragover', file_drag_event_handler);
+	tmp.bind('dragend', file_drop_event_handler);
+	tmp.bind('drop', file_drop_event_handler);
 <?php endif; ?>
 
 	render_wiki ();
