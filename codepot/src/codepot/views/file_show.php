@@ -90,11 +90,10 @@ function populate_selected_files_for_adding_with (files)
 		}
 	}
 
-	$('#file_show_add_file_table').empty();
+	var file_table = $('#file_show_add_file_table');
+	file_table.empty();
 	populated_file_obj_for_adding = [];
 
-	//var f = $('#file_show_add_files').get(0);
-	//var f = files_obj;
 	var f_no = 0;
 	for (var n = 0; n < files.length; n++)
 	{
@@ -103,7 +102,7 @@ function populate_selected_files_for_adding_with (files)
 			var desc = file_desc[files[n].name];
 			if (desc == null) desc = '';
 
-			$('#file_show_add_file_table').append (
+			file_table.append (
 				codepot_sprintf (
 					'<tr id="file_show_add_file_row_%d"><td><a href="#" id="file_show_add_file_cancel_%d" onClick="cancel_out_add_file(%d); return false;"><i class="fa fa-trash"></i></a></td><td>%s</td><td><input type="text" id="file_show_add_file_desc_%d" size="40" value="%s" /></td></tr>', 
 					f_no, f_no, f_no, codepot_htmlspecialchars(files[n].name), f_no, codepot_addslashes(desc)
