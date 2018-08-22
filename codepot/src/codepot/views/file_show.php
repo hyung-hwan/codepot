@@ -570,11 +570,17 @@ $(function () {
 	};
 
 	var tmp = $('#file_show_content');
+	tmp.bind('dragstart', file_drag_event_handler);
+	tmp.bind('dragenter', file_drag_event_handler);
+	tmp.bind('dragleave', file_drag_event_handler);
 	tmp.bind('dragover', file_drag_event_handler);
 	tmp.bind('dragend', file_drop_event_handler);
 	tmp.bind('drop', file_drop_event_handler);
 
 	var tmp = $('#file_show_add_file_form').dialog();
+	tmp.bind('dragstart', file_drag_event_handler);
+	tmp.bind('dragenter', file_drag_event_handler);
+	tmp.bind('dragleave', file_drag_event_handler);
 	tmp.bind('dragover', file_drag_event_handler);
 	tmp.bind('dragend', file_drop_event_handler);
 	tmp.bind('drop', file_drop_event_handler);
