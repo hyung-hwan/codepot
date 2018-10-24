@@ -30,6 +30,7 @@
 		$revreqroot = '';
 
 		$history_path = "/code/history/{$project->id}/{$hex_headpath}";
+		$code_path = "/code/file/{$project->id}/{$hex_headpath}";
 	}
 	else
 	{
@@ -39,6 +40,7 @@
 		if ($hex_headpath == '') $revtrailer = $revreqroot;
 		else $revtrailer = "/{$hex_headpath}{$revreq}";
 		$history_path = "/code/history/{$project->id}{$revtrailer}";
+		$code_path = "/code/file/{$project->id}{$revtrailer}";
 	}
 
 	$creole_base = site_url() . "/wiki/show/{$project->id}/"; 
@@ -99,6 +101,11 @@ $(function() {
 
 	$("#code_revision_history_button").button().click (function() {
 		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print $history_path; ?>'));
+		return false;
+	});
+
+	$("#code_revision_code_button").button().click (function() {
+		$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", '<?php print $code_path; ?>'));
 		return false;
 	});
 
@@ -661,6 +668,9 @@ $history = $file['history'];
 
 		$history_anchor_text = '<i class="fa fa-history"></i> ' . $this->lang->line('History');
 		print anchor ("#", $history_anchor_text, 'id="code_revision_history_button"');
+
+		$history_anchor_text = '<i class="fa fa-code"></i> ' . $this->lang->line('Code');
+		print anchor ("#", $history_anchor_text, 'id="code_revision_code_button"');
 		print '</div>';
 
 		print '<div class="metadata-commit-date">';
