@@ -343,7 +343,7 @@ class SubversionModel extends Model
 
 	function storeFile ($projectid, $path, $committer, $commit_message, $text)
 	{
-		$errmsg = '';
+		$this->errmsg = '';
 
 		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 		$canon_path = $this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
@@ -1316,6 +1316,7 @@ class SubversionModel extends Model
 
 	function getRevProp ($projectid, $rev, $prop)
 	{
+		$this->errmsg = '';
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
 		set_error_handler (array ($this, 'capture_error'));
@@ -1326,6 +1327,7 @@ class SubversionModel extends Model
 
 	function setRevProp ($projectid, $rev, $prop, $propval, $user)
 	{
+		$this->errmsg = '';
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
 		set_error_handler (array ($this, 'capture_error'));
@@ -1342,6 +1344,7 @@ class SubversionModel extends Model
 
 	function killRevProp ($projectid, $rev, $prop, $user)
 	{
+		$this->errmsg = '';
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
 		set_error_handler (array ($this, 'capture_error'));
@@ -1359,6 +1362,7 @@ class SubversionModel extends Model
 
 	function mapRevPropToRev ($projectid, $revprop_name)
 	{
+		$this->errmsg = '';
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
 		set_error_handler (array ($this, 'capture_error'));
@@ -1384,6 +1388,7 @@ class SubversionModel extends Model
 
 	function findRevWithRevProp ($projectid, $revprop_name, $revprop_value)
 	{
+		$this->errmsg = '';
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
 		set_error_handler (array ($this, 'capture_error'));
@@ -1409,6 +1414,7 @@ class SubversionModel extends Model
 
 	function listProps ($projectid, $path, $rev)
 	{
+		$this->errmsg = '';
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
@@ -1436,6 +1442,7 @@ class SubversionModel extends Model
 
 	function getProp ($projectid, $path, $rev, $prop)
 	{
+		$this->errmsg = '';
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
