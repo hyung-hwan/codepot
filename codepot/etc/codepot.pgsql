@@ -180,7 +180,7 @@ CREATE TABLE issue_change_file_list (
 	createdby  VARCHAR(32)   NOT NULL,
 	updatedby  VARCHAR(32)   NOT NULL,
 
-	UNIQUE (projectid, issueid, name),
+	UNIQUE (projectid, issueid, filename),
 
 	CONSTRAINT issue_change_file_list_projectid FOREIGN KEY (projectid) REFERENCES project(id)
 		ON DELETE RESTRICT ON UPDATE CASCADE,

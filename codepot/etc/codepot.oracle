@@ -152,7 +152,7 @@ CREATE TABLE "cpot_issue_change_file_list" (
 	"updatedon"  TIMESTAMP     NOT NULL,
 	"createdby"  VARCHAR(32)   NOT NULL,
 	"updatedby"  VARCHAR(32)   NOT NULL,
-	UNIQUE ("projectid", "issueid", "name"),
+	UNIQUE ("projectid", "issueid", "filename"),
 	CONSTRAINT issue_change_file_list_c1 FOREIGN KEY ("projectid") REFERENCES "cpot_project"("id"),
 	CONSTRAINT issue_change_file_list_c2 FOREIGN KEY ("projectid","issueid","issuesno") REFERENCES "cpot_issue_change"("projectid","id","sno")
 );
