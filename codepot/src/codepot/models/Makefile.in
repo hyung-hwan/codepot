@@ -148,6 +148,7 @@ www_DATA = \
 	codemodel.php \
 	dbloginmodel.php \
 	filemodel.php \
+	gitmodel.php \
 	index.html \
 	issuemodel.php \
 	ldaploginmodel.php \
