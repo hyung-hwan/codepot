@@ -1,6 +1,7 @@
 wwwdir=$(WWWDIR)/codepot/models
 www_DATA =  \
 	codemodel.php \
+	coderepomodel.php \
 	dbloginmodel.php \
 	filemodel.php \
 	gitmodel.php \

@@ -1,22 +1,13 @@
 <?php
 
-class SubversionModel extends Model
+$CI = &get_instance();
+$CI->load->model('CodeRepoModel');
+
+class SubversionModel extends CodeRepoModel
 {
-	protected $errmsg = '';
-
-	function capture_error ($errno, $errmsg)
-	{
-		$this->errmsg = $errmsg;
-	}
-
-	function getErrorMessage ()
-	{
-		return $this->errmsg;
-	}
-
 	function SubversionModel ()
 	{
-		parent::Model ();
+		parent::CodeRepoModel ();
 	}
 
 	private function _canonical_path($path) 
@@ -343,7 +334,7 @@ class SubversionModel extends Model
 
 	function storeFile ($projectid, $path, $committer, $commit_message, $text)
 	{
-		$this->errmsg = '';
+		$this->clearErrorMessage ();
 
 		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 		$canon_path = $this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
@@ -382,7 +373,7 @@ class SubversionModel extends Model
 
 	function importFiles ($projectid, $path, $committer, $commit_message, $files, $uploader)
 	{
-		$this->errmsg = '';
+		$this->clearErrorMessage ();
 
 		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 		$full_path = CODEPOT_SVNREPO_DIR."/{$projectid}";
@@ -528,7 +519,7 @@ class SubversionModel extends Model
 
 	function deleteFiles ($projectid, $path, $committer, $commit_message, $files)
 	{
-		$this->errmsg = '';
+		$this->clearErrorMessage ();
 
 		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 		$full_path = CODEPOT_SVNREPO_DIR."/{$projectid}";
@@ -587,7 +578,7 @@ class SubversionModel extends Model
 
 	function renameFiles ($projectid, $path, $committer, $commit_message, $files)
 	{
-		$this->errmsg = '';
+		$this->clearErrorMessage ();
 
 		//$url = 'file://'.CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}";
 		$full_path = CODEPOT_SVNREPO_DIR."/{$projectid}";
@@ -1316,7 +1307,7 @@ class SubversionModel extends Model
 
 	function getRevProp ($projectid, $rev, $prop)
 	{
-		$this->errmsg = '';
+		$this->clearErrorMessage ();
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
 		set_error_handler (array ($this, 'capture_error'));
@@ -1327,7 +1318,7 @@ class SubversionModel extends Model
 
 	function setRevProp ($projectid, $rev, $prop, $propval, $user)
 	{
-		$this->errmsg = '';
+		$this->clearErrorMessage ();
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
 		set_error_handler (array ($this, 'capture_error'));
@@ -1344,7 +1335,7 @@ class SubversionModel extends Model
 
 	function killRevProp ($projectid, $rev, $prop, $user)
 	{
-		$this->errmsg = '';
+		$this->clearErrorMessage ();
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
 		set_error_handler (array ($this, 'capture_error'));
@@ -1362,7 +1353,7 @@ class SubversionModel extends Model
 
 	function mapRevPropToRev ($projectid, $revprop_name)
 	{
-		$this->errmsg = '';
+		$this->clearErrorMessage ();
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
 		set_error_handler (array ($this, 'capture_error'));
@@ -1388,7 +1379,7 @@ class SubversionModel extends Model
 
 	function findRevWithRevProp ($projectid, $revprop_name, $revprop_value)
 	{
-		$this->errmsg = '';
+		$this->clearErrorMessage ();
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
 		set_error_handler (array ($this, 'capture_error'));
@@ -1414,7 +1405,7 @@ class SubversionModel extends Model
 
 	function listProps ($projectid, $path, $rev)
 	{
-		$this->errmsg = '';
+		$this->clearErrorMessage ();
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
@@ -1442,7 +1433,7 @@ class SubversionModel extends Model
 
 	function getProp ($projectid, $path, $rev, $prop)
 	{
-		$this->errmsg = '';
+		$this->clearErrorMessage ();
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
@@ -2209,6 +2200,54 @@ class SubversionModel extends Model
 		// the caller must clear temporary files.
 
 		return $tfname;
+	}
+
+	static function createRepo ($projectid, $repodir, $cfgdir, $api)
+	{
+		$projdir = "{$repodir}/{$projectid}";
+		if (@svn_repos_create($projdir) === FALSE) return FALSE;
+
+		$hooks = array (
+			  "pre-commit",
+			  "start-commit",
+			  "post-commit",
+			  "pre-revprop-change",
+			  "post-revprop-change"
+		);
+
+		foreach ($hooks as $hook)
+		{
+			// copy hook scripts to the top repository directory
+			// overwriting existing scripts are ok as they are
+			// just updated to the latest scripts anyway.
+			$contents = @file_get_contents("{$cfgdir}/${hook}");
+			if ($contents === FALSE)
+			{
+				$this->deleteDirectory ($projdir);
+				return FALSE;
+			}
+
+			if (@file_put_contents("{$repodir}/${hook}", str_replace('%API%', $api, $contents)) === FALSE)
+			{
+				$this->deleteDirectory ($projdir);
+				return FALSE;
+			}
+
+			// install the hook script to the new project repository
+			if (@chmod("{$repodir}/{$hook}", 0755) === FALSE ||
+			    @symlink("../../{$hook}", "{$repodir}/{$projectid}/hooks/${hook}") === FALSE)
+			{
+				$this->deleteDirectory ($projdir);
+				return FALSE;
+			}
+		}
+
+		return TRUE;
+	}
+
+	static function deleteRepo ($projectid, $repodir)
+	{
+		return $this->deleteDirectory("{$repodir}/{$projectid}");
 	}
 }
 

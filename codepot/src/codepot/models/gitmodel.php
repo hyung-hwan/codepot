@@ -1,22 +1,13 @@
 <?php
 
-class GitModel extends Model
+$CI = &get_instance();
+$CI->load->model('CodeRepoModel');
+
+class GitModel extends CodeRepoModel
 {
-	protected $errmsg = '';
-
-	function capture_error ($errno, $errmsg)
-	{
-		$this->errmsg = $errmsg;
-	}
-
-	function getErrorMessage ()
-	{
-		return $this->errmsg;
-	}
-
 	function GitModel ()
 	{
-		parent::Model ();
+		parent::CodeRepoModel ();
 	}
 
 	private function _canonical_path($path) 
