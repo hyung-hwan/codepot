@@ -152,6 +152,17 @@ class GitModel extends CodeRepoModel
 	{
 		return FALSE;
 	}
+
+	static function createRepo ($projectid, $repodir, $cfgdir, $api)
+	{
+		$projdir = "{$repodir}/{$projectid}";
+		if (@git_repository_init($projdir, TRUE) === FALSE) return FALSE;
+	}
+
+	static function deleteRepo ($projectid, $repodir)
+	{
+		return $this->deleteDirectory("{$repodir}/{$projectid}");
+	}
 }
 
 ?>
