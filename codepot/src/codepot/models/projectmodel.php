@@ -1,5 +1,8 @@
 <?php
 
+$CI = &get_instance();
+$CI->load->model('SubversionModel');
+
 class ProjectModel extends Model
 {
 	function ProjectModel ()
@@ -194,55 +197,11 @@ class ProjectModel extends Model
 			$cfgdir = CODEPOT_CFG_DIR;
 			$repodir = CODEPOT_SVNREPO_DIR;
 
-			// create repository
-			if (@svn_repos_create ("{$repodir}/{$project->id}") === FALSE)
+			if (SubversionModel::createRepo($project->id, $repodir, $cfgdir, $api) === FALSE)
 			{
 				$this->db->trans_rollback ();
 				$repo_error = TRUE;
 				return FALSE;
-			}
-
-			$hooks = array (
-				"pre-commit",
-				"start-commit",
-				"post-commit",
-				"pre-revprop-change",
-				"post-revprop-change"
-			);
-
-			foreach ($hooks as $hook)
-			{
-				// copy hook scripts to the top repository directory
-				// overwriting existing scripts are ok as they are 
-				// just updated to the latest scripts anyway.
-				$contents = @file_get_contents("{$cfgdir}/${hook}");
-				if ($contents === FALSE)
-				{
-					$this->deleteDirectory ("{$repodir}/{$project->id}");
-					$this->db->trans_rollback ();
-					$repo_error = TRUE;
-					return FALSE;
-				}
-
-				if (@file_put_contents (
-					"{$repodir}/${hook}",
-					str_replace('%API%', $api, $contents)) === FALSE)
-				{
-					$this->deleteDirectory ("{$repodir}/{$project->id}");
-					$this->db->trans_rollback ();
-					$repo_error = TRUE;
-					return FALSE;
-				}
-
-				// install the hook script to the new project repository
-				if (@chmod ("{$repodir}/{$hook}", 0755) === FALSE ||
-				    @symlink ("../../{$hook}", "{$repodir}/{$project->id}/hooks/${hook}") === FALSE)
-				{
-					$this->deleteDirectory ("{$repodir}/{$project->id}");
-					$this->db->trans_rollback ();
-					$repo_error = TRUE;
-					return FALSE;
-				}
 			}
 
 			$this->db->trans_commit ();
@@ -372,7 +331,7 @@ class ProjectModel extends Model
 		else
 		{
 			$repodir = CODEPOT_SVNREPO_DIR;
-			if ($this->deleteDirectory ("{$repodir}/{$project->id}") === FALSE)
+			if (SubversionModel::deleteRepo($project->id, $repodir) === FALSE)
 			{
 				$this->db->trans_rollback ();
 				return FALSE;
@@ -444,42 +403,6 @@ class ProjectModel extends Model
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() === FALSE) return FALSE;
 		return $query->result ();
-	}
-
-
-
-	function _scandir ($dir)
-	{
-		$files = array ();
-
-		$dh  = opendir($dir);
-		while (false !== ($filename = readdir($dh)))
-		{
-			$files[] = $filename;
-		}
-		closedir ($dh);
-
-		return $files;
-	}
-
-	function deleteDirectory($dir) 
-	{
-		if (is_link($dir)) return @unlink($dir);
-		if (!file_exists($dir)) return TRUE;
-		if (!is_dir($dir)) return @unlink($dir);
-
-		foreach ($this->_scandir($dir) as $item) 
-		{
-			if ($item == '.' || $item == '..') continue;
-			if ($this->deleteDirectory($dir . "/" . $item) === FALSE) 
-			{
-				chmod($dir . "/" . $item, 0777);
-				if ($this->deleteDirectory($dir . "/" . $item) === FALSE) 
-					return FALSE;
-			};
-		}
-
-		return rmdir($dir);
 	}
 
 	function projectHasMember ($projectid, $userid)
