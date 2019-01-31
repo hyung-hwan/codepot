@@ -47,6 +47,7 @@
 
 
 #if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+typedef size_t codepot_size_t;
 #	define CODEPOT_RETURN_STRING(ptr) RETURN_STRING(ptr)
 #	define CODEPOT_SET_RETVAL_TO_STRING(ptr) RETVAL_STRING(ptr)
 #	define CODEPOT_SET_RETVAL_TO_STRINGL(ptr,len) RETVAL_STRINGL(ptr,len)
@@ -62,6 +63,7 @@
  	} while(0)
 
 #else
+typedef int codepot_size_t;
 #	define CODEPOT_RETURN_STRING(ptr) RETURN_STRING(ptr,1)
 #	define CODEPOT_SET_RETVAL_TO_STRING(ptr) RETVAL_STRING(ptr,1)
 #	define CODEPOT_SET_RETVAL_TO_STRINGL(ptr,len) RETVAL_STRINGL(ptr,len,1)
@@ -135,23 +137,35 @@ static ZEND_RSRC_DTOR_FUNC(php_svn_repos_dtor)
 
 static ZEND_RSRC_DTOR_FUNC(php_svn_fs_dtor)
 {
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	zend_list_delete(res);
+#else
 	struct php_svn_fs *r = CODEPOT_DTOR_RSRC->ptr;
 	zend_list_delete(r->repos->rsrc_id);
 	efree(r);
+#endif
 }
 
 static ZEND_RSRC_DTOR_FUNC(php_svn_fs_root_dtor)
 {
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	zend_list_delete(res);
+#else
 	struct php_svn_fs_root *r = CODEPOT_DTOR_RSRC->ptr;
 	zend_list_delete(r->repos->rsrc_id);
 	efree(r);
+#endif
 }
 
 static ZEND_RSRC_DTOR_FUNC(php_svn_repos_fs_txn_dtor)
 {
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	zend_list_delete(res);
+#else
 	struct php_svn_repos_fs_txn *r = CODEPOT_DTOR_RSRC->ptr;
 	zend_list_delete(r->repos->rsrc_id);
 	efree(r);
+#endif
 }
 
 #define SVN_STATIC_ME(name) ZEND_FENTRY(name, ZEND_FN(svn_ ## name), NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
@@ -326,38 +340,50 @@ static enum svn_opt_revision_kind php_svn_get_revision_kind(svn_opt_revision_t r
 /* }}} */
 
 
-//#include "ext/standard/php_smart_str.h"
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
 #include "ext/standard/php_smart_string.h"
+typedef smart_string CODEPOT_SMART_STRING;
+#define CODEPOT_SMART_STRING_APPENDL(a,b,c) smart_string_appendl(a,b,c)
+#define CODEPOT_SMART_STRING_0(a) smart_string_0(a)
+#define CODEPOT_SMART_STRING_FREE(a) smart_string_free(a)
+#else
+#include "ext/standard/php_smart_str.h"
+typedef smart_str CODEPOT_SMART_STRING;
+#define CODEPOT_SMART_STRING_APPENDL(a,b,c) smart_str_appendl(a,b,c)
+#define CODEPOT_SMART_STRING_0(a) smart_str_0(a)
+#define CODEPOT_SMART_STRING_FREE(a) smart_str_free(a)
+#endif
+
 static void php_svn_handle_error(svn_error_t *error TSRMLS_DC)
 {
 	svn_error_t *itr = error;
-	smart_str s = {0,0,0};
+	CODEPOT_SMART_STRING s = {0,0,0};
 
-	smart_str_appendl(&s, "svn error(s) occured\n", sizeof("svn error(s) occured\n")-1);
+	CODEPOT_SMART_STRING_APPENDL(&s, "svn error(s) occured\n", sizeof("svn error(s) occured\n")-1);
 
 	while (itr) {
 		char buf[256];
 
 		smart_str_append_long(&s, itr->apr_err);
-		smart_str_appendl(&s, " (", 2);
+		CODEPOT_SMART_STRING_APPENDL(&s, " (", 2);
 
 		svn_strerror(itr->apr_err, buf, sizeof(buf));
-		smart_str_appendl(&s, buf, strlen(buf));
-		smart_str_appendl(&s, ") ", 2);
+		CODEPOT_SMART_STRING_APPENDL(&s, buf, strlen(buf));
+		CODEPOT_SMART_STRING_APPENDL(&s, ") ", 2);
 		if (itr->message) {
-			smart_str_appendl(&s, itr->message, strlen(itr->message));
+			CODEPOT_SMART_STRING_APPENDL(&s, itr->message, strlen(itr->message));
 		}
 
 		if (itr->child) {
-			smart_str_appendl(&s, "\n", 1);
+			CODEPOT_SMART_STRING_APPENDL(&s, "\n", 1);
 		}
 		itr = itr->child;
 	}
 
-	smart_str_appendl(&s, "\n", 1);
-	smart_str_0(&s);
+	CODEPOT_SMART_STRING_APPENDL(&s, "\n", 1);
+	CODEPOT_SMART_STRING_0(&s);
 	php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s", s.c);
-	smart_str_free(&s);
+	CODEPOT_SMART_STRING_FREE(&s);
 }
 
 static svn_error_t *php_svn_auth_ssl_client_server_trust_prompter(
@@ -467,7 +493,7 @@ static int init_svn_client(TSRMLS_D)
 PHP_FUNCTION(svn_auth_get_parameter)
 {
 	char *key;
-	int keylen;
+	codepot_size_t keylen;
 	const char *value;
 
 	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &keylen)) {
@@ -489,7 +515,7 @@ PHP_FUNCTION(svn_auth_set_parameter)
 {
 	char *key, *actual_value = NULL;
 	zval *value;
-	int keylen;
+	codepot_size_t keylen;
 
 	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sz", &key, &keylen, &value)) {
 		return;
@@ -517,7 +543,7 @@ PHP_FUNCTION(svn_config_ensure)
 {
 	const char *config_path = NULL;
 	const char *utf8_path = NULL;
-	int config_path_len;
+	codepot_size_t config_path_len;
 	apr_pool_t *subpool;
 	svn_error_t *err;
 	
@@ -563,9 +589,9 @@ PHP_FUNCTION(svn_import)
 	svn_client_commit_info_t *commit_info_p = NULL;
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int pathlen;
+	codepot_size_t pathlen;
 	char *url;
-	int urllen;
+	codepot_size_t urllen;
 	svn_boolean_t nonrecursive;
 	svn_error_t *err;
 	apr_pool_t *subpool;
