@@ -72,7 +72,7 @@ class Lang_detect
 	/**
 	 * Constructor
 	 */
-	function Lang_detect()
+	function __construct()
 	{
 		$this->obj =& get_instance();
 		// get list of supported languages

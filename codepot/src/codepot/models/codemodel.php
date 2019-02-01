@@ -9,9 +9,9 @@ class CodeModel extends Model
 		return $this->errmsg;
 	}
 
-	function CodeModel ()
+	function __construct ()
 	{
-		parent::Model ();
+		parent::__construct ();
 		$this->load->database ();
 	}
 

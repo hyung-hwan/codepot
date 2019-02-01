@@ -61,7 +61,7 @@ class CI_Input {
 	*
 	* @access	public
 	*/
-	function CI_Input()
+	function __construct()
 	{
 		log_message('debug', "Input Class Initialized");
 

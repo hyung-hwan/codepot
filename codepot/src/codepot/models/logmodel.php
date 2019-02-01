@@ -2,9 +2,9 @@
 
 class LogModel extends Model
 {
-	function LogModel ()
+	function __construct ()
 	{
-		parent::Model ();
+		parent::__construct ();
 		$this->load->database ();
 	}
 

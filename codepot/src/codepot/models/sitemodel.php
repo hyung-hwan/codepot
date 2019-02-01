@@ -2,9 +2,9 @@
 
 class SiteModel extends Model
 {
-	function SiteModel ()
+	function __construct ()
 	{
-		parent::Model ();
+		parent::__construct ();
 		$this->load->database ();
 	}
 

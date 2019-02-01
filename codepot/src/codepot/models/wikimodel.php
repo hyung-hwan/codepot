@@ -14,9 +14,9 @@ class WikiModel extends Model
 		return $this->errmsg;
 	}
 
-	function WikiModel ()
+	function __construct ()
 	{
-		parent::Model ();
+		parent::__construct ();
 		$this->load->database ();
 	}
 

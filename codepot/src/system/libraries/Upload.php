@@ -58,7 +58,7 @@ class CI_Upload {
 	 *
 	 * @access	public
 	 */
-	function CI_Upload($props = array())
+	function __construct($props = array())
 	{
 		if (count($props) > 0)
 		{

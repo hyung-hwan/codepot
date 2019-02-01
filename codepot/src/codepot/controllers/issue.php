@@ -6,9 +6,9 @@ class Issue extends Controller
 	var $VIEW_HOME = 'issue_home';
 	var $VIEW_SHOW = 'issue_show';
 
-	function Issue ()
+	function __construct ()
 	{
-		parent::Controller ();
+		parent::__construct ();
 
 		$this->load->helper ('url');
 		$this->load->helper ('form');

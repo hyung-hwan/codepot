@@ -9,9 +9,9 @@ class Wiki extends Controller
 	var $VIEW_EDITX = 'wiki_editx';
 	var $VIEW_DELETE = 'wiki_delete';
 
-	function Wiki ()
+	function __construct ()
 	{
-		parent::Controller ();
+		parent::__construct ();
 
 		$this->load->helper ('url');
 		$this->load->helper ('form');

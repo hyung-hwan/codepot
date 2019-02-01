@@ -2,9 +2,9 @@
 
 class Main extends Controller 
 {
-	function Main()
+	function __construct ()
 	{
-		parent::Controller();
+		parent::__construct ();
 
 		$this->load->helper ('url');
 		$this->load->helper ('form');

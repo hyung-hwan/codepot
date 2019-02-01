@@ -2,9 +2,9 @@
 
 class API extends Controller 
 {
-	function API()
+	function __construct ()
 	{
-		parent::Controller();
+		parent::__construct ();
 	}
 
 	function check_access ()
