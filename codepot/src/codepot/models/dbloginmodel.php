@@ -3,9 +3,9 @@ require_once 'loginmodel.php';
 
 class DbLoginModel extends LoginModel
 {
-	function DbLoginModel ()
+	function __construct ()
 	{
-		parent::LoginModel ();
+		parent::__construct ();
 		$this->load->database ();
 	}
 
@@ -77,7 +77,7 @@ class DbLoginModel extends LoginModel
 		}
 
 		// TODO: implement $insider like LdapLoginModel
-		return parent::authenticate ($userid, $user->passwd, $user->email);
+		return parent::__authenticate ($userid, $user->passwd, $user->email);
 	}
 
 	function changePassword ($userid, $passwd)

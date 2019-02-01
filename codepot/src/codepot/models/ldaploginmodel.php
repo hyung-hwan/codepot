@@ -3,9 +3,9 @@ require_once 'loginmodel.php';
 
 class LdapLoginModel extends LoginModel
 {
-	function LdapLoginModel ()
+	function __construct ()
 	{
-		parent::LoginModel ();
+		parent::__construct ();
 	}
 
 	function authenticate ($userid, $password)
@@ -171,7 +171,7 @@ class LdapLoginModel extends LoginModel
 
 		//@ldap_unbind ($ldap);
 		@ldap_close ($ldap);
-		return parent::authenticate ($userid, $password, $email, $insider);
+		return parent::__authenticate ($userid, $password, $email, $insider);
 	}
 
 	function queryUserInfo ($userid)

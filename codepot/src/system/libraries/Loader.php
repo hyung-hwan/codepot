@@ -49,7 +49,7 @@ class CI_Loader {
 	 *
 	 * @access	public
 	 */
-	function CI_Loader()
+	function __construct()
 	{	
 		$this->_ci_is_php5 = (floor(phpversion()) >= 5) ? TRUE : FALSE;
 		$this->_ci_view_path = APPPATH.'views/';
@@ -252,7 +252,8 @@ class CI_Loader {
 		require_once(BASEPATH.'database/drivers/'.$CI->db->dbdriver.'/'.$CI->db->dbdriver.'_utility'.EXT);
 		$class = 'CI_DB_'.$CI->db->dbdriver.'_utility';
 
-		$CI->dbutil =& instantiate_class(new $class());
+		$obj = new $class();
+		$CI->dbutil =& instantiate_class($obj);
 
 		$CI->load->_ci_assign_to_models();
 	}
