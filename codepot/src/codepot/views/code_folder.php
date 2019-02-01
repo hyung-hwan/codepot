@@ -1236,7 +1236,7 @@ $this->load->view (
 		</div>
 
 		<?php
-		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+		if (array_key_exists('properties', $file) && !is_null($file['properties']) && count($file['properties']) > 0)
 		{
 			print '<div><ul id="code_folder_property_list">';
 			foreach ($file['properties'] as $pn => $pv)
