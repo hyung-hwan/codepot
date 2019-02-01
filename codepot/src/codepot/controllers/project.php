@@ -10,9 +10,9 @@ class Project extends Controller
 	var $VIEW_LOG = 'log';
 	var $VIEW_MAP = 'project_map';
 
-	function Project ()
+	function __construct ()
 	{
-		parent::Controller ();
+		parent::__construct ();
 
 		$this->load->helper ('url');
 		$this->load->helper ('form');

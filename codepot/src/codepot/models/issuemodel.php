@@ -14,9 +14,9 @@ class IssueModel extends Model
 		return $this->errmsg;
 	}
 
-	function IssueModel ()
+	function __construct ()
 	{
-		parent::Model ();
+		parent::__construct ();
 		$this->load->database ();
 	}
 

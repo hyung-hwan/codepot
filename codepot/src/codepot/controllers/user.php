@@ -8,9 +8,9 @@ class User extends Controller
 	var $VIEW_ISSUE = 'user_issue';
 	var $VIEW_SETTINGS = 'user_settings';
 
-	function User ()
+	function __construct ()
 	{
-		parent::Controller ();
+		parent::__construct ();
 
 		$this->load->helper ('url');
 		$this->load->helper ('form');

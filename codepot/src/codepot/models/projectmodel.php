@@ -5,9 +5,9 @@ $CI->load->model('SubversionModel');
 
 class ProjectModel extends Model
 {
-	function ProjectModel ()
+	function __construct ()
 	{
-		parent::Model ();
+		parent::__construct ();
 		$this->load->database ();
 	}
 

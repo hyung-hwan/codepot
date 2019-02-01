@@ -10,7 +10,7 @@ class WikiHelper
 		'##F' => '__FILE__'
 	);
 
-	function WikiHelper ()
+	function __construct ()
 	{
 	}
 

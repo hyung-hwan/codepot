@@ -6,9 +6,9 @@ class File extends Controller
 	var $VIEW_HOME = 'file_home';
 	var $VIEW_SHOW = 'file_show';
 
-	function File ()
+	function __construct ()
 	{
-		parent::Controller ();
+		parent::__construct ();
 		$this->load->helper ('url');
 		$this->load->helper ('form');
 		$this->load->library ('Converter', 'converter');

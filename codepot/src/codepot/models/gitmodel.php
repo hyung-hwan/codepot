@@ -5,9 +5,9 @@ $CI->load->model('CodeRepoModel');
 
 class GitModel extends CodeRepoModel
 {
-	function GitModel ()
+	function __construct ()
 	{
-		parent::CodeRepoModel ();
+		parent::__construct ();
 	}
 
 	private function _canonical_path($path) 

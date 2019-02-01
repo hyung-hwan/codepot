@@ -5,9 +5,9 @@ class Graph extends Controller
 	var $VIEW_ERROR = 'error';
 	var $VIEW_MAIN = 'graph_main';
 
-	function Graph ()
+	function __construct ()
 	{
-		parent::Controller ();
+		parent::__construct ();
 		$this->load->helper ('url');
 		$this->load->helper ('form');
 		$this->load->library ('Converter', 'converter');

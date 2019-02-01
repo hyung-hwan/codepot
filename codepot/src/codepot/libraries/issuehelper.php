@@ -31,7 +31,7 @@ class IssueHelper
 	var $PRIORITY_LOW      = 'low';
 	var $PRIORITY_OTHER    = 'other';
 
-	function IssueHelper ()
+	function __construct ()
 	{
 	}
 

@@ -13,9 +13,9 @@ class Code extends Controller
 	var $VIEW_FETCH = 'code_fetch';
 	var $VIEW_SEARCH = 'code_search';
 
-	function Code ()
+	function __construct ()
 	{
-		parent::Controller ();
+		parent::__construct ();
 		$this->load->helper ('url');
 		$this->load->helper ('form');
 		$this->load->library ('Converter', 'converter');

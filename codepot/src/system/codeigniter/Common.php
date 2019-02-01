@@ -139,13 +139,15 @@ function &load_class($class, $instantiate = TRUE)
 	{
 		$name = config_item('subclass_prefix').$class;
 
-		$objects[$class] =& instantiate_class(new $name());
+		$obj = new $name();
+		$objects[$class] =& instantiate_class(obj);
 		return $objects[$class];
 	}
 
 	$name = ($class != 'Controller') ? 'CI_'.$class : $class;
 
-	$objects[$class] =& instantiate_class(new $name());
+	$obj = new $name();
+	$objects[$class] =& instantiate_class($obj);
 	return $objects[$class];
 }
 

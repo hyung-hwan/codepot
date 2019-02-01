@@ -10,9 +10,9 @@ class Site extends Controller
 	var $VIEW_CATALOG = 'site_catalog';
 	var $VIEW_LOG = 'log';
 
-	function Site ()
+	function __construct ()
 	{
-		parent::Controller ();
+		parent::__construct ();
 
 		$this->load->helper ('url');
 		$this->load->helper ('form');

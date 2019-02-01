@@ -9,9 +9,9 @@ class LoginModel extends Model
 {
 	var $error_message = '';
 
-	function LoginModel ()
+	function __construct ()
 	{
-		parent::Model ();
+		parent::__construct ();
 		$this->load->library ('session');
 	}
 
@@ -66,7 +66,7 @@ class LoginModel extends Model
 		);
 	}
 
-	function authenticate ($userid, $password, $email = '', $insider = NULL)
+	function __authenticate ($userid, $password, $email = '', $insider = NULL)
 	{
 		//$server = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'];
 		$server = $_SERVER['HTTP_HOST'];

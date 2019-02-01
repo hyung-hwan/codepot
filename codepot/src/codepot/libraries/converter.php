@@ -2,7 +2,7 @@
  
 class Converter
 {
-	function Converter ()
+	function __construct ()
 	{
 	}
 
