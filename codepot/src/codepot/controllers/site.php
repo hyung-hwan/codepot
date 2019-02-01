@@ -227,6 +227,7 @@ class Site extends Controller
 
 			// recompose the site information from POST data.
 			unset ($site);
+			$site = new stdClass();
 			$site->id = $tmpid;
 			
 			$site->name = $this->input->post('site_name');
@@ -290,6 +291,7 @@ class Site extends Controller
 		}
 		else
 		{
+			$site = new stdClass();
 			$site->id = $siteid;
 			$site->name = '';
 			$site->summary = '';
