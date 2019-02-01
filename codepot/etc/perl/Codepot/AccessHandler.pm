@@ -42,7 +42,7 @@ use URI;
 use DBI;
 use Digest::SHA1 qw (sha1_hex);
 
-use Apache2::Const -compile => qw(OK DECLINED FORBIDDEN HTTP_UNAUTHORIZED HTTP_INTERNAL_SERVER_ERROR PROXYREQ_PROXY);
+use Apache2::Const -compile => qw(OK DECLINED FORBIDDEN HTTP_UNAUTHORIZED HTTP_INTERNAL_SERVER_ERROR PROXYREQ_PROXY AUTH_REQUIRED);
 
 sub get_config
 {
@@ -366,6 +366,13 @@ sub __handler
 			if (lc($cfg->{svn_read_access}) eq 'anonymous')
 			{
 				# grant an anonymous user the read access.
+				if (!defined($userid) || $userid eq '') 
+				{
+					# httpd 2.4 emits the following message if the user is not set
+					#   AH00027: No authentication done but request not allowed
+					#   without authentication for /xxx/xxx. Authentication not configured?
+					$r->user('<codepot-anonymous-user>');
+				}
 				return Apache2::Const::OK;
 			}
 		}
@@ -455,4 +462,5 @@ sub handler: method
 	close_database ($dbh);
 	return $res;
 }
+
 1;
