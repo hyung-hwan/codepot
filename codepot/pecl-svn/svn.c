@@ -47,33 +47,35 @@
 
 
 #if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
-typedef size_t codepot_size_t;
-#	define CODEPOT_RETURN_STRING(ptr) RETURN_STRING(ptr)
-#	define CODEPOT_SET_RETVAL_TO_STRING(ptr) RETVAL_STRING(ptr)
-#	define CODEPOT_SET_RETVAL_TO_STRINGL(ptr,len) RETVAL_STRINGL(ptr,len)
-#	define CODEPOT_ADD_ASSOC_STRING(zv,key,str) add_assoc_string(zv,key,str)
-#	define CODEPOT_ADD_ASSOC_STRINGL(zv,key,str,len) add_assoc_stringl(zv,key,str,len)
-#	define CODEPOT_ADD_NEXT_INDEX_STRING(zv,str) add_next_index_string(zv,str)
-#	define CODEPOT_DTOR_RSRC res
-#	define CODEPOT_HASH_KEY_PTR(x) ((x)->key->val)
-#	define CODEPOT_HASH_KEY_LEN(x) ((x)->key->len)
-#	define CODEPOT_ZEND_FETCH_RESOURCE(a,b,c,d,e,f) \ 
+typedef size_t psvn_size_t;
+#	define PSVN_RETURN_STRING(ptr) RETURN_STRING(ptr)
+#	define PSVN_SET_RETVAL_TO_STRING(ptr) RETVAL_STRING(ptr)
+#	define PSVN_SET_RETVAL_TO_STRINGL(ptr,len) RETVAL_STRINGL(ptr,len)
+#	define PSVN_ADD_ASSOC_STRING(zv,key,str) add_assoc_string(zv,key,str)
+#	define PSVN_ADD_ASSOC_STRINGL(zv,key,str,len) add_assoc_stringl(zv,key,str,len)
+#	define PSVN_ADD_NEXT_INDEX_STRING(zv,str) add_next_index_string(zv,str)
+#	define PSVN_DTOR_RSRC res
+#	define PSVN_HASH_KEY_PTR(x) ((x)->key->val)
+#	define PSVN_HASH_KEY_LEN(x) ((x)->key->len)
+#	define PSVN_ZEND_FETCH_RESOURCE(a,b,c,d,e,f) \
  	do { \
  		if ((a = (b)zend_fetch_resource_ex(c,e,f)) == NULL) { RETURN_FALSE; } \
  	} while(0)
+#	define PSVN_CONVERT_TO_STRING_EX(v) convert_to_string_ex(v)
 
 #else
-typedef int codepot_size_t;
-#	define CODEPOT_RETURN_STRING(ptr) RETURN_STRING(ptr,1)
-#	define CODEPOT_SET_RETVAL_TO_STRING(ptr) RETVAL_STRING(ptr,1)
-#	define CODEPOT_SET_RETVAL_TO_STRINGL(ptr,len) RETVAL_STRINGL(ptr,len,1)
-#	define CODEPOT_ADD_ASSOC_STRING(zv,key,str) add_assoc_string(zv,key,str,1)
-#	define CODEPOT_ADD_ASSOC_STRING(zv,key,str,len) add_assoc_stringl(zv,key,str,len,1)
-#	define CODEPOT_ADD_NEXT_INDEX_STRING(zv,str) add_next_index_string(zv,str,1)
-#	define CODEPOT_DTOR_RSRC rsrc
-#	define CODEPOT_HASH_KEY_PTR(x) ((x)->arKey)
-#	define CODEPOT_HASH_KEY_LEN(x) ((x)->nKeyLength)
-#	define CODEPOT_ZEND_FETCH_RESOURCE(a,b,c,d,e,f) ZEND_FETCH_RESOURCE(a,b,&(c),d,e,f)
+typedef int psvn_size_t;
+#	define PSVN_RETURN_STRING(ptr) RETURN_STRING(ptr,1)
+#	define PSVN_SET_RETVAL_TO_STRING(ptr) RETVAL_STRING(ptr,1)
+#	define PSVN_SET_RETVAL_TO_STRINGL(ptr,len) RETVAL_STRINGL(ptr,len,1)
+#	define PSVN_ADD_ASSOC_STRING(zv,key,str) add_assoc_string(zv,key,str,1)
+#	define PSVN_ADD_ASSOC_STRING(zv,key,str,len) add_assoc_stringl(zv,key,str,len,1)
+#	define PSVN_ADD_NEXT_INDEX_STRING(zv,str) add_next_index_string(zv,str,1)
+#	define PSVN_DTOR_RSRC rsrc
+#	define PSVN_HASH_KEY_PTR(x) ((x)->arKey)
+#	define PSVN_HASH_KEY_LEN(x) ((x)->nKeyLength)
+#	define PSVN_ZEND_FETCH_RESOURCE(a,b,c,d,e,f) ZEND_FETCH_RESOURCE(a,b,&(c),d,e,f)
+#	define PSVN_CONVERT_TO_STRING_EX(v) convert_to_string_ex(&v)
 #endif
 
 ZEND_DECLARE_MODULE_GLOBALS(svn)
@@ -127,7 +129,7 @@ static int le_svn_repos_fs_txn;
 
 static ZEND_RSRC_DTOR_FUNC(php_svn_repos_dtor)
 {
-	struct php_svn_repos *r = CODEPOT_DTOR_RSRC->ptr;
+	struct php_svn_repos *r = PSVN_DTOR_RSRC->ptr;
 	/* If root pool doesn't exist, then this resource's pool was already destroyed */
 	if (SVN_G(pool)) {
 		svn_pool_destroy(r->pool);
@@ -140,7 +142,7 @@ static ZEND_RSRC_DTOR_FUNC(php_svn_fs_dtor)
 #if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
 	zend_list_delete(res);
 #else
-	struct php_svn_fs *r = CODEPOT_DTOR_RSRC->ptr;
+	struct php_svn_fs *r = PSVN_DTOR_RSRC->ptr;
 	zend_list_delete(r->repos->rsrc_id);
 	efree(r);
 #endif
@@ -151,7 +153,7 @@ static ZEND_RSRC_DTOR_FUNC(php_svn_fs_root_dtor)
 #if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
 	zend_list_delete(res);
 #else
-	struct php_svn_fs_root *r = CODEPOT_DTOR_RSRC->ptr;
+	struct php_svn_fs_root *r = PSVN_DTOR_RSRC->ptr;
 	zend_list_delete(r->repos->rsrc_id);
 	efree(r);
 #endif
@@ -162,7 +164,7 @@ static ZEND_RSRC_DTOR_FUNC(php_svn_repos_fs_txn_dtor)
 #if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
 	zend_list_delete(res);
 #else
-	struct php_svn_repos_fs_txn *r = CODEPOT_DTOR_RSRC->ptr;
+	struct php_svn_repos_fs_txn *r = PSVN_DTOR_RSRC->ptr;
 	zend_list_delete(r->repos->rsrc_id);
 	efree(r);
 #endif
@@ -342,48 +344,50 @@ static enum svn_opt_revision_kind php_svn_get_revision_kind(svn_opt_revision_t r
 
 #if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
 #include "ext/standard/php_smart_string.h"
-typedef smart_string CODEPOT_SMART_STRING;
-#define CODEPOT_SMART_STRING_APPENDL(a,b,c) smart_string_appendl(a,b,c)
-#define CODEPOT_SMART_STRING_0(a) smart_string_0(a)
-#define CODEPOT_SMART_STRING_FREE(a) smart_string_free(a)
+typedef smart_string PSVN_SMART_STRING;
+#define PSVN_SMART_STRING_APPENDL(a,b,c) smart_string_appendl(a,b,c)
+#define PSVN_SMART_STRING_APPEND_LONG(a,b) smart_string_append_long(a,b)
+#define PSVN_SMART_STRING_0(a) smart_string_0(a)
+#define PSVN_SMART_STRING_FREE(a) smart_string_free(a)
 #else
 #include "ext/standard/php_smart_str.h"
-typedef smart_str CODEPOT_SMART_STRING;
-#define CODEPOT_SMART_STRING_APPENDL(a,b,c) smart_str_appendl(a,b,c)
-#define CODEPOT_SMART_STRING_0(a) smart_str_0(a)
-#define CODEPOT_SMART_STRING_FREE(a) smart_str_free(a)
+typedef smart_str PSVN_SMART_STRING;
+#define PSVN_SMART_STRING_APPENDL(a,b,c) smart_str_appendl(a,b,c)
+#define PSVN_SMART_STRING_APPEND_LONG(a,b) smart_str_append_long(a,b)
+#define PSVN_SMART_STRING_0(a) smart_str_0(a)
+#define PSVN_SMART_STRING_FREE(a) smart_str_free(a)
 #endif
 
 static void php_svn_handle_error(svn_error_t *error TSRMLS_DC)
 {
 	svn_error_t *itr = error;
-	CODEPOT_SMART_STRING s = {0,0,0};
+	PSVN_SMART_STRING s = {0,0,0};
 
-	CODEPOT_SMART_STRING_APPENDL(&s, "svn error(s) occured\n", sizeof("svn error(s) occured\n")-1);
+	PSVN_SMART_STRING_APPENDL(&s, "svn error(s) occured\n", sizeof("svn error(s) occured\n")-1);
 
 	while (itr) {
 		char buf[256];
 
-		smart_str_append_long(&s, itr->apr_err);
-		CODEPOT_SMART_STRING_APPENDL(&s, " (", 2);
+		PSVN_SMART_STRING_APPEND_LONG(&s, itr->apr_err);
+		PSVN_SMART_STRING_APPENDL(&s, " (", 2);
 
 		svn_strerror(itr->apr_err, buf, sizeof(buf));
-		CODEPOT_SMART_STRING_APPENDL(&s, buf, strlen(buf));
-		CODEPOT_SMART_STRING_APPENDL(&s, ") ", 2);
+		PSVN_SMART_STRING_APPENDL(&s, buf, strlen(buf));
+		PSVN_SMART_STRING_APPENDL(&s, ") ", 2);
 		if (itr->message) {
-			CODEPOT_SMART_STRING_APPENDL(&s, itr->message, strlen(itr->message));
+			PSVN_SMART_STRING_APPENDL(&s, itr->message, strlen(itr->message));
 		}
 
 		if (itr->child) {
-			CODEPOT_SMART_STRING_APPENDL(&s, "\n", 1);
+			PSVN_SMART_STRING_APPENDL(&s, "\n", 1);
 		}
 		itr = itr->child;
 	}
 
-	CODEPOT_SMART_STRING_APPENDL(&s, "\n", 1);
-	CODEPOT_SMART_STRING_0(&s);
+	PSVN_SMART_STRING_APPENDL(&s, "\n", 1);
+	PSVN_SMART_STRING_0(&s);
 	php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s", s.c);
-	CODEPOT_SMART_STRING_FREE(&s);
+	PSVN_SMART_STRING_FREE(&s);
 }
 
 static svn_error_t *php_svn_auth_ssl_client_server_trust_prompter(
@@ -492,8 +496,8 @@ static int init_svn_client(TSRMLS_D)
 	Retrieves authentication parameter at key */
 PHP_FUNCTION(svn_auth_get_parameter)
 {
-	char *key;
-	codepot_size_t keylen;
+	const char *key;
+	psvn_size_t keylen;
 	const char *value;
 
 	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &key, &keylen)) {
@@ -504,7 +508,7 @@ PHP_FUNCTION(svn_auth_get_parameter)
 
 	value = svn_auth_get_parameter(SVN_G(ctx)->auth_baton, key);
 	if (value) {
-		CODEPOT_SET_RETVAL_TO_STRING((char*)value);
+		PSVN_SET_RETVAL_TO_STRING((char*)value);
 	}
 }
 /* }}} */
@@ -515,7 +519,7 @@ PHP_FUNCTION(svn_auth_set_parameter)
 {
 	char *key, *actual_value = NULL;
 	zval *value;
-	codepot_size_t keylen;
+	psvn_size_t keylen;
 
 	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sz", &key, &keylen, &value)) {
 		return;
@@ -527,7 +531,7 @@ PHP_FUNCTION(svn_auth_set_parameter)
 	}
 
 	if (Z_TYPE_P(value) != IS_NULL) {
-		convert_to_string_ex(&value);
+		PSVN_CONVERT_TO_STRING_EX(value);
 		actual_value = Z_STRVAL_P(value);
 	}
 
@@ -543,7 +547,7 @@ PHP_FUNCTION(svn_config_ensure)
 {
 	const char *config_path = NULL;
 	const char *utf8_path = NULL;
-	codepot_size_t config_path_len;
+	psvn_size_t config_path_len;
 	apr_pool_t *subpool;
 	svn_error_t *err;
 	
@@ -589,9 +593,9 @@ PHP_FUNCTION(svn_import)
 	svn_client_commit_info_t *commit_info_p = NULL;
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	codepot_size_t pathlen;
+	psvn_size_t pathlen;
 	char *url;
-	codepot_size_t urllen;
+	psvn_size_t urllen;
 	svn_boolean_t nonrecursive;
 	svn_error_t *err;
 	apr_pool_t *subpool;
@@ -840,7 +844,7 @@ PHP_FUNCTION(svn_checkout)
 	char *repos_url = NULL, *target_path = NULL;
 	const char *utf8_repos_url = NULL, *utf8_target_path = NULL;
 	const char *can_repos_url = NULL, *can_target_path = NULL;
-	int repos_url_len, target_path_len;
+	psvn_size_t repos_url_len, target_path_len;
 	svn_error_t *err;
 	svn_opt_revision_t revision = { 0 }, peg_revision = { 0 };
 	long flags = 0, depth = svn_depth_infinity;
@@ -931,7 +935,7 @@ PHP_FUNCTION(svn_cat)
 {
 	const char *url = NULL;
 	const char *utf8_url = NULL;
-	int url_len;
+	psvn_size_t url_len;
 	apr_size_t size;
 	svn_error_t *err;
 	svn_opt_revision_t revision = { 0 }, peg_revision = { 0 } ;
@@ -1006,7 +1010,7 @@ PHP_FUNCTION(svn_cat)
 	retdata = NULL;
 #else
 	/* it's less efficient than the old disabled code */
-	CODEPOT_SET_RETVAL_TO_STRINGL(retdata, size);
+	PSVN_SET_RETVAL_TO_STRINGL(retdata, size);
 #endif
 
 cleanup:
@@ -1015,6 +1019,15 @@ cleanup:
 }
 /* }}} */
 
+	
+#if defined(APR_VERSION_MAJOR) && (APR_VERSION_MAJOR >= 2)
+static int compare_keys(const void *a, const void *b) 
+{
+	Bucket *f = *((Bucket **) a);
+	Bucket *s = *((Bucket **) b);
+	return strcmp(f->arKey, s->arKey);
+}
+#endif
 
 /* {{{ proto array svn_ls(string repository_url [, int revision [, bool recurse [, bool peg]]])
 	Returns a list of a directory in a working copy or repository, optionally at revision_no. */
@@ -1022,7 +1035,7 @@ PHP_FUNCTION(svn_ls)
 {
 	const char *repos_url = NULL;
 	const char *utf8_repos_url = NULL;
-	int repos_url_len;
+	psvn_size_t repos_url_len;
 	zend_bool recurse = 0, peg = 0;
 	svn_error_t *err;
 	svn_opt_revision_t revision = { 0 };
@@ -1074,6 +1087,70 @@ PHP_FUNCTION(svn_ls)
 		goto cleanup;
 	}
 
+#if defined(APR_VERSION_MAJOR) && (APR_VERSION_MAJOR >= 2)
+	array_init(return_value);
+	
+	for (hi = apr_hash_first(subpool, dirents); hi; hi = apr_hash_next(hi)) {
+		const char *utf8_entryname;
+		svn_dirent_t *dirent;
+		apr_time_t now = apr_time_now();
+		apr_time_exp_t exp_time;
+		apr_status_t apr_err;
+		apr_size_t size;
+		char timestr[20];
+		const char   *utf8_timestr;
+		apr_hash_index_t *hi;
+		zval    *row;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		zval actual_row;
+#endif
+	
+		svn_utf_cstring_to_utf8 (&utf8_entryname, apr_hash_this_key(hi), subpool);
+		dirent = apr_hash_this_val(hi);
+	
+		/* svn_time_to_human_cstring gives us something *way* too long
+		   to use for this, so we have to roll our own.  We include
+		   the year if the entry's time is not within half a year. */
+		apr_time_exp_lt (&exp_time, dirent->time);
+		if (apr_time_sec(now - dirent->time) < (365 * 86400 / 2)
+		    && apr_time_sec(dirent->time - now) < (365 * 86400 / 2)) {
+			apr_err = apr_strftime (timestr, &size, sizeof (timestr),
+			                        "%b %d %H:%M", &exp_time);
+		} else {
+			apr_err = apr_strftime (timestr, &size, sizeof (timestr),
+			                        "%b %d %Y", &exp_time);
+		}
+	
+		/* if that failed, just zero out the string and print nothing */
+		if (apr_err) timestr[0] = '\0';
+	
+		/* we need it in UTF-8. */
+		err = svn_utf_cstring_to_utf8 (&utf8_timestr, timestr, subpool);
+		if (err) {
+			php_svn_handle_error(err TSRMLS_CC);
+			RETVAL_FALSE;
+			goto cleanup;
+		}
+	
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		row = &actual_row;
+#else
+		MAKE_STD_ZVAL(row);
+#endif
+		array_init(row);
+		add_assoc_long(row,   "created_rev",    (long) dirent->created_rev);
+		PSVN_ADD_ASSOC_STRING(row, "last_author",    dirent->last_author ? (char *) dirent->last_author : " ? ");
+		add_assoc_long(row,   "size",           dirent->size);
+		PSVN_ADD_ASSOC_STRING(row, "time",           timestr);
+		add_assoc_long(row,   "time_t",         apr_time_sec(dirent->time));
+		/* this doesnt have a matching struct name */
+		PSVN_ADD_ASSOC_STRING(row, "name",           (char *) utf8_entryname);
+		/* should this be a integer or something? - not very clear though.*/
+		PSVN_ADD_ASSOC_STRING(row, "type",           (dirent->kind == svn_node_dir) ? "dir" : "file");
+	
+		add_assoc_zval(return_value, (char *)utf8_entryname, row);
+	}
+#else
 	array = svn_sort__hash (dirents, svn_sort_compare_items_as_paths, subpool);
 	array_init(return_value);
 
@@ -1089,6 +1166,9 @@ PHP_FUNCTION(svn_ls)
 		char timestr[20];
 		const char   *utf8_timestr;
 		zval 	*row;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		zval actual_row;
+#endif
 
 		item = &APR_ARRAY_IDX (array, i, svn_sort__item_t);
 		utf8_entryname = item->key;
@@ -1120,25 +1200,39 @@ PHP_FUNCTION(svn_ls)
 			goto cleanup;
 		}
 
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		row = &actual_row;
+#else
 		MAKE_STD_ZVAL(row);
+#endif
 		array_init(row);
 		add_assoc_long(row,   "created_rev", 	(long) dirent->created_rev);
-		CODEPOT_ADD_ASSOC_STRING(row, "last_author", 	dirent->last_author ? (char *) dirent->last_author : " ? ");
+		PSVN_ADD_ASSOC_STRING(row, "last_author", 	dirent->last_author ? (char *) dirent->last_author : " ? ");
 		add_assoc_long(row,   "size", 		dirent->size);
-		CODEPOT_ADD_ASSOC_STRING(row, "time", 		timestr);
+		PSVN_ADD_ASSOC_STRING(row, "time", 		timestr);
 		add_assoc_long(row,   "time_t", 	apr_time_sec(dirent->time));
 		/* this doesnt have a matching struct name */
-		CODEPOT_ADD_ASSOC_STRING(row, "name", 		(char *) utf8_entryname);
+		PSVN_ADD_ASSOC_STRING(row, "name", 		(char *) utf8_entryname);
 		/* should this be a integer or something? - not very clear though.*/
-		CODEPOT_ADD_ASSOC_STRING(row, "type", 		(dirent->kind == svn_node_dir) ? "dir" : "file");
+		PSVN_ADD_ASSOC_STRING(row, "type", 		(dirent->kind == svn_node_dir) ? "dir" : "file");
 
 		add_assoc_zval(return_value, (char *)utf8_entryname, row);
 	}
+#endif
 
 cleanup:
 	svn_pool_destroy(subpool);
 }
 /* }}} */
+
+#if defined(APR_VERSION_MAJOR) && (APR_VERSION_MAJOR >= 2)
+static int compare_keys_as_paths(const void *a, const void *b) 
+{
+	Bucket *f = *((Bucket **) a);
+	Bucket *s = *((Bucket **) b);
+	return svn_sort_compare_paths(&(f->arKey), &(s->arKey));
+}
+#endif
 
 static svn_error_t *
 php_svn_log_receiver (void *ibaton,
@@ -1151,6 +1245,9 @@ php_svn_log_receiver (void *ibaton,
 {
 	struct php_svn_log_receiver_baton *baton = (struct php_svn_log_receiver_baton*) ibaton;
 	zval  *row, *paths;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	zval actual_row, actual_paths;
+#endif
 	apr_array_header_t *sorted_paths;
 	int i;
 	TSRMLS_FETCH();
@@ -1159,24 +1256,30 @@ php_svn_log_receiver (void *ibaton,
 		return SVN_NO_ERROR;
 	}
 
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	row = &actual_row;
+#else
 	MAKE_STD_ZVAL(row);
+#endif
 	array_init(row);
 	add_assoc_long(row, "rev", (long) rev);
 
 	if (author) {
-		CODEPOT_ADD_ASSOC_STRING(row, "author", (char *) author);
+		PSVN_ADD_ASSOC_STRING(row, "author", (char *) author);
 	}
 	if (!baton->omit_messages && msg) {
-		CODEPOT_ADD_ASSOC_STRING(row, "msg", (char *) msg);
+		PSVN_ADD_ASSOC_STRING(row, "msg", (char *) msg);
 	}
 	if (date) {
-		CODEPOT_ADD_ASSOC_STRING(row, "date", (char *) date);
+		PSVN_ADD_ASSOC_STRING(row, "date", (char *) date);
 	}
 
 	if (changed_paths) {
-
-
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		paths = &actual_paths;
+#else
 		MAKE_STD_ZVAL(paths);
+#endif
 		array_init(paths);
 
 		sorted_paths = svn_sort__hash(changed_paths, svn_sort_compare_items_as_paths, pool);
@@ -1186,20 +1289,25 @@ php_svn_log_receiver (void *ibaton,
 			svn_sort__item_t *item;
 			svn_log_changed_path_t *log_item;
 			zval *zpaths;
-			const char *path;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+			zval actual_zpaths;
+#endif
 
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+			zpaths = &actual_zpaths;
+#else
 			MAKE_STD_ZVAL(zpaths);
+#endif
 			array_init(zpaths);
 			item = &(APR_ARRAY_IDX (sorted_paths, i, svn_sort__item_t));
-			path = item->key;
 			log_item = apr_hash_get (changed_paths, item->key, item->klen);
 
-			CODEPOT_ADD_ASSOC_STRINGL(zpaths, "action", &(log_item->action), 1);
-			CODEPOT_ADD_ASSOC_STRING(zpaths, "path", (char *) item->key);
+			PSVN_ADD_ASSOC_STRINGL(zpaths, "action", &(log_item->action), 1);
+			PSVN_ADD_ASSOC_STRING(zpaths, "path", (char *) item->key);
 
 			if (log_item->copyfrom_path
 					&& SVN_IS_VALID_REVNUM (log_item->copyfrom_rev)) {
-				CODEPOT_ADD_ASSOC_STRING(zpaths, "copyfrom", (char *) log_item->copyfrom_path);
+				PSVN_ADD_ASSOC_STRING(zpaths, "copyfrom", (char *) log_item->copyfrom_path);
 				add_assoc_long(zpaths, "rev", (long) log_item->copyfrom_rev);
 			} else {
 
@@ -1219,7 +1327,7 @@ php_svn_log_receiver (void *ibaton,
 PHP_FUNCTION(svn_log)
 {
 	const char *url = NULL, *utf8_url = NULL;
-	int url_len;
+	psvn_size_t url_len;
 
 	svn_error_t *err;
 	svn_opt_revision_t 	start_revision = { 0 }, end_revision = { 0 };
@@ -1381,7 +1489,7 @@ PHP_FUNCTION(svn_diff)
 	char *path1, *path2;
 	const char *utf8_path1 = NULL,*utf8_path2 = NULL;
 	const char *can_path1 = NULL,*can_path2 = NULL;
-	int path1len, path2len;
+	psvn_size_t path1len, path2len;
 	long rev1 = -1, rev2 = -1;
 	apr_array_header_t diff_options = { 0, 0, 0, 0, 0};
 	svn_opt_revision_t revision1, revision2;
@@ -1463,8 +1571,12 @@ PHP_FUNCTION(svn_diff)
 		php_svn_handle_error(err TSRMLS_CC);
 	} else {
 		zval *t;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		zval actual_t;
+#endif
 		php_stream *stm = NULL;
 		apr_off_t off = (apr_off_t)0;
+	
 
 		array_init(return_value);
 
@@ -1474,12 +1586,22 @@ PHP_FUNCTION(svn_diff)
 
 		/* 'bless' the apr files into streams and return those */
 		stm = php_stream_alloc(&php_apr_stream_ops, outfile, 0, "rw");
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		t = &actual_t;
+		ZVAL_LONG(t, 0);
+#else
 		MAKE_STD_ZVAL(t);
+#endif
 		php_stream_to_zval(stm, t);
 		add_next_index_zval(return_value, t);
 
 		stm = php_stream_alloc(&php_apr_stream_ops, errfile, 0, "rw");
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		t = &actual_t;
+		ZVAL_LONG(t, 0);
+#else
 		MAKE_STD_ZVAL(t);
+#endif
 		php_stream_to_zval(stm, t);
 		add_next_index_zval(return_value, t);
 	}
@@ -1495,7 +1617,7 @@ PHP_FUNCTION(svn_cleanup)
 {
 	const char *workingdir = NULL;
 	const char *utf8_workingdir = NULL;
-	int workingdir_len;
+	psvn_size_t workingdir_len;
 	svn_error_t *err;
 	apr_pool_t *subpool;
 
@@ -1636,20 +1758,36 @@ cleanup:
 }
 /* }}} */
 
-static int replicate_hash(void *pDest TSRMLS_DC, int num_args, va_list args, zend_hash_key *key)
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+static int replicate_hash(zval *pDest TSRMLS_DC, int num_args, va_list args, zend_hash_key *key)
 {
-	zval **val = (zval **)pDest;
 	apr_hash_t *hash = va_arg(args, apr_hash_t*);
 
-	if (CODEPOT_HASH_KEY_LEN(key) && Z_TYPE_PP(val) == IS_STRING) {
+	if (PSVN_HASH_KEY_LEN(key) && Z_TYPE_P(pDest) == IS_STRING) {
 		/* apr doesn't want the NUL terminator in its keys */
-		apr_hash_set(hash, CODEPOT_HASH_KEY_PTR(key), CODEPOT_HASH_KEY_LEN(key)-1, Z_STRVAL_PP(val));
+		apr_hash_set(hash, PSVN_HASH_KEY_PTR(key), PSVN_HASH_KEY_LEN(key)-1, Z_STRVAL_P(pDest));
 	}
 
 	va_end(args);
 
 	return ZEND_HASH_APPLY_KEEP;
 }
+#else
+static int replicate_hash(void *pDest TSRMLS_DC, int num_args, va_list args, zend_hash_key *key)
+{
+	zval **val = (zval **)pDest;
+	apr_hash_t *hash = va_arg(args, apr_hash_t*);
+
+	if (PSVN_HASH_KEY_LEN(key) && Z_TYPE_PP(val) == IS_STRING) {
+		/* apr doesn't want the NUL terminator in its keys */
+		apr_hash_set(hash, PSVN_HASH_KEY_PTR(key), PSVN_HASH_KEY_LEN(key)-1, Z_STRVAL_PP(val));
+	}
+
+	va_end(args);
+
+	return ZEND_HASH_APPLY_KEEP;
+}
+#endif
 
 static apr_hash_t *replicate_zend_hash_to_apr_hash(zval *arr, apr_pool_t *pool TSRMLS_DC)
 {
@@ -1673,8 +1811,8 @@ PHP_FUNCTION(svn_fs_revision_prop)
 	struct php_svn_fs *fs;
 	svn_error_t *err;
 	svn_string_t *str;
-	char *propname;
-	int propnamelen;
+	const char *propname;
+	psvn_size_t propnamelen;
 	apr_pool_t *subpool;
 
 	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rls",
@@ -1682,7 +1820,7 @@ PHP_FUNCTION(svn_fs_revision_prop)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(fs, struct php_svn_fs *, zfs, -1, "svn-fs", le_svn_fs);
+	PSVN_ZEND_FETCH_RESOURCE(fs, struct php_svn_fs *, zfs, -1, "svn-fs", le_svn_fs);
 
 	subpool = svn_pool_create(SVN_G(pool));
 	if (!subpool) {
@@ -1695,9 +1833,9 @@ PHP_FUNCTION(svn_fs_revision_prop)
 		RETVAL_FALSE;
 	} else if (!str) {
 		/* the property is not found. return an empty string */
-		CODEPOT_SET_RETVAL_TO_STRINGL("", 0);
+		PSVN_SET_RETVAL_TO_STRINGL("", 0);
 	} else {
-		CODEPOT_SET_RETVAL_TO_STRINGL((char*)str->data, str->len);
+		PSVN_SET_RETVAL_TO_STRINGL((char*)str->data, str->len);
 	}
 
 	svn_pool_destroy(subpool);
@@ -1718,7 +1856,7 @@ PHP_FUNCTION(svn_fs_youngest_rev)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(fs, struct php_svn_fs *, zfs, -1, "svn-fs", le_svn_fs);
+	PSVN_ZEND_FETCH_RESOURCE(fs, struct php_svn_fs *, zfs, -1, "svn-fs", le_svn_fs);
 
 	err = svn_fs_youngest_rev(&revnum, fs->fs, fs->repos->pool);
 
@@ -1748,7 +1886,7 @@ PHP_FUNCTION(svn_fs_revision_root)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(fs, struct php_svn_fs *, zfs, -1, "svn-fs", le_svn_fs);
+	PSVN_ZEND_FETCH_RESOURCE(fs, struct php_svn_fs *, zfs, -1, "svn-fs", le_svn_fs);
 
 	err = svn_fs_revision_root(&root, fs->fs, revnum, fs->repos->pool);
 	if (err) {
@@ -1759,8 +1897,13 @@ PHP_FUNCTION(svn_fs_revision_root)
 	resource = emalloc(sizeof(*resource));
 	resource->root = root;
 	resource->repos = fs->repos;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	zend_list_insert (fs, fs->repos->rsrc_id);
+	RETVAL_RES (zend_register_resource(resource, le_svn_fs_root));
+#else
 	zend_list_addref(fs->repos->rsrc_id);
 	ZEND_REGISTER_RESOURCE(return_value, resource, le_svn_fs_root);
+#endif
 }
 /* }}} */
 
@@ -1819,7 +1962,7 @@ PHP_FUNCTION(svn_fs_file_contents)
 	struct php_svn_fs_root *fsroot;
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int pathlen;
+	psvn_size_t pathlen;
 	svn_error_t *err;
 	svn_stream_t *svnstm;
 	apr_pool_t *subpool;
@@ -1829,7 +1972,7 @@ PHP_FUNCTION(svn_fs_file_contents)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(fsroot, struct php_svn_fs_root*, zfsroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(fsroot, struct php_svn_fs_root*, zfsroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	subpool = svn_pool_create(SVN_G(pool));
 	if (!subpool) {
@@ -1869,7 +2012,7 @@ PHP_FUNCTION(svn_fs_file_length)
 	struct php_svn_fs_root *fsroot;
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int pathlen;
+	psvn_size_t pathlen;
 	svn_filesize_t len;
 	svn_error_t *err;
 	apr_pool_t *subpool;
@@ -1879,7 +2022,7 @@ PHP_FUNCTION(svn_fs_file_length)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(fsroot, struct php_svn_fs_root*, zfsroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(fsroot, struct php_svn_fs_root*, zfsroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	subpool = svn_pool_create(SVN_G(pool));
 	if (!subpool) {
@@ -1918,8 +2061,8 @@ PHP_FUNCTION(svn_fs_node_prop)
 	struct php_svn_fs_root *fsroot;
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	char *propname;
-	int pathlen, propnamelen;
+	const char *propname;
+	psvn_size_t pathlen, propnamelen;
 	svn_error_t *err;
 	apr_pool_t *subpool;
 	svn_string_t *val;
@@ -1929,7 +2072,7 @@ PHP_FUNCTION(svn_fs_node_prop)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(fsroot, struct php_svn_fs_root*, zfsroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(fsroot, struct php_svn_fs_root*, zfsroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	subpool = svn_pool_create(SVN_G(pool));
 	if (!subpool) {
@@ -1952,7 +2095,7 @@ PHP_FUNCTION(svn_fs_node_prop)
 		RETVAL_FALSE;
 	} else {
 		if (val != NULL && val->data != NULL) {
-			CODEPOT_SET_RETVAL_TO_STRINGL((char *)val->data, val->len);
+			PSVN_SET_RETVAL_TO_STRINGL((char *)val->data, val->len);
 		} else {
 			RETVAL_EMPTY_STRING();
 		}
@@ -1972,7 +2115,7 @@ PHP_FUNCTION(svn_fs_node_created_rev)
 	struct php_svn_fs_root *fsroot;
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int pathlen;
+	psvn_size_t pathlen;
 	svn_error_t *err;
 	apr_pool_t *subpool;
 	svn_revnum_t rev;
@@ -1982,7 +2125,7 @@ PHP_FUNCTION(svn_fs_node_created_rev)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(fsroot, struct php_svn_fs_root*, zfsroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(fsroot, struct php_svn_fs_root*, zfsroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	subpool = svn_pool_create(SVN_G(pool));
 	if (!subpool) {
@@ -2020,7 +2163,7 @@ PHP_FUNCTION(svn_fs_dir_entries)
 	struct php_svn_fs_root *fsroot;
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int pathlen;
+	psvn_size_t pathlen;
 	svn_error_t *err;
 	apr_pool_t *subpool;
 	apr_hash_t *hash;
@@ -2035,7 +2178,7 @@ PHP_FUNCTION(svn_fs_dir_entries)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(fsroot, struct php_svn_fs_root*, zfsroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(fsroot, struct php_svn_fs_root*, zfsroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	subpool = svn_pool_create(SVN_G(pool));
 	if (!subpool) {
@@ -2079,7 +2222,7 @@ PHP_FUNCTION(svn_fs_check_path)
 	struct php_svn_fs_root *fsroot;
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int pathlen;
+	psvn_size_t pathlen;
 	svn_error_t *err;
 	apr_pool_t *subpool;
 
@@ -2088,7 +2231,7 @@ PHP_FUNCTION(svn_fs_check_path)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(fsroot, struct php_svn_fs_root*, zfsroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(fsroot, struct php_svn_fs_root*, zfsroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	subpool = svn_pool_create(SVN_G(pool));
 	if (!subpool) {
@@ -2131,14 +2274,20 @@ PHP_FUNCTION(svn_repos_fs)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(repos, struct php_svn_repos *, zrepos, -1, "svn-repos", le_svn_repos);
+	PSVN_ZEND_FETCH_RESOURCE(repos, struct php_svn_repos *, zrepos, -1, "svn-repos", le_svn_repos);
 
 	resource = emalloc(sizeof(*resource));
 	resource->repos = repos;
+
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	zend_list_insert(repos, repos->rsrc_id);
+	resource->fs = svn_repos_fs(repos->repos);
+	RETVAL_RES (zend_register_resource(resource, le_svn_fs));
+#else
 	zend_list_addref(repos->rsrc_id);
 	resource->fs = svn_repos_fs(repos->repos);
-
 	ZEND_REGISTER_RESOURCE(return_value, resource, le_svn_fs);
+#endif
 }
 /* }}} */
 
@@ -2148,7 +2297,7 @@ PHP_FUNCTION(svn_repos_open)
 {
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int pathlen;
+	psvn_size_t pathlen;
 	apr_pool_t *subpool;
 	svn_error_t *err;
 	svn_repos_t *repos = NULL;
@@ -2184,7 +2333,11 @@ PHP_FUNCTION(svn_repos_open)
 		resource = emalloc(sizeof(*resource));
 		resource->pool = subpool;
 		resource->repos = repos;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		RETVAL_RES (zend_register_resource(resource, le_svn_repos));
+#else
 		ZEND_REGISTER_RESOURCE(return_value, resource, le_svn_repos);
+#endif
 	} else {
 		svn_pool_destroy(subpool);
 		RETURN_FALSE;
@@ -2195,29 +2348,36 @@ PHP_FUNCTION(svn_repos_open)
 static svn_error_t *info_func (void *baton, const char *path, const svn_info_t *info, apr_pool_t *pool) {
 	zval *return_value = (zval*)baton;
 	zval *entry;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	zval actual_entry;
+#endif
 	TSRMLS_FETCH();
 
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	entry = &actual_entry;
+#else
 	MAKE_STD_ZVAL(entry);
+#endif
 	array_init(entry);
 
-	CODEPOT_ADD_ASSOC_STRING(entry, "path", (char*)path);
+	PSVN_ADD_ASSOC_STRING(entry, "path", (char*)path);
 	if (info) {
 		if (info->URL) {
-			CODEPOT_ADD_ASSOC_STRING(entry, "url", (char *)info->URL);
+			PSVN_ADD_ASSOC_STRING(entry, "url", (char *)info->URL);
 		}
 
 		add_assoc_long(entry, "revision", info->rev);
 		add_assoc_long(entry, "kind", info->kind);
 
 		if (info->repos_root_URL) {
-			CODEPOT_ADD_ASSOC_STRING(entry, "repos", (char *)info->repos_root_URL);
+			PSVN_ADD_ASSOC_STRING(entry, "repos", (char *)info->repos_root_URL);
 		}
 
 		add_assoc_long(entry, "last_changed_rev", info->last_changed_rev);
-		CODEPOT_ADD_ASSOC_STRING(entry, "last_changed_date", (char *) svn_time_to_cstring(info->last_changed_date, pool));
+		PSVN_ADD_ASSOC_STRING(entry, "last_changed_date", (char *) svn_time_to_cstring(info->last_changed_date, pool));
 
 		if (info->last_changed_author) {
-			CODEPOT_ADD_ASSOC_STRING(entry, "last_changed_author", (char *)info->last_changed_author);
+			PSVN_ADD_ASSOC_STRING(entry, "last_changed_author", (char *)info->last_changed_author);
 		}
 
 		if (info->lock) {
@@ -2239,7 +2399,7 @@ static svn_error_t *info_func (void *baton, const char *path, const svn_info_t *
 PHP_FUNCTION(svn_info)
 {
 	const char *path = NULL, *utf8_path = NULL;
-	int pathlen;
+	psvn_size_t pathlen;
 	long revnum = -1;
 	apr_pool_t *subpool;
 	zend_bool recurse = 1;
@@ -2307,7 +2467,7 @@ PHP_FUNCTION(svn_export)
 {
 	const char *from = NULL, *to = NULL;
 	const char *utf8_from_path = NULL, *utf8_to_path = NULL;
-	int fromlen, tolen;
+	psvn_size_t fromlen, tolen;
 	long revision_no = -1;
 	apr_pool_t *subpool;
 	zend_bool working_copy = 1;
@@ -2373,7 +2533,7 @@ PHP_FUNCTION(svn_switch)
 {
 	const char *url = NULL, *path = NULL;
 	const char *utf8_url = NULL, *utf8_path = NULL;
-	int urllen, pathlen;
+	psvn_size_t urllen, pathlen;
 	apr_pool_t *subpool;
 	zend_bool working_copy = 1;
 	svn_error_t *err;
@@ -2434,8 +2594,8 @@ PHP_FUNCTION(svn_copy)
 {
 	const char *src_path = NULL, *dst_path = NULL;
 	const char *utf8_src_path = NULL, *utf8_dst_path = NULL;
-	char *log;
-	int src_pathlen, dst_pathlen, loglen;
+	const char *log;
+	psvn_size_t src_pathlen, dst_pathlen, loglen;
 	long revnum = -1;
 	apr_pool_t *subpool;
 	zend_bool working_copy = 1;
@@ -2480,7 +2640,7 @@ PHP_FUNCTION(svn_copy)
 		revision.kind = php_svn_get_revision_kind(revision);
 	}
 
-	SVN_G(ctx)->log_msg_baton = log;
+	SVN_G(ctx)->log_msg_baton = (char*)log;
 
 	err = svn_client_copy2(&info, (const char*)src_path, &revision, (const char*)dst_path, SVN_G(ctx), subpool);
 	SVN_G(ctx)->log_msg_baton = NULL;
@@ -2492,13 +2652,13 @@ PHP_FUNCTION(svn_copy)
 		array_init(return_value);
 		add_next_index_long(return_value, info->revision);
 		if (info->date) {
-			CODEPOT_ADD_NEXT_INDEX_STRING(return_value, (char*)info->date);
+			PSVN_ADD_NEXT_INDEX_STRING(return_value, (char*)info->date);
 		} else {
 			add_next_index_null(return_value);
 		}
 
 		if (info->author) {
-			CODEPOT_ADD_NEXT_INDEX_STRING(return_value, (char*)info->author);
+			PSVN_ADD_NEXT_INDEX_STRING(return_value, (char*)info->author);
 		} else {
 			add_next_index_null(return_value);
 		}
@@ -2524,6 +2684,9 @@ php_svn_blame_message_receiver (void *baton,
 				apr_pool_t *pool)
 {
 	zval *return_value = (zval *)baton, *row;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	zval actual_row;
+#endif
 
 	TSRMLS_FETCH();
 
@@ -2531,19 +2694,23 @@ php_svn_blame_message_receiver (void *baton,
 		return SVN_NO_ERROR;
 	}
 
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	row = &actual_row;
+#else
 	MAKE_STD_ZVAL(row);
+#endif
 	array_init(row);
 
 
 	add_assoc_long(row, "rev", (long) rev);
 	add_assoc_long(row, "line_no", line_no + 1);
-	CODEPOT_ADD_ASSOC_STRING(row, "line", (char *) line);
+	PSVN_ADD_ASSOC_STRING(row, "line", (char *) line);
 
 	if (author) {
-		CODEPOT_ADD_ASSOC_STRING(row, "author", (char *) author);
+		PSVN_ADD_ASSOC_STRING(row, "author", (char *) author);
 	}
 	if (date) {
-		CODEPOT_ADD_ASSOC_STRING(row, "date", (char *) date);
+		PSVN_ADD_ASSOC_STRING(row, "date", (char *) date);
 	}
 
 
@@ -2557,7 +2724,7 @@ PHP_FUNCTION(svn_blame)
 {
 	const char *repos_url = NULL;
 	const char *utf8_repos_url = NULL;
-	int repos_url_len;
+	psvn_size_t repos_url_len;
 	int revision = -1;
 	svn_error_t *err;
 	svn_opt_revision_t
@@ -2632,7 +2799,7 @@ cleanup:
 PHP_FUNCTION(svn_delete)
 {
 	const char *path = NULL, *utf8_path = NULL, *logmsg = NULL;
-	int pathlen, logmsg_len;
+	psvn_size_t pathlen, logmsg_len;
 	apr_pool_t *subpool;
 	zend_bool force = 0;
 	svn_error_t *err;
@@ -2660,7 +2827,7 @@ PHP_FUNCTION(svn_delete)
 	targets = apr_array_make (subpool, 1, sizeof(char *));
 	APR_ARRAY_PUSH(targets, const char *) = svn_path_canonicalize(utf8_path, subpool);
 	
-	SVN_G(ctx)->log_msg_baton = logmsg; 
+	SVN_G(ctx)->log_msg_baton = (char*)logmsg; 
 	err = svn_client_delete2(&info, targets, force, SVN_G(ctx), subpool);
 	SVN_G(ctx)->log_msg_baton = NULL; 
 
@@ -2671,13 +2838,13 @@ PHP_FUNCTION(svn_delete)
 		array_init(return_value);
 		add_next_index_long(return_value, info->revision);
 		if (info->date) {
-			CODEPOT_ADD_NEXT_INDEX_STRING(return_value, (char*)info->date);
+			PSVN_ADD_NEXT_INDEX_STRING(return_value, (char*)info->date);
 		} else {
 			add_next_index_null(return_value);
 		}
 
 		if (info->author) {
-			CODEPOT_ADD_NEXT_INDEX_STRING(return_value, (char*)info->author);
+			PSVN_ADD_NEXT_INDEX_STRING(return_value, (char*)info->author);
 		} else {
 			add_next_index_null(return_value);
 		}
@@ -2696,7 +2863,7 @@ PHP_FUNCTION(svn_mkdir)
 {
 	const char *path = NULL, *utf8_path = NULL;
 	char *log_message = NULL;
-	int pathlen, loglen = 0;
+	psvn_size_t pathlen, loglen = 0;
 	apr_pool_t *subpool;
 	svn_error_t *err;
 	svn_commit_info_t *info = NULL;
@@ -2755,13 +2922,13 @@ PHP_FUNCTION(svn_mkdir)
 	array_init(return_value);
 	add_next_index_long(return_value, info->revision);
 	if (info->date) {
-		CODEPOT_ADD_NEXT_INDEX_STRING(return_value, (char*)info->date);
+		PSVN_ADD_NEXT_INDEX_STRING(return_value, (char*)info->date);
 	} else {
 		add_next_index_null(return_value);
 	}
 
 	if (info->author) {
-		CODEPOT_ADD_NEXT_INDEX_STRING(return_value, (char*)info->author);
+		PSVN_ADD_NEXT_INDEX_STRING(return_value, (char*)info->author);
 	} else {
 		add_next_index_null(return_value);
 	}
@@ -2777,7 +2944,7 @@ PHP_FUNCTION(svn_move)
 {
 	const char *src_path = NULL, *utf8_src_path = NULL;
 	const char *dst_path = NULL, *utf8_dst_path = NULL;
-	int src_pathlen, dst_pathlen;
+	psvn_size_t src_pathlen, dst_pathlen;
 	zend_bool force = 0;
 	apr_pool_t *subpool;
 	svn_error_t *err;
@@ -2820,13 +2987,13 @@ PHP_FUNCTION(svn_move)
 		array_init(return_value);
 		add_next_index_long(return_value, info->revision);
 		if (info->date) {
-			CODEPOT_ADD_NEXT_INDEX_STRING(return_value, (char*)info->date);
+			PSVN_ADD_NEXT_INDEX_STRING(return_value, (char*)info->date);
 		} else {
 			add_next_index_null(return_value);
 		}
 
 		if (info->author) {
-			CODEPOT_ADD_NEXT_INDEX_STRING(return_value, (char*)info->author);
+			PSVN_ADD_NEXT_INDEX_STRING(return_value, (char*)info->author);
 		} else {
 			add_next_index_null(return_value);
 		}
@@ -2845,7 +3012,7 @@ cleanup:
 PHP_FUNCTION(svn_proplist)
 {
 	const char *path = NULL, *utf8_path = NULL;
-	int pathlen;
+	psvn_size_t pathlen;
 	zend_bool recurse = 0;
 	apr_pool_t *subpool;
 	svn_error_t *err;
@@ -2896,9 +3063,16 @@ PHP_FUNCTION(svn_proplist)
 			svn_client_proplist_item_t *item
 				= ((svn_client_proplist_item_t **)props->elts)[i];
 			zval *row;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+			zval actual_row;
+#endif
 			apr_hash_index_t *hi;
 
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+			row = &actual_row;
+#else
 			MAKE_STD_ZVAL(row);
+#endif
 			array_init(row);
 			for (hi = apr_hash_first(subpool, item->prop_hash); hi; hi = apr_hash_next(hi)) {
 				const void *key;
@@ -2910,7 +3084,7 @@ PHP_FUNCTION(svn_proplist)
 				pname = key;
 				propval = val;
 
-				CODEPOT_ADD_ASSOC_STRINGL(row, (char *)pname, (char *)propval->data, propval->len);
+				PSVN_ADD_ASSOC_STRINGL(row, (char *)pname, (char *)propval->data, propval->len);
 			}
 			add_assoc_zval(return_value, (char *)svn_path_local_style(item->node_name->data, subpool), row);
 		}
@@ -2928,7 +3102,7 @@ PHP_FUNCTION(svn_propget)
 {
 	const char *path = NULL, *utf8_path = NULL;
 	const char *propname = NULL;
-	int pathlen, propnamelen;
+	psvn_size_t pathlen, propnamelen;
 	zend_bool recurse = 0;
 	apr_pool_t *subpool;
 	svn_error_t *err;
@@ -2980,14 +3154,21 @@ PHP_FUNCTION(svn_propget)
 			const char *pname;
 			svn_string_t *propval;
 			zval *row;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+			zval actual_row;
+#endif
 
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+			row = &actual_row;
+#else
 			MAKE_STD_ZVAL(row);
+#endif
 			array_init(row);
 			apr_hash_this(hi, &key, NULL, &val);
 			pname = key;
 			propval = val;
 
-			CODEPOT_ADD_ASSOC_STRINGL(row, (char *)propname, (char *)propval->data, propval->len);
+			PSVN_ADD_ASSOC_STRINGL(row, (char *)propname, (char *)propval->data, propval->len);
 			add_assoc_zval(return_value, (char *)svn_path_local_style(pname, subpool), row);
 		}
 	}
@@ -3004,12 +3185,11 @@ PHP_FUNCTION(svn_propset)
 {
 	const char *path = NULL, *utf8_path = NULL;
 	const char *propname = NULL, *propval = NULL;
-	int pathlen, propnamelen, propvallen;
+	psvn_size_t pathlen, propnamelen, propvallen;
 	zend_bool recurse = 0, skip_checks = 0;
 	apr_pool_t *subpool;
 	svn_error_t *err;
 	svn_opt_revision_t revision = { 0 }, peg_revision = { 0 };
-	apr_hash_index_t *hi;
 	const char *true_path;
 
 	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|bbl", 
@@ -3062,12 +3242,11 @@ PHP_FUNCTION(svn_prop_delete)
 {
 	const char *path = NULL, *utf8_path = NULL;
 	const char *propname = NULL;
-	int pathlen, propnamelen;
+	psvn_size_t pathlen, propnamelen;
 	zend_bool recurse = 0, skip_checks = 0;
 	apr_pool_t *subpool;
 	svn_error_t *err;
 	svn_opt_revision_t revision = { 0 }, peg_revision = { 0 };
-	apr_hash_index_t *hi;
 	const char *true_path;
 
 	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|bbl", 
@@ -3121,7 +3300,7 @@ PHP_FUNCTION(svn_revprop_get)
 {
 	const char *url = NULL, *utf8_url = NULL;
 	const char *propname = NULL, * utf8_propname = NULL;
-	int urllen, propnamelen;
+	psvn_size_t urllen, propnamelen;
 	apr_pool_t *subpool;
 	svn_error_t *err;
 	svn_opt_revision_t revision = { 0 };
@@ -3164,9 +3343,9 @@ PHP_FUNCTION(svn_revprop_get)
 		RETVAL_FALSE;
 		goto cleanup;
 	} else if (!pval) {
-		CODEPOT_SET_RETVAL_TO_STRINGL("", 0);
+		PSVN_SET_RETVAL_TO_STRINGL("", 0);
 	} else {
-		CODEPOT_SET_RETVAL_TO_STRINGL((char*)pval->data, pval->len);
+		PSVN_SET_RETVAL_TO_STRINGL((char*)pval->data, pval->len);
 	}
 
 cleanup:
@@ -3180,11 +3359,10 @@ PHP_FUNCTION(svn_revprop_set)
 {
 	const char *url = NULL, *utf8_url = NULL;
 	const char *propname = NULL, *propval = NULL, * utf8_propname = NULL;
-	int urllen, propnamelen, propvallen;
+	psvn_size_t urllen, propnamelen, propvallen;
 	apr_pool_t *subpool;
 	svn_error_t *err;
 	svn_opt_revision_t revision = { 0 };
-	svn_string_t* pval = NULL;
 	svn_revnum_t result_rev;
 	zend_bool force = 0;
 
@@ -3238,11 +3416,10 @@ PHP_FUNCTION(svn_revprop_delete)
 {
 	const char *url = NULL, *utf8_url = NULL;
 	const char *propname = NULL, * utf8_propname = NULL;
-	int urllen, propnamelen;
+	psvn_size_t urllen, propnamelen;
 	apr_pool_t *subpool;
 	svn_error_t *err;
 	svn_opt_revision_t revision = { 0 };
-	svn_string_t* pval = NULL;
 	svn_revnum_t result_rev;
 
 	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sls", 
@@ -3295,7 +3472,7 @@ PHP_FUNCTION(svn_repos_create)
 {
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int pathlen;
+	psvn_size_t pathlen;
 	zval *config = NULL;
 	zval *fsconfig = NULL;
 	apr_hash_t *config_hash = NULL;
@@ -3338,7 +3515,11 @@ PHP_FUNCTION(svn_repos_create)
 		resource = emalloc(sizeof(*resource));
 		resource->pool = subpool;
 		resource->repos = repos;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		RETVAL_RES (zend_register_resource(resource, le_svn_repos));
+#else
 		ZEND_REGISTER_RESOURCE(return_value, resource, le_svn_repos);
+#endif
 	} else {
 		svn_pool_destroy(subpool);
 		RETURN_FALSE;
@@ -3352,7 +3533,7 @@ PHP_FUNCTION(svn_repos_recover)
 {
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int pathlen;
+	psvn_size_t pathlen;
 	apr_pool_t *subpool;
 	svn_error_t *err;
 
@@ -3396,7 +3577,7 @@ PHP_FUNCTION(svn_repos_hotcopy)
 {
 	const char *src_path = NULL, *dst_path = NULL;
 	const char *utf8_src_path = NULL, *utf8_dst_path = NULL;
-	int src_path_len, dst_path_len;
+	psvn_size_t src_path_len, dst_path_len;
 	zend_bool cleanlogs;
 	apr_pool_t *subpool;
 	svn_error_t *err;
@@ -3443,6 +3624,21 @@ cleanup:
 }
 /* }}} */
 
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+static int replicate_array(zval *pDest TSRMLS_DC, int num_args, va_list args, zend_hash_key *key)
+{
+	apr_pool_t *pool = (apr_pool_t*)va_arg(args, apr_pool_t*);
+	apr_array_header_t *arr = (apr_array_header_t*)va_arg(args, apr_array_header_t*);
+
+	if (Z_TYPE_P(pDest) == IS_STRING) {
+		APR_ARRAY_PUSH(arr, const char*) = apr_pstrdup(pool, Z_STRVAL_P(pDest));
+	}
+
+	va_end(args);
+
+	return ZEND_HASH_APPLY_KEEP;
+}
+#else
 static int replicate_array(void *pDest TSRMLS_DC, int num_args, va_list args, zend_hash_key *key)
 {
 	zval **val = (zval **)pDest;
@@ -3457,6 +3653,7 @@ static int replicate_array(void *pDest TSRMLS_DC, int num_args, va_list args, ze
 
 	return ZEND_HASH_APPLY_KEEP;
 }
+#endif
 
 
 static apr_array_header_t *replicate_zend_hash_to_apr_array(zval *arr, apr_pool_t *pool TSRMLS_DC)
@@ -3475,7 +3672,7 @@ static apr_array_header_t *replicate_zend_hash_to_apr_array(zval *arr, apr_pool_
 PHP_FUNCTION(svn_commit)
 {
 	char *log = NULL;
-	int loglen, pathlen;
+	psvn_size_t loglen, pathlen;
 	const char *path = NULL;
 	const char *utf8_path = NULL;
 	zend_bool recursive = 1;
@@ -3527,13 +3724,13 @@ PHP_FUNCTION(svn_commit)
 		array_init(return_value);
 		add_next_index_long(return_value, info->revision);
 		if (info->date) {
-			CODEPOT_ADD_NEXT_INDEX_STRING(return_value, (char*)info->date);
+			PSVN_ADD_NEXT_INDEX_STRING(return_value, (char*)info->date);
 		} else {
 			add_next_index_null(return_value);
 		}
 
 		if (info->author) {
-			CODEPOT_ADD_NEXT_INDEX_STRING(return_value, (char*)info->author);
+			PSVN_ADD_NEXT_INDEX_STRING(return_value, (char*)info->author);
 		} else {
 			add_next_index_null(return_value);
 		}
@@ -3553,7 +3750,7 @@ cleanup:
 PHP_FUNCTION(svn_lock)
 {
 	char *comment = NULL;
-	int comment_len, pathlen;
+	psvn_size_t comment_len, pathlen;
 	const char *path = NULL;
 	const char *utf8_path = NULL;
 	zend_bool steal_lock = 0;
@@ -3611,7 +3808,7 @@ cleanup:
 	Lock targets in the repository */
 PHP_FUNCTION(svn_unlock)
 {
-	int pathlen;
+	psvn_size_t pathlen;
 	const char *path = NULL;
 	const char *utf8_path = NULL;
 	zend_bool break_lock = 0;
@@ -3671,7 +3868,7 @@ PHP_FUNCTION(svn_add)
 {
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int pathlen;
+	psvn_size_t pathlen;
 	zend_bool recurse = 1, force = 0;
 	apr_pool_t *subpool;
 	svn_error_t *err;
@@ -3715,12 +3912,19 @@ static void php_svn_status_receiver(void *baton, const char *path, svn_wc_status
 {
 	zval *return_value = (zval*)baton;
 	zval *entry;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	zval actual_entry;
+#endif
 	TSRMLS_FETCH();
 
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+	entry = &actual_entry;
+#else
 	MAKE_STD_ZVAL(entry);
+#endif
 	array_init(entry);
 
-	CODEPOT_ADD_ASSOC_STRING(entry, "path", (char*)path);
+	PSVN_ADD_ASSOC_STRING(entry, "path", (char*)path);
 	if (status) {
 		add_assoc_long(entry, "text_status", status->text_status);
 		add_assoc_long(entry, "repos_text_status", status->repos_text_status);
@@ -3732,13 +3936,13 @@ static void php_svn_status_receiver(void *baton, const char *path, svn_wc_status
 
 		if (status->entry) {
 			if (status->entry->name) {
-				CODEPOT_ADD_ASSOC_STRING(entry, "name", (char*)status->entry->name);
+				PSVN_ADD_ASSOC_STRING(entry, "name", (char*)status->entry->name);
 			}
 			if (status->entry->url) {
-				CODEPOT_ADD_ASSOC_STRING(entry, "url", (char*)status->entry->url);
+				PSVN_ADD_ASSOC_STRING(entry, "url", (char*)status->entry->url);
 			}
 			if (status->entry->repos) {
-				CODEPOT_ADD_ASSOC_STRING(entry, "repos", (char*)status->entry->repos);
+				PSVN_ADD_ASSOC_STRING(entry, "repos", (char*)status->entry->repos);
 			}
 
 			add_assoc_long(entry, "revision", status->entry->revision);
@@ -3749,14 +3953,14 @@ static void php_svn_status_receiver(void *baton, const char *path, svn_wc_status
 			if (status->entry->incomplete) add_assoc_bool(entry, "incomplete", status->entry->incomplete);
 
 			if (status->entry->copyfrom_url) {
-				CODEPOT_ADD_ASSOC_STRING(entry, "copyfrom_url", (char*)status->entry->copyfrom_url);
+				PSVN_ADD_ASSOC_STRING(entry, "copyfrom_url", (char*)status->entry->copyfrom_url);
 				add_assoc_long(entry, "copyfrom_rev", status->entry->copyfrom_rev);
 			}
 
 			if (status->entry->cmt_author) {
 				add_assoc_long(entry, "cmt_date", apr_time_sec(status->entry->cmt_date));
 				add_assoc_long(entry, "cmt_rev", status->entry->cmt_rev);
-				CODEPOT_ADD_ASSOC_STRING(entry, "cmt_author", (char*)status->entry->cmt_author);
+				PSVN_ADD_ASSOC_STRING(entry, "cmt_author", (char*)status->entry->cmt_author);
 			}
 			if (status->entry->prop_time) {
 				add_assoc_long(entry, "prop_time", apr_time_sec(status->entry->prop_time));
@@ -3777,7 +3981,7 @@ PHP_FUNCTION(svn_status)
 {
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int path_len;
+	psvn_size_t path_len;
 	long flags = 0;
 	apr_pool_t *subpool;
 	svn_error_t *err;
@@ -3837,7 +4041,7 @@ PHP_FUNCTION(svn_update)
 {
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int pathlen;
+	psvn_size_t pathlen;
 	zend_bool recurse = 1;
 	apr_pool_t *subpool;
 	svn_error_t *err;
@@ -3893,8 +4097,7 @@ PHP_FUNCTION(svn_update2)
 {
 	const char *path = NULL;
 	const char *utf8_path = NULL;
-	int pathlen;
-	zend_bool recurse = 1;
+	psvn_size_t pathlen;
 	apr_pool_t *subpool;
 	svn_error_t *err;
 	apr_array_header_t *result_revs;
@@ -3976,7 +4179,7 @@ PHP_FUNCTION(svn_client_version)
 	}
 
 	php_svn_get_version(vers, sizeof(vers));
-	CODEPOT_RETURN_STRING (vers);
+	PSVN_RETURN_STRING (vers);
 }
 /* }}} */
 
@@ -3990,7 +4193,7 @@ PHP_FUNCTION(svn_repos_fs_begin_txn_for_commit)
 	struct php_svn_repos *repos = NULL;
 	svn_revnum_t rev;
 	char *author, *log_msg;
-	int author_len, log_msg_len;
+	psvn_size_t author_len, log_msg_len;
 	apr_pool_t *subpool;
 	svn_error_t *err;
 
@@ -3999,7 +4202,7 @@ PHP_FUNCTION(svn_repos_fs_begin_txn_for_commit)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(repos, struct php_svn_repos *, zrepos, -1, "svn-repos", le_svn_repos);
+	PSVN_ZEND_FETCH_RESOURCE(repos, struct php_svn_repos *, zrepos, -1, "svn-repos", le_svn_repos);
 
 	subpool = svn_pool_create(SVN_G(pool));
 	if (!subpool) {
@@ -4015,10 +4218,15 @@ PHP_FUNCTION(svn_repos_fs_begin_txn_for_commit)
 	if (txn_p) {
 		new_txn = emalloc(sizeof(*new_txn));
 		new_txn->repos = repos;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		zend_list_insert(repos, repos->rsrc_id);
+		new_txn->txn = txn_p;
+		RETVAL_RES (zend_register_resource(new_txn, le_svn_repos_fs_txn));
+#else
 		zend_list_addref(repos->rsrc_id);
 		new_txn->txn = txn_p;
-
 		ZEND_REGISTER_RESOURCE(return_value, new_txn, le_svn_repos_fs_txn);
+#endif
 	} else {
 		svn_pool_destroy(subpool);
 		RETURN_FALSE;
@@ -4041,7 +4249,7 @@ PHP_FUNCTION(svn_repos_fs_commit_txn)
 		RETURN_FALSE;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(txn, struct php_svn_repos_fs_txn *, ztxn, -1, "svn-repos-fs-txn", le_svn_repos_fs_txn);
+	PSVN_ZEND_FETCH_RESOURCE(txn, struct php_svn_repos_fs_txn *, ztxn, -1, "svn-repos-fs-txn", le_svn_repos_fs_txn);
 
 	err = svn_repos_fs_commit_txn(&conflicts, txn->repos->repos, &new_rev, txn->txn, txn->repos->pool);
 
@@ -4069,7 +4277,7 @@ PHP_FUNCTION(svn_fs_txn_root)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(txn, struct php_svn_repos_fs_txn *, ztxn, -1, "svn-fs-repos-txn", le_svn_repos_fs_txn);
+	PSVN_ZEND_FETCH_RESOURCE(txn, struct php_svn_repos_fs_txn *, ztxn, -1, "svn-fs-repos-txn", le_svn_repos_fs_txn);
 
 	err = svn_fs_txn_root(&root_p, txn->txn, txn->repos->pool);
 
@@ -4081,10 +4289,15 @@ PHP_FUNCTION(svn_fs_txn_root)
 	if (root_p) {
 		new_root = emalloc(sizeof(*new_root));
 		new_root->repos = txn->repos;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		zend_list_insert(txn, txn->repos->rsrc_id);
+		new_root->root = root_p;
+		RETVAL_RES (zend_register_resource(new_root, le_svn_fs_root));
+#else
 		zend_list_addref(txn->repos->rsrc_id);
 		new_root->root = root_p;
-
 		ZEND_REGISTER_RESOURCE(return_value, new_root, le_svn_fs_root);
+#endif
 	} else {
 		RETURN_FALSE;
 	}
@@ -4098,7 +4311,7 @@ PHP_FUNCTION(svn_fs_make_file)
 	zval *zroot;
 	struct php_svn_fs_root *root = NULL;
 	const char *path = NULL, *utf8_path = NULL;
-	int path_len;
+	psvn_size_t path_len;
 	svn_error_t *err;
 	apr_pool_t *subpool;
 
@@ -4120,7 +4333,7 @@ PHP_FUNCTION(svn_fs_make_file)
 	}
 	path = svn_path_canonicalize(utf8_path, subpool);
 
-	CODEPOT_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	err = svn_fs_make_file(root->root, path, root->repos->pool);
 
@@ -4143,7 +4356,7 @@ PHP_FUNCTION(svn_fs_make_dir)
 	zval *zroot;
 	struct php_svn_fs_root *root = NULL;
 	const char *path = NULL, *utf8_path = NULL;
-	int path_len;
+	psvn_size_t path_len;
 	svn_error_t *err;
 	apr_pool_t *subpool;
 
@@ -4165,7 +4378,7 @@ PHP_FUNCTION(svn_fs_make_dir)
 	}
 	path = svn_path_canonicalize(utf8_path, subpool);
 
-	CODEPOT_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	err = svn_fs_make_dir(root->root, path, root->repos->pool);
 
@@ -4190,7 +4403,7 @@ PHP_FUNCTION(svn_fs_apply_text)
 	zval *zroot;
 	struct php_svn_fs_root *root = NULL;
 	const char *path = NULL, *utf8_path = NULL;
-	int path_len;
+	psvn_size_t path_len;
 	svn_error_t *err;
 	svn_stream_t *stream_p = NULL;
 	apr_pool_t *subpool;
@@ -4213,7 +4426,7 @@ PHP_FUNCTION(svn_fs_apply_text)
 	}
 	path = svn_path_canonicalize(utf8_path, subpool);
 
-	CODEPOT_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	err = svn_fs_apply_text(&stream_p, root->root, path, NULL, root->repos->pool);
 
@@ -4244,7 +4457,7 @@ PHP_FUNCTION(svn_fs_copy)
 	struct php_svn_fs_root *from_root, *to_root;
 	const char *from_path = NULL, *to_path = NULL;
 	const char *utf8_from_path = NULL, *utf8_to_path = NULL;
-	int from_path_len, to_path_len;
+	psvn_size_t from_path_len, to_path_len;
 	svn_error_t *err;
 	apr_pool_t *subpool;
 
@@ -4275,8 +4488,8 @@ PHP_FUNCTION(svn_fs_copy)
 	from_path = svn_path_canonicalize(utf8_from_path, subpool);
 	to_path = svn_path_canonicalize(utf8_to_path, subpool);
 
-	CODEPOT_ZEND_FETCH_RESOURCE(from_root, struct php_svn_fs_root *, zfrom_root, -1, "svn-fs-root", le_svn_fs_root);
-	CODEPOT_ZEND_FETCH_RESOURCE(to_root, struct php_svn_fs_root *, zto_root, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(from_root, struct php_svn_fs_root *, zfrom_root, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(to_root, struct php_svn_fs_root *, zto_root, -1, "svn-fs-root", le_svn_fs_root);
 
 	err = svn_fs_copy(from_root->root, from_path, to_root->root, to_path, to_root->repos->pool);
 
@@ -4299,7 +4512,7 @@ PHP_FUNCTION(svn_fs_delete)
 	zval *zroot;
 	struct php_svn_fs_root *root = NULL;
 	const char *path = NULL, *utf8_path = NULL;
-	int path_len;
+	psvn_size_t path_len;
 	svn_error_t *err;
 	apr_pool_t *subpool;
 
@@ -4321,7 +4534,7 @@ PHP_FUNCTION(svn_fs_delete)
 	}
 	path = svn_path_canonicalize(utf8_path, subpool);
 
-	CODEPOT_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	err = svn_fs_delete(root->root, path, root->repos->pool);
 
@@ -4353,7 +4566,7 @@ PHP_FUNCTION(svn_fs_begin_txn2)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(fs, struct php_svn_fs *, zfs, -1, "svn-fs", le_svn_fs);
+	PSVN_ZEND_FETCH_RESOURCE(fs, struct php_svn_fs *, zfs, -1, "svn-fs", le_svn_fs);
 
 	err = svn_fs_begin_txn2(&txn_p, fs->fs, rev, 0, SVN_G(pool));
 
@@ -4365,10 +4578,15 @@ PHP_FUNCTION(svn_fs_begin_txn2)
 	if (txn_p) {
 		new_txn = emalloc(sizeof(*new_txn));
 		new_txn->repos = fs->repos;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		zend_list_insert(fs, fs->repos->rsrc_id);
+		new_txn->txn = txn_p;
+		RETVAL_RES (zend_register_resource(new_txn, le_svn_repos_fs_txn));
+#else
 		zend_list_addref(fs->repos->rsrc_id);
 		new_txn->txn = txn_p;
-
 		ZEND_REGISTER_RESOURCE(return_value, new_txn, le_svn_repos_fs_txn);
+#endif
 	} else {
 		RETURN_FALSE;
 	}
@@ -4382,7 +4600,7 @@ PHP_FUNCTION(svn_fs_is_file)
 	zval *zroot;
 	struct php_svn_fs_root *root = NULL;
 	const char *path = NULL, *utf8_path = NULL;
-	int path_len;
+	psvn_size_t path_len;
 	svn_error_t *err;
 	svn_boolean_t is_file;
 	apr_pool_t *subpool;
@@ -4406,7 +4624,7 @@ PHP_FUNCTION(svn_fs_is_file)
 
 	path = svn_path_canonicalize(utf8_path, subpool);
 
-	CODEPOT_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	err = svn_fs_is_file(&is_file, root->root, path, root->repos->pool);
 
@@ -4429,7 +4647,7 @@ PHP_FUNCTION(svn_fs_is_dir)
 	zval *zroot;
 	struct php_svn_fs_root *root = NULL;
 	const char *path = NULL, *utf8_path = NULL;
-	int path_len;
+	psvn_size_t path_len;
 	svn_error_t *err;
 	svn_boolean_t is_dir;
 	apr_pool_t *subpool;
@@ -4452,7 +4670,7 @@ PHP_FUNCTION(svn_fs_is_dir)
 	}
 	path = svn_path_canonicalize(utf8_path, subpool);
 
-	CODEPOT_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	err = svn_fs_is_dir(&is_dir, root->root, path, root->repos->pool);
 
@@ -4476,7 +4694,7 @@ PHP_FUNCTION(svn_fs_change_node_prop)
 	struct php_svn_fs_root *root = NULL;
 	const char *path = NULL, *utf8_path = NULL;
 	char *name;
-	int path_len, name_len, value_len;
+	psvn_size_t path_len, name_len;
 	svn_string_t *svn_value = NULL;
 	svn_error_t *err;
 	apr_pool_t *subpool;
@@ -4499,10 +4717,10 @@ PHP_FUNCTION(svn_fs_change_node_prop)
 	}
 	path = svn_path_canonicalize(utf8_path, subpool);
 
-	CODEPOT_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(root, struct php_svn_fs_root *, zroot, -1, "svn-fs-root", le_svn_fs_root);
 
 	if (Z_TYPE_P(value) != IS_NULL) {
-		convert_to_string_ex(&value);
+		PSVN_CONVERT_TO_STRING_EX(value);
 		svn_value = emalloc(sizeof(*svn_value));
 		svn_value->data = Z_STRVAL_P(value);
 		svn_value->len  = Z_STRLEN_P(value);
@@ -4531,7 +4749,7 @@ PHP_FUNCTION(svn_fs_contents_changed)
 	struct php_svn_fs_root *root1 = NULL, *root2 = NULL;
 	const char *path1 = NULL, *path2 = NULL;
 	const char *utf8_path1 = NULL, *utf8_path2 = NULL;
-	int path1_len, path2_len;
+	psvn_size_t path1_len, path2_len;
 	svn_boolean_t changed;
 	svn_error_t *err;
 	apr_pool_t *subpool;
@@ -4563,8 +4781,8 @@ PHP_FUNCTION(svn_fs_contents_changed)
 	path1 = svn_path_canonicalize(utf8_path1, subpool);
 	path2 = svn_path_canonicalize(utf8_path2, subpool);
 
-	CODEPOT_ZEND_FETCH_RESOURCE(root1, struct php_svn_fs_root *, zroot1, -1, "svn-fs-root", le_svn_fs_root);
-	CODEPOT_ZEND_FETCH_RESOURCE(root2, struct php_svn_fs_root *, zroot2, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(root1, struct php_svn_fs_root *, zroot1, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(root2, struct php_svn_fs_root *, zroot2, -1, "svn-fs-root", le_svn_fs_root);
 
 	err = svn_fs_contents_changed(&changed, root1->root, path1,
 			root2->root, path2,	root1->repos->pool);
@@ -4591,7 +4809,7 @@ PHP_FUNCTION(svn_fs_props_changed)
 	struct php_svn_fs_root *root1 = NULL, *root2 = NULL;
 	const char *path1 = NULL, *path2 = NULL;
 	const char *utf8_path1 = NULL, *utf8_path2 = NULL;
-	int path1_len, path2_len;
+	psvn_size_t path1_len, path2_len;
 	svn_boolean_t changed;
 	svn_error_t *err;
 	apr_pool_t *subpool;
@@ -4623,8 +4841,8 @@ PHP_FUNCTION(svn_fs_props_changed)
 	path1 = svn_path_canonicalize(utf8_path1, subpool);
 	path2 = svn_path_canonicalize(utf8_path2, subpool);
 
-	CODEPOT_ZEND_FETCH_RESOURCE(root1, struct php_svn_fs_root *, zroot1, -1, "svn-fs-root", le_svn_fs_root);
-	CODEPOT_ZEND_FETCH_RESOURCE(root2, struct php_svn_fs_root *, zroot2, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(root1, struct php_svn_fs_root *, zroot1, -1, "svn-fs-root", le_svn_fs_root);
+	PSVN_ZEND_FETCH_RESOURCE(root2, struct php_svn_fs_root *, zroot2, -1, "svn-fs-root", le_svn_fs_root);
 
 	err = svn_fs_props_changed(&changed, root1->root, path1,
 			root2->root, path2,	root1->repos->pool);
@@ -4656,7 +4874,7 @@ PHP_FUNCTION(svn_fs_abort_txn)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(txn, struct php_svn_repos_fs_txn *, ztxn, -1, "svn-repos-fs-txn", le_svn_repos_fs_txn);
+	PSVN_ZEND_FETCH_RESOURCE(txn, struct php_svn_repos_fs_txn *, ztxn, -1, "svn-repos-fs-txn", le_svn_repos_fs_txn);
 
 	err = svn_fs_abort_txn(txn->txn, txn->repos->pool);
 
@@ -4675,11 +4893,10 @@ PHP_FUNCTION(svn_fs_open_txn)
 {
 	zval *zfs;
 	struct php_svn_fs *fs;
-	zval *ztxn;
-	struct php_svn_repos_fs_txn *txn;
+	struct svn_fs_txn_t *txn;
 	svn_error_t *err;
 	const char *name = NULL;
-	int name_len;
+	psvn_size_t name_len;
 	apr_pool_t *subpool;
 
 	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs",
@@ -4687,7 +4904,7 @@ PHP_FUNCTION(svn_fs_open_txn)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(fs, struct php_svn_fs *, zfs, -1, "svn-fs", le_svn_fs);
+	PSVN_ZEND_FETCH_RESOURCE(fs, struct php_svn_fs *, zfs, -1, "svn-fs", le_svn_fs);
 
 	subpool = svn_pool_create(SVN_G(pool));
 	if (!subpool) {
@@ -4703,10 +4920,15 @@ PHP_FUNCTION(svn_fs_open_txn)
 
 		new_txn = emalloc(sizeof(*new_txn));
 		new_txn->repos = fs->repos;
+#if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
+		zend_list_insert(fs, fs->repos->rsrc_id);
+		new_txn->txn = txn;
+		RETVAL_RES (zend_register_resource(new_txn, le_svn_repos_fs_txn));
+#else
 		zend_list_addref(fs->repos->rsrc_id);
 		new_txn->txn = txn;
-
 		ZEND_REGISTER_RESOURCE(return_value, new_txn, le_svn_repos_fs_txn);
+#endif
 	} else {
 		RETVAL_FALSE;
 	}
@@ -4724,7 +4946,7 @@ PHP_FUNCTION(svn_fs_txn_prop)
 	svn_error_t *err;
 	svn_string_t *str;
 	char *propname;
-	int propnamelen;
+	psvn_size_t propnamelen;
 	apr_pool_t *subpool;
 
 	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs",
@@ -4732,7 +4954,7 @@ PHP_FUNCTION(svn_fs_txn_prop)
 		return;
 	}
 
-	CODEPOT_ZEND_FETCH_RESOURCE(txn, struct php_svn_repos_fs_txn *, ztxn, -1, "svn-repos-fs-txn", le_svn_repos_fs_txn);
+	PSVN_ZEND_FETCH_RESOURCE(txn, struct php_svn_repos_fs_txn *, ztxn, -1, "svn-repos-fs-txn", le_svn_repos_fs_txn);
 
 	subpool = svn_pool_create(SVN_G(pool));
 	if (!subpool) {
@@ -4745,9 +4967,9 @@ PHP_FUNCTION(svn_fs_txn_prop)
 		RETVAL_FALSE;
 	} else if (!str) {
 		/* the property is not found. return an empty string */
-		CODEPOT_SET_RETVAL_TO_STRINGL("", 0);
+		PSVN_SET_RETVAL_TO_STRINGL("", 0);
 	} else {
-		CODEPOT_SET_RETVAL_TO_RETVAL_STRINGL((char*)str->data, str->len);
+		PSVN_SET_RETVAL_TO_STRINGL((char*)str->data, str->len);
 	}
 
 	svn_pool_destroy(subpool);
@@ -4760,6 +4982,6 @@ PHP_FUNCTION(svn_fs_txn_prop)
  * tab-width: 4
  * c-basic-offset: 4
  * End:
- * vim600: noet sw=4 ts=4 fdm=marker
+ * vim600: noet sw=4 ts=4 
  * vim<600: noet sw=4 ts=4
  */
