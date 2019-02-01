@@ -1486,7 +1486,7 @@ PHP_FUNCTION(svn_diff)
 	apr_pool_t *subpool;
 	apr_file_t *outfile = NULL, *errfile = NULL;
 	svn_error_t *err;
-	char *path1, *path2;
+	const char *path1, *path2;
 	const char *utf8_path1 = NULL,*utf8_path2 = NULL;
 	const char *can_path1 = NULL,*can_path2 = NULL;
 	psvn_size_t path1len, path2len;
@@ -2725,7 +2725,7 @@ PHP_FUNCTION(svn_blame)
 	const char *repos_url = NULL;
 	const char *utf8_repos_url = NULL;
 	psvn_size_t repos_url_len;
-	int revision = -1;
+	long revision = -1;
 	svn_error_t *err;
 	svn_opt_revision_t
 			start_revision = { 0 },

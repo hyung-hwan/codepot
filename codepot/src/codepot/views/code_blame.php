@@ -261,7 +261,7 @@ $this->load->view (
 		</div>
 
 		<?php
-		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+		if (array_key_exists('properties', $file) && !is_null($file['properties']) && count($file['properties']) > 0)
 		{
 			print '<ul id="code_blame_property_list">';
 			foreach ($file['properties'] as $pn => $pv)
@@ -369,7 +369,7 @@ $this->load->view (
 	printf ('<code class="codepot-line-numbered-code prettyprint %s %s" id="code_blame_result_code">', $prettyprint_linenums, $prettyprint_lang);
 
 	$charset = '';
-	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+	if (array_key_exists('properties', $file) && !is_null($file['properties']) && count($file['properties']) > 0)
 	{
 		$p = &$file['properties'];
 		if (array_key_exists('svn:mime-type', $p))
