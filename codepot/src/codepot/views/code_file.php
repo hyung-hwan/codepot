@@ -9,7 +9,7 @@
 	$is_pdf_file = FALSE;
 	$is_odf_file = FALSE;
 	$is_special_stream = FALSE;
-	if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+	if (array_key_exists('properties', $file) && !is_null($file['properties']) && count($file['properties']) > 0)
 	{
 		$octet_stream = FALSE;
 		foreach ($file['properties'] as $pn => $pv)
@@ -819,7 +819,7 @@ $this->load->view (
 		</div>
 
 		<?php
-		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+		if (array_key_exists('properties', $file) && !is_null($file['properties']) && count($file['properties']) > 0)
 		{
 			print '<ul id="code_file_property_list">';
 			foreach ($file['properties'] as $pn => $pv)
@@ -897,7 +897,7 @@ if ($login['settings'] != NULL &&
 	{
 		printf ('<pre class="prettyprint %s %s" id="code_file_result_code">', $prettyprint_linenums, $prettyprint_lang);
 		$charset = '';
-		if (array_key_exists('properties', $file) && count($file['properties']) > 0)
+		if (array_key_exists('properties', $file) && !is_null($file['properties']) && count($file['properties']) > 0)
 		{
 			$p = &$file['properties'];
 			if (array_key_exists('svn:mime-type', $p))
