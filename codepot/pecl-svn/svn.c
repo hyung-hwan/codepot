@@ -1495,7 +1495,8 @@ PHP_FUNCTION(svn_diff)
 	svn_opt_revision_t revision1, revision2;
 	zend_bool ignore_content_type = 0;
 
-	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl!sl!",
+	/* sl!sl! caused segfault with PHP 7.3.2RC1. using slsl. */
+	if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "slsl" /*"sl!sl!"*/,
 			&path1, &path1len, &rev1,
 			&path2, &path2len, &rev2)) {
 		return;
@@ -1508,6 +1509,7 @@ PHP_FUNCTION(svn_diff)
 	}
 	RETVAL_FALSE;
 
+printf (">>> %ld %ld\n", rev1, rev2);
 	if (rev1 <= 0) {
 		revision1.kind = svn_opt_revision_head;
 	} else {
