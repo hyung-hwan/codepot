@@ -1509,7 +1509,6 @@ PHP_FUNCTION(svn_diff)
 	}
 	RETVAL_FALSE;
 
-printf (">>> %ld %ld\n", rev1, rev2);
 	if (rev1 <= 0) {
 		revision1.kind = svn_opt_revision_head;
 	} else {
