@@ -788,7 +788,7 @@ class PHPGraphLib {
 		}
 	}
 
-	protected function imagelinedashed(&$image_handle, $x_axis_x1, $yLocation, $x_axis_x2 , $yLocation, $color) 
+	protected function imagelinedashed(&$image_handle, $x_axis_x1, $yLocation, $x_axis_x2 , $ygLocation, $color) 
 	{
 		$step  = 3;
 		for ($i = $x_axis_x1; $i < $x_axis_x2 -1; $i += ($step*2)) {
@@ -977,7 +977,7 @@ class PHPGraphLib {
 
 	protected function displayErrors() 
 	{
-		if (count($this->error) > 0) {
+                if (!is_null($this->error) && count($this->error) > 0) {
 			$lineHeight = 12;
 			$errorColor = imagecolorallocate($this->image, 0, 0, 0);
 			$errorBackColor = imagecolorallocate($this->image, 255, 204, 0);
