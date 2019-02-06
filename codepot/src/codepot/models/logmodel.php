@@ -33,8 +33,7 @@ class LogModel extends Model
 
 		$result = $query->result();
 		
-		$num = empty($result)? 0:
-		       isset($result[0]->COUNT)? $result[0]->COUNT: $result[0]->count;
+		$num = empty($result)? 0: (isset($result[0]->COUNT)? $result[0]->COUNT: $result[0]->count);
 
 		$this->db->trans_complete ();
 		if ($this->db->trans_status() === FALSE) return FALSE;
