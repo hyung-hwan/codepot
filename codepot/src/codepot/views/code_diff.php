@@ -428,7 +428,7 @@ $this->load->view (
 	}
 	print '</span>';
 
-	print '<code class="codepot-line-numbered-code prettyprint lang-{$fileext}">';
+	print '<code id="code_diff_old_code_block" class="codepot-line-numbered-code prettyprint lang-{$fileext}">';
 	$actual_line_no = 1;
 	foreach ($file['content'] as $x)
 	{
@@ -527,7 +527,7 @@ $this->load->view (
 	}
 	print '</span>';
 
-	print '<code class="codepot-line-numbered-code prettyprint lang-{$fileext}" class="codepot-line-numbered-code">';
+	print '<code id="code_diff_new_code_block" class="codepot-line-numbered-code prettyprint lang-{$fileext}" class="codepot-line-numbered-code">';
 	$actual_line_no = 1;
 	foreach ($file['content'] as $x)
 	{
