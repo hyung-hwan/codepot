@@ -520,6 +520,15 @@
 	background-color: black;
 }
 
+#code_diff_old_code_block,
+#code_diff_new_code_block {
+	/* in google-chrome, i can't align tabs properly with a different tab size in this view. 
+	 * tabs in this view are shown in spans unlike the main code view */
+	tab-size: 2;
+	-moz-tab-size: 2;
+	-o-tab-size: 2;
+}
+
 /*----------------------------------------------- 
  * project source search view (including folder view)
  *-----------------------------------------------*/
