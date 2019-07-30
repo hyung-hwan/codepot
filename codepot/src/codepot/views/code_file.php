@@ -63,10 +63,16 @@
 			}
 		}
 		if ($octet_stream) $is_special_stream = TRUE;
+
+		if (!$is_special_stream) goto check_for_wiki;
 	}
-	else if (in_array($fileext, array('md', 'wc')))
+	else
 	{
-		$is_wiki_file = TRUE;
+	check_for_wiki:
+		if (in_array($fileext, array('md', 'wc')))
+		{
+			$is_wiki_file = TRUE;
+		}
 	}
 ?>
 
@@ -672,7 +678,7 @@ $(function () {
 	});
 
 	<?php if ($is_wiki_file): ?>
-
+ 
 	<?php if ($fileext == "wc"): ?>
 	render_wiki_wc ();
 	<?php else: ?>
