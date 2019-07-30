@@ -4,11 +4,13 @@
 
 <?php
 	$fileext = substr(strrchr($file['name'], '.'), 1);
+	$fileext = strtolower($fileext);
 
 	$is_image_file = FALSE;
 	$is_pdf_file = FALSE;
 	$is_odf_file = FALSE;
 	$is_special_stream = FALSE;
+	$is_wiki_file = FALSE;
 	if (array_key_exists('properties', $file) && !is_null($file['properties']) && count($file['properties']) > 0)
 	{
 		$octet_stream = FALSE;
@@ -20,8 +22,7 @@
 				{
 					$octet_stream = TRUE;
 
-					$lower_fileext = strtolower($fileext);
-					if (in_array ($lower_fileext, array ('png', 'jpg', 'jpeg', 'gif', 'tif', 'bmp', 'ico')))
+					if (in_array ($fileext, array ('png', 'jpg', 'jpeg', 'gif', 'tif', 'bmp', 'ico')))
 					{
 						$img = @imagecreatefromstring ($file['content']);
 						if ($img !== FALSE) 
@@ -32,13 +33,13 @@
 							break;
 						}
 					}
-					else if (in_array ($lower_fileext, array ('pdf')))
+					else if (in_array ($fileext, array ('pdf')))
 					{
 						$is_special_stream = TRUE;
 						$is_pdf_file = TRUE;
 						break;
 					}
-					else if (in_array ($lower_fileext, array ('odt', 'odp', 'ods')))
+					else if (in_array ($fileext, array ('odt', 'odp', 'ods')))
 					{
 						$is_special_stream = TRUE;
 						$is_odf_file = TRUE;
@@ -63,6 +64,10 @@
 		}
 		if ($octet_stream) $is_special_stream = TRUE;
 	}
+	else if (in_array($fileext, array('md', 'wc')))
+	{
+		$is_wiki_file = TRUE;
+	}
 ?>
 
 <head>
@@ -73,6 +78,9 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/common.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/code.css')?>" />
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/font-awesome.min.css')?>" />
+
+<script type="text/javascript" src="<?php print base_url_make('/js/creole.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/showdown.js')?>"></script>
 
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/prettify.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/prettify/lang-ada.js')?>"></script>
@@ -236,6 +244,29 @@ function showRawCode()
 
 	showing_raw_code = !showing_raw_code;
 }
+
+function render_wiki_wc ()
+{
+	creole_render_wiki (
+		"code_file_wiki_text",
+		"code_diff_new_code_view",
+		codepot_merge_path("<?php print site_url(); ?>", "/wiki/show/<?php print $project->id?>/"),
+		codepot_merge_path("<?php print site_url(); ?>", "/wiki/attachment0/<?php print $project->id?>/"),
+		false
+	);
+}
+
+function render_wiki_md ()
+{
+	showdown_render_wiki (
+		"code_file_wiki_text",
+		"code_diff_new_code_view",
+		codepot_merge_path("<?php print site_url(); ?>", "/wiki/show/<?php print $project->id?>/"),
+		codepot_merge_path("<?php print site_url(); ?>", "/wiki/attachment0/<?php print $project->id?>/"),
+		false
+	);
+}
+
 <?php endif; ?>
 
 var GraphApp = (function ()
@@ -640,6 +671,16 @@ $(function () {
 		return false;
 	});
 
+	<?php if ($is_wiki_file): ?>
+
+	<?php if ($fileext == "wc"): ?>
+	render_wiki_wc ();
+	<?php else: ?>
+	render_wiki_md ();
+	<?php endif; ?>
+
+	<?php endif; ?>
+
 	// for code rendering
 	$("#code_file_result_raw").html ($("#code_file_result_code").html())
 	prettyPrint ();
@@ -858,7 +899,9 @@ $this->load->view (
 <div id="code_file_result" class="codepot-relative-container-view codepot-styled-code-view" >
 <?php endif; ?>
 
-<?php 
+<?php
+if ($is_wiki_file) print '<div id="code_diff_old_code_view">';
+
 if ($fileext == 'adb' || $fileext == 'ads') $fileext = 'ada';
 else if ($fileext == 'pas') $fileext = 'pascal';
 else if ($fileext == 'bas') $fileext = 'basic';
@@ -938,9 +981,25 @@ if ($login['settings'] != NULL &&
 			print '</div>';
 		}
 	}
+
+	if ($is_wiki_file)
+	{
+		print '</div>';
+		print '<div id="code_diff_new_code_view">';
+		print '<pre id="code_file_wiki_text">';
+		if ($charset == '')
+		{
+			print htmlspecialchars($file['content']);
+		}
+		else
+		{
+			// ignore iconv error
+			print htmlspecialchars(@iconv ($charset, 'UTF-8//IGNORE', $file['content']));
+		}
+		print '</pre>';
+		print '</div>';
+	}
 ?>
-
-
 
 </div> <!-- code_file_result -->
 
