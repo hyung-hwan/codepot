@@ -22,7 +22,7 @@ class SubversionModel extends CodeRepoModel
 		if ($canonical != '/' && substr($canonical, -1) == '/') 
 		{
 			// if the last character is / and it's not the only character, remove it
-			$canonical = substr ($canonical, 0, -1);
+			$canonical = substr($canonical, 0, -1);
 		}
 		return $canonical;
 	}
@@ -33,8 +33,8 @@ class SubversionModel extends CodeRepoModel
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
-		$info = @svn_info ($workurl, FALSE, $rev);
-		if ($info === FALSE || count($info) != 1) 
+		$info = @svn_info($workurl, FALSE, $rev);
+		if ($info === FALSE || $info === NULL ||  count($info) != 1) 
 		{
 			// If a URL is at the root of repository and the url type is file://
 			// (e.g. file:///svnrepo/codepot/ where /svnrepo/codepot is a project root),
@@ -51,8 +51,8 @@ class SubversionModel extends CodeRepoModel
 
 			// rebuild the URL with a peg revision and retry it.
 			$workurl = "{$orgurl}@{$rev}";
-			$info = @svn_info ($workurl, FALSE, $rev);
-			if ($info === FALSE || count($info) != 1)  return FALSE;
+			$info = @svn_info($workurl, FALSE, $rev);
+			if ($info === FALSE || $info === NULL || count($info) != 1)  return FALSE;
 		}
 
 		$info0 = &$info[0];
@@ -198,13 +198,13 @@ class SubversionModel extends CodeRepoModel
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
-		$info = @svn_info ($workurl, FALSE, $rev);
-		if ($info === FALSE || count($info) != 1) 
+		$info = @svn_info($workurl, FALSE, $rev);
+		if ($info === FALSE || $info === NULL || count($info) != 1) 
 		{
 			if ($rev == SVN_REVISION_HEAD || $path == '') return FALSE;
 			$workurl = "{$orgurl}@{$rev}";
-			$info = @svn_info ($workurl, FALSE, $rev);
-			if ($info === FALSE || count($info) != 1)  return FALSE;
+			$info = @svn_info($workurl, FALSE, $rev);
+			if ($info === FALSE || $info === NULL || count($info) != 1)  return FALSE;
 		}
 
 		$info0 = $info[0];
@@ -261,8 +261,8 @@ class SubversionModel extends CodeRepoModel
 
 		if ($rev == SVN_REVISION_HEAD)
 		{
-			$info = @svn_info ($url, FALSE, $rev);
-			if ($info === FALSE || count($info) != 1) return FALSE;
+			$info = @svn_info($url, FALSE, $rev);
+			if ($info === FALSE || $info === NULL || count($info) != 1)  return FALASE;
 		}
 		else
 		{
@@ -273,15 +273,15 @@ class SubversionModel extends CodeRepoModel
 			// Try to get the history from the head revision down.
 			// regardless of the given revision.
 			//
-			$info = @svn_info ($url, FALSE, $rev);
-			if ($info === FALSE || count($info) != 1) 
+			$info = @svn_info($url, FALSE, $rev);
+			if ($info === FALSE || $info === NULL || count($info) != 1) 
 			{
 				//
 				// Try further with the original revision 
 				//
 				$rev = $orgrev;
 				$info = @svn_info ($url, FALSE, $rev);
-				if ($info === FALSE || count($info) != 1) 
+				if ($info === FALSE || $info === NULL || count($info) != 1) 
 				{
 					//
 					// don't try with a pegged url for a project root 
@@ -292,8 +292,8 @@ class SubversionModel extends CodeRepoModel
 					// Retry with a pegged url 
 					//
 					$url = $url . '@' . $rev;
-					$info = @svn_info ($url, FALSE, $rev);
-					if ($info === FALSE || count($info) != 1) return FALSE;
+					$info = @svn_info($url, FALSE, $rev);
+					if ($info === FALSE || $info === NULL || count($info) != 1) return FALSE;
 				}
 			}
 		}
@@ -658,11 +658,11 @@ class SubversionModel extends CodeRepoModel
 		 * in getFile() to know more about this skipping.
 		 */
 		if ($rev != SVN_REVISION_HEAD && $path != '') $url = $url . '@' . $rev;
-		$info = @svn_info ($url, FALSE, $rev);
-		if ($info === FALSE || count($info) != 1) 
+		$info = @svn_info($url, FALSE, $rev);
+		if ($info === FALSE || $info === NULL || count($info) != 1) 
 		{
-			$info = @svn_info ($orgurl, FALSE, $rev);
-			if ($info === FALSE || count($info) != 1) return FALSE;
+			$info = @svn_info($orgurl, FALSE, $rev);
+			if ($info === FALSE || $info === NULL || count($info) != 1) return FALSE;
 			$url = $orgurl;
 		}
 
@@ -1090,11 +1090,11 @@ class SubversionModel extends CodeRepoModel
 		// let's get the actual URL for each revision.
 		// the actual URLs may be different from $url 
 		// if the file has been changed.
-		$info1 = @svn_info ($workurl1, FALSE, $rev1);
-		if ($info1 === FALSE || count($info1) != 1) return FALSE;
+		$info1 = @svn_info($workurl1, FALSE, $rev1);
+		if ($info1 === FALSE || $info1 === NULL || count($info1) != 1) return FALSE;
 		if ($info1[0]['kind'] != SVN_NODE_FILE) return FALSE;
-		$info2 = @svn_info ($workurl2, FALSE, $rev2);
-		if ($info2 === FALSE || count($info1) != 1) return FALSE;
+		$info2 = @svn_info($workurl2, FALSE, $rev2);
+		if ($info2 === FALSE || $info2 === NULL || count($info2) != 1) return FALSE;
 		if ($info2[0]['kind'] != SVN_NODE_FILE) return FALSE;
 
 		// get the difference with the actual URLs
@@ -1170,13 +1170,13 @@ class SubversionModel extends CodeRepoModel
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
-		$info = @svn_info ($workurl, FALSE, $rev);
-		if ($info === FALSE || count($info) != 1) 
+		$info = @svn_info($workurl, FALSE, $rev);
+		if ($info === FALSE || $info === NULL || count($info) != 1) 
 		{
 			if ($rev == SVN_REVISION_HEAD || $path == '') return $rev;
 			$workurl = "{$orgurl}@{$rev}";
-			$info = @svn_info ($workurl, FALSE, $rev);
-			if ($info === FALSE || count($info) != 1)  return $rev;
+			$info = @svn_info($workurl, FALSE, $rev);
+			if ($info === FALSE || $info === NULL || count($info) != 1)  return $rev;
 		}
 
 		$log = @svn_log (
@@ -1252,8 +1252,8 @@ class SubversionModel extends CodeRepoModel
 		// 
 		for ($count = $count - 2; $count >= 0; $count--)
 		{
-			$info = @svn_info ($url, FALSE, $log[$count]['rev']);
-			if ($info === FALSE) return FALSE;
+			$info = @svn_info($url, FALSE, $log[$count]['rev']);
+			if ($info === FALSE || $info === NULL) return FALSE;
 
 			if ($info[0]['last_changed_rev'] > $rev)
 			{
@@ -1274,25 +1274,25 @@ class SubversionModel extends CodeRepoModel
 			$workurl = $orgurl;
 			$workrev = $rev;
 
-			$info = @svn_info ($workurl, FALSE, $workrev);
-			if ($info === FALSE || count($info) != 1)  return FALSE;
+			$info = @svn_info($workurl, FALSE, $workrev);
+			if ($info === FALSE || $info === NULL || count($info) != 1)  return FALSE;
 		}
 		else
 		{
 			$workurl = "{$orgurl}@";
 			$workrev = SVN_REVISION_HEAD;
-			$info = @svn_info ($workurl, FALSE, $workrev);
-			if ($info === FALSE || count($info) != 1) 
+			$info = @svn_info($workurl, FALSE, $workrev);
+			if ($info === FALSE || $info === NULL || count($info) != 1) 
 			{
 				$workrev = $rev;
-				$info = @svn_info ($workurl, FALSE, $workrev);
-				if ($info === FALSE || count($info) != 1) 
+				$info = @svn_info($workurl, FALSE, $workrev);
+				if ($info === FALSE || $info === NULL || count($info) != 1) 
 				{
 					if ($rev == SVN_REVISION_HEAD) return FALSE;
 
 					$workurl = "{$orgurl}@{$rev}";
-					$info = @svn_info ($workurl, FALSE, $workrev);
-					if ($info === FALSE || count($info) != 1) return FALSE;
+					$info = @svn_info($workurl, FALSE, $workrev);
+					if ($info === FALSE || $info === NULL || count($info) != 1) return FALSE;
 				}
 			}
 		}
@@ -1357,9 +1357,9 @@ class SubversionModel extends CodeRepoModel
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
 		set_error_handler (array ($this, 'capture_error'));
-		$info = @svn_info ($url, FALSE);
+		$info = @svn_info($url, FALSE);
 		restore_error_handler ();
-		if ($info == FALSE || count($info) != 1) return FALSE;
+		if ($info == FALSE || $info === NULL || count($info) != 1) return FALSE;
 
 		$props = array ();
 		$xi = $info[0];
@@ -1383,9 +1383,9 @@ class SubversionModel extends CodeRepoModel
 		$url = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}");
 
 		set_error_handler (array ($this, 'capture_error'));
-		$info = @svn_info ($url, FALSE);
+		$info = @svn_info($url, FALSE);
 		restore_error_handler ();
-		if ($info == FALSE || count($info) != 1) return FALSE;
+		if ($info == FALSE || $info === NULL || count($info) != 1) return FALSE;
 
 		$xi = $info[0];
 		for ($rev = $xi['revision']; $rev > 0; $rev--)
@@ -1410,19 +1410,19 @@ class SubversionModel extends CodeRepoModel
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
 		set_error_handler (array ($this, 'capture_error'));
-		$info = @svn_info ($workurl, FALSE, $rev);
+		$info = @svn_info($workurl, FALSE, $rev);
 		restore_error_handler ();
 
-		if ($info === FALSE || count($info) != 1) 
+		if ($info === FALSE || $info === NULL || count($info) != 1) 
 		{
 			if ($rev == SVN_REVISION_HEAD || $path == '') return FALSE;
 
 			// rebuild the URL with a peg revision and retry it.
 			$workurl = "{$orgurl}@{$rev}";
 			set_error_handler (array ($this, 'capture_error'));
-			$info = @svn_info ($workurl, FALSE, $rev);
+			$info = @svn_info($workurl, FALSE, $rev);
 			restore_error_handler ();
-			if ($info === FALSE || count($info) != 1)  return FALSE;
+			if ($info === FALSE || $info === NULL || count($info) != 1)  return FALSE;
 		}
 
 		set_error_handler (array ($this, 'capture_error'));
@@ -1438,19 +1438,19 @@ class SubversionModel extends CodeRepoModel
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
 		set_error_handler (array ($this, 'capture_error'));
-		$info = @svn_info ($workurl, FALSE, $rev);
+		$info = @svn_info($workurl, FALSE, $rev);
 		restore_error_handler ();
 
-		if ($info === FALSE || count($info) != 1) 
+		if ($info === FALSE || $info === NULL || count($info) != 1) 
 		{
 			if ($rev == SVN_REVISION_HEAD || $path == '') return FALSE;
 
 			// rebuild the URL with a peg revision and retry it.
 			$workurl = "{$orgurl}@{$rev}";
 			set_error_handler (array ($this, 'capture_error'));
-			$info = @svn_info ($workurl, FALSE, $rev);
+			$info = @svn_info($workurl, FALSE, $rev);
 			restore_error_handler ();
-			if ($info === FALSE || count($info) != 1)  return FALSE;
+			if ($info === FALSE || $info === NULL || count($info) != 1)  return FALSE;
 		}
 
 		set_error_handler (array ($this, 'capture_error'));
@@ -1464,8 +1464,8 @@ class SubversionModel extends CodeRepoModel
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
-		$info = @svn_info ($workurl, FALSE, $rev);
-		if ($info === FALSE || count($info) != 1) 
+		$info = @svn_info($workurl, FALSE, $rev);
+		if ($info === FALSE || $info === NULL || count($info) != 1) 
 		{
 			// If a URL is at the root of repository and the url type is file://
 			// (e.g. file:///svnrepo/codepot/ where /svnrepo/codepot is a project root),
@@ -1482,8 +1482,8 @@ class SubversionModel extends CodeRepoModel
 
 			// rebuild the URL with a peg revision and retry it.
 			$workurl = "{$orgurl}@{$rev}";
-			$info = @svn_info ($workurl, FALSE, $rev);
-			if ($info === FALSE || count($info) != 1)  return FALSE;
+			$info = @svn_info($workurl, FALSE, $rev);
+			if ($info === FALSE || $info === NULL || count($info) != 1)  return FALSE;
 		}
 
 		if ($info[0]['kind'] == SVN_NODE_FILE) return FALSE;
@@ -1561,8 +1561,8 @@ class SubversionModel extends CodeRepoModel
 			$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$current_path}");
 			$trailer = ($current_path == '')? '': '@'; // trailing @ for collision prevention
 			$workurl = $orgurl . $trailer;
-			$info = @svn_info ($workurl, FALSE, $rev);
-			if ($info === FALSE || count($info) != 1) 
+			$info = @svn_info($workurl, FALSE, $rev);
+			if ($info === FALSE || $info === NULL || count($info) != 1) 
 			{
 				// If a URL is at the root of repository and the url type is file://
 				// (e.g. file:///svnrepo/codepot/ where /svnrepo/codepot is a project root),
@@ -1580,8 +1580,8 @@ class SubversionModel extends CodeRepoModel
 				// rebuild the URL with a peg revision and retry it.
 				$trailer = "@{$rev}";
 				$workurl = $orgurl . $trailer;
-				$info = @svn_info ($workurl, FALSE, $rev);
-				if ($info === FALSE || count($info) != 1)  continue;
+				$info = @svn_info($workurl, FALSE, $rev);
+				if ($info === FALSE || $info === NULL || count($info) != 1)  continue;
 			}
 
 			if ($info[0]['kind'] == SVN_NODE_FILE) return FALSE;
@@ -2150,8 +2150,8 @@ class SubversionModel extends CodeRepoModel
 		$orgurl = 'file://'.$this->_canonical_path(CODEPOT_SVNREPO_DIR."/{$projectid}/{$path}");
 
 		$workurl = ($path == '')? $orgurl: "{$orgurl}@"; // trailing @ for collision prevention
-		$info = @svn_info ($workurl, FALSE, $rev);
-		if ($info === FALSE || count($info) != 1) 
+		$info = @svn_info($workurl, FALSE, $rev);
+		if ($info === FALSE || $info === NULL || count($info) != 1) 
 		{
 			// If a URL is at the root of repository and the url type is file://
 			// (e.g. file:///svnrepo/codepot/ where /svnrepo/codepot is a project root),
@@ -2168,8 +2168,8 @@ class SubversionModel extends CodeRepoModel
 
 			// rebuild the URL with a peg revision and retry it.
 			$workurl = "{$orgurl}@{$rev}";
-			$info = @svn_info ($workurl, FALSE, $rev);
-			if ($info === FALSE || count($info) != 1)  return FALSE;
+			$info = @svn_info($workurl, FALSE, $rev);
+			if ($info === FALSE || $info === NULL || count($info) != 1)  return FALSE;
 		}
 
 		// pass __FILE__ as the first argument so that tempnam creates a name
