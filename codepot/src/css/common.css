@@ -14,7 +14,7 @@ body {
 
 textarea {
 	font-size: inherit;
-	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
+	font-family: inconsolata, "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
 
 	tab-size: 5;
 	-moz-tab-size: 5;
@@ -26,7 +26,7 @@ textarea {
 }
 
 pre, code, tt {
-	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
+	font-family: inconsolata, "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
 }
 
 .content {

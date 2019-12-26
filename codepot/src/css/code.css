@@ -186,7 +186,7 @@
 }
 
 #code_edit_result_code {
-	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
+	font-family: inconsolata, "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
 	/*overflow: auto;*/
 	overflow: initial;
 

@@ -125,7 +125,7 @@ textarea.codepot-issue-edit-comment {
 	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
 	white-space: -pre-wrap; /* Opera 4-6 */
 	white-space: -o-pre-wrap; /* Opera 7 */
-	font-family: "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
+	font-family: inconsolata, "DejaVu Sans Mono", consolas, monaco, "Andale Mono", monospace;
 }
 
 #issue_home_result_pages {
