@@ -19,7 +19,7 @@ class CodeRepoModel extends Model
 		return $this->errmsg;
 	}
 
-	function _scandir ($dir)
+	static function _scandir ($dir)
 	{
 		$files = array ();
 
@@ -33,22 +33,27 @@ class CodeRepoModel extends Model
 		return $files;
 	}
 
-	function deleteDirectory($dir)
+	static function _deleteDirectory($dir)
 	{
 		if (is_link($dir)) return @unlink($dir);
 		if (!file_exists($dir)) return TRUE;
 		if (!is_dir($dir)) return @unlink($dir);
 
-		foreach ($this->_scandir($dir) as $item)
+		foreach (self::_scandir($dir) as $item)
 		{
 			if ($item == '.' || $item == '..') continue;
-			if ($this->deleteDirectory($dir . "/" . $item) === FALSE)
+			if (self::_deleteDirectory($dir . "/" . $item) === FALSE)
 			{
 				chmod($dir . "/" . $item, 0777);
-				if ($this->deleteDirectory($dir . "/" . $item) === FALSE) return FALSE;
+				if (self::deleteDirectory($dir . "/" . $item) === FALSE) return FALSE;
 			};
 		}
 
 		return rmdir($dir);
+	}
+
+	function deleteDirectory($dir)
+	{
+		return self::_deleteDirectory($dir);
 	}
 }

@@ -867,7 +867,7 @@ class SubversionModel extends CodeRepoModel
 					$listing[$index]["rev1lineno"] = 0;
 					$listing[$index]["rev2lineno"] = 0;
 
-					$mod = $line{0};
+					$mod = $line[0];
 
 					$line = rtrim(substr($line, 1), "\r\n");
 					if ($ent) $line = replaceEntities($line, $rep);
@@ -2247,7 +2247,7 @@ class SubversionModel extends CodeRepoModel
 
 	static function deleteRepo ($projectid, $repodir)
 	{
-		return $this->deleteDirectory("{$repodir}/{$projectid}");
+		return self::_deleteDirectory("{$repodir}/{$projectid}");
 	}
 }
 
