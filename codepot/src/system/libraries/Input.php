@@ -179,7 +179,7 @@ class CI_Input {
 		}
 
 		// We strip slashes if magic quotes is on to keep things consistent
-		if (get_magic_quotes_gpc())
+                if ((!defined('PHP_MAJOR_VERSION') || (defined('PHP_MAJOR_VERSION') && PHP_MAJOR_VERSION < 7)) && get_magic_quotes_gpc())
 		{
 			$str = stripslashes($str);
 		}

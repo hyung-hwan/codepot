@@ -83,7 +83,7 @@ INSTALLATION ON CENTOS
    database_username = "root"
    database_password = ""
    database_name = "codepot"
-   database_driver = "mysql"
+   database_driver = "mysqli"
    database_prefix = ""
 
  5. Add a local user using the 'codepot-user' command. This command is used
@@ -134,6 +134,15 @@ INSTALLATION ON CENTOS
 
    $ ls -lZd /var/cache/codepot
    drwxr-xr-x  apache apache system_u:object_r:httpd_sys_content_t /var/cache/codepot
+
+ The following commands may help.
+   $ chcon -R -t httpd_sys_content_t /var/lib/codepot
+   $ chcon -R -t httpd_sys_content_t /var/cache/codepot
+
+
+ If it doesn't work with 'httpd_sys_content_t', you may require 'httpd_sys_content_rw_t'.
+   $ chcon -R -t httpd_sys_content_rw_t /var/lib/codepot
+   $ chcon -R -t httpd_sys_content_rw_t /var/cache/codepot
 
  10. If you have SELinux on in the enforcing mode, ensure to allow httpd to
  execute an external command.
