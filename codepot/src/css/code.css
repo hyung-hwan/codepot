@@ -450,6 +450,9 @@
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 }
+#code_diff_new_code_view.code_file_full_width {
+	width: 100%;
+}
 
 #code_diff_full_code_view .navigator {
 	padding: 0.5em 0.8em 0.5em 0.8em;
