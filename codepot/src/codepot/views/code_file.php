@@ -253,6 +253,11 @@ function showRawCode()
 
 function render_wiki_wc ()
 {
+	$("#code_toggle_wc_view_button").button().click(function() {
+		$("#code_diff_old_code_view").toggle();
+		$("#code_diff_new_code_view").toggleClass("code_file_full_width");
+		return false;
+	});
 	creole_render_wiki (
 		"code_file_wiki_text",
 		"code_diff_new_code_view",
@@ -831,6 +836,7 @@ $this->load->view (
 		$download_anchor_text = '<i class="fa fa-download"></i> ' . $this->lang->line('Download');
 		$diff_anchor_text = '<i class="fa fa-server"></i> ' . $this->lang->line('Difference');
 		$fulldiff_anchor_text = '<i class="fa fa-tasks"></i> ' . $this->lang->line('Full Difference');
+		$toggle_wc_text = '<i class="fa fa-eye"></i> ' . $this->lang->line('Toggle View');
 
 		if ($file['created_rev'] != $file['head_rev']) 
 		{
@@ -851,6 +857,8 @@ $this->load->view (
 		print $this->lang->line('CODE_REVISION_GRAPH'); 
 		print '</a>';
 	
+		if ($is_wiki_file) { print anchor ('#', $toggle_wc_text, 'id="code_toggle_wc_view_button"'); }
+
 		print '</div>';
 
 		print '<div class="metadata-commit-date">';

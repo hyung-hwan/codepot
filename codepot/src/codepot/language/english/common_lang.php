@@ -112,6 +112,7 @@ $lang['System'] = 'System';
 $lang['Tag'] = 'Tag';
 $lang['Text'] = 'Text';
 $lang['Time'] = 'Time';
+$lang['Toggle View'] = 'Toggle View';
 $lang['Top committers'] = 'Top committers';
 $lang['Top projects'] = 'Top projects';
 $lang['Type'] = 'Type';
