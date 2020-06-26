@@ -18,7 +18,7 @@ class WikiHelper
 	{
 		if (preg_match ('/^#R([[:digit:]]+)$/', $name, $matches) == 1)
 		{
-			// #R123 -> translate it to code reivision.
+			// #R123 -> translate it to code revision.
 			$link = "code/revision/{$projectid}/2e/{$matches[1]}";
 			return $link;
 		}
@@ -161,6 +161,25 @@ class WikiHelper
 					$link = "{$ex0}/attachment0/{$ex1}/{$extra}";
 		
 					return $link;
+				}
+			}
+			else if ($cnt == 5)
+			{
+				if ($ex[0] == '__CODE__')
+				{
+					$ex0 = $this->_trans_reserved ($ex[0]);
+					$ex1 = ($ex[1] == '')? $projectid: $ex[1];
+					if ($ex[2] == 'file')
+					{
+						// __CODE__|project001|file|123|file001.txt
+
+						$ex4 = $converter->AsciiToHex($ex[4]);
+						if ($ex1 == NULL) return FALSE;
+						$link = "{$ex0}/{$ex[2]}/{$ex1}/{$ex4}/{$ex[3]}";
+						return $link;
+					}
+
+					return FALSE;
 				}
 			}
 		}
