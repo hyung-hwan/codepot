@@ -29,11 +29,13 @@ class WikiHelper
 			$link = "issue/show/{$projectid}/{$num_hex}";
 			return $link;
 		}
-		else if (preg_match ('/^#C(\/.*)$/', $name, $matches) == 1)
+		else if (preg_match ('/^#C([[:digit:]]*)(\/.*)$/', $name, $matches) == 1)
 		{
 			// #C/XXX... -> translate it to a code file
-			$file_name = $converter->AsciiToHex ($matches[1]);
+			// #C123/XXX... -> translate it to a code file at revision 123
+			$file_name = $converter->AsciiToHex ($matches[2]);
 			$link = "code/file/{$projectid}/{$file_name}";
+			if (strlen($matches[1]) > 0) $link .= "/" . $matches[1];
 			return $link;
 		}
 		else if (preg_match ('/^#F(.+)$/', $name, $matches) == 1)
