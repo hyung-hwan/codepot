@@ -749,6 +749,11 @@ span.codepot-history-review-count {
 	color: #7E7EAE;
 } /* IE indents via margin-left */
 
+.prettyprint ol.linenums li:before { 
+	content: " ";
+	border-left:  solid #ffffff 1px;
+}
+
 /*
 .prettyprint li.L0,
 .prettyprint li.L1,
