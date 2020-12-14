@@ -1020,12 +1020,15 @@ cleanup:
 /* }}} */
 
 	
-#if defined(APR_VERSION_MAJOR) && (APR_VERSION_MAJOR >= 2)
+#if defined(APR_MAJOR_VERSION) && ((APR_MAJOR_VERSION >= 2) || (APR_MAJOR_VERSION == 1 && APR_MINOR_VERSION >= 5))
 static int compare_keys(const void *a, const void *b) 
 {
 	Bucket *f = *((Bucket **) a);
 	Bucket *s = *((Bucket **) b);
-	return strcmp(f->arKey, s->arKey);
+	/*return strcmp(f->arKey, s->arKey);*/
+	int diff = ZSTR_LEN(f->key) - ZSTR_LEN(s->key);
+	if (diff) return diff;
+	return strncmp(ZSTR_VAL(f->key), ZSTR_VAL(s->key), ZSTR_LEN(f->key));
 }
 #endif
 
@@ -1045,6 +1048,9 @@ PHP_FUNCTION(svn_ls)
 	apr_pool_t *subpool;
 	svn_opt_revision_t peg_revision;
 	const char *true_path;
+#if defined(APR_MAJOR_VERSION) && ((APR_MAJOR_VERSION >= 2) || (APR_MAJOR_VERSION == 1 && APR_MINOR_VERSION >= 5))
+	apr_hash_index_t *hi;
+#endif
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|lbb",
 			&repos_url, &repos_url_len, &revision.value.number, &recurse, &peg) == FAILURE) {
@@ -1087,7 +1093,7 @@ PHP_FUNCTION(svn_ls)
 		goto cleanup;
 	}
 
-#if defined(APR_VERSION_MAJOR) && (APR_VERSION_MAJOR >= 2)
+#if defined(APR_MAJOR_VERSION) && ((APR_MAJOR_VERSION >= 2) || (APR_MAJOR_VERSION == 1 && APR_MINOR_VERSION >= 5))
 	array_init(return_value);
 	
 	for (hi = apr_hash_first(subpool, dirents); hi; hi = apr_hash_next(hi)) {
@@ -1225,12 +1231,15 @@ cleanup:
 }
 /* }}} */
 
-#if defined(APR_VERSION_MAJOR) && (APR_VERSION_MAJOR >= 2)
+#if defined(APR_MAJOR_VERSION) && ((APR_MAJOR_VERSION >= 2) || (APR_MAJOR_VERSION == 1 && APR_MINOR_VERSION >= 5))
 static int compare_keys_as_paths(const void *a, const void *b) 
 {
 	Bucket *f = *((Bucket **) a);
 	Bucket *s = *((Bucket **) b);
-	return svn_sort_compare_paths(&(f->arKey), &(s->arKey));
+	/*return svn_sort_compare_paths(&(f->arKey), &(s->arKey));*/
+	int diff =  ZSTR_LEN(f->key) - ZSTR_LEN(s->key);
+	if (diff) return diff;
+	return strncmp(ZSTR_VAL(f->key), ZSTR_VAL(s->key), ZSTR_LEN(f->key));
 }
 #endif
 
@@ -1274,7 +1283,13 @@ php_svn_log_receiver (void *ibaton,
 		PSVN_ADD_ASSOC_STRING(row, "date", (char *) date);
 	}
 
-	if (changed_paths) {
+	if (changed_paths) 
+	{
+#if defined(APR_MAJOR_VERSION) && ((APR_MAJOR_VERSION >= 2) || (APR_MAJOR_VERSION == 1 && APR_MINOR_VERSION >= 5))
+		apr_hash_index_t* hi;
+		zend_array* arr;
+#endif
+
 #if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
 		paths = &actual_paths;
 #else
@@ -1282,6 +1297,35 @@ php_svn_log_receiver (void *ibaton,
 #endif
 		array_init(paths);
 
+#if defined(APR_MAJOR_VERSION) && ((APR_MAJOR_VERSION >= 2) || (APR_MAJOR_VERSION == 1 && APR_MINOR_VERSION >= 5))
+		for (hi = apr_hash_first(pool, changed_paths); hi; hi = apr_hash_next(hi)) 
+		{
+			svn_log_changed_path_t *log_item;
+			zval zpaths;
+			char *path;
+			const void *key;
+			void *val;
+
+			array_init(&zpaths);
+
+			apr_hash_this(hi, &key, NULL, &val);
+			path = (char *)key;
+			log_item = val;
+
+			add_assoc_stringl(&zpaths, "action", &(log_item->action), 1);
+			add_assoc_string(&zpaths, "path", path);
+
+			if (log_item->copyfrom_path && SVN_IS_VALID_REVNUM (log_item->copyfrom_rev)) {
+				add_assoc_string(&zpaths, "copyfrom", (char *) log_item->copyfrom_path);
+				add_assoc_long(&zpaths, "rev", (long) log_item->copyfrom_rev);
+			}
+
+			add_assoc_zval(paths, path, &zpaths);
+		}
+		arr = Z_ARRVAL(*paths);
+		zend_hash_sort_ex(Z_ARRVAL(*paths), zend_qsort, compare_keys_as_paths, 1);
+
+#else
 		sorted_paths = svn_sort__hash(changed_paths, svn_sort_compare_items_as_paths, pool);
 
 		for (i = 0; i < sorted_paths->nelts; i++)
@@ -1315,6 +1359,7 @@ php_svn_log_receiver (void *ibaton,
 
 			add_next_index_zval(paths,zpaths);
 		}
+#endif
 		add_assoc_zval(row,"paths",paths);
 	}
 
