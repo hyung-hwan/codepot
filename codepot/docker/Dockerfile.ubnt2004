@@ -1,0 +1,6 @@
+FROM ubuntu:20.04
+
+COPY build-ubnt2004.sh /tmp
+RUN /tmp/build-ubnt2004.sh && rm -rf /tmp/*
+
+CMD ["/bin/bash"]
