@@ -38,12 +38,12 @@ sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*""$|database_hostname =
         -e 's|^database_driver[[:space:]]*=[[:space:]]*""$|database_driver = "mysqli"|g' /etc/codepot/codepot.ini &&  \
 sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /usr/sbin/codepot-user && \
 sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /etc/codepot/perl/Codepot/AccessHandler.pm && \
+install -m 0755 -D -t /usr/sbin docker/apache2-fg.sh && \
 cd .. && \
 cd .. && \
 \
 cp -pf /etc/codepot/codepot.httpd /etc/apache2/conf-enabled/codepot.conf && \
 echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/apache2/conf-enabled/perl.conf 
-
 
 
 apt-get remove -y php-dev libsvn-dev make && \
