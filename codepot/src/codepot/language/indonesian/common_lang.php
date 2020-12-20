@@ -111,6 +111,7 @@ $lang['System'] = 'Sistem';
 $lang['Tag'] = 'Label';
 $lang['Text'] = 'Teks';
 $lang['Time'] = 'Waktu';
+$lang['Toggle View'] = 'Toggle View';
 $lang['Top committers'] = 'Top committers';
 $lang['Top projects'] = 'Top projects';
 $lang['Type'] = 'Type';
