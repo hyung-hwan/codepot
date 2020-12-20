@@ -58,6 +58,6 @@ cat <<EOF > /var/www/html/index.html
 EOF
 
 apt-get remove --purge -y php-dev libsvn-dev make libfdisk1 && \
-apt-get auto-remove -y && rm -rf /var/lib/apt/lists/*
+apt-get autoremove --purge -y && rm -rf /var/lib/apt/lists/*
 
 rm -rf /root/.subversion

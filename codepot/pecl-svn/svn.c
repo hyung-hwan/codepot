@@ -1023,8 +1023,8 @@ cleanup:
 #if defined(APR_MAJOR_VERSION) && ((APR_MAJOR_VERSION >= 2) || (APR_MAJOR_VERSION == 1 && APR_MINOR_VERSION >= 5))
 static int compare_keys(const void *a, const void *b) 
 {
-	Bucket *f = *((Bucket **) a);
-	Bucket *s = *((Bucket **) b);
+	Bucket *f = (Bucket*)a;
+	Bucket *s = (Bucket*)b;
 	/*return strcmp(f->arKey, s->arKey);*/
 	int diff = ZSTR_LEN(f->key) - ZSTR_LEN(s->key);
 	if (diff) return diff;
@@ -1242,9 +1242,8 @@ cleanup:
 #if defined(APR_MAJOR_VERSION) && ((APR_MAJOR_VERSION >= 2) || (APR_MAJOR_VERSION == 1 && APR_MINOR_VERSION >= 5))
 static int compare_keys_as_paths(const void *a, const void *b) 
 {
-	Bucket *f = *((Bucket **) a);
-	Bucket *s = *((Bucket **) b);
-	/*return svn_sort_compare_paths(&(f->arKey), &(s->arKey));*/
+	Bucket *f = (Bucket*)a;
+	Bucket *s = (Bucket*)b;
 	int diff =  ZSTR_LEN(f->key) - ZSTR_LEN(s->key);
 	if (diff) return diff;
 	return strncmp(ZSTR_VAL(f->key), ZSTR_VAL(s->key), ZSTR_LEN(f->key));
