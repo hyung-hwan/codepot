@@ -45,6 +45,17 @@ cd .. && \
 cp -pf /etc/codepot/codepot.httpd /etc/apache2/conf-enabled/codepot.conf && \
 echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/apache2/conf-enabled/perl.conf 
 
+cat <<EOF > /var/www/html/index.html
+<html>
+<head>
+<title>Codepot</title>
+<meta http-equiv="refresh" content="0;URL='/codepot'" />
+</head>
+<body>
+<p>Access <a href="/codepot">this page</a> for codepot.</p>
+</body>
+</html>
+EOF
 
 apt-get remove --purge -y php-dev libsvn-dev make libfdisk1 && \
 apt-get auto-remove -y && rm -rf /var/lib/apt/lists/*
