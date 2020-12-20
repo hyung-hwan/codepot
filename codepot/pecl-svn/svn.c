@@ -1110,9 +1110,17 @@ PHP_FUNCTION(svn_ls)
 #if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
 		zval actual_row;
 #endif
+		const void* key;
+		void* val;
 	
-		svn_utf_cstring_to_utf8 (&utf8_entryname, apr_hash_this_key(hi), subpool);
-		dirent = apr_hash_this_val(hi);
+		apr_hash_this(hi, &key, NULL, &val);
+		err = svn_utf_cstring_to_utf8 (&utf8_entryname, key, subpool);
+		if (err) {
+			php_svn_handle_error(err TSRMLS_CC);
+			RETVAL_FALSE;
+			goto cleanup;
+		}
+		dirent = val;
 	
 		/* svn_time_to_human_cstring gives us something *way* too long
 		   to use for this, so we have to roll our own.  We include
