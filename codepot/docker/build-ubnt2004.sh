@@ -46,5 +46,7 @@ cp -pf /etc/codepot/codepot.httpd /etc/apache2/conf-enabled/codepot.conf && \
 echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/apache2/conf-enabled/perl.conf 
 
 
-apt-get remove -y php-dev libsvn-dev make && \
+apt-get remove --purge -y php-dev libsvn-dev make libfdisk1 && \
 apt-get auto-remove -y && rm -rf /var/lib/apt/lists/*
+
+rm -rf /root/.subversion
