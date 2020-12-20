@@ -1,5 +1,4 @@
-
-CODEPOT
+# CODEPOT
 
  Codepot is a simple web-based source code manager. It incorporates the
  subversion revision control system and wiki-based documentation, and supports
@@ -7,54 +6,54 @@ CODEPOT
  multiple subversion repositories independent of each other. Going beyond it,
  you can track issues, write documents, and upload release files.
 
-UPGRADING FROM 0.2.0
+## DOCKER CONTAINER
 
- You must make the following changes to your existing database manually
- if you are upgrading from 0.2.0.
+The easiest wasy to get codepot up and running is to run it in docker.
+You may pull the image from the Docker Hub and run a container from the image.
 
-  mysql> ALTER TABLE user_settings CHANGE code_hide_details code_hide_metadata CHAR(1) NOT NULL;
-  mysql> ALTER TABLE site ADD COLUMN(summary VARCHAR(255) NOT NULL);
-  mysql> RENAME TABLE user TO user_account;
-  mysql> ALTER TABLE file DROP INDEX encname;
-  mysql> create the file_list table according to the definition found in codepot.mysql
-  mysql> INSERT INTO file_list (projectid, name, filename, encname, md5sum, description) SELECT projectid, name, name, encname, md5sum, summary FROM file WHERE md5sum != '';
-  mysql> ALTER TABLE file DROP COLUMN summary;
-  mysql> ALTER TABLE file DROP COLUMN md5sum;
-  mysql> ALTER TABLE file DROP COLUMN encname;
-  mysql> ALTER TABLE project ADD COLUMN (codecharset VARCHAR(32));
-  mysql> DROP TABLE issue_attachment;
-  mysql> create the issue_file_list table according to the definition found in codepot.mysql
-  mysql> ALTER TABLE issue_change ADD COLUMN(createdon datetime not null, createdby varchar(32) not null);
-  mysql> UPDATE issue_change SET createdby=updatedby, createdon=updatedon;
-  mysql> create the issue_coderev table according to the definition found in codepot.mysql
-  mysql> ALTER TABLE user_settings ADD COLUMN(user_summary VARCHAR(255) NULL);
-  mysql> CREATE INDEX projectid_index on project_membership(projectid);
-  mysql> CREATE INDEX userid_index on project_membership(userid);
+For example,
 
-INSTALLATION ON CENTOS
+```
+$ docker pull hyunghwan/codepot:ubnt20.04
+$ docker run -dit --restart unless-stopped --name codepot -p 7000:80 hyunghwan/codepot:ubnt20.04
+```
 
- A RPM package is provided for RedHat/CentOS Linux. The RPM package specifies
- dependency which must be met prior to or at the same time as the installation
- of the rpm package. 
+The image runs the apache2 server in the foreground by default. You may open
+a shell session to configure various aspects of codepot.
 
-   $ rpm -ivh codepot-X.X.X-Y.Y.Y.Y.rpm
+```
+$ docker exec -it codepot /bin/bash
+```
 
- You can use the yum utility to be hassle-free instead. However, some required
- packages are not available in the base CentOS repository but in the RPMforge
- repository. You may be required to add the RPMforge repository to the system.
- View http://wiki.centos.org/AdditionalResources/Repositories/RPMForge for 
- RPMforge set-up.
+# INSTALLATION ON CENTOS
 
-   $ yum localinstall --nogpgcheck codepot-X.X.X-Y.Y.Y.Y.rpm
+A RPM package is provided for RedHat/CentOS Linux. The RPM package specifies
+dependency which must be met prior to or at the same time as the installation
+of the rpm package. 
 
- Once you have all required package installed, you can proceed to configure
- the system. The following steps shown assume the default installation of
- CentOS 5.
+```
+$ rpm -ivh codepot-X.X.X-Y.Y.Y.Y.rpm
+```
 
- X.X.X is the version number and Y.Y.Y.Y is the release number. For example,
- to install Codepot 0.2.0 for a 32-bit x86 CentOS 5 server running PHP 5.3,
- you should get the RPM package file - codepot-0.2.0-php53.1.el5.i686.rpm.
+You can use the yum utility to be hassle-free instead. However, some required
+packages are not available in the base CentOS repository but in the RPMforge
+repository. You may be required to add the RPMforge repository to the system.
+View http://wiki.centos.org/AdditionalResources/Repositories/RPMForge for 
+RPMforge set-up.
 
+```
+$ yum localinstall --nogpgcheck codepot-X.X.X-Y.Y.Y.Y.rpm
+```
+
+Once you have all required package installed, you can proceed to configure
+the system. The following steps shown assume the default installation of
+CentOS 5.
+
+X.X.X is the version number and Y.Y.Y.Y is the release number. For example,
+to install Codepot 0.2.0 for a 32-bit x86 CentOS 5 server running PHP 5.3,
+you should get the RPM package file - codepot-0.2.0-php53.1.el5.i686.rpm.
+
+```
  1. Add the following line to /etc/httpd/conf.d/perl.conf. It must be placed 
  after 'LoadModule perl_module modules/mod_perl.so'.
 
@@ -165,12 +164,13 @@ INSTALLATION ON CENTOS
    $ service httpd restart
 
  12. Access http://your-server/codepot/
+```
 
+## INSTALLATION ON DEBIAN
 
-INSTALLATION ON DEBIAN
+Here is how to install Codepot into the standard locations under Debian Linux.
 
- Here is how to install Codepot into the standard locations under Debian Linux.
-
+```
  * Install required packages.
    $ sudo apt-get install subversion
    $ sudo apt-get install apache2-mpm-prefork
@@ -218,49 +218,74 @@ INSTALLATION ON DEBIAN
    $ sudo make-ssl-cert generate-default-snakeoil --force-overwrite
    $ sudo hostname ${HOSTNAME}
    $ sudo /etc/init.d/apache2 restart
+```
  
-   Note that make-ssl-cert is provided by the ssl-cert package.
+Note that make-ssl-cert is provided by the ssl-cert package.
 
-INSTALLATION WITH SOURCE CODE
+## INSTALLATION WITH SOURCE CODE
 
- Codepot uses the standard autoconf & automake build system. You can execute
- 'configure' followed by 'make' and 'make install' in principle. However, there
- are some key options you should be aware of. See this sample run below.
+Codepot uses the standard autoconf & automake build system. You can execute
+'configure' followed by 'make' and 'make install' in principle. However, there
+are some key options you should be aware of. See this sample run below.
+
+```
+$ ./configure --prefix=/usr \
+              --libdir=/usr/lib64 \
+              --sysconfdir=/etc \
+              --with-wwwdir=/var/www/html/codepot \
+              --with-cfgdir=/etc/codepot \
+              --with-depotdir=/var/lib/codepot \
+              --with-logdir=/var/log/codepot \
+              --with-cachedir=/var/cache/codepot \
+              --with-phpextdir=/usr/lib64/php/modules \
+              --with-phpextinidir=/etc/php.d
+$ make
+$ make install 
+```
+
+You should take note of the following key directory options:
+
+- wwwdir: The directory where most of the codepot program files are installed.
+- cfgdir: The directory where the codepot configuration file(codepot.ini) and other supporting files are stored.
+- depotdir: Subversion repostiories and various files uploaded are stored under this directory.
+- cachedir: Cache directory.
+- phpextdir: PHP extension directory. The peclsvn extension(svn.so) goes here.
+- phpextinidir: The configuration file(svn.ini) to enable the extension goes here.
  
-   $ ./configure --prefix=/usr \
-                 --libdir=/usr/lib64 \
-                 --sysconfdir=/etc \
-                 --with-wwwdir=/var/www/html/codepot \
-                 --with-cfgdir=/etc/codepot \
-                 --with-depotdir=/var/lib/codepot \
-                 --with-logdir=/var/log/codepot \
-                 --with-cachedir=/var/cache/codepot \
-                 --with-phpextdir=/usr/lib64/php/modules \
-                 --with-phpextinidir=/etc/php.d
-   $ make
-   $ make install 
+You should customize the value of these directories according to your system
+configuration.
 
- You should take note of the following key directory options:
+## UPGRADING FROM 0.2.0
 
- - wwwdir:       The directory where most of the codepot program files are 
-                 installed.
- - cfgdir:       The directory where the codepot configuration file(codepot.ini)
-                 and other supporting files are stored.
- - depotdir:     Subversion repostiories and various files uploaded are stored
-                 under this directory.
- - cachedir:     Cache directory.
- - phpextdir:    PHP extension directory. The peclsvn extension(svn.so) goes
-                 here.
- - phpextinidir: The configuration file(svn.ini) to enable the extension goes
-                 here.
- 
- You should customize the value of these directories according to your system
- configuration.
+You must make the following changes to your existing database manually
+if you are upgrading from 0.2.0.
 
-LICENSE
+```
+mysql> ALTER TABLE user_settings CHANGE code_hide_details code_hide_metadata CHAR(1) NOT NULL;
+mysql> ALTER TABLE site ADD COLUMN(summary VARCHAR(255) NOT NULL);
+mysql> RENAME TABLE user TO user_account;
+mysql> ALTER TABLE file DROP INDEX encname;
+mysql> create the file_list table according to the definition found in codepot.mysql
+mysql> INSERT INTO file_list (projectid, name, filename, encname, md5sum, description) SELECT projectid, name, name, encname, md5sum, summary FROM file WHERE md5sum != '';
+mysql> ALTER TABLE file DROP COLUMN summary;
+mysql> ALTER TABLE file DROP COLUMN md5sum;
+mysql> ALTER TABLE file DROP COLUMN encname;
+mysql> ALTER TABLE project ADD COLUMN (codecharset VARCHAR(32));
+mysql> DROP TABLE issue_attachment;
+mysql> create the issue_file_list table according to the definition found in codepot.mysql
+mysql> ALTER TABLE issue_change ADD COLUMN(createdon datetime not null, createdby varchar(32) not null);
+mysql> UPDATE issue_change SET createdby=updatedby, createdon=updatedon;
+mysql> create the issue_coderev table according to the definition found in codepot.mysql
+mysql> ALTER TABLE user_settings ADD COLUMN(user_summary VARCHAR(255) NULL);
+mysql> CREATE INDEX projectid_index on project_membership(projectid);
+mysql> CREATE INDEX userid_index on project_membership(userid);
+```
 
- This software is licensed under the GNU General Public License.
+## LICENSE
 
+This software is licensed under the GNU General Public License.
+
+```
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -273,28 +298,30 @@ LICENSE
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+```
 
- This software contains the following third-party components.
+This software contains the following third-party components.
 
-   ------------------------------------------------------------------------
-   Name                                         License
-   ------------------------------------------------------------------------
-   CodeIgniter 1.7.2                            See src/system/license.txt
-   Google code prettify                         Apache License 2.0
-   JavaScript Creole 1.0 Wiki Markup Parser     See src/js/creole.js
-   jQuery JavaScript Library v1.11.2            MIT See http://jquery.org/license
-   jQuery UI 1.9.2                              MIT See http://jquery.org/license
-   X-editable 1.5.1                             MIT
-   PHPGraphLib                                  MIT
-   CLOC 1.62                                    GPL
-   Flot                                         https://github.com/flot/flot/blob/master/LICENSE.txt
-   Font Awesome 4.3.0                           MIT & SIL OFL 1.1
-   D3.js 3.5.5                                  BSD
-   CodeFlower                                   MIT
-   ACE                                          BSD (http://ace.c9.io)
-   Medium-editor                                https://github.com/yabwe/medium-editor/blob/master/LICENSE
-   PDFJS                                        https://github.com/mozilla/pdf.js
-   WebODF                                       http://webodf.org/
-   ICONMONSTR Icons                             https://iconmonstr.com/
-   ------------------------------------------------------------------------
-
+```
+------------------------------------------------------------------------
+Name                                         License
+------------------------------------------------------------------------
+CodeIgniter 1.7.2                            See src/system/license.txt
+Google code prettify                         Apache License 2.0
+JavaScript Creole 1.0 Wiki Markup Parser     See src/js/creole.js
+jQuery JavaScript Library v1.11.2            MIT See http://jquery.org/license
+jQuery UI 1.9.2                              MIT See http://jquery.org/license
+X-editable 1.5.1                             MIT
+PHPGraphLib                                  MIT
+CLOC 1.62                                    GPL
+Flot                                         https://github.com/flot/flot/blob/master/LICENSE.txt
+Font Awesome 4.3.0                           MIT & SIL OFL 1.1
+D3.js 3.5.5                                  BSD
+CodeFlower                                   MIT
+ACE                                          BSD (http://ace.c9.io)
+Medium-editor                                https://github.com/yabwe/medium-editor/blob/master/LICENSE
+PDFJS                                        https://github.com/mozilla/pdf.js
+WebODF                                       http://webodf.org/
+ICONMONSTR Icons                             https://iconmonstr.com/
+------------------------------------------------------------------------
+```
