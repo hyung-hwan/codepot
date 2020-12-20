@@ -37,4 +37,5 @@ for e in "${!APACHE_@}"; do
 	fi
 done
 
-exec apache2 -DFOREGROUND "$@"
+# start the mysql service and run the httpd server in the foreground
+service mysql start && sleep 2 && exec apache2 -DFOREGROUND "$@"
