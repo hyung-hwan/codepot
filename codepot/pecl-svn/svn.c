@@ -1025,7 +1025,6 @@ static int compare_keys(const void *a, const void *b)
 {
 	Bucket *f = (Bucket*)a;
 	Bucket *s = (Bucket*)b;
-	/*return strcmp(f->arKey, s->arKey);*/
 	int diff = ZSTR_LEN(f->key) - ZSTR_LEN(s->key);
 	if (diff) return diff;
 	return strncmp(ZSTR_VAL(f->key), ZSTR_VAL(s->key), ZSTR_LEN(f->key));
@@ -1239,17 +1238,6 @@ cleanup:
 }
 /* }}} */
 
-#if defined(APR_MAJOR_VERSION) && ((APR_MAJOR_VERSION >= 2) || (APR_MAJOR_VERSION == 1 && APR_MINOR_VERSION >= 5))
-static int compare_keys_as_paths(const void *a, const void *b) 
-{
-	Bucket *f = (Bucket*)a;
-	Bucket *s = (Bucket*)b;
-	int diff =  ZSTR_LEN(f->key) - ZSTR_LEN(s->key);
-	if (diff) return diff;
-	return strncmp(ZSTR_VAL(f->key), ZSTR_VAL(s->key), ZSTR_LEN(f->key));
-}
-#endif
-
 static svn_error_t *
 php_svn_log_receiver (void *ibaton,
 				apr_hash_t *changed_paths,
@@ -1330,7 +1318,7 @@ php_svn_log_receiver (void *ibaton,
 			add_assoc_zval(paths, path, &zpaths);
 		}
 		arr = Z_ARRVAL(*paths);
-		zend_hash_sort_ex(Z_ARRVAL(*paths), zend_qsort, compare_keys_as_paths, 1);
+		zend_hash_sort_ex(Z_ARRVAL(*paths), zend_qsort, compare_keys, 1);
 
 #else
 		sorted_paths = svn_sort__hash(changed_paths, svn_sort_compare_items_as_paths, pool);
