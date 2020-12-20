@@ -25,7 +25,17 @@ a shell session to configure various aspects of codepot.
 $ docker exec -it codepot /bin/bash
 ```
 
-# INSTALLATION ON CENTOS
+The first thing to do is to create a local user, assuming you use local user authentication.
+In the shell session created, use the codepot-user command to create and enable a new user.
+
+```
+$ /usr/sbin/codepot-user add username password username@your.domain
+$ /usr/sbin/codepot-user enable username
+```
+
+You can use the created user account to sign in to codepot and start creating a new project.
+
+## INSTALLATION ON CENTOS
 
 A RPM package is provided for RedHat/CentOS Linux. The RPM package specifies
 dependency which must be met prior to or at the same time as the installation
