@@ -1096,6 +1096,7 @@ PHP_FUNCTION(svn_ls)
 #if defined(APR_MAJOR_VERSION) && ((APR_MAJOR_VERSION >= 2) || (APR_MAJOR_VERSION == 1 && APR_MINOR_VERSION >= 5))
 	array_init(return_value);
 	
+
 	for (hi = apr_hash_first(subpool, dirents); hi; hi = apr_hash_next(hi)) {
 		const char *utf8_entryname;
 		svn_dirent_t *dirent;
@@ -1105,7 +1106,6 @@ PHP_FUNCTION(svn_ls)
 		apr_size_t size;
 		char timestr[20];
 		const char   *utf8_timestr;
-		apr_hash_index_t *hi;
 		zval    *row;
 #if defined(PHP_MAJOR_VERSION) && (PHP_MAJOR_VERSION >= 7)
 		zval actual_row;
