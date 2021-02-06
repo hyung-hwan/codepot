@@ -11,12 +11,14 @@
 The easiest wasy to get codepot up and running is to run it in docker.
 You may pull the image from the Docker Hub and run a container from the image.
 
-For example,
+For example, you may run the following commands to start the container.
 
 ```
 $ docker pull hyunghwan/codepot:ubnt20.04
 $ docker run -dit --restart unless-stopped --name codepot -p 7000:80 hyunghwan/codepot:ubnt20.04
 ```
+
+Then you can open a web browser to http://docker-host-address:7000/ to access the codepot system.
 
 The image runs the apache2 server in the foreground by default. You may open
 a shell session to configure various aspects of codepot.
