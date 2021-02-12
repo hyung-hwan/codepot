@@ -3,7 +3,7 @@
 $CI = &get_instance();
 $CI->load->model('CodeRepoModel');
 
-class GitModel extends CodeRepoModel
+class SubversionModel extends CodeRepoModel
 {
 	function __construct ()
 	{
@@ -156,12 +156,20 @@ class GitModel extends CodeRepoModel
 	static function createRepo ($projectid, $repodir, $cfgdir, $api)
 	{
 		$projdir = "{$repodir}/{$projectid}";
-		if (@git_repository_init($projdir, TRUE) === FALSE) return FALSE;
+		try
+		{
+			@Git2\Repository::init($projdir, FALSE);
+			return TRUE;
+		}
+		catch (Exception $x)
+		{
+			return FALSE;
+		}
 	}
 
 	static function deleteRepo ($projectid, $repodir)
 	{
-		return $this->deleteDirectory("{$repodir}/{$projectid}");
+		return  self::_deleteDirectory("{$repodir}/{$projectid}");
 	}
 }
 
