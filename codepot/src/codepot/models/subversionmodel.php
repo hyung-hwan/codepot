@@ -2223,13 +2223,13 @@ class SubversionModel extends CodeRepoModel
 			$contents = @file_get_contents("{$cfgdir}/${hook}");
 			if ($contents === FALSE)
 			{
-				$this->deleteDirectory ($projdir);
+				self::_deleteDirectory ($projdir);
 				return FALSE;
 			}
 
 			if (@file_put_contents("{$repodir}/${hook}", str_replace('%API%', $api, $contents)) === FALSE)
 			{
-				$this->deleteDirectory ($projdir);
+				self::_deleteDirectory ($projdir);
 				return FALSE;
 			}
 
@@ -2237,7 +2237,7 @@ class SubversionModel extends CodeRepoModel
 			if (@chmod("{$repodir}/{$hook}", 0755) === FALSE ||
 			    @symlink("../../{$hook}", "{$repodir}/{$projectid}/hooks/${hook}") === FALSE)
 			{
-				$this->deleteDirectory ($projdir);
+				self::_deleteDirectory ($projdir);
 				return FALSE;
 			}
 		}

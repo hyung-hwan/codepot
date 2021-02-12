@@ -45,7 +45,7 @@ class CodeRepoModel extends Model
 			if (self::_deleteDirectory($dir . "/" . $item) === FALSE)
 			{
 				chmod($dir . "/" . $item, 0777);
-				if (self::deleteDirectory($dir . "/" . $item) === FALSE) return FALSE;
+				if (self::_deleteDirectory($dir . "/" . $item) === FALSE) return FALSE;
 			};
 		}
 
