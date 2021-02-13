@@ -44,12 +44,12 @@ class CodeRepoModel extends Model
 			if ($item == '.' || $item == '..') continue;
 			if (self::_deleteDirectory($dir . "/" . $item) === FALSE)
 			{
-				chmod($dir . "/" . $item, 0777);
+				@chmod($dir . "/" . $item, 0777);
 				if (self::_deleteDirectory($dir . "/" . $item) === FALSE) return FALSE;
 			};
 		}
 
-		return rmdir($dir);
+		return @rmdir($dir);
 	}
 
 	function deleteDirectory($dir)
