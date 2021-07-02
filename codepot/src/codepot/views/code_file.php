@@ -269,6 +269,11 @@ function render_wiki_wc ()
 
 function render_wiki_md ()
 {
+	$("#code_toggle_wc_view_button").button().click(function() {
+		$("#code_diff_old_code_view").toggle();
+		$("#code_diff_new_code_view").toggleClass("code_file_full_width");
+		return false;
+	});
 	showdown_render_wiki (
 		"code_file_wiki_text",
 		"code_diff_new_code_view",
