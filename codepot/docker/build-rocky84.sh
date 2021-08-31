@@ -67,6 +67,6 @@ cat <<EOF > /var/www/html/index.html
 EOF
 
 dnf remove -y php-dev subversion-devel perl-devel make && \
-dnf autoremove -y && rm -rf /var/lib/apt/lists/*
+dnf autoremove -y && rm -rf /var/cache/yum/*
 
 rm -rf /root/.subversion
