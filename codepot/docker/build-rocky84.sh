@@ -10,6 +10,8 @@ dnf install -y \
 	perl-Digest-SHA \
 	perl-DBD-MySQL perl-LDAP \
 	mod_dav_svn mod_perl \
+
+dnf install -y \
 	php-devel subversion-devel perl-devel make 
 
 dnf remove -y mariadb-gssapi-server mariadb-backup
