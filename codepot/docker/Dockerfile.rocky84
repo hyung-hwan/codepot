@@ -1,0 +1,6 @@
+FROM rockylinux/rockylinux:latest
+
+COPY build-rocky84.sh /tmp
+RUN /tmp/build-rocky84.sh && rm -rf /tmp/*
+
+CMD ["/usr/sbin/httpd-fg.sh"]
