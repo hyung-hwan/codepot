@@ -9,7 +9,7 @@ dnf install -y \
 	php php-mysqli php-gd \
 	perl-Digest-SHA \
 	perl-DBD-MySQL perl-LDAP \
-	mod_dav_svn mod_perl \
+	mod_dav_svn mod_perl diffutils
 
 dnf install -y \
 	php-devel subversion-devel perl-devel make 
@@ -66,7 +66,9 @@ cat <<EOF > /var/www/html/index.html
 </html>
 EOF
 
-dnf remove -y php-dev subversion-devel perl-devel make && \
+# mod_perl has dependency on perl-devel which i think is wrong.
+# so i can't get perl-devel removed.
+dnf remove -y php-dev subversion-devel make && \
 dnf autoremove -y && rm -rf /var/cache/yum/*
 
 rm -rf /root/.subversion
