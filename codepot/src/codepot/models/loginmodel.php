@@ -72,7 +72,7 @@ class LoginModel extends Model
 		$server = $_SERVER['HTTP_HOST'];
 
 		$sysadmin = FALSE;
-		$ids = explode (',', CODEPOT_SYSADMIN_USERIDS);
+		$ids = explode(',', CODEPOT_SYSADMIN_USERIDS);
 		foreach ($ids as $id)
 		{
 			if (trim($id) == $userid) 
@@ -82,6 +82,7 @@ class LoginModel extends Model
 			}
 		}
 
+		// big security loophole - implement a different way of session management
 		$this->session->set_userdata (
 			array (
 				'userid' => $userid,

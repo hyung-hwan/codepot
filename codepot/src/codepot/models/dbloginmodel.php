@@ -53,8 +53,8 @@ class DbLoginModel extends LoginModel
 		$result = $query->result ();
 		if (empty($result))
 		{
-			$this->setErrorMessage ('invalid credential'); // no such user name
 			$this->db->trans_rollback ();
+			$this->setErrorMessage ('No such user');
 			return FALSE;
 		}
 

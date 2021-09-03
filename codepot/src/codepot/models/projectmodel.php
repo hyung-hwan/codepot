@@ -496,7 +496,7 @@ class ProjectModel extends Model
 		$recipients = '';
 		foreach ($query->result() as $v)
 		{
-			$m = $login_model->queryUserInfo ($v->userid);
+			$m = $login_model->queryUserInfo($v->userid);
 			if ($m !== FALSE && $m['email'] != '')
 			{
 				if (!empty($recipients)) $recipients .= ', ';

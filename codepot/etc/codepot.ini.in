@@ -339,6 +339,15 @@ svn_tag_property = "codepot:tag"
 svn_read_access = "member"
 
 ;------------------------------------------------------------------------------
+; Grant subversin read access to public repository if the user id and the 
+; password match this special credential configured. The value must be
+; a userid and a password separated by a colon. For example,
+;    anonymous:aab08d13-942c-49bc-b6a7-5ca4408b08d6
+; This credentical takes precedence over non-anonymous svn_read_access mode.
+;------------------------------------------------------------------------------
+svn_read_credential = ""
+
+;------------------------------------------------------------------------------
 ; The length of a commit message must be as long as this value.
 ;------------------------------------------------------------------------------
 svn_min_commit_message_length = "0"

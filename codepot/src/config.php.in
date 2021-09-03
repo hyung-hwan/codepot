@@ -34,6 +34,7 @@ function load_ini ($file)
 
 		array ('signin_compulsory',            'boolean',    FALSE),
 		array ('code_read_access',             'string',     'anonymous'),
+		array ('code_read_credential',         'string',     ''),
 		array ('file_read_access',             'string',     'anonymous'),
 
 		array ('https_compulsory',             'boolean',    FALSE),

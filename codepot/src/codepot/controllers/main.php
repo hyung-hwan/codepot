@@ -29,13 +29,13 @@ class Main extends Controller
 			$user_name = $this->input->post('user_name');
 			$user_pass = $this->input->post('user_pass');
 
-			if ($this->login->authenticate ($user_name, $user_pass) === FALSE)
+			if ($this->login->authenticate($user_name, $user_pass) === FALSE)
 			{
 				print 'error - ' . $this->login->getErrorMessage();
 			}
 			else
 			{
-				$settings = $this->users->fetchSettings ($user_name);
+				$settings = $this->users->fetchSettings($user_name);
 				if ($settings !== FALSE) $this->login->setUserSettings ($settings);
 				print 'ok';
 			}
@@ -67,7 +67,7 @@ class Main extends Controller
 
 			if($this->form_validation->run())
 			{
-				if ($this->login->authenticate ($user_name, $user_pass) === FALSE)
+				if ($this->login->authenticate($user_name, $user_pass) === FALSE)
 				{
 					$data['message'] = $this->login->getErrorMessage();
 					$data['user_name'] = $user_name;

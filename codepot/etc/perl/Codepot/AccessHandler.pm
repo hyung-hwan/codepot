@@ -56,27 +56,28 @@ sub get_config
 	my $config = {
 		login_model => $cfg->param ('login_model'),
 		
-		ldap_server_uri => $cfg->param ('ldap_server_uri'),
-		ldap_server_protocol_version => $cfg->param ('ldap_server_protocol_version'),
-		ldap_auth_mode => $cfg->param ('ldap_auth_mode'),
-		ldap_userid_format => $cfg->param ('ldap_userid_format'),
-		ldap_password_format => $cfg->param ('ldap_password_format'),
-		ldap_admin_binddn => $cfg->param ('ldap_admin_binddn'),
-		ldap_admin_password => $cfg->param ('ldap_admin_password'),
-		ldap_userid_search_base => $cfg->param ('ldap_userid_search_base'),
-		ldap_userid_search_filter => $cfg->param ('ldap_userid_search_filter'),
-		ldap_insider_attribute_names => $cfg->param ('ldap_insider_attribute_names'),
-		ldap_insider_attribute_value => $cfg->param ('ldap_insider_attribute_value'),
+		ldap_server_uri => $cfg->param('ldap_server_uri'),
+		ldap_server_protocol_version => $cfg->param('ldap_server_protocol_version'),
+		ldap_auth_mode => $cfg->param('ldap_auth_mode'),
+		ldap_userid_format => $cfg->param('ldap_userid_format'),
+		ldap_password_format => $cfg->param('ldap_password_format'),
+		ldap_admin_binddn => $cfg->param('ldap_admin_binddn'),
+		ldap_admin_password => $cfg->param('ldap_admin_password'),
+		ldap_userid_search_base => $cfg->param('ldap_userid_search_base'),
+		ldap_userid_search_filter => $cfg->param('ldap_userid_search_filter'),
+		ldap_insider_attribute_names => $cfg->param('ldap_insider_attribute_names'),
+		ldap_insider_attribute_value => $cfg->param('ldap_insider_attribute_value'),
 
-		database_hostname => $cfg->param ('database_hostname'),
-		database_port => $cfg->param ("database_port"),
-		database_username => $cfg->param ('database_username'),
-		database_password => $cfg->param ('database_password'),
-		database_name => $cfg->param ('database_name'),
-		database_driver => $cfg->param ('database_driver'),
-		database_prefix => $cfg->param ('database_prefix'),
+		database_hostname => $cfg->param('database_hostname'),
+		database_port => $cfg->param("database_port"),
+		database_username => $cfg->param('database_username'),
+		database_password => $cfg->param('database_password'),
+		database_name => $cfg->param('database_name'),
+		database_driver => $cfg->param('database_driver'),
+		database_prefix => $cfg->param('database_prefix'),
 
-		svn_read_access => $cfg->param ('svn_read_access')
+		svn_read_access => $cfg->param('svn_read_access'),
+		svn_read_credential => $cfg->param('svn_read_credential')
 	};
 
 	return $config;
@@ -163,7 +164,7 @@ sub authenticate_ldap
 	{
 		my $attr_str =  $cfg->{ldap_insider_attribute_names};
 		$attr_str =~ s/^\s+|\s+$//g;
-		my @attrs = split (/\s+/, $attr_str);
+		my @attrs = split(/\s+/, $attr_str);
 
 		if (scalar(@attrs) > 0)
 		{
@@ -307,14 +308,15 @@ sub is_read_method
 	       $method eq "OPTIONS" || $method eq "REPORT" ||
 	       $method eq "PROPFIND";
 }
+
 sub __handler 
 {
 	my ($r, $cfg, $dbh) = @_;
 	my $method = uc($r->method());
-	my $is_method_r = is_read_method ($method);
+	my $is_method_r = is_read_method($method);
 
 	#my ($empty, $base, $repo, $dummy) = split ('/', $r->uri(), 4);
-	my @urisegs = split ('/', $r->uri());
+	my @urisegs = split('/', $r->uri());
 	my $repo = $urisegs[2];
 
 	my $author;
@@ -354,7 +356,7 @@ sub __handler
 
 	if ($is_method_r)
 	{
-		($public, $errmsg) = is_project_public ($dbh, $cfg->{database_prefix}, $repo, $qc);
+		($public, $errmsg) = is_project_public($dbh, $cfg->{database_prefix}, $repo, $qc);
 		if ($public <= -1)
 		{
 			# failed to contact the authentication server
@@ -374,6 +376,15 @@ sub __handler
 					$r->user('<codepot-anonymous-user>');
 				}
 				return Apache2::Const::OK;
+			}
+			elsif (defined($cfg->{svn_read_credential}) && $cfg->{svn_read_credential} ne '')
+			{
+				# security loop hole here.
+				my ($c_user, $c_pass) = split(/:/, $cfg->{svn_read_credential});
+				if ($c_user ne '' && $c_pass ne '' && $c_user eq $userid && $c_pass eq $password)
+				{
+					return Apache2::Const::OK;
+				}
 			}
 		}
 	}
@@ -419,7 +430,7 @@ sub __handler
 		}
 	}
 
-	($member, $errmsg) = is_project_member ($dbh, $cfg->{database_prefix}, $repo, $userid, $qc);
+	($member, $errmsg) = is_project_member($dbh, $cfg->{database_prefix}, $repo, $userid, $qc);
 	if ($member <= -1)
 	{
 		$r->log_error ("Cannot check project membership - $errmsg");
