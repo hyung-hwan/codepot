@@ -388,16 +388,15 @@ sub __handler
 			}
 		}
 	}
-	
+
 	my $auth = -3;
 	if ($cfg->{login_model} eq 'LdapLoginModel')
 	{
-		$auth = authenticate_ldap ($r, $cfg, $userid, $password);
+		$auth = authenticate_ldap($r, $cfg, $userid, $password);
 	}
 	elsif ($cfg->{login_model} eq 'DbLoginModel')
 	{
-		($auth, $errmsg) = authenticate_database (
-			$dbh, $cfg->{database_prefix}, $userid, $password, $qc);
+		($auth, $errmsg) = authenticate_database($dbh, $cfg->{database_prefix}, $userid, $password, $qc);
 		if ($auth <= -1)
 		{
 			$r->log_error ("Database error - $errmsg");
@@ -468,7 +467,7 @@ sub handler: method
 		return Apache2::Const::HTTP_INTERNAL_SERVER_ERROR;
 	}
 
-	$res = __handler ($r, $cfg, $dbh);
+	$res = __handler($r, $cfg, $dbh);
 
 	close_database ($dbh);
 	return $res;
