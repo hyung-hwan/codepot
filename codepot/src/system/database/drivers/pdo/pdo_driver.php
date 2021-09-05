@@ -237,6 +237,17 @@ class CI_DB_pdo_driver extends CI_DB {
 		return TRUE;
 	}
 
+
+	// HYUNG-HWAN - hack to enable foreign keys support in sqlite
+	function db_post_initialize ()
+	{
+		if (preg_match("/^sqlite/", $this->hostname))
+		{
+			$this->_execute('PRAGMA foreign_keys=ON');
+		}
+	}
+	// END HYUNG-HWAN
+
 	// --------------------------------------------------------------------
 
 	/**

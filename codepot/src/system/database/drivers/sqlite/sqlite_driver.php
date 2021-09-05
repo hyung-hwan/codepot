@@ -143,6 +143,13 @@ class CI_DB_sqlite_driver extends CI_DB {
 		return TRUE;
 	}
 
+	// HYUNG-HWAN - hack to enable foreign keys support in sqlite
+	function db_post_initialize ()
+	{
+		$this->_execute('PRAGMA foreign_keys=ON');
+	}
+	// END HYUNG-HWAN
+
 	// --------------------------------------------------------------------
 
 	/**

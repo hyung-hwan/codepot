@@ -141,6 +141,13 @@ class CI_DB_oci8_driver extends CI_DB {
 		return TRUE;
 	}
 
+	// HYUNG-HWAN
+	function db_post_initialize ()
+	{
+		$this->query ("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS.FF'");
+	}
+	// END HYUNG-HWAN
+
 	// --------------------------------------------------------------------
 
 	/**
