@@ -138,29 +138,30 @@ AC_CONFIG_FILES([
 	src/js/prettify/Makefile
 	src/js/Makefile
 	src/ace/Makefile
-	src/system/cache/Makefile
-	src/system/codeigniter/Makefile
-	src/system/database/drivers/mssql/Makefile
-	src/system/database/drivers/mysql/Makefile
-	src/system/database/drivers/mysqli/Makefile
-	src/system/database/drivers/oci8/Makefile
+
+	src/system/fonts/Makefile
+	src/system/libraries/javascript/Makefile
+	src/system/libraries/Cache/drivers/Makefile
+	src/system/libraries/Cache/Makefile
+	src/system/libraries/Makefile
+	src/system/language/english/Makefile
+	src/system/language/Makefile
+	src/system/helpers/Makefile
+	src/system/core/Makefile
 	src/system/database/drivers/odbc/Makefile
+	src/system/database/drivers/pdo/Makefile
 	src/system/database/drivers/postgre/Makefile
+	src/system/database/drivers/mssql/Makefile
+	src/system/database/drivers/cubrid/Makefile
+	src/system/database/drivers/mysql/Makefile
+	src/system/database/drivers/sqlsrv/Makefile
+	src/system/database/drivers/oci8/Makefile
 	src/system/database/drivers/sqlite/Makefile
+	src/system/database/drivers/mysqli/Makefile
 	src/system/database/drivers/Makefile
 	src/system/database/Makefile
-	src/system/fonts/Makefile
-	src/system/helpers/Makefile
-	src/system/language/english/Makefile
-	src/system/language/korean/Makefile
-	src/system/language/Makefile
-	src/system/libraries/Makefile
-	src/system/logs/Makefile
-	src/system/plugins/Makefile
-	src/system/scaffolding/images/Makefile
-	src/system/scaffolding/views/Makefile
-	src/system/scaffolding/Makefile
 	src/system/Makefile
+
 	src/Makefile
 ])
 AC_OUTPUT
