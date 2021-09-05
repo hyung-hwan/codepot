@@ -51,6 +51,7 @@ sub open_database
 	if ($dbtype eq 'postgre') { $dbtype = 'Pg'; }
 	elsif ($dbtype eq 'oci8') { $dbtype = 'Oracle'; }
 	elsif ($dbtype eq 'mysqli') { $dbtype = 'mysql'; }
+	elsif ($dbtype eq 'sqlite') { $dbtype = 'SQLite'; }
 
 	my $dbstr;
 	my $dbuser;
@@ -61,6 +62,12 @@ sub open_database
 		$dbstr = "DBI:$dbtype:";
 		$dbuser = $cfg->{database_username} . '/' . $cfg->{database_password} . '@' . $dbhost;
 		$dbpass = '';
+	}
+	elsif ($dbtype eq 'SQLite')
+	{
+		$dbstr = "DBI:$dbtype:database=$dbhost;";
+		$dbuser = $cfg->{database_username};
+		$dbpass = $cfg->{database_password};
 	}
 	else
 	{
@@ -185,12 +192,12 @@ sub toggle_user
 
 	$dbh->begin_work ();
 
-	my $query = $dbh->prepare ("UPDATE ${QC}${prefix}user_account${QC} SET ${QC}enabled${QC}=? WHERE ${QC}userid${QC}=?");
-	if (!$query || !$query->execute ($enabled, $userid) || $query->rows() <= 0)
+	my $query = $dbh->prepare("UPDATE ${QC}${prefix}user_account${QC} SET ${QC}enabled${QC}=? WHERE ${QC}userid${QC}=?");
+	if (!$query || !(my $execok = $query->execute($enabled, $userid)) || $query->rows() <= 0)
 	{
-		my $errstr = $dbh->errstr();
+		my $errstr = $execok? "user not found": $dbh->errstr();
 		$dbh->rollback ();
-		print (STDERR "Cannot enable/disable a user - $errstr\n");
+		print (STDERR "Cannot enable/disable the user '$userid' - $errstr\n");
 		return -1;
 	}
 
@@ -262,7 +269,7 @@ if ($op <= 0)
 	exit (2);
 }
 
-my $cfg = get_config ();
+my $cfg = get_config();
 if (!defined($cfg))
 {
 	print (STDERR "Cannot load codepot configuration file\n");
@@ -294,7 +301,7 @@ if ($allowed_to_execute == 0)
 	exit (1);
 }
 
-my $dbh = open_database ($cfg);
+my $dbh = open_database($cfg);
 if (!defined($dbh))
 {
 	printf (STDERR "Cannot open database - %s\n", $DBI::errstr);
@@ -303,10 +310,10 @@ if (!defined($dbh))
 
 switch ($op)
 {
-	case 1 { $ret = add_user ($dbh, $cfg->{database_prefix}, $USERID, $PASSWD, $EMAIL); }
-	case 2 { $ret = delete_user ($dbh, $cfg->{database_prefix}, $USERID); }
-	case 3 { $ret = toggle_user ($dbh, $cfg->{database_prefix}, $USERID, 'Y'); }
-	case 4 { $ret = toggle_user ($dbh, $cfg->{database_prefix}, $USERID, 'N'); }
+	case 1 { $ret = add_user($dbh, $cfg->{database_prefix}, $USERID, $PASSWD, $EMAIL); }
+	case 2 { $ret = delete_user($dbh, $cfg->{database_prefix}, $USERID); }
+	case 3 { $ret = toggle_user($dbh, $cfg->{database_prefix}, $USERID, 'Y'); }
+	case 4 { $ret = toggle_user($dbh, $cfg->{database_prefix}, $USERID, 'N'); }
 }
 
 close_database ($dbh);

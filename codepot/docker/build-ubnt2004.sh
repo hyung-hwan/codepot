@@ -6,7 +6,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
 	php libapache2-mod-php php-mysql php-gd \
 	libapache2-mod-perl2 libapache2-mod-svn \
 	libswitch-perl libconfig-simple-perl libdigest-sha-perl \
-	libdbd-mysql-perl libnet-ldap-perl libsvn-perl libmail-sendmail-perl \
+	libdbd-mysql-perl libdbd-sqlite3-perl libnet-ldap-perl libsvn-perl libmail-sendmail-perl \
 	php-dev libsvn-dev make 
 
 svn co http://code.miflux.com/svn/codepot/trunk/codepot && \

@@ -8,7 +8,7 @@ dnf install -y \
 	mariadb-server mariadb httpd \
 	php php-mysqli php-gd \
 	perl-Digest-SHA \
-	perl-DBD-MySQL perl-LDAP \
+	perl-DBD-MySQL perl-DBD-SQLite perl-LDAP \
 	mod_dav_svn mod_perl diffutils
 
 dnf install -y \

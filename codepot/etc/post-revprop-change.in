@@ -58,6 +58,7 @@ sub open_database
 	if ($dbtype eq 'postgre') { $dbtype = 'Pg'; }
 	elsif ($dbtype eq 'oci8') { $dbtype = 'Oracle'; }
 	elsif ($dbtype eq 'mysqli') { $dbtype = 'mysql'; }
+	elsif ($dbtype eq 'sqlite') { $dbtype = 'SQLite'; }
 
 	my $dbstr;
 	my $dbuser;
@@ -68,6 +69,12 @@ sub open_database
 		$dbstr = "DBI:$dbtype:";
 		$dbuser = $cfg->{database_username} . '/' . $cfg->{database_password} . '@' . $dbhost;
 		$dbpass = '';
+	}
+	elsif ($dbtype eq 'SQLite')
+	{
+		$dbstr = "DBI:$dbtype:database=$dbhost;";
+		$dbuser = $cfg->{database_username};
+		$dbpass = $cfg->{database_password};
 	}
 	else
 	{
