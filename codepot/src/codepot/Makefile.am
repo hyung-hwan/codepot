@@ -1,4 +1,4 @@
-SUBDIRS =  config controllers errors helpers hooks language libraries models views
+SUBDIRS =  config controllers core errors helpers hooks language libraries models views
 
 wwwdir=$(WWWDIR)/codepot
 www_DATA =  \

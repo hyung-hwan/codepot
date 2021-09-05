@@ -188,7 +188,7 @@ class User extends CI_Controller
 		$user->id = $login['id'];
 		$user->xid = $this->converter->AsciiToHex($user->id);
 		$user->summary = '';
-		$settings = $this->users->fetchSettings ($user->id);
+		$settings = $this->users->fetchSettings($user->id);
 		if ($settings !== FALSE && $settings !== NULL) $user->summary = $settings->user_summary;
 
 		$icon_fname = FALSE;
@@ -239,6 +239,7 @@ class User extends CI_Controller
 			// also change the sanity check in LoginModel/getUser()
 			// if you add/delete fields to the settings object.
 			//
+			$settings = new stdClass();
 			$settings->code_hide_line_num = $this->input->post('code_hide_line_num');
 			$settings->code_hide_metadata = $this->input->post('code_hide_metadata');
 			$settings->user_summary = $this->input->post('user_summary');

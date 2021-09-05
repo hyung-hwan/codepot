@@ -3,7 +3,7 @@ AUTOMAKE_OPTION = foreign
 
 SUBDIRS = etc src sbin pecl-svn
 
-EXTRA_DIST = README mkmf.sh DEBIAN
+EXTRA_DIST = README.md mkmf.sh DEBIAN
 
 PHP_PACKAGE_NAME ?= php
 

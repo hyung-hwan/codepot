@@ -1,4 +1,9 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+// HYUNG-HWAN
+// The mcrypt module is not available on some platforms by default.
+// This file has been overridden with https://github.com/kpushpendra81/exam/blob/master/encrypt.php
+
 /**
  * CodeIgniter
  *

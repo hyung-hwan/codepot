@@ -308,7 +308,7 @@ wwwdir = @wwwdir@
 ACLOCAL_AMFLAGS = -I ac/m4
 AUTOMAKE_OPTION = foreign
 SUBDIRS = etc src sbin pecl-svn
-EXTRA_DIST = README mkmf.sh DEBIAN
+EXTRA_DIST = README.md mkmf.sh DEBIAN
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

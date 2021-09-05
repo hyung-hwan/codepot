@@ -39,11 +39,11 @@ class Graph extends CI_Controller
 			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
 
-		//$path = $this->converter->HexToAscii ($path);
+		//$path = $this->converter->HexToAscii($path);
 		//if ($path == '.') $path = ''; /* treat a period specially */
 		//$path = $this->_normalize_path ($path);
 
-		$project = $this->projects->get ($projectid);
+		$project = $this->projects->get($projectid);
 		if ($project === FALSE)
 		{
 			$data['message'] = 'DATABASE ERROR';
@@ -80,7 +80,7 @@ class Graph extends CI_Controller
 			return;
 		}
 
-		$project = $this->projects->get ($projectid);
+		$project = $this->projects->get($projectid);
 		if ($project === FALSE || ($project->public !== 'Y' && $login['id'] == ''))
 		{
 			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
@@ -89,7 +89,7 @@ class Graph extends CI_Controller
 
 		$this->load->model ('SubversionModel', 'subversion');
 
-		$path = $this->converter->HexToAscii ($path);
+		$path = $this->converter->HexToAscii($path);
 		if ($path == '.') $path = ''; /* treat a period specially */
 		$path = $this->_normalize_path ($path);
 
@@ -109,7 +109,7 @@ class Graph extends CI_Controller
 			}
 		}
 
-		print codepot_json_encode ($history);
+		print codepot_json_encode($history);
 	}
 
 	function enjson_loc_by_lang ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
@@ -123,7 +123,7 @@ class Graph extends CI_Controller
 			return;
 		}
 
-		$project = $this->projects->get ($projectid);
+		$project = $this->projects->get($projectid);
 		if ($project === FALSE || ($project->public !== 'Y' && $login['id'] == ''))
 		{
 			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
@@ -132,12 +132,12 @@ class Graph extends CI_Controller
 
 		$this->load->model ('SubversionModel', 'subversion');
 
-		$path = $this->converter->HexToAscii ($path);
+		$path = $this->converter->HexToAscii($path);
 		if ($path == '.') $path = ''; /* treat a period specially */
 		$path = $this->_normalize_path ($path);
 
-		$cloc = $this->subversion->clocRevByLang ($projectid, $path, $rev);
-		print codepot_json_encode ($cloc);
+		$cloc = $this->subversion->clocRevByLang($projectid, $path, $rev);
+		print codepot_json_encode($cloc);
 	}
 
 	function enjson_loc_by_file ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
@@ -151,7 +151,7 @@ class Graph extends CI_Controller
 			return;
 		}
 
-		$project = $this->projects->get ($projectid);
+		$project = $this->projects->get($projectid);
 		if ($project === FALSE || ($project->public !== 'Y' && $login['id'] == ''))
 		{
 			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
@@ -160,12 +160,12 @@ class Graph extends CI_Controller
 
 		$this->load->model ('SubversionModel', 'subversion');
 
-		$path = $this->converter->HexToAscii ($path);
+		$path = $this->converter->HexToAscii($path);
 		if ($path == '.') $path = ''; /* treat a period specially */
 		$path = $this->_normalize_path ($path);
 
-		$cloc = $cloc = $this->subversion->clocRevByFile ($projectid, $path, $rev);
-		print codepot_json_encode ($cloc);
+		$cloc = $cloc = $this->subversion->clocRevByFile($projectid, $path, $rev);
+		print codepot_json_encode($cloc);
 	}
 
 	function enjson_revision_graph ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
@@ -179,7 +179,7 @@ class Graph extends CI_Controller
 			return;
 		}
 
-		$project = $this->projects->get ($projectid);
+		$project = $this->projects->get($projectid);
 		if ($project === FALSE || ($project->public !== 'Y' && $login['id'] == ''))
 		{
 			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
@@ -188,12 +188,12 @@ class Graph extends CI_Controller
 
 		$this->load->model ('SubversionModel', 'subversion');
 
-		$path = $this->converter->HexToAscii ($path);
+		$path = $this->converter->HexToAscii($path);
 		if ($path == '.') $path = ''; /* treat a period specially */
 		$path = $this->_normalize_path ($path);
 
-		$rg = $this->subversion->revisionGraph ($projectid, $path, $rev);
-		print codepot_json_encode ($rg);
+		$rg = $this->subversion->revisionGraph($projectid, $path, $rev);
+		print codepot_json_encode($rg);
 	}
 
 	function enjson_project_members ($filter = '')
@@ -207,7 +207,7 @@ class Graph extends CI_Controller
 			return;
 		}
 
-		$filter = $this->converter->HexToAscii ($filter);
+		$filter = $this->converter->HexToAscii($filter);
 		$rel = $this->projects->getProjectMembers($filter);
 		print codepot_json_encode($rel);
 	}

@@ -1,5 +1,8 @@
 <?php
 
+// this is a internal utility program to generate Makefile.am files 
+// under the system directory upon codeigniter upgrade.
+
 function gen_dir($basedir, $dir)
 {
 	$curdir = (substr($basedir, -1) == "/")? "$basedir$dir": "$basedir/$dir";
