@@ -65,6 +65,10 @@ class CI_Lang {
 	 */
 	function load($langfile = '', $idiom = '', $return = FALSE, $add_suffix = TRUE, $alt_path = '')
 	{
+		$first = true;
+		$orglangfile = $langfile;
+
+	RETRY:
 		$langfile = str_replace('.php', '', $langfile);
 
 		if ($add_suffix == TRUE)
@@ -108,6 +112,14 @@ class CI_Lang {
 
 			if ($found !== TRUE)
 			{
+				if ($first && $idiom != 'english')
+				{
+					// HYUNG-HWAN: load the english file if the given language is not available
+					$first = false;
+					$idiom = 'english';
+					$langfile = $orglangfile;
+					goto RETRY;
+				}
 				show_error('Unable to load the requested language file: language/'.$idiom.'/'.$langfile);
 			}
 		}

@@ -318,12 +318,7 @@ class CI_Form_validation {
 		}
 
 		// Load the language file containing error messages
-		
-		// HYUNG-HWAN: codepot doesn't ship the other language files for form validation
-		//             let's hard-code it to english
-		//$this->CI->lang->load('form_validation');
-		$this->CI->lang->load('form_validation', 'english'); 
-
+		$this->CI->lang->load('form_validation');
 
 		// Cycle through the rules for each field, match the
 		// corresponding $_POST item and test for errors

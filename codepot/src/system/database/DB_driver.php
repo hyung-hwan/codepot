@@ -154,6 +154,13 @@ class CI_DB_driver {
 			}
 		}
 
+		// HYUNG-HWAN - hack to enable foreign keys support in sqlite
+		if (preg_match("/^sqlite/", $this->dbdriver) || 
+		    ($this->dbdriver == 'pdo' && preg_match("/^sqlite/", $this->hostname)))
+		{
+			$this->_execute('PRAGMA foreign_keys=ON');
+		}
+
 		return TRUE;
 	}
 

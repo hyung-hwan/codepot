@@ -193,7 +193,8 @@ sub toggle_user
 	$dbh->begin_work ();
 
 	my $query = $dbh->prepare("UPDATE ${QC}${prefix}user_account${QC} SET ${QC}enabled${QC}=? WHERE ${QC}userid${QC}=?");
-	if (!$query || !(my $execok = $query->execute($enabled, $userid)) || $query->rows() <= 0)
+	my $execok = undef;
+	if (!$query || !($execok = $query->execute($enabled, $userid)) || $query->rows() <= 0)
 	{
 		my $errstr = $execok? "user not found": $dbh->errstr();
 		$dbh->rollback ();
