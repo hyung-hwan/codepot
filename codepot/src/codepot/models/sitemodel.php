@@ -1,6 +1,6 @@
 <?php
 
-class SiteModel extends Model
+class SiteModel extends CI_Model
 {
 	function __construct ()
 	{

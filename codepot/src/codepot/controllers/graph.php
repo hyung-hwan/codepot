@@ -1,6 +1,6 @@
 <?php
 
-class Graph extends Controller
+class Graph extends CI_Controller
 {
 	var $VIEW_ERROR = 'error';
 	var $VIEW_MAIN = 'graph_main';
@@ -13,7 +13,6 @@ class Graph extends Controller
 		$this->load->library ('Converter', 'converter');
 		$this->load->model (CODEPOT_LOGIN_MODEL, 'login');
 
-		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG); 
 		$this->lang->load ('code', CODEPOT_LANG); 
 	}

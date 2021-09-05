@@ -1,6 +1,6 @@
 <?php
 
-class WikiModel extends Model
+class WikiModel extends CI_Model
 {
 	protected $errmsg = '';
 

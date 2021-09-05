@@ -1,6 +1,6 @@
 <?php
 
-class FileModel extends Model
+class FileModel extends CI_Model
 {
 	protected $errmsg = '';
 

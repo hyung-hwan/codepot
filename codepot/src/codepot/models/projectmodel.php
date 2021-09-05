@@ -3,7 +3,7 @@
 $CI = &get_instance();
 $CI->load->model('SubversionModel');
 
-class ProjectModel extends Model
+class ProjectModel extends CI_Model
 {
 	function __construct ()
 	{

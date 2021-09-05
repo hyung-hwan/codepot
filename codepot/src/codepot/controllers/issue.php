@@ -1,6 +1,6 @@
 <?php
 
-class Issue extends Controller
+class Issue extends CI_Controller
 {
 	var $VIEW_ERROR = 'error';
 	var $VIEW_HOME = 'issue_home';
@@ -15,7 +15,6 @@ class Issue extends Controller
 		$this->load->library ('Converter', 'converter');
 		$this->load->model (CODEPOT_LOGIN_MODEL, 'login');
 
-		$this->load->library ('Language', 'lang');
 		$this->load->library ('IssueHelper', 'issuehelper');
 		$this->lang->load ('common', CODEPOT_LANG);
 		$this->lang->load ('issue', CODEPOT_LANG);

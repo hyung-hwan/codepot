@@ -1,6 +1,6 @@
 <?php
 
-class File extends Controller
+class File extends CI_Controller
 {
 	var $VIEW_ERROR = 'error';
 	var $VIEW_HOME = 'file_home';
@@ -14,7 +14,6 @@ class File extends Controller
 		$this->load->library ('Converter', 'converter');
 		$this->load->model (CODEPOT_LOGIN_MODEL, 'login');
 
-		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG);
 		$this->lang->load ('file', CODEPOT_LANG);
 	}

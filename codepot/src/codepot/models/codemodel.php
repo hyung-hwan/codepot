@@ -1,6 +1,6 @@
 <?php
 
-class CodeModel extends Model
+class CodeModel extends CI_Model
 {
 	protected $errmsg = '';
 

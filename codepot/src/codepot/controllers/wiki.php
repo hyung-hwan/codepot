@@ -1,6 +1,6 @@
 <?php
 
-class Wiki extends Controller
+class Wiki extends CI_Controller
 {
 	var $VIEW_ERROR = 'error';
 	var $VIEW_HOME = 'wiki_home';
@@ -19,7 +19,6 @@ class Wiki extends Controller
 		$this->load->library ('WikiHelper', 'wikihelper');
 		$this->load->model (CODEPOT_LOGIN_MODEL, 'login');
 
-		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG);
 		$this->lang->load ('wiki', CODEPOT_LANG);
 	}

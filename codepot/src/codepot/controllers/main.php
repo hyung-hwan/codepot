@@ -1,6 +1,6 @@
 <?php
 
-class Main extends Controller 
+class Main extends CI_Controller 
 {
 	function __construct ()
 	{
@@ -11,7 +11,6 @@ class Main extends Controller
 		$this->load->library ('Converter', 'converter');
 		$this->load->model (CODEPOT_LOGIN_MODEL, 'login');
 
-		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG);
 	}
 
@@ -35,7 +34,7 @@ class Main extends Controller
 			}
 			else
 			{
-				$settings = $this->users->fetchSettings($user_name);
+				$settings = $this->users->fetchSettings ($user_name);
 				if ($settings !== FALSE) $this->login->setUserSettings ($settings);
 				print 'ok';
 			}

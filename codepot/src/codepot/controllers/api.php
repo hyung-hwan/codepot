@@ -1,6 +1,6 @@
 <?php
 
-class API extends Controller 
+class API extends CI_Controller 
 {
 	function __construct ()
 	{

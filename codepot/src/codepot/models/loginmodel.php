@@ -5,7 +5,7 @@
 //       AuthModel or IdentityModel?
 //
 
-class LoginModel extends Model
+class LoginModel extends CI_Model
 {
 	var $error_message = '';
 

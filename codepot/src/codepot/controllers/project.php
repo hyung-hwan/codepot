@@ -1,6 +1,6 @@
 <?php
 
-class Project extends Controller 
+class Project extends CI_Controller 
 {
 	var $VIEW_ERROR = 'error';
 	var $VIEW_HOME = 'project_home';
@@ -19,7 +19,6 @@ class Project extends Controller
 		$this->load->library ('Converter', 'converter');
 		$this->load->model (CODEPOT_LOGIN_MODEL, 'login');
 
-		$this->load->library ('Language', 'lang');
 		$this->lang->load ('common', CODEPOT_LANG);
 		$this->lang->load ('project', CODEPOT_LANG);
 
