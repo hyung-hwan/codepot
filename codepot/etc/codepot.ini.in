@@ -11,7 +11,25 @@ default_site_name = "@PACKAGE@"
 ;------------------------------------------------------------------------------
 ; database settings
 ;
-; database_driver: mysql, mysqli, postgre, oci8
+; database_driver: pdo, mysql, mysqli, postgre, oci8
+;
+; == PDO mysql ==
+; database_hostname = "mysql:host=localhost;dbname=codepot"
+; database_port = ""
+; database_username = "codepot"
+; database_password = "codepot"
+; database_name = ""
+; database_driver = "pdo"
+; database_prefix = ""
+;
+; == PDO sqlite ==
+; database_hostname = "sqlite:/var/lib/codepot/codepot.sqlite"
+; database_port = ""
+; database_username = ""
+; database_password = ""
+; database_name = ""
+; database_driver = "pdo"
+; database_prefix = ""
 ;
 ; == MySQL ==
 ; database_hostname = "localhost"
