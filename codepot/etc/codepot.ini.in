@@ -11,24 +11,26 @@ default_site_name = "@PACKAGE@"
 ;------------------------------------------------------------------------------
 ; database settings
 ;
-; database_driver: pdo, mysql, mysqli, postgre, oci8
+; database_driver: mysql, mysqli, postgre, oci8, sqlite
 ;
 ; == PDO mysql ==
-; database_hostname = "mysql:host=localhost;dbname=codepot"
+; database_hostname = "localhost"
 ; database_port = ""
 ; database_username = "codepot"
 ; database_password = "codepot"
-; database_name = ""
-; database_driver = "pdo"
+; database_name = "codepot"
+; database_driver = "mysql"
+; database_use_pdo = "yes"
 ; database_prefix = ""
 ;
 ; == PDO sqlite ==
-; database_hostname = "sqlite:/var/lib/codepot/codepot.sqlite"
+; database_hostname = "/var/lib/codepot/codepot.db"
 ; database_port = ""
 ; database_username = ""
 ; database_password = ""
 ; database_name = ""
-; database_driver = "pdo"
+; database_driver = "sqlite"
+; database_use_pdo = "yes"
 ; database_prefix = ""
 ;
 ; == MySQL ==
@@ -38,6 +40,7 @@ default_site_name = "@PACKAGE@"
 ; database_password = "codepot"
 ; database_name = "codepot"
 ; database_driver = "mysql"
+; database_use_pdo = "no"
 ; database_prefix = ""
 ;
 ; == PostgresSQL ==
@@ -47,6 +50,7 @@ default_site_name = "@PACKAGE@"
 ; database_password = "codepot"
 ; database_name = "codepot"
 ; database_driver = "postgre"
+; database_use_pdo = "no"
 ; database_prefix = ""
 ;
 ; == Oracle
@@ -56,6 +60,7 @@ default_site_name = "@PACKAGE@"
 ; database_password = "tiger"
 ; database_name = ""
 ; database_driver = "oci8"
+; database_use_pdo = "no"
 ; database_prefix = "cpot_"
 ;------------------------------------------------------------------------------
 database_hostname = "localhost"
@@ -65,6 +70,7 @@ database_password = ""
 database_name = ""
 database_driver = ""
 database_prefix = ""
+database_use_pdo = "no"
 database_store_gmt = "yes"
 
 ;------------------------------------------------------------------------------

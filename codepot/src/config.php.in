@@ -61,6 +61,7 @@ function load_ini ($file)
 		array ('database_password',            'string',     ''),
 		array ('database_name',                'string',     ''),
 		array ('database_driver',              'string',     ''),
+		array ('database_use_pdo',             'boolean',    FALSE),
 		array ('database_prefix',              'string',     ''),
 		array ('database_store_gmt',           'boolean',    FALSE),
 
@@ -153,6 +154,38 @@ function load_ini ($file)
 			}
 		}
 		else define ($const, $x[2]);
+	}
+
+
+	if (CODEPOT_DATABASE_USE_PDO)
+	{
+		// override the hostname for PDO.
+		// this block isn't perfect as it handles translation for a few well known databases.
+		
+		if (CODEPOT_DATABASE_DRIVER == "sqlite")
+		{
+			$hostname = sprintf("sqlite:%s", CODEPOT_DATABASE_HOSTNAME);
+		}
+		elseif (CODEPOT_DATABASE_DRIVER == "postgre")
+		{
+			$hostname = sprintf("pgsql:host=%s;port=%s;dbname=%s", CODEPOT_DATABASE_HOSTNAME, CODEPOT_DATABASE_PORT, CODEPOT_DATABASE_NAME);
+		}
+		elseif (CODEPOT_DATABASE_DRIVER == "mysqli")
+		{
+			$hostname = sprintf("mysql:host=%s;port=%s;dbname=%s", CODEPOT_DATABASE_HOSTNAME, CODEPOT_DATABASE_PORT, CODEPOT_DATABASE_NAME);
+		}
+		else
+		{
+			$hostname = sprintf("%s:host=%s;port=%s;dbname=%s", CODEPOT_DATABASE_DRIVER, CODEPOT_DATABASE_HOSTNAME, CODEPOT_DATABASE_PORT, CODEPOT_DATABASE_NAME);
+		}
+
+		define('CODEPOT_DATABASE_REAL_HOSTNAME', $hostname);
+		define('CODEPOT_DATABASE_REAL_DRIVER', 'pdo');
+	}
+	else
+	{
+		define('CODEPOT_DATABASE_REAL_HOSTNAME', CODEPOT_DATABASE_HOSTNAME);
+		define('CODEPOT_DATABASE_REAL_DRIVER', CODEPOT_DATABASE_DRIVER);
 	}
 
 	return TRUE;

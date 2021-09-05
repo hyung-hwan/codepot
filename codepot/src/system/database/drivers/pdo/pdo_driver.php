@@ -14,6 +14,78 @@
  * @filesource
  */
 
+// HYUNG-HWAN: 
+//  hack against the CodeIgniter's PDO driver bug.
+//  The main driver calls PDOStatement::fetchAll() multiple times over the same instance.
+//  The method returns the empty result set on the second and later calls.
+//  Create this wrapper to cache the result on the first call and return the stored result on later calls.
+class CI_DB_pdo_statement_wrapper
+{
+	private $actual_pdo_statement;
+	private $ever_fetched = false;
+	private $stored_result;
+	private $cursor = -1;
+
+	public function __construct ($pdo_statement)
+	{
+		$this->actual_pdo_statement = $pdo_statement;
+		$this->ever_fetched = false;
+		$this->cursor = 0;
+	}
+
+	public function fetchAll ()
+	{
+		if (!$this->ever_fetched) 
+		{
+			$this->ever_fetched = true;
+			$this->stored_result = $this->actual_pdo_statement->fetchAll(PDO::FETCH_ASSOC);
+		}
+
+		return $this->stored_result;
+	}
+
+	public function fetchObject()
+	{
+		if ($this->ever_fetched)
+		{
+			if ($this->cursor >= count($this->stored_result)) return false;
+			$row = $this->stored_result[$this->cursor];
+			$this->cursor++;
+
+			$obj = new stdClass();
+			foreach ($row as $k => $v) 
+			{
+				//if (!is_numeric($k)) $obj->$k = $row[$k];
+				$obj->$k = $row[$k];
+			}
+
+			return $obj;
+		}
+
+		return $this->actual_pdo_statement->fetchObject();
+	}
+
+	public function fetchAssoc ()
+	{
+		if ($this->ever_fetched)
+		{
+			if ($this->cursor >= count($this->stored_result)) return false;
+			$tmp = $this->stored_result[$this->cursor];
+			$this->cursor++;
+			return $tmp;
+		}
+
+		return $this->actual_pdo_statement->fetch(PDO::FETCH_ASSOC);
+	}
+
+
+	public function __call ($method_name, $arguments) 
+	{
+		$callable = [$this->actual_pdo_statement, $method_name];
+		return call_user_func_array($callable, $arguments);
+	}
+};
+
 // ------------------------------------------------------------------------
 
 /**
@@ -190,7 +262,7 @@ class CI_DB_pdo_driver extends CI_DB {
 	function _execute($sql)
 	{
 		$sql = $this->_prep_query($sql);
-		$result_id = $this->conn_id->prepare($sql);
+		$result_id = new CI_DB_pdo_statement_wrapper($this->conn_id->prepare($sql));
 
 		if (is_object($result_id) && $result_id->execute())
 		{

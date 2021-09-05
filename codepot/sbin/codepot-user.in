@@ -24,13 +24,13 @@ sub get_config
 	}
 
 	my $config = {
-		database_hostname => $cfg->param ("database_hostname"),
-		database_port => $cfg->param ("database_port"),
-		database_username => $cfg->param ("database_username"),
-		database_password => $cfg->param ("database_password"),
-		database_name => $cfg->param ("database_name"),
-		database_driver => $cfg->param ("database_driver"),
-		database_prefix => $cfg->param ("database_prefix"),
+		database_hostname => $cfg->param("database_hostname"),
+		database_port => $cfg->param("database_port"),
+		database_username => $cfg->param("database_username"),
+		database_password => $cfg->param("database_password"),
+		database_name => $cfg->param("database_name"),
+		database_driver => $cfg->param("database_driver"),
+		database_prefix => $cfg->param("database_prefix"),
 
 		codepot_user_executor => $cfg->param("codepot_user_executor")
 	};

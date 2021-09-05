@@ -37,12 +37,12 @@
 $active_group = "default";
 $active_record = TRUE;
 
-$db['default']['hostname'] = CODEPOT_DATABASE_HOSTNAME;
+$db['default']['hostname'] = CODEPOT_DATABASE_REAL_HOSTNAME;
 $db['default']['port']     = CODEPOT_DATABASE_PORT;
 $db['default']['username'] = CODEPOT_DATABASE_USERNAME;
 $db['default']['password'] = CODEPOT_DATABASE_PASSWORD;
 $db['default']['database'] = CODEPOT_DATABASE_NAME;
-$db['default']['dbdriver'] = CODEPOT_DATABASE_DRIVER;
+$db['default']['dbdriver'] = CODEPOT_DATABASE_REAL_DRIVER;
 $db['default']['dbprefix'] = CODEPOT_DATABASE_PREFIX;
 $db['default']['pconnect'] = FALSE;
 $db['default']['db_debug'] = FALSE;

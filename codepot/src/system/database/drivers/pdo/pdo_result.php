@@ -159,7 +159,8 @@ class CI_DB_pdo_result extends CI_DB_result {
 	 */
 	function _fetch_assoc()
 	{
-		return $this->result_id->fetch(PDO::FETCH_ASSOC);
+		//return $this->result_id->fetch(PDO::FETCH_ASSOC);
+		return $this->result_id->fetchAssoc();  // HYUNG-HWAN: available in CI_DB_pdo_statement_wrapper only 
 	}
 
 	// --------------------------------------------------------------------

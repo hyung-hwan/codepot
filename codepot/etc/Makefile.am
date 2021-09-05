@@ -1,6 +1,6 @@
 
 cfgdir=$(CFGDIR)
-cfg_DATA = codepot.ini codepot.mysql codepot.pgsql codepot.a2ldap codepot.httpd
+cfg_DATA = codepot.ini codepot.mysql codepot.pgsql codepot.sqlite codepot.a2ldap codepot.httpd
 cfg_SCRIPTS = start-commit pre-commit post-commit pre-revprop-change post-revprop-change cloc.pl
 
 perldir=$(CFGDIR)/perl/Codepot
