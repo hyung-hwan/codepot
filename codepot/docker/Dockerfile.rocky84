@@ -7,7 +7,7 @@ RUN dnf install -y epel-release
 RUN dnf install -y \
 	subversion subversion-perl \
 	httpd php php-mysqli php-gd php-pdo \
-	perl-Digest-SHA \
+	perl-Digest-SHA perl-Config-Simple \
 	perl-DBD-MySQL perl-DBD-SQLite perl-LDAP \
 	mod_dav_svn mod_perl diffutils sqlite
 
