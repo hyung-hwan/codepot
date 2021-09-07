@@ -49,7 +49,14 @@ mkdir -p /var/cache/codepot /var/log/codepot
 chown -R www-data:www-data /var/lib/codepot /var/cache/codepot /var/log/codepot
 
 [ ! -f /var/lib/codepot/codepot.ini ] && cp -pf /etc/codepot/codepot.ini /var/lib/codepot/codepot.ini
-export CODEPOT_CONFIG_FILE=/var/lib/codepot/codepot.ini
+
+grep -F -q  '<Location "/codepot">' /etc/apache2/conf-enabled/codepot.conf || {
+        cat <<EOF >> /etc/apache2/conf-enabled/codepot.conf
+<Location "/codepot">
+        SetEnv CODEPOT_CONFIG_FILE /var/lib/codepot/codepot.ini
+</Location>
+EOF
+}
 
 #httpd server in the foreground
 exec apache2 -DFOREGROUND "$@"
