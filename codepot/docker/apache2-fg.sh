@@ -37,5 +37,16 @@ for e in "${!APACHE_@}"; do
 	fi
 done
 
-# start the mysql service and run the httpd server in the foreground
-service mysql start && sleep 2 && exec apache2 -DFOREGROUND "$@"
+[ ! -d /var/lib/codepot/attachments ] && mkdir -p /var/lib/codepot/attachments
+[ ! -d /var/lib/codepot/files ] && mkdir -p /var/lib/codepot/files
+[ ! -d /var/lib/codepot/issuefiles ] && mkdir -p /var/lib/codepot/issuefiles
+[ ! -d /var/lib/codepot/svnrepo ] && mkdir -p /var/lib/codepot/svnrepo
+[ ! -d /var/lib/codepot/usericons ] && mkdir -p /var/lib/codepot/usericons
+[ ! -f /var/lib/codepot/codepot.db ] && sqlite3 -init /etc/codepot/codepot.sqlite /var/lib/codepot/codepot.db ""
+
+mkdir -p /var/cache/codepot /var/log/codepot
+chown -R www-data:www-data /var/lib/codepot /var/cache/codepot /var/log/codepot
+
+
+#httpd server in the foreground
+exec apache2 -DFOREGROUND "$@"
