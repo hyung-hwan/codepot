@@ -69,8 +69,8 @@ database_username = ""
 database_password = ""
 database_name = ""
 database_driver = ""
-database_prefix = ""
 database_use_pdo = "no"
+database_prefix = ""
 database_store_gmt = "yes"
 
 ;------------------------------------------------------------------------------

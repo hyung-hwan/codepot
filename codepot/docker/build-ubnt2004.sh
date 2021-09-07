@@ -1,13 +1,14 @@
 cd /tmp 
 
-apt-get update && 
-DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-	subversion mariadb-server mariadb-client apache2 \
-	php libapache2-mod-php php-mysql php-gd \
-	libapache2-mod-perl2 libapache2-mod-svn \
-	libswitch-perl libconfig-simple-perl libdigest-sha-perl \
-	libdbd-mysql-perl libdbd-sqlite3-perl libnet-ldap-perl libsvn-perl libmail-sendmail-perl \
-	php-dev libsvn-dev make 
+#apt update && 
+#DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+#	subversion mariadb-server mariadb-client apache2 \
+#	php libapache2-mod-php php-gd php-sqlite3 \
+#	libapache2-mod-perl2 libapache2-mod-svn \
+#	libswitch-perl libconfig-simple-perl libdigest-sha-perl \
+#	libdbd-sqlite3-perl libnet-ldap-perl libsvn-perl libmail-sendmail-perl \
+#	sqlite3 php-dev libsvn-dev make vim
+
 
 svn co http://code.miflux.com/svn/codepot/trunk/codepot && \
 cd codepot && \
@@ -25,17 +26,11 @@ cd codepot && \
 make && make install && \
 mkdir -p /var/lib/codepot/svnrepo /var/lib/codepot/files && \
 mkdir -p /var/cache/codepot /var/log/codepot && \
+sqlite3 -init /etc/codepot/codepot.sqlite /var/lib/codepot/codepot.db "" && \
 chown -R www-data:www-data /var/lib/codepot /var/cache/codepot /var/log/codepot && \
-service mysql start && sleep 5 && \
-mysql -e 'create database codepot' && \
-mysql -e 'source /etc/codepot/codepot.mysql' codepot && \
-mysql -e 'create user "codepot"@"localhost" identified by "codepot"' && \
-mysql -e 'grant all privileges on codepot.* to "codepot"@"localhost"' && \
-sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*""$|database_hostname = "localhost"|g' \
-        -e 's|^database_username[[:space:]]*=[[:space:]]*""$|database_username = "codepot"|g' \
-        -e 's|^database_password[[:space:]]*=[[:space:]]*""$|database_password = "codepot"|g' \
-        -e 's|^database_name[[:space:]]*=[[:space:]]*""$|database_name = "codepot"|g' \
-        -e 's|^database_driver[[:space:]]*=[[:space:]]*""$|database_driver = "mysqli"|g' /etc/codepot/codepot.ini &&  \
+sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*"localhost"$|database_hostname = "/var/lib/codepot/codepot.db"|g' \
+        -e 's|^database_driver[[:space:]]*=[[:space:]]*""$|database_driver = "sqlite"|g' \
+        -e 's|^database_use_pdo[[:space:]]*=[[:space:]]*"no"$|database_use_pdo = "yes"|g' /etc/codepot/codepot.ini &&  \
 sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /usr/sbin/codepot-user && \
 sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /etc/codepot/perl/Codepot/AccessHandler.pm && \
 install -m 0755 -D -t /usr/sbin docker/apache2-fg.sh && \
@@ -57,7 +52,7 @@ cat <<EOF > /var/www/html/index.html
 </html>
 EOF
 
-apt-get remove --purge -y --allow-remove-essential php-dev libsvn-dev make libfdisk1 && \
-apt-get autoremove --purge -y && rm -rf /var/lib/apt/lists/*
+apt remove --purge -y --allow-remove-essential php-dev libsvn-dev make libfdisk1 && \
+apt autoremove --purge -y && rm -rf /var/lib/apt/lists/*
 
 rm -rf /root/.subversion
