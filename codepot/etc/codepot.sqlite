@@ -1,0 +1,275 @@
+-- ---------------------------------------------------------
+-- This file is the Codepot database schema file for SQLITE.
+-- ---------------------------------------------------------
+PRAGMA journal_mode=WAL;
+PRAGMA foreign_keys=ON;
+
+CREATE TABLE site (
+	id          VARCHAR(32)  PRIMARY KEY,
+	name        VARCHAR(128) NOT NULL,
+	summary     VARCHAR(255) NOT NULL,
+	text        TEXT         NOT NULL,
+
+	createdon   DATETIME     NOT NULL,
+	updatedon   DATETIME     NOT NULL,
+	createdby   VARCHAR(32)  NOT NULL,
+	updatedby   VARCHAR(32)  NOT NULL
+);
+
+CREATE TABLE project (
+	id             VARCHAR(32)  PRIMARY KEY,
+	name           VARCHAR(255) UNIQUE NOT NULL,
+	summary        VARCHAR(255) NOT NULL,
+	description    TEXT         NOT NULL,
+	commitable     CHAR(1)      NOT NULL DEFAULT 'Y',
+	public         CHAR(1)      NOT NULL DEFAULT 'Y',
+	codecharset    VARCHAR(32),
+
+	createdon      DATETIME     NOT NULL,
+	updatedon      DATETIME     NOT NULL,
+	createdby      VARCHAR(32)  NOT NULL,
+	updatedby      VARCHAR(32)  NOT NULL
+
+);
+
+CREATE TABLE project_membership (
+	projectid VARCHAR(32) NOT NULL,
+	userid    VARCHAR(32) NOT NULL,
+	priority  INTEGER     NOT NULL,
+
+	CONSTRAINT membership_projectid FOREIGN KEY (projectid) REFERENCES project(id) 
+		ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE UNIQUE INDEX project_membership_index_1 on project_membership(projectid, userid);
+CREATE INDEX project_membership_index_2 on project_membership(userid);
+CREATE INDEX project_membership_index_3 on project_membership(projectid);
+
+CREATE TABLE wiki (
+	projectid  VARCHAR(32)   NOT NULL,
+	name       VARCHAR(255)  NOT NULL,
+	text       TEXT          NOT NULL,
+	doctype    CHAR(1)       NOT NULL DEFAULT 'C',
+	columns    INT           NOT NULL DEFAULT 1,
+
+	createdon  DATETIME      NOT NULL,
+	updatedon  DATETIME      NOT NULL,
+	createdby  VARCHAR(32)   NOT NULL,
+	updatedby  VARCHAR(32)   NOT NULL,
+
+	CONSTRAINT wiki_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+);
+CREATE UNIQUE INDEX wiki_index on wiki(projectid, name);
+
+CREATE TABLE wiki_attachment (
+	projectid  VARCHAR(32)   NOT NULL,
+	wikiname   VARCHAR(255)  NOT NULL,
+	name       VARCHAR(255)  NOT NULL,
+	encname    VARCHAR(255)  NOT NULL,
+
+	createdon  DATETIME      NOT NULL,
+	createdby  VARCHAR(32)   NOT NULL,
+
+	CONSTRAINT wiki_attachment_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+
+	CONSTRAINT wiki_attachment_wikiid FOREIGN KEY (projectid,wikiname) REFERENCES wiki(projectid,name)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+);
+CREATE UNIQUE INDEX wiki_attachment_index_1 on wiki_attachment(projectid, wikiname, name);
+
+CREATE TABLE issue (
+	projectid     VARCHAR(32)   NOT NULL,
+	id            BIGINT        NOT NULL,
+	summary       VARCHAR(255)  NOT NULL,
+	description   TEXT          NOT NULL,
+
+	type          VARCHAR(32)   NOT NULL,
+	status        VARCHAR(32)   NOT NULL,
+	owner         VARCHAR(255)  NOT NULL,
+	priority      VARCHAR(32)   NOT NULL,
+
+	createdon     DATETIME      NOT NULL,
+	updatedon     DATETIME      NOT NULL,
+	createdby     VARCHAR(32)   NOT NULL,
+	updatedby     VARCHAR(32)   NOT NULL,
+
+	PRIMARY KEY (projectid, id),
+
+	CONSTRAINT issue_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+);
+CREATE INDEX issue_index_1 ON issue(projectid, status, type, summary);
+CREATE INDEX issue_index_2 ON issue(projectid, summary);
+
+CREATE TABLE issue_file_list (
+	projectid   VARCHAR(32)   NOT NULL,
+	issueid     BIGINT        NOT NULL,
+	filename    VARCHAR(255)  NOT NULL,
+	encname     VARCHAR(255)  NOT NULL,
+	md5sum      CHAR(32)      NOT NULL,
+	description VARCHAR(255)  NOT NULL,
+
+	createdon   DATETIME      NOT NULL,
+	updatedon   DATETIME      NOT NULL,
+	createdby   VARCHAR(32)   NOT NULL,
+	updatedby   VARCHAR(32)   NOT NULL,
+
+	CONSTRAINT issue_file_list_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+
+	CONSTRAINT issue_file_list_issueid FOREIGN KEY (projectid,issueid) REFERENCES issue(projectid,id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+);
+CREATE UNIQUE INDEX issue_file_list_index_1 on issue_file_list(projectid, issueid, filename);
+CREATE UNIQUE INDEX issue_file_list_index_2 on issue_file_list(encname);
+
+CREATE TABLE issue_change (
+	projectid    VARCHAR(32)  NOT NULL,
+	id           BIGINT       NOT NULL,
+	sno          BIGINT       NOT NULL,
+
+	type         VARCHAR(32)  NOT NULL,
+	status       VARCHAR(32)  NOT NULL,
+	owner        VARCHAR(255) NOT NULL,
+	priority     VARCHAR(32)  NOT NULL,
+	comment      TEXT         NOT NULL,
+
+	createdon    DATETIME     NOT NULL,
+	updatedon    DATETIME     NOT NULL,
+	createdby    VARCHAR(32)  NOT NULL,
+	updatedby    VARCHAR(32)  NOT NULL,
+
+	PRIMARY KEY (projectid, id, sno),
+
+	CONSTRAINT issue_change_id FOREIGN KEY (projectid,id) REFERENCES issue(projectid,id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+
+);
+CREATE INDEX issue_change_index_1 ON issue_change(projectid, id, updatedon);
+
+CREATE TABLE issue_change_file_list (
+	projectid  VARCHAR(32)   NOT NULL,
+	issueid    BIGINT        NOT NULL,
+	issuesno   BIGINT        NOT NULL,
+	filename   VARCHAR(255)  NOT NULL,
+	encname    VARCHAR(255)  NOT NULL,
+
+	createdon  DATETIME      NOT NULL,
+	updatedon  DATETIME      NOT NULL,
+	createdby  VARCHAR(32)   NOT NULL,
+	updatedby  VARCHAR(32)   NOT NULL,
+
+	CONSTRAINT issue_change_file_list_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+
+	CONSTRAINT issue_change_file_list_issueidsno FOREIGN KEY (projectid,issueid,issuesno) REFERENCES issue_change(projectid,id,sno)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+);
+CREATE UNIQUE INDEX issue_change_file_list_index_1 on issue_change_file_list(projectid, issueid, filename);
+
+CREATE TABLE issue_coderev (
+	projectid  VARCHAR(32)   NOT NULL,
+	issueid    BIGINT        NOT NULL,
+
+	codeproid  VARCHAR(32)   NOT NULL,
+	coderev    VARCHAR(64)   NOT NULL, -- git commit id is 40 characters. subversion revision is a number.
+
+	CONSTRAINT issue_coderev_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+
+	CONSTRAINT issue_coderev_codeproid FOREIGN KEY (codeproid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+
+	-- Commit message is typically a free text. Its issue reference could be error-prone.
+	-- So i won't have this constraint enforced.
+	-- CONSTRAINT issue_coderev_issueid FOREIGN KEY (projectid,issueid) REFERENCES issue(projectid,id)
+	--	ON DELETE RESTRICT ON UPDATE CASCADE
+
+);
+CREATE UNIQUE INDEX issue_coderev_index_1 ON issue_coderev(projectid, issueid, codeproid, coderev);
+CREATE INDEX issue_coderev_index_2 ON issue_coderev(codeproid, coderev);
+CREATE INDEX issue_coderev_index_3 ON issue_coderev(projectid, issueid);
+
+CREATE TABLE file (
+	projectid   VARCHAR(32)   NOT NULL,
+	name        VARCHAR(255)  NOT NULL,
+	tag         VARCHAR(54)   NOT NULL,
+	description TEXT          NOT NULL,
+
+	createdon   DATETIME      NOT NULL,
+	updatedon   DATETIME      NOT NULL, 
+	createdby   VARCHAR(32)   NOT NULL,
+	updatedby   VARCHAR(32)   NOT NULL,
+
+	CONSTRAINT file_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+);
+CREATE UNIQUE INDEX file_index_1 ON file(projectid, name);
+CREATE INDEX file_index_2 ON file(projectid, tag, name);
+
+CREATE TABLE file_list (
+	projectid   VARCHAR(32)   NOT NULL,
+	name        VARCHAR(255)  NOT NULL,
+	filename    VARCHAR(255)  NOT NULL,
+	encname     VARCHAR(255)  NOT NULL,
+	md5sum      CHAR(32)      NOT NULL,
+	description VARCHAR(255)  NOT NULL,
+
+	createdon   DATETIME      NOT NULL,
+	updatedon   DATETIME      NOT NULL, 
+	createdby   VARCHAR(32)   NOT NULL,
+	updatedby   VARCHAR(32)   NOT NULL,
+
+	CONSTRAINT file_list_projectid FOREIGN KEY (projectid,name) REFERENCES file(projectid,name)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+);
+CREATE INDEX file_list_index_1 ON file_list(projectid, name);
+CREATE UNIQUE INDEX file_list_index_2 ON file_list(projectid, filename);
+CREATE UNIQUE INDEX file_list_index_3 ON file_list(encname);
+
+CREATE TABLE code_review (
+	projectid    VARCHAR(32)   NOT NULL,
+	rev          BIGINT        NOT NULL,
+	sno          BIGINT        NOT NULL,
+	comment      TEXT          NOT NULL,
+
+	createdon    DATETIME      NOT NULL,
+	createdby    VARCHAR(32)   NOT NULL,
+
+	updatedon    DATETIME      NOT NULL,
+	updatedby    VARCHAR(32)   NOT NULL,
+
+
+	CONSTRAINT code_review_projectid FOREIGN KEY (projectid) REFERENCES project(id)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+);
+CREATE UNIQUE INDEX code_review_index_1 ON code_review(projectid, rev, sno);
+
+CREATE TABLE log  (
+	id         BIGINT PRIMARY KEY,
+	projectid  VARCHAR(32)  NOT NULL,
+	type       VARCHAR(16)  NOT NULL,
+	action     VARCHAR(16)  NOT NULL,
+	userid     VARCHAR(32)  NOT NULL,
+	message    TEXT         NOT NULL,
+	createdon  DATETIME     NOT NULL
+);
+CREATE INDEX log_index_1 ON log(createdon, projectid, type, action);
+
+CREATE TABLE user_settings (
+	userid              VARCHAR(32) PRIMARY KEY,
+	code_hide_line_num  CHAR(1) NOT NULL,
+	code_hide_metadata  CHAR(1) NOT NULL,
+	icon_name           VARCHAR(255) UNIQUE NULL,
+	user_summary        VARCHAR(255) NULL
+);
+
+CREATE TABLE user_account (
+	userid     VARCHAR(32)  PRIMARY KEY,
+	passwd     VARCHAR(255) NOT NULL,
+	email      VARCHAR(255),
+	enabled    CHAR(1)      NOT NULL DEFAULT 'N' CHECK(enabled in ('Y', 'N'))
+);
+
