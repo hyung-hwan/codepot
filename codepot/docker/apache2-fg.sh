@@ -37,6 +37,7 @@ for e in "${!APACHE_@}"; do
 	fi
 done
 
+
 [ ! -d /var/lib/codepot/attachments ] && mkdir -p /var/lib/codepot/attachments
 [ ! -d /var/lib/codepot/files ] && mkdir -p /var/lib/codepot/files
 [ ! -d /var/lib/codepot/issuefiles ] && mkdir -p /var/lib/codepot/issuefiles
@@ -47,6 +48,8 @@ done
 mkdir -p /var/cache/codepot /var/log/codepot
 chown -R www-data:www-data /var/lib/codepot /var/cache/codepot /var/log/codepot
 
+[ ! -f /var/lib/codepot/codepot.ini ] && cp -pf /etc/codepot/codepot.ini /var/lib/codepot/codepot.ini
+export CODEPOT_CONFIG_FILE=/var/lib/codepot/codepot.ini
 
 #httpd server in the foreground
 exec apache2 -DFOREGROUND "$@"

@@ -2,7 +2,7 @@ cd /tmp
 
 #apt update && 
 #DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
-#	subversion mariadb-server mariadb-client apache2 \
+#	subversion apache2 \
 #	php libapache2-mod-php php-gd php-sqlite3 \
 #	libapache2-mod-perl2 libapache2-mod-svn \
 #	libswitch-perl libconfig-simple-perl libdigest-sha-perl \
@@ -23,7 +23,7 @@ cd codepot && \
 	--with-cachedir=/var/cache/codepot \
 	--with-phpextdir=`php-config --extension-dir` \
 	--with-phpextinidir=`php-config --ini-dir | sed 's|/cli/|/apache2/|g'` && \
-make && make install && \
+make && make install && rm -rf /var/lib/codepot/* && \
 sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*"localhost"$|database_hostname = "/var/lib/codepot/codepot.db"|g' \
         -e 's|^database_driver[[:space:]]*=[[:space:]]*""$|database_driver = "sqlite"|g' \
         -e 's|^database_use_pdo[[:space:]]*=[[:space:]]*"no"$|database_use_pdo = "yes"|g' /etc/codepot/codepot.ini &&  \
