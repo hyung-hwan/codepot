@@ -1,15 +1,5 @@
 cd /tmp 
 
-#apt update && 
-#DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
-#	subversion apache2 \
-#	php libapache2-mod-php php-gd php-sqlite3 \
-#	libapache2-mod-perl2 libapache2-mod-svn \
-#	libswitch-perl libconfig-simple-perl libdigest-sha-perl \
-#	libdbd-sqlite3-perl libnet-ldap-perl libsvn-perl libmail-sendmail-perl \
-#	sqlite3 php-dev libsvn-dev make vim
-
-
 svn co http://code.miflux.com/svn/codepot/trunk/codepot && \
 cd codepot && \
 ./configure \

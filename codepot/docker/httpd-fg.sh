@@ -37,8 +37,26 @@ for e in "${!APACHE_@}"; do
 	fi
 done
 
-# start the mysql service and run the httpd server in the foreground
-/usr/bin/mysqld_safe --datadir='/var/lib/mysql' &
+
+[ ! -d /var/lib/codepot/attachments ] && mkdir -p /var/lib/codepot/attachments
+[ ! -d /var/lib/codepot/files ] && mkdir -p /var/lib/codepot/files
+[ ! -d /var/lib/codepot/issuefiles ] && mkdir -p /var/lib/codepot/issuefiles
+[ ! -d /var/lib/codepot/svnrepo ] && mkdir -p /var/lib/codepot/svnrepo
+[ ! -d /var/lib/codepot/usericons ] && mkdir -p /var/lib/codepot/usericons
+[ ! -f /var/lib/codepot/codepot.db ] && sqlite3 -init /etc/codepot/codepot.sqlite /var/lib/codepot/codepot.db ""
+
+mkdir -p /var/cache/codepot /var/log/codepot
+chown -R apache:apache /var/lib/codepot /var/cache/codepot /var/log/codepot
+
+[ ! -f /var/lib/codepot/codepot.ini ] && cp -pf /etc/codepot/codepot.ini /var/lib/codepot/codepot.ini
+
+#grep -F -q  '<Location "/codepot">' /etc/httpd/conf-enabled/codepot.conf || {
+#        cat <<EOF >> /etc/httpd/conf-enabled/codepot.conf
+#<Location "/codepot">
+#        SetEnv CODEPOT_CONFIG_FILE /var/lib/codepot/codepot.ini
+#</Location>
+#EOF
+#}
+
 php-fpm
-sleep 2
 exec httpd -DFOREGROUND "$@"

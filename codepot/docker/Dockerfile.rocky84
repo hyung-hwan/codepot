@@ -1,5 +1,18 @@
 FROM rockylinux/rockylinux:latest
 
+
+## epel-release for mod_perl
+RUN dnf install -y epel-release
+
+RUN dnf install -y \
+	subversion subversion-perl \
+	httpd php php-mysqli php-gd php-pdo \
+	perl-Digest-SHA \
+	perl-DBD-MySQL perl-DBD-SQLite perl-LDAP \
+	mod_dav_svn mod_perl diffutils sqlite3
+
+RUN dnf install -y php-devel subversion-devel perl-devel make 
+
 COPY build-rocky84.sh /tmp
 RUN /tmp/build-rocky84.sh && rm -rf /tmp/*
 
