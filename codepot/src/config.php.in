@@ -192,10 +192,13 @@ function load_ini ($file)
 }
 
 $codepot_ini_file = CODEPOT_CFG_DIR.'/codepot.ini';
-if (function_exists('apache_getenv'))
+$tmp = getenv('CODEPOT_CONFIG_FILE');
+if ($tmp != '') $codepot_ini_file = $tmp;
+elseif (function_exists('apache_getenv'))
 {
 	$tmp = apache_getenv('CODEPOT_CONFIG_FILE');
 	if ($tmp != '') $codepot_ini_file = $tmp;
 }
 load_ini ($codepot_ini_file);
+
 ?>

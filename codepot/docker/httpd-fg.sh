@@ -50,13 +50,9 @@ chown -R apache:apache /var/lib/codepot /var/cache/codepot /var/log/codepot
 
 [ ! -f /var/lib/codepot/codepot.ini ] && cp -pf /etc/codepot/codepot.ini /var/lib/codepot/codepot.ini
 
-#grep -F -q  '<Location "/codepot">' /etc/httpd/conf-enabled/codepot.conf || {
-#        cat <<EOF >> /etc/httpd/conf-enabled/codepot.conf
-#<Location "/codepot">
-#        SetEnv CODEPOT_CONFIG_FILE /var/lib/codepot/codepot.ini
-#</Location>
-#EOF
-#}
+grep -F -q 'env[CODEPOT_CONFIG_FILE]' /etc/php-fpm.d/www.conf || {
+	echo 'env[CODEPOT_CONFIG_FILE] = /var/lib/codepot/codepot.ini' >> /etc/php-fpm.d/www.conf
+}
 
 php-fpm
 exec httpd -DFOREGROUND "$@"

@@ -9,7 +9,7 @@ RUN dnf install -y \
 	httpd php php-mysqli php-gd php-pdo \
 	perl-Digest-SHA \
 	perl-DBD-MySQL perl-DBD-SQLite perl-LDAP \
-	mod_dav_svn mod_perl diffutils sqlite3
+	mod_dav_svn mod_perl diffutils sqlite
 
 RUN dnf install -y php-devel subversion-devel perl-devel make 
 
