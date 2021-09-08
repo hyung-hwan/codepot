@@ -1,6 +1,7 @@
 If you require the root privilege to build a docker image, specify sudo in DOCKER.
 ```
 make rocky8 DOCKER="sudo docker"
+make ubnt20.04 DOCKER="sudo docker"
 ```
 
 Run the service like
