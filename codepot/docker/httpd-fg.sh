@@ -1,8 +1,12 @@
 #!/bin/bash
 set -e
 
-HTTPS_REDIRECTED=""
+CODEPOT_CONFIG_FILE="/var/lib/codepot/codepot.ini"
+HTTPD_CONFIG_FILE="/etc/httpd/conf/httpd.conf"
+
 SERVICE_PORT=""
+HIDE_INDEX_PAGE=""
+HTTPS_REDIRECTED=""
 while getopts ":hp:-:" oc
 do
 	case "${oc}" in
@@ -15,6 +19,17 @@ do
 			;;
 		port=*)
 			SERVICE_PORT=${OPTARG#*=}
+                    	opt=${OPTARG%=$val}
+			;;
+
+		hide-index-page)
+			opt=${OPTARG}
+			HIDE_INDEX_PAGE="${!OPTIND}"
+			OPTIND=$(($OPTIND + 1))
+			;;
+
+		hide-index-page=*)
+			HIDE_INDEX_PAGE=${OPTARG#*=}
                     	opt=${OPTARG%=$val}
 			;;
 
@@ -44,6 +59,7 @@ do
 		echo " -h                         print this help message"
 		echo " -p                number   specify the port number"
 		echo " -port             number   specify the port number"
+		echo " -hide-index-page  yes/no   hide/show the index page script from the URL"
 		echo " -https-redirected yes/no   indicate if the requets are HTTPS redirected"
 		echo "-------------------------------------------------------------------------"
 		;;
@@ -60,8 +76,8 @@ done
 
 ## fall back to default values if the given values are not proper
 echo "${SERVICE_PORT}" | grep -q -E '^[[:digit:]]+$' || SERVICE_PORT="80"
+[[ "${HIDE_INDEX_PAGE}" == "" ]] && HIDE_INDEX_PAGE="no"
 [[ "${HTTPS_REDIRECTED}" == "" ]] && HTTPS_REDIRECTED="no"
-
 
 # Note: we don't just use "apache2ctl" here because it itself is just a shell-script wrapper around apache2 which provides extra functionality like "apache2ctl start" for launching apache2 in the background.
 # (also, when run as "apache2ctl <apache args>", it does not use "exec", which leaves an undesirable resident shell process)
@@ -110,15 +126,16 @@ done
 mkdir -p /var/cache/codepot /var/log/codepot
 chown -R apache:apache /var/lib/codepot /var/cache/codepot /var/log/codepot
 
-[ ! -f /var/lib/codepot/codepot.ini ] && cp -pf /etc/codepot/codepot.ini /var/lib/codepot/codepot.ini
+[ ! -f "${CODEPOT_CONFIG_FILE}" ] && cp -pf /etc/codepot/codepot.ini "${CODEPOT_CONFIG_FILE}"
 
 grep -F -q 'env[CODEPOT_CONFIG_FILE]' /etc/php-fpm.d/www.conf || {
-	echo 'env[CODEPOT_CONFIG_FILE] = /var/lib/codepot/codepot.ini' >> /etc/php-fpm.d/www.conf
+	echo "env[CODEPOT_CONFIG_FILE] = ${CODEPOT_CONFIG_FILE}" >> /etc/php-fpm.d/www.conf
 }
 
 ## change the port number as specified on the command line
-echo "Configuring to listen on the port[$SERVICE_PORT] https-redirected[$HTTPS_REDIRECTED]"
-sed -r -i "s|^Listen[[:space:]]+.*|Listen ${SERVICE_PORT}|g" /etc/httpd/conf/httpd.conf
+echo "Configuring to listen on the port[$SERVICE_PORT] hide-index-page[$HIDE_INDEX_PAGE] https-redirected[$HTTPS_REDIRECTED]"
+
+sed -r -i "s|^Listen[[:space:]]+.*|Listen ${SERVICE_PORT}|g" "${HTTPD_CONFIG_FILE}"
 
 if [[ "${HTTPS_REDIRECTED}" =~ [Yy][Ee][Ss] ]]
 then
@@ -129,6 +146,25 @@ then
 	echo "RequestHeader edit Destination ^https: http: early" > /etc/httpd/conf.d/codepot-dav-https-redirected.conf
 else
 	rm -f /etc/httpd/conf.d/codepot-dav-https-redirected.conf
+fi
+
+if [[ "${HIDE_INDEX_PAGE}" =~ [Yy][Ee][Ss] ]]
+then
+	sed -r -i 's|^index_page[[:space:]]*=.*$|index_page=""|g' "${CODEPOT_CONFIG_FILE}"
+	cat <<EOF > /var/www/html/.htaccess
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L]
+EOF
+	sed -r -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/s|^[[:space:]]*AllowOverride[[:space:]]+.*$|    AllowOverride All|g' "${HTTPD_CONFIG_FILE}"
+
+else
+	sed -r -i 's|^index_page[[:space:]]*=.*$|index_page="index.php"|g' "${CODEPOT_CONFIG_FILE}"
+	rm -rf /var/www/html/.htaccess
+
+	sed -r -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/s|^[[:space:]]*AllowOverride[[:space:]]+.*$|    AllowOverride None|g' "${HTTPD_CONFIG_FILE}"
 fi
 
 php-fpm
