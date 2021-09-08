@@ -318,7 +318,7 @@ This software contains the following third-party components.
 ------------------------------------------------------------------------
 Name                                         License
 ------------------------------------------------------------------------
-CodeIgniter 1.7.2                            See src/system/license.txt
+CodeIgniter 2.2.6                            See src/system/license.txt
 Google code prettify                         Apache License 2.0
 JavaScript Creole 1.0 Wiki Markup Parser     See src/js/creole.js
 jQuery JavaScript Library v1.11.2            MIT See http://jquery.org/license
