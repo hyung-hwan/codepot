@@ -136,6 +136,9 @@ grep -F -q  '<Location "/">' /etc/apache2/conf-enabled/codepot.conf || {
 EOF
 }
 
+sed -r -i "s|PerlSetEnv CODEPOT_CONFIG_FILE .*\$|PerlSetEnv CODEPOT_CONFIG_FILE ${CODEPOT_CONFIG_FILE}|g" /etc/apache2/conf-enabled/codepot.conf
+
+
 ## change the port number as specified on the command line
 echo "Configuring to listen on the port[$SERVICE_PORT] hide-index-page[$HIDE_INDEX_PAGE] https-redirected[$HTTPS_REDIRECTED]"
 

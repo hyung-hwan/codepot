@@ -132,6 +132,8 @@ grep -F -q 'env[CODEPOT_CONFIG_FILE]' /etc/php-fpm.d/www.conf || {
 	echo "env[CODEPOT_CONFIG_FILE] = ${CODEPOT_CONFIG_FILE}" >> /etc/php-fpm.d/www.conf
 }
 
+sed -r -i "s|PerlSetEnv CODEPOT_CONFIG_FILE .*\$|PerlSetEnv CODEPOT_CONFIG_FILE ${CODEPOT_CONFIG_FILE}|g" /etc/httpd/conf.d/codepot.conf
+
 ## change the port number as specified on the command line
 echo "Configuring to listen on the port[$SERVICE_PORT] hide-index-page[$HIDE_INDEX_PAGE] https-redirected[$HTTPS_REDIRECTED]"
 
