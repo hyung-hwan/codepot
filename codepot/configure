@@ -658,7 +658,6 @@ infodir
 docdir
 oldincludedir
 includedir
-runstatedir
 localstatedir
 sharedstatedir
 sysconfdir
@@ -731,7 +730,6 @@ datadir='${datarootdir}'
 sysconfdir='${prefix}/etc'
 sharedstatedir='${prefix}/com'
 localstatedir='${prefix}/var'
-runstatedir='${localstatedir}/run'
 includedir='${prefix}/include'
 oldincludedir='/usr/include'
 docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
@@ -984,15 +982,6 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
-  -runstatedir | --runstatedir | --runstatedi | --runstated \
-  | --runstate | --runstat | --runsta | --runst | --runs \
-  | --run | --ru | --r)
-    ac_prev=runstatedir ;;
-  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
-  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
-  | --run=* | --ru=* | --r=*)
-    runstatedir=$ac_optarg ;;
-
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -1130,7 +1119,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir runstatedir
+		libdir localedir mandir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -1283,7 +1272,6 @@ Fine tuning of the installation directories:
   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
-  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -3392,7 +3380,7 @@ phpextinidir=$phpextinidir
 
 
 
-ac_config_files="$ac_config_files Makefile codepot.spec etc/Makefile etc/codepot.ini etc/codepot.a2ldap etc/codepot.httpd etc/pre-commit etc/start-commit etc/post-commit etc/pre-revprop-change etc/post-revprop-change sbin/Makefile sbin/codepot-user pecl-svn/Makefile DEBIAN/Makefile DEBIAN/control DEBIAN/postinst DEBIAN/postrm src/config.php src/codepot/config/Makefile src/codepot/controllers/Makefile src/codepot/core/Makefile src/codepot/errors/Makefile src/codepot/helpers/Makefile src/codepot/hooks/Makefile src/codepot/language/english/Makefile src/codepot/language/indonesian/Makefile src/codepot/language/korean/Makefile src/codepot/language/Makefile src/codepot/libraries/Makefile src/codepot/models/Makefile src/codepot/views/Makefile src/codepot/Makefile src/css/fonts/Makefile src/css/images/Makefile src/css/Makefile src/js/prettify/Makefile src/js/Makefile src/ace/Makefile src/system/fonts/Makefile src/system/libraries/javascript/Makefile src/system/libraries/Cache/drivers/Makefile src/system/libraries/Cache/Makefile src/system/libraries/Makefile src/system/language/english/Makefile src/system/language/Makefile src/system/helpers/Makefile src/system/core/Makefile src/system/database/drivers/odbc/Makefile src/system/database/drivers/pdo/Makefile src/system/database/drivers/postgre/Makefile src/system/database/drivers/mssql/Makefile src/system/database/drivers/cubrid/Makefile src/system/database/drivers/mysql/Makefile src/system/database/drivers/sqlsrv/Makefile src/system/database/drivers/oci8/Makefile src/system/database/drivers/sqlite/Makefile src/system/database/drivers/mysqli/Makefile src/system/database/drivers/Makefile src/system/database/Makefile src/system/Makefile src/Makefile"
+ac_config_files="$ac_config_files Makefile codepot.spec etc/Makefile etc/codepot.ini etc/codepot.a2ldap etc/codepot.httpd etc/pre-commit etc/start-commit etc/post-commit etc/pre-revprop-change etc/post-revprop-change sbin/Makefile sbin/codepot-user pecl-svn/Makefile DEBIAN/Makefile DEBIAN/control DEBIAN/postinst DEBIAN/postrm docker/Makefile src/Makefile src/config.php src/codepot/config/Makefile src/codepot/controllers/Makefile src/codepot/core/Makefile src/codepot/errors/Makefile src/codepot/helpers/Makefile src/codepot/hooks/Makefile src/codepot/language/english/Makefile src/codepot/language/indonesian/Makefile src/codepot/language/korean/Makefile src/codepot/language/Makefile src/codepot/libraries/Makefile src/codepot/models/Makefile src/codepot/views/Makefile src/codepot/Makefile src/css/fonts/Makefile src/css/images/Makefile src/css/Makefile src/js/prettify/Makefile src/js/Makefile src/ace/Makefile src/system/fonts/Makefile src/system/libraries/javascript/Makefile src/system/libraries/Cache/drivers/Makefile src/system/libraries/Cache/Makefile src/system/libraries/Makefile src/system/language/english/Makefile src/system/language/Makefile src/system/helpers/Makefile src/system/core/Makefile src/system/database/drivers/odbc/Makefile src/system/database/drivers/pdo/Makefile src/system/database/drivers/postgre/Makefile src/system/database/drivers/mssql/Makefile src/system/database/drivers/cubrid/Makefile src/system/database/drivers/mysql/Makefile src/system/database/drivers/sqlsrv/Makefile src/system/database/drivers/oci8/Makefile src/system/database/drivers/sqlite/Makefile src/system/database/drivers/mysqli/Makefile src/system/database/drivers/Makefile src/system/database/Makefile src/system/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -4115,6 +4103,8 @@ do
     "DEBIAN/control") CONFIG_FILES="$CONFIG_FILES DEBIAN/control" ;;
     "DEBIAN/postinst") CONFIG_FILES="$CONFIG_FILES DEBIAN/postinst" ;;
     "DEBIAN/postrm") CONFIG_FILES="$CONFIG_FILES DEBIAN/postrm" ;;
+    "docker/Makefile") CONFIG_FILES="$CONFIG_FILES docker/Makefile" ;;
+    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "src/config.php") CONFIG_FILES="$CONFIG_FILES src/config.php" ;;
     "src/codepot/config/Makefile") CONFIG_FILES="$CONFIG_FILES src/codepot/config/Makefile" ;;
     "src/codepot/controllers/Makefile") CONFIG_FILES="$CONFIG_FILES src/codepot/controllers/Makefile" ;;
@@ -4158,7 +4148,6 @@ do
     "src/system/database/drivers/Makefile") CONFIG_FILES="$CONFIG_FILES src/system/database/drivers/Makefile" ;;
     "src/system/database/Makefile") CONFIG_FILES="$CONFIG_FILES src/system/database/Makefile" ;;
     "src/system/Makefile") CONFIG_FILES="$CONFIG_FILES src/system/Makefile" ;;
-    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
