@@ -16,4 +16,7 @@ RUN dnf install -y php-devel subversion-devel perl-devel make
 COPY build-rocky84.sh /tmp
 RUN /tmp/build-rocky84.sh && rm -rf /tmp/*
 
-CMD ["/usr/sbin/httpd-fg.sh"]
+COPY httpd-fg.sh /usr/sbin/
+
+##CMD ["/usr/sbin/httpd-fg.sh"]
+ENTRYPOINT ["/usr/sbin/httpd-fg.sh"]

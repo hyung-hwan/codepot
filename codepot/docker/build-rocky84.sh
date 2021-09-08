@@ -15,7 +15,6 @@ cd codepot && \
 	--with-cachedir=/var/cache/codepot \
 	--with-phpextdir=`php-config --extension-dir` \
 make && make install && \
-install -m 0755 -D -t /usr/sbin docker/httpd-fg.sh && \
 cd ../.. && \
 rm -rf /var/lib/codepot/* && \
 sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*"localhost"$|database_hostname = "/var/lib/codepot/codepot.db"|g' \

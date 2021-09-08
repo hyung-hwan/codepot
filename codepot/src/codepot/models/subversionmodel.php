@@ -2217,25 +2217,8 @@ class SubversionModel extends CodeRepoModel
 
 		foreach ($hooks as $hook)
 		{
-			// copy hook scripts to the top repository directory
-			// overwriting existing scripts are ok as they are
-			// just updated to the latest scripts anyway.
-			$contents = @file_get_contents("{$cfgdir}/${hook}");
-			if ($contents === FALSE)
-			{
-				self::_deleteDirectory ($projdir);
-				return FALSE;
-			}
-
-			if (@file_put_contents("{$repodir}/${hook}", str_replace('%API%', $api, $contents)) === FALSE)
-			{
-				self::_deleteDirectory ($projdir);
-				return FALSE;
-			}
-
-			// install the hook script to the new project repository
-			if (@chmod("{$repodir}/{$hook}", 0755) === FALSE ||
-			    @symlink("../../{$hook}", "{$repodir}/{$projectid}/hooks/${hook}") === FALSE)
+			// install the hook script to the new project repository using symbolic links
+			if (@symlink("${cfgdir}/${hook}", "{$repodir}/{$projectid}/hooks/${hook}") === FALSE)
 			{
 				self::_deleteDirectory ($projdir);
 				return FALSE;

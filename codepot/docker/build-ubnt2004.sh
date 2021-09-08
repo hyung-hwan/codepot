@@ -14,7 +14,6 @@ cd codepot && \
 	--with-phpextdir=`php-config --extension-dir` \
 	--with-phpextinidir=`php-config --ini-dir | sed 's|/cli/|/apache2/|g'` && \
 make && make install && \
-install -m 0755 -D -t /usr/sbin docker/apache2-fg.sh && \
 cd ../.. && \
 rm -rf /var/lib/codepot/* && \
 sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*"localhost"$|database_hostname = "/var/lib/codepot/codepot.db"|g' \

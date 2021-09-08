@@ -38,6 +38,11 @@ else
 	$_SERVER['REQUEST_PROTOCOL'] = 'http';
 }
 
+if (array_key_exists('HTTP_X_FORWARDED_HOST', $_SERVER) && $_SERVER['HTTP_X_FORWARDED_HOST'] != '')
+{
+        $_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
+}
+
 $config['base_url'] .= "://{$_SERVER['HTTP_HOST']}";
 $config['base_url'] .= preg_replace('@/+$@','',dirname($_SERVER['SCRIPT_NAME'])).'/';
 

@@ -12,4 +12,6 @@ RUN apt update && \
 COPY build-ubnt2004.sh /tmp
 RUN /tmp/build-ubnt2004.sh && rm -rf /tmp/*
 
+COPY apache2-fg.sh /usr/sbin/
+
 CMD ["/usr/sbin/apache2-fg.sh"]

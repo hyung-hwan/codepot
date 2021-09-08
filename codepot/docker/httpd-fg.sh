@@ -1,6 +1,52 @@
 #!/bin/bash
 set -e
 
+SERVICE_PORT=""
+while getopts ":hp:-:" oc
+do
+	case "${oc}" in
+	-)
+		case "${OPTARG}" in
+		port)
+			opt=${OPTARG}
+			SERVICE_PORT="${!OPTIND}"
+			OPTIND=$(($OPTIND + 1))
+			;;
+		port=*)
+			SERVICE_PORT=${OPTARG#*=}
+                    	opt=${OPTARG%=$val}
+			;;
+
+		*)
+               		echo "Warning: unknown option - $OPTARG"
+			;;
+		esac
+		;;
+
+	h)
+		echo "-----------------------------------------------------------"
+		echo "This container runs a http service on port 80."
+		echo "Use an external reverse proxy to enable https as it doesn't"
+		echo "enable the HTTP service."
+		echo "Extra options allowed when running the container: "
+		echo " -h             print this help message"
+		echo " -p    number   specify the port number"
+		echo " -port number   specify the port number"
+		echo "-----------------------------------------------------------"
+		;;
+	p)
+		SERVICE_PORT=${OPTARG#*=}
+                opt=${OPTARG%=$val}
+		;;
+
+	*)
+               	echo "Warning: unknown option - $OPTARG"
+		;;
+	esac
+done
+echo "${SERVICE_PORT}" | grep -q -E '^[[:digit:]]+$' || SERVICE_PORT="80"
+
+
 # Note: we don't just use "apache2ctl" here because it itself is just a shell-script wrapper around apache2 which provides extra functionality like "apache2ctl start" for launching apache2 in the background.
 # (also, when run as "apache2ctl <apache args>", it does not use "exec", which leaves an undesirable resident shell process)
 
@@ -54,5 +100,9 @@ grep -F -q 'env[CODEPOT_CONFIG_FILE]' /etc/php-fpm.d/www.conf || {
 	echo 'env[CODEPOT_CONFIG_FILE] = /var/lib/codepot/codepot.ini' >> /etc/php-fpm.d/www.conf
 }
 
+## change the port number as specified on the command line
+echo "Configuring to listen on the port [$SERVICE_PORT]"
+sed -r -i "s|^Listen[[:space:]]+.*|Listen ${SERVICE_PORT}|g" /etc/httpd/conf/httpd.conf
+
 php-fpm
-exec httpd -DFOREGROUND "$@"
+exec httpd -DFOREGROUND
