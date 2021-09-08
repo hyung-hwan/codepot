@@ -118,6 +118,10 @@ AC_CONFIG_FILES([
 	DEBIAN/control
 	DEBIAN/postinst
 	DEBIAN/postrm
+
+	docker/Makefile
+
+	src/Makefile
 	src/config.php
 	src/codepot/config/Makefile
 	src/codepot/controllers/Makefile
@@ -163,7 +167,6 @@ AC_CONFIG_FILES([
 	src/system/database/Makefile
 	src/system/Makefile
 
-	src/Makefile
 ])
 AC_OUTPUT
 
