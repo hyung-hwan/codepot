@@ -139,7 +139,7 @@ EOF
 ## change the port number as specified on the command line
 echo "Configuring to listen on the port[$SERVICE_PORT] hide-index-page[$HIDE_INDEX_PAGE] https-redirected[$HTTPS_REDIRECTED]"
 
-sed -r -i "s|^Listen[[:space:]]+.*|Listen ${SERVICE_PORT}|g" "${HTTPD_CONFIG_FILE}"
+sed -r -i "s|^Listen[[:space:]]+.*|Listen ${SERVICE_PORT}|g" "/etc/apache2/ports.conf"
 
 if [[ "${HTTPS_REDIRECTED}" =~ [Yy][Ee][Ss] ]]
 then
@@ -155,20 +155,20 @@ fi
 if [[ "${HIDE_INDEX_PAGE}" =~ [Yy][Ee][Ss] ]]
 then
 	sed -r -i 's|^index_page[[:space:]]*=.*$|index_page=""|g' "${CODEPOT_CONFIG_FILE}"
-	cat <<EOF > /var/www/html/.htaccess
-RewriteEngine On
+
+        echo 'RewriteEngine On
 RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php/$1 [L]
-EOF
-	sed -r -i '/<Directory "\/var\/www">/,/<\/Directory>/s|^[[:space:]]*AllowOverride[[:space:]]+.*$|    AllowOverride All|g' "${HTTPD_CONFIG_FILE}"
+RewriteRule ^(.*)$ index.php/$1 [L]' > /var/www/html/.htaccess
+
+	sed -r -i '/<Directory \/var\/www\/>/,/<\/Directory>/s|^[[:space:]]*AllowOverride[[:space:]]+.*$|\tAllowOverride All|g' "${HTTPD_CONFIG_FILE}"
 
 else
 	sed -r -i 's|^index_page[[:space:]]*=.*$|index_page="index.php"|g' "${CODEPOT_CONFIG_FILE}"
 	rm -rf /var/www/html/.htaccess
 
-	sed -r -i '/<Directory "\/var\/www">/,/<\/Directory>/s|^[[:space:]]*AllowOverride[[:space:]]+.*$|    AllowOverride None|g' "${HTTPD_CONFIG_FILE}"
+	sed -r -i '/<Directory \/var\/www\/>/,/<\/Directory>/s|^[[:space:]]*AllowOverride[[:space:]]+.*$|\tAllowOverride None|g' "${HTTPD_CONFIG_FILE}"
 fi
 
 #httpd server in the foreground

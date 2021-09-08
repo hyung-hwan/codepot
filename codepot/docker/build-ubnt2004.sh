@@ -1,5 +1,11 @@
 cd /tmp 
 
+## delete all files under /var/www/html
+rm -rf /var/www/html/*
+
+a2enmod rewrite
+a2enmod headers
+
 tar -zxvf codepot-0.4.0.tar.gz && mv -f codepot-0.4.0 codepot && \
 cd codepot && \
 ./configure \
@@ -23,6 +29,7 @@ sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /usr/sbin/codepot-user && \
 sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /etc/codepot/perl/Codepot/AccessHandler.pm && \
 cp -pf /etc/codepot/codepot.httpd /etc/apache2/conf-enabled/codepot.conf && \
 echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/apache2/conf-enabled/perl.conf 
+
 
 apt remove --purge -y --allow-remove-essential php-dev libsvn-dev make libfdisk1 && \
 apt autoremove --purge -y && rm -rf /var/lib/apt/lists/*

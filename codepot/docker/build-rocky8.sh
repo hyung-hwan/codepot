@@ -1,5 +1,7 @@
-
 cd /tmp 
+
+## delete all files under /var/www/html
+rm -rf /var/www/html/*
 
 tar -zxvf codepot-0.4.0.tar.gz && mv -f codepot-0.4.0 codepot && \
 touch -r *  */* */*/* */*/*/* */*/*/*/* && \
