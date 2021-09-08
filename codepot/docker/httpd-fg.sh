@@ -104,5 +104,9 @@ grep -F -q 'env[CODEPOT_CONFIG_FILE]' /etc/php-fpm.d/www.conf || {
 echo "Configuring to listen on the port [$SERVICE_PORT]"
 sed -r -i "s|^Listen[[:space:]]+.*|Listen ${SERVICE_PORT}|g" /etc/httpd/conf/httpd.conf
 
+## Enable DAV to work with Apache running HTTP through SSL hardware (problem description) 
+## by replacing https: with http: in the Destination header:
+##RequestHeader edit Destination ^https: http: early
+
 php-fpm
 exec httpd -DFOREGROUND
