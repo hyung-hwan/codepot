@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+HTTPS_REDIRECTED=""
 SERVICE_PORT=""
 while getopts ":hp:-:" oc
 do
@@ -17,6 +18,17 @@ do
                     	opt=${OPTARG%=$val}
 			;;
 
+		https-redirected)
+			opt=${OPTARG}
+			HTTPS_REDIRECTED="${!OPTIND}"
+			OPTIND=$(($OPTIND + 1))
+			;;
+
+		https-redirected=*)
+			HTTPS_REDIRECTED=${OPTARG#*=}
+                    	opt=${OPTARG%=$val}
+			;;
+
 		*)
                		echo "Warning: unknown option - $OPTARG"
 			;;
@@ -24,15 +36,16 @@ do
 		;;
 
 	h)
-		echo "-----------------------------------------------------------"
+		echo "-------------------------------------------------------------------------"
 		echo "This container runs a http service on port 80."
 		echo "Use an external reverse proxy to enable https as it doesn't"
 		echo "enable the HTTP service."
 		echo "Extra options allowed when running the container: "
-		echo " -h             print this help message"
-		echo " -p    number   specify the port number"
-		echo " -port number   specify the port number"
-		echo "-----------------------------------------------------------"
+		echo " -h                         print this help message"
+		echo " -p                number   specify the port number"
+		echo " -port             number   specify the port number"
+		echo " -https-redirected yes/no   indicate if the requets are HTTPS redirected"
+		echo "-------------------------------------------------------------------------"
 		;;
 	p)
 		SERVICE_PORT=${OPTARG#*=}
@@ -44,7 +57,10 @@ do
 		;;
 	esac
 done
+
+## fall back to default values if the given values are not proper
 echo "${SERVICE_PORT}" | grep -q -E '^[[:digit:]]+$' || SERVICE_PORT="80"
+[[ "${HTTPS_REDIRECTED}" == "" ]] && HTTPS_REDIRECTED="no"
 
 
 # Note: we don't just use "apache2ctl" here because it itself is just a shell-script wrapper around apache2 which provides extra functionality like "apache2ctl start" for launching apache2 in the background.
@@ -101,12 +117,19 @@ grep -F -q 'env[CODEPOT_CONFIG_FILE]' /etc/php-fpm.d/www.conf || {
 }
 
 ## change the port number as specified on the command line
-echo "Configuring to listen on the port [$SERVICE_PORT]"
+echo "Configuring to listen on the port[$SERVICE_PORT] https-redirected[$HTTPS_REDIRECTED]"
 sed -r -i "s|^Listen[[:space:]]+.*|Listen ${SERVICE_PORT}|g" /etc/httpd/conf/httpd.conf
 
-## Enable DAV to work with Apache running HTTP through SSL hardware (problem description) 
-## by replacing https: with http: in the Destination header:
-##RequestHeader edit Destination ^https: http: early
+if [[ "${HTTPS_REDIRECTED}" =~ [Yy][Ee][Ss] ]]
+then
+	## The DAV COPY request contains the header 'Destination: https://' if the origin request
+	## is HTTPS. This container is configured to server on HTTP only. If HTTPS is redirected
+	## to HTTP, we must translate https:// to http:// in the Destination header.
+	## Otherwise, the response is 502 Bad Gateway.
+	echo "RequestHeader edit Destination ^https: http: early" > /etc/httpd/conf.d/codepot-dav-https-redirected.conf
+else
+	rm -f /etc/httpd/conf.d/codepot-dav-https-redirected.conf
+fi
 
 php-fpm
 exec httpd -DFOREGROUND
