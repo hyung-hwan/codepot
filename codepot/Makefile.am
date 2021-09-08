@@ -1,9 +1,9 @@
 ACLOCAL_AMFLAGS = -I ac/m4
 AUTOMAKE_OPTION = foreign
 
-SUBDIRS = etc src sbin pecl-svn
+SUBDIRS = etc src sbin pecl-svn 
 
-EXTRA_DIST = README.md mkmf.sh DEBIAN
+EXTRA_DIST = README.md mkmf.sh DEBIAN docker
 
 PHP_PACKAGE_NAME ?= php
 

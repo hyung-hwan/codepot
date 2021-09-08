@@ -306,8 +306,8 @@ top_srcdir = @top_srcdir@
 wwwdir = @wwwdir@
 ACLOCAL_AMFLAGS = -I ac/m4
 AUTOMAKE_OPTION = foreign
-SUBDIRS = etc src sbin pecl-svn
-EXTRA_DIST = README.md mkmf.sh DEBIAN
+SUBDIRS = etc src sbin pecl-svn 
+EXTRA_DIST = README.md mkmf.sh DEBIAN docker
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
