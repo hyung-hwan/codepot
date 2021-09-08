@@ -2202,7 +2202,7 @@ class SubversionModel extends CodeRepoModel
 		return $tfname;
 	}
 
-	static function createRepo ($projectid, $repodir, $cfgdir, $api)
+	static function createRepo ($projectid, $repodir, $cfgdir)
 	{
 		$projdir = "{$repodir}/{$projectid}";
 		if (@svn_repos_create($projdir) === FALSE) return FALSE;

@@ -146,15 +146,9 @@ file_read_access = "anonymous"
 ;------------------------------------------------------------------------------
 ; When set to yes, non-http access is diverted to https using 
 ; the base URL specified in https_base_url. api calls are not affected.
-; change api_base_url to force https api calls instead.
 ;------------------------------------------------------------------------------
 https_compulsory = "no"
 https_url = "https://${SERVER_NAME}${REQUEST_URI}"
-
-;------------------------------------------------------------------------------
-; API base URL (Deprecated as of v0.1.2. Not useful anymore)
-;------------------------------------------------------------------------------
-api_base_url = "http://127.0.0.1"
 
 ;------------------------------------------------------------------------------
 ; Command-separated list of subversion base URLs

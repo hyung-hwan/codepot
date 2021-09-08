@@ -153,7 +153,7 @@ class SubversionModel extends CodeRepoModel
 		return FALSE;
 	}
 
-	static function createRepo ($projectid, $repodir, $cfgdir, $api)
+	static function createRepo ($projectid, $repodir, $cfgdir)
 	{
 		$projdir = "{$repodir}/{$projectid}";
 		try

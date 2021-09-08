@@ -237,12 +237,10 @@ class Project extends CI_Controller
 			// validate the form
 			if ($this->form_validation->run())
 			{
-				$api_base_url = $this->converter->expand (CODEPOT_API_BASE_URL, $_SERVER);
-
 				// if ok, take action
 				$result = ($mode == 'update')?
 					$this->projects->update ($login['id'], $project):
-					$this->projects->create ($login['id'], $project, $api_base_url, $repo_error);
+					$this->projects->create ($login['id'], $project, $repo_error);
 				if ($result === FALSE)
 				{
 					if ($repo_error)

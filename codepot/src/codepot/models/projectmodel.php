@@ -135,7 +135,7 @@ class ProjectModel extends CI_Model
 		return $query->result ();
 	}
 
-	function create ($userid, $project, $api_base_url, &$repo_error)
+	function create ($userid, $project, &$repo_error)
 	{
 		// TODO: check if userid can do this..
 		$repo_error = FALSE;
@@ -191,12 +191,11 @@ class ProjectModel extends CI_Model
 		else
 		{
 			$url = parse_url(base_url());
-			$api = $api_base_url . $url['path'] . '/' . CODEPOT_INDEX_PAGE . '/api';
 
 			$cfgdir = CODEPOT_CFG_DIR;
 			$repodir = CODEPOT_SVNREPO_DIR;
 
-			if (SubversionModel::createRepo($project->id, $repodir, $cfgdir, $api) === FALSE)
+			if (SubversionModel::createRepo($project->id, $repodir, $cfgdir) === FALSE)
 			{
 				$this->db->trans_rollback ();
 				$repo_error = TRUE;
