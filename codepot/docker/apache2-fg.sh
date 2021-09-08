@@ -1,7 +1,12 @@
 #!/bin/bash
 set -e
 
+CODEPOT_CONFIG_FILE="/var/lib/codepot/codepot.ini"
+HTTPD_CONFIG_FILE="/etc/apache2/apache2.conf"
+
 SERVICE_PORT=""
+HIDE_INDEX_PAGE=""
+HTTPS_REDIRECTED=""
 while getopts ":hp:-:" oc
 do
 	case "${oc}" in
@@ -17,6 +22,28 @@ do
                     	opt=${OPTARG%=$val}
 			;;
 
+		hide-index-page)
+			opt=${OPTARG}
+			HIDE_INDEX_PAGE="${!OPTIND}"
+			OPTIND=$(($OPTIND + 1))
+			;;
+
+		hide-index-page=*)
+			HIDE_INDEX_PAGE=${OPTARG#*=}
+                    	opt=${OPTARG%=$val}
+			;;
+
+		https-redirected)
+			opt=${OPTARG}
+			HTTPS_REDIRECTED="${!OPTIND}"
+			OPTIND=$(($OPTIND + 1))
+			;;
+
+		https-redirected=*)
+			HTTPS_REDIRECTED=${OPTARG#*=}
+                    	opt=${OPTARG%=$val}
+			;;
+
 		*)
                		echo "Warning: unknown option - $OPTARG"
 			;;
@@ -24,15 +51,17 @@ do
 		;;
 
 	h)
-		echo "-----------------------------------------------------------"
+		echo "-------------------------------------------------------------------------"
 		echo "This container runs a http service on port 80."
 		echo "Use an external reverse proxy to enable https as it doesn't"
 		echo "enable the HTTP service."
 		echo "Extra options allowed when running the container: "
-		echo " -h             print this help message"
-		echo " -p    number   specify the port number"
-		echo " -port number   specify the port number"
-		echo "-----------------------------------------------------------"
+		echo " -h                         print this help message"
+		echo " -p                number   specify the port number"
+		echo " -port             number   specify the port number"
+		echo " -hide-index-page  yes/no   hide/show the index page script from the URL"
+		echo " -https-redirected yes/no   indicate if the requets are HTTPS redirected"
+		echo "-------------------------------------------------------------------------"
 		;;
 	p)
 		SERVICE_PORT=${OPTARG#*=}
@@ -44,7 +73,11 @@ do
 		;;
 	esac
 done
+
+## fall back to default values if the given values are not proper
 echo "${SERVICE_PORT}" | grep -q -E '^[[:digit:]]+$' || SERVICE_PORT="80"
+[[ "${HIDE_INDEX_PAGE}" == "" ]] && HIDE_INDEX_PAGE="no"
+[[ "${HTTPS_REDIRECTED}" == "" ]] && HTTPS_REDIRECTED="no"
 
 
 # Note: we don't just use "apache2ctl" here because it itself is just a shell-script wrapper around apache2 which provides extra functionality like "apache2ctl start" for launching apache2 in the background.
@@ -93,18 +126,50 @@ done
 mkdir -p /var/cache/codepot /var/log/codepot
 chown -R www-data:www-data /var/lib/codepot /var/cache/codepot /var/log/codepot
 
-[ ! -f /var/lib/codepot/codepot.ini ] && cp -pf /etc/codepot/codepot.ini /var/lib/codepot/codepot.ini
+[ ! -f "${CODEPOT_CONFIG_FILE}" ] && cp -pf /etc/codepot/codepot.ini "${CODEPOT_CONFIG_FILE}"
 
-### TODO: this needs changes..
-grep -F -q  '<Location "/codepot">' /etc/apache2/conf-enabled/codepot.conf || {
+grep -F -q  '<Location "/">' /etc/apache2/conf-enabled/codepot.conf || {
         cat <<EOF >> /etc/apache2/conf-enabled/codepot.conf
-<Location "/codepot">
-        SetEnv CODEPOT_CONFIG_FILE /var/lib/codepot/codepot.ini
+<Location "/">
+        SetEnv CODEPOT_CONFIG_FILE ${CODEPOT_CONFIG_FILE}
 </Location>
 EOF
 }
 
-## TODO: change the port number according to SERVICE_PORT
+## change the port number as specified on the command line
+echo "Configuring to listen on the port[$SERVICE_PORT] hide-index-page[$HIDE_INDEX_PAGE] https-redirected[$HTTPS_REDIRECTED]"
+
+sed -r -i "s|^Listen[[:space:]]+.*|Listen ${SERVICE_PORT}|g" "${HTTPD_CONFIG_FILE}"
+
+if [[ "${HTTPS_REDIRECTED}" =~ [Yy][Ee][Ss] ]]
+then
+	## The DAV COPY request contains the header 'Destination: https://' if the origin request
+	## is HTTPS. This container is configured to server on HTTP only. If HTTPS is redirected
+	## to HTTP, we must translate https:// to http:// in the Destination header.
+	## Otherwise, the response is 502 Bad Gateway.
+	echo "RequestHeader edit Destination ^https: http: early" > /etc/apache2/conf-enabled/codepot-dav-https-redirected.conf
+else
+	rm -f /etc/apache2/conf-enabled/codepot-dav-https-redirected.conf
+fi
+
+if [[ "${HIDE_INDEX_PAGE}" =~ [Yy][Ee][Ss] ]]
+then
+	sed -r -i 's|^index_page[[:space:]]*=.*$|index_page=""|g' "${CODEPOT_CONFIG_FILE}"
+	cat <<EOF > /var/www/html/.htaccess
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L]
+EOF
+	sed -r -i '/<Directory "\/var\/www">/,/<\/Directory>/s|^[[:space:]]*AllowOverride[[:space:]]+.*$|    AllowOverride All|g' "${HTTPD_CONFIG_FILE}"
+
+else
+	sed -r -i 's|^index_page[[:space:]]*=.*$|index_page="index.php"|g' "${CODEPOT_CONFIG_FILE}"
+	rm -rf /var/www/html/.htaccess
+
+	sed -r -i '/<Directory "\/var\/www">/,/<\/Directory>/s|^[[:space:]]*AllowOverride[[:space:]]+.*$|    AllowOverride None|g' "${HTTPD_CONFIG_FILE}"
+fi
 
 #httpd server in the foreground
 exec apache2 -DFOREGROUND

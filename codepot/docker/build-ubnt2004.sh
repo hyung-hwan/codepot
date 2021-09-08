@@ -1,6 +1,6 @@
 cd /tmp 
 
-svn co http://code.miflux.com/svn/codepot/trunk/codepot && \
+tar -zxvf codepot-0.4.0.tar.gz && mv -f codepot-0.4.0 codepot && \
 cd codepot && \
 ./configure \
 	--prefix=/usr \
