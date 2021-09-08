@@ -8,12 +8,13 @@ RUN dnf install -y \
 	subversion subversion-perl \
 	httpd php php-mysqli php-gd php-pdo \
 	perl-Digest-SHA perl-Config-Simple \
-	perl-DBD-MySQL perl-DBD-SQLite perl-LDAP \
+	perl-DBD-MySQL perl-DBD-SQLite perl-LDAP perl-Mail-Sendmail \
 	mod_dav_svn mod_perl diffutils sqlite
 
 RUN dnf install -y php-devel subversion-devel perl-devel make 
 
 COPY build-rocky84.sh /tmp
+COPY codepot-0.4.0.tar.gz /tmp
 RUN /tmp/build-rocky84.sh && rm -rf /tmp/*
 
 COPY httpd-fg.sh /usr/sbin/

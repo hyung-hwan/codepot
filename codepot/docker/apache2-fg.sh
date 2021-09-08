@@ -1,6 +1,52 @@
 #!/bin/bash
 set -e
 
+SERVICE_PORT=""
+while getopts ":hp:-:" oc
+do
+	case "${oc}" in
+	-)
+		case "${OPTARG}" in
+		port)
+			opt=${OPTARG}
+			SERVICE_PORT="${!OPTIND}"
+			OPTIND=$(($OPTIND + 1))
+			;;
+		port=*)
+			SERVICE_PORT=${OPTARG#*=}
+                    	opt=${OPTARG%=$val}
+			;;
+
+		*)
+               		echo "Warning: unknown option - $OPTARG"
+			;;
+		esac
+		;;
+
+	h)
+		echo "-----------------------------------------------------------"
+		echo "This container runs a http service on port 80."
+		echo "Use an external reverse proxy to enable https as it doesn't"
+		echo "enable the HTTP service."
+		echo "Extra options allowed when running the container: "
+		echo " -h             print this help message"
+		echo " -p    number   specify the port number"
+		echo " -port number   specify the port number"
+		echo "-----------------------------------------------------------"
+		;;
+	p)
+		SERVICE_PORT=${OPTARG#*=}
+                opt=${OPTARG%=$val}
+		;;
+
+	*)
+               	echo "Warning: unknown option - $OPTARG"
+		;;
+	esac
+done
+echo "${SERVICE_PORT}" | grep -q -E '^[[:digit:]]+$' || SERVICE_PORT="80"
+
+
 # Note: we don't just use "apache2ctl" here because it itself is just a shell-script wrapper around apache2 which provides extra functionality like "apache2ctl start" for launching apache2 in the background.
 # (also, when run as "apache2ctl <apache args>", it does not use "exec", which leaves an undesirable resident shell process)
 
@@ -37,7 +83,6 @@ for e in "${!APACHE_@}"; do
 	fi
 done
 
-
 [ ! -d /var/lib/codepot/attachments ] && mkdir -p /var/lib/codepot/attachments
 [ ! -d /var/lib/codepot/files ] && mkdir -p /var/lib/codepot/files
 [ ! -d /var/lib/codepot/issuefiles ] && mkdir -p /var/lib/codepot/issuefiles
@@ -50,6 +95,7 @@ chown -R www-data:www-data /var/lib/codepot /var/cache/codepot /var/log/codepot
 
 [ ! -f /var/lib/codepot/codepot.ini ] && cp -pf /etc/codepot/codepot.ini /var/lib/codepot/codepot.ini
 
+### TODO: this needs changes..
 grep -F -q  '<Location "/codepot">' /etc/apache2/conf-enabled/codepot.conf || {
         cat <<EOF >> /etc/apache2/conf-enabled/codepot.conf
 <Location "/codepot">
@@ -58,5 +104,7 @@ grep -F -q  '<Location "/codepot">' /etc/apache2/conf-enabled/codepot.conf || {
 EOF
 }
 
+## TODO: change the port number according to SERVICE_PORT
+
 #httpd server in the foreground
-exec apache2 -DFOREGROUND "$@"
+exec apache2 -DFOREGROUND

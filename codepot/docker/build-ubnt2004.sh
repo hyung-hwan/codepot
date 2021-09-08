@@ -6,7 +6,7 @@ cd codepot && \
 	--prefix=/usr \
 	--libdir=/usr/lib64 \
 	--sysconfdir=/etc \
-	--with-wwwdir=/var/www/html/codepot \
+	--with-wwwdir=/var/www/html \
 	--with-cfgdir=/etc/codepot \
 	--with-depotdir=/var/lib/codepot \
 	--with-logdir=/var/log/codepot \
@@ -23,18 +23,6 @@ sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /usr/sbin/codepot-user && \
 sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /etc/codepot/perl/Codepot/AccessHandler.pm && \
 cp -pf /etc/codepot/codepot.httpd /etc/apache2/conf-enabled/codepot.conf && \
 echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/apache2/conf-enabled/perl.conf 
-
-cat <<EOF > /var/www/html/index.html
-<html>
-<head>
-<title>Codepot</title>
-<meta http-equiv="refresh" content="0;URL='/codepot'" />
-</head>
-<body>
-<p>Access <a href="/codepot">this page</a> for codepot.</p>
-</body>
-</html>
-EOF
 
 apt remove --purge -y --allow-remove-essential php-dev libsvn-dev make libfdisk1 && \
 apt autoremove --purge -y && rm -rf /var/lib/apt/lists/*
