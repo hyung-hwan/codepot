@@ -37,6 +37,17 @@ $ /usr/sbin/codepot-user enable username
 
 You can use the created user account to sign in to codepot and start creating a new project.
 
+If you like to keep the data persistenly on the docker host, map /var/lib/codepot to a local
+directory or a volume on the host when starting the container.
+
+```
+$ docker run -dit --restart unless-stopped --name codepot -p 7000:80 -v ${HOME}/codepot-data:/var/lib/codepot hyunghwan/codepot:ubnt20.04
+```
+
+If you run this command, codepot stores all data under ${HOME}/codepot-data from the host 
+perspective. The master configuration file is placed in ${HOME}/codepot-data. You may
+edit ${HOME}/codepot-data/codepot.ini for configuration changes without entering the container.
+
 ## INSTALLATION ON CENTOS
 
 A RPM package is provided for RedHat/CentOS Linux. The RPM package specifies
