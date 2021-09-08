@@ -13,9 +13,9 @@ RUN dnf install -y \
 
 RUN dnf install -y php-devel subversion-devel perl-devel make 
 
-COPY build-rocky84.sh /tmp
+COPY build-rocky8.sh /tmp
 COPY codepot-0.4.0.tar.gz /tmp
-RUN /tmp/build-rocky84.sh && rm -rf /tmp/*
+RUN /tmp/build-rocky8.sh && rm -rf /tmp/*
 
 COPY httpd-fg.sh /usr/sbin/
 
