@@ -140,6 +140,7 @@ EOF
 echo "Configuring to listen on the port[$SERVICE_PORT] hide-index-page[$HIDE_INDEX_PAGE] https-redirected[$HTTPS_REDIRECTED]"
 
 sed -r -i "s|^Listen[[:space:]]+.*|Listen ${SERVICE_PORT}|g" "/etc/apache2/ports.conf"
+sed -r -i "s|^<VirtualHost .+$|<VirtualHost *:${SERVICE_PORT}>|g" "/etc/apache2/sites-available/000-default.conf"
 
 if [[ "${HTTPS_REDIRECTED}" =~ [Yy][Ee][Ss] ]]
 then
