@@ -26,7 +26,9 @@ sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /usr/sbin/codepot-user && \
 sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /etc/codepot/perl/Codepot/AccessHandler.pm && \
 mkdir -p /run/php-fpm && \
 cp -pf /etc/codepot/codepot.httpd /etc/httpd/conf.d/codepot.conf && \
-echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/httpd/conf.d/perl.conf 
+echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/httpd/conf.d/perl.conf && \
+sed -ri -e 's|^max_execution_time[[:space:]]*=.*$|max_execution_time = 120|g' /etc/php.ini
+
 
 # mod_perl has dependency on perl-devel which i think is wrong.
 # so i can't get perl-devel removed.

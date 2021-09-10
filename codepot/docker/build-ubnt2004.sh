@@ -28,7 +28,8 @@ sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*"localhost"$|database_h
 sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /usr/sbin/codepot-user && \
 sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /etc/codepot/perl/Codepot/AccessHandler.pm && \
 cp -pf /etc/codepot/codepot.httpd /etc/apache2/conf-enabled/codepot.conf && \
-echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/apache2/conf-enabled/perl.conf 
+echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/apache2/conf-enabled/perl.conf && \
+sed -ri -e 's|^max_execution_time[[:space:]]*=.*$|max_execution_time = 120|g' /etc/php/*/apache2/php.ini
 
 
 apt remove --purge -y --allow-remove-essential php-dev libsvn-dev make libfdisk1 && \

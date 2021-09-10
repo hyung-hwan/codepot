@@ -4,11 +4,12 @@ FROM rockylinux/rockylinux:latest
 ## epel-release for mod_perl
 RUN dnf install -y epel-release
 
+# for mysql access, include php-mysqli and perl-DBD-MYSQL
 RUN dnf install -y \
 	subversion subversion-perl \
-	httpd php php-mysqli php-gd php-pdo \
+	httpd php php-gd php-pdo php-ldap \
 	perl-Digest-SHA perl-Config-Simple \
-	perl-DBD-MySQL perl-DBD-SQLite perl-LDAP perl-Mail-Sendmail \
+	perl-DBD-SQLite perl-LDAP perl-Mail-Sendmail \
 	mod_dav_svn mod_perl diffutils sqlite
 
 RUN dnf install -y php-devel subversion-devel perl-devel make 
