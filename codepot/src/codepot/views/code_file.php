@@ -102,6 +102,13 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
+<!--[if lte IE 8]><script type="text/javascript" src="<?php print base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.time.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
+
 <script type="text/javascript" src="<?php print base_url_make('/js/vis.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/vis.min.css')?>" />
 
@@ -479,9 +486,9 @@ var RevGraphApp = (function ()
 
 			edges: {
 				smooth: {
-				    //type: 'cubicBezier',
-				    //forceDirection: 'horizontal', // 'vertical',
-				    roundness: 0.4
+					//type: 'cubicBezier',
+					//forceDirection: 'horizontal', // 'vertical',
+					roundness: 0.4
 				}
 			},
 			physics: {
@@ -550,6 +557,81 @@ var RevGraphApp = (function ()
 })();
 
 
+var LocGraphApp = (function ()
+{
+	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
+	{
+		GraphApp.call (this, top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
+		this.plot_dataset = null;
+		this.plot_options = null;
+		return this;
+	}
+	App.prototype = Object.create(GraphApp.prototype);
+	App.prototype.constructor = App;
+	App.prototype.renderGraph = function (data)
+	{
+		if (!data.hasOwnProperty('SUM'))
+		{
+			this.showMessage ('No data to show');
+			return;
+		}
+		if (data.SUM.length != 4)
+		{
+			this.showMessage ('Invalid data to show');
+			return;
+		}
+
+		this.clearMessage ();
+
+		var pd = [];
+		// files, blank, comment, code 
+		// files is always 1.
+		for (var i = 1; i < data.SUM.length ; i++)
+		{
+			pd[i - 1] = [ i - 1, data.SUM[i] ];				
+		}
+		this.plot_dataset = [
+			{ label: 'LOC', data: pd }
+		]
+
+		var ticks = [
+    			[0, "<?php print $this->lang->line('Blank')?>(" + data.SUM[1] + ")"], 
+			[1, "<?php print $this->lang->line('Comment')?>(" + data.SUM[2] + "])"],
+			[2, "<?php print $this->lang->line('Code')?>(" + data.SUM[3] + ")"]
+		];
+
+		this.plot_options = {
+			series: {
+				bars: { show: true }
+			},
+			bars: {
+				align: "center",
+				barWidth: 0.8
+			},
+			xaxis: {
+				axisLabel: "",
+				axisLabelUseCanvas: true,
+				ticks: ticks
+			},
+			yaxis: {
+			}
+		};
+	}
+
+	App.prototype.resizeGraph = function ()
+	{
+		if (this.plot_dataset != null)
+		{
+			this.graph_canvas.width (this.graph_container.width() - 5);
+			this.graph_canvas.height (this.graph_container.height() - 10);
+			$.plot(this.graph_canvas, this.plot_dataset, this.plot_options);
+		}
+	}
+
+	return App;
+})();
+
+
 $(function () {
 
 	$('#code_file_metadata').accordion({
@@ -558,24 +640,20 @@ $(function () {
 	});
 
 <?php if (!$is_special_stream): ?>
-	$("#code_file_loc_info").hide();
-	btn = $("#code_file_loc_button").button().click (function () {
-		if ($("#code_file_loc_info").is(":visible"))
-		{
-			$("#code_file_loc_info").hide("blind",{},200);
-		}
-		else
-		{
-			$("#code_file_loc_info").show("blind",{},200);
-		}
-
-		return false; // prevent the default behavior
-	});
-
-	
 	$("#code_file_edit_button").button();
-<?php endif; ?>
 
+	var loc_graph_app = new LocGraphApp (
+		$(window), 
+		$("#code_file_loc_graph_container"),
+		$("#code_file_loc_graph_error"),
+		$("#code_file_loc_graph"),
+		$("#code_file_loc_graph_button"),
+		$("#code_file_loc_graph_spin"),
+		codepot_merge_path ("<?php print site_url(); ?>", "/graph/enjson_loc_by_lang/<?php print $project->id; ?>/<?php print $hex_headpath;?><?php print $revreq?>"),
+		"LOC"
+	);
+	loc_graph_app.initWidgets ();
+<?php endif; ?>
 
 	var rev_graph_app = new RevGraphApp (
 		$(window), 
@@ -815,9 +893,11 @@ $this->load->view (
 			if ((isset($login['id']) && $login['id'] != '') )
 			{
 				print ' ';
-				print anchor ("code/edit/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Edit'), 'id="code_file_edit_button"');
+				print anchor("code/edit/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Edit'), 'id="code_file_edit_button"');
 			}
-			print anchor ("#", "LOC", "id=code_file_loc_button");
+			/*print anchor ("#", "LOC", "id=code_file_loc_button");*/
+			print '<a id="code_file_loc_graph_button" href="#">';
+			print '<i id="code_file_loc_graph_spin" class="fa"></i>LOC</a>';
 		}
 		?>
 	</div>
@@ -905,6 +985,11 @@ $this->load->view (
 		<div id="code_file_revision_graph"></div>
 		<div id="code_file_revision_graph_error"></div>
 	</div>
+
+	<div id="code_file_loc_graph_container">
+		<div id="code_file_loc_graph"></div>
+		<div id="code_file_loc_graph_error"></div>
+	</div>
 </div>
 
 <div style="display:none">
@@ -989,16 +1074,6 @@ if ($login['settings'] != NULL &&
 		}
 
 		print '</pre>';
-
-		if (!$is_special_stream)
-		{
-			print '<div id="code_file_loc_info" class="codepot-infobox">';
-			print '<div class="title">LOC</div>';
-			/* TODO: show this if it's enabled in the user settings  */
-			$graph_url = codepot_merge_path (site_url(), "/code/graph/cloc-file/{$project->id}/{$hex_headpath}{$revreq}");
-			print "<img src='{$graph_url}' id='code_file_loc_info_locgraph' />";
-			print '</div>';
-		}
 	}
 
 	if ($is_wiki_file)

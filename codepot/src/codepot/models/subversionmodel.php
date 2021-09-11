@@ -1486,24 +1486,36 @@ class SubversionModel extends CodeRepoModel
 			if ($info === FALSE || $info === NULL || count($info) != 1)  return FALSE;
 		}
 
-		if ($info[0]['kind'] == SVN_NODE_FILE) return FALSE;
-
-		// pass __FILE__ as the first argument so that tempnam creates a name
-		// in the system directory. __FILE__ can never be a valid directory.
-		$tfname = @tempnam(__FILE__, 'codepot-cloc-rev-');
-		if ($tfname === FALSE) return FALSE;
-
-		$actual_tfname = $tfname . '.d';
-		codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
-
-		if (@svn_checkout ($workurl, $actual_tfname, $rev, 0) === FALSE)
+		if ($info[0]['kind'] == SVN_NODE_FILE)
 		{
-			codepot_delete_files ($actual_tfname, TRUE);
-			@unlink ($tfname);
-			return FALSE;
+			$file = $this->getFile($projectid, $path, $rev);
+			if ($file === FALSE) return FALSE;
+
+			$tfname = @tempnam(__FILE__, 'codepot-cloc-rev-');
+			if ($tfname === FALSE) return FALSE;
+
+			$actual_tfname = $tfname . '.' . pathinfo ($file['name'], PATHINFO_EXTENSION);
+			@file_put_contents ($actual_tfname, $file['content']);
+		}
+		else
+		{
+			// pass __FILE__ as the first argument so that tempnam creates a name
+			// in the system directory. __FILE__ can never be a valid directory.
+			$tfname = @tempnam(__FILE__, 'codepot-cloc-rev-');
+			if ($tfname === FALSE) return FALSE;
+
+			$actual_tfname = $tfname . '.d';
+			codepot_delete_files ($actual_tfname, TRUE); // delete the directory in case it exists
+
+			if (@svn_checkout ($workurl, $actual_tfname, $rev, 0) === FALSE)
+			{
+				codepot_delete_files ($actual_tfname, TRUE);
+				@unlink ($tfname);
+				return FALSE;
+			}
 		}
 
-		$cloc_cmd = sprintf ('%s --quiet --csv --csv-delimiter=":" %s', CODEPOT_CLOC_COMMAND_PATH, $actual_tfname);
+		$cloc_cmd = sprintf('%s --quiet --csv --csv-delimiter=":" %s', CODEPOT_CLOC_COMMAND_PATH, $actual_tfname);
 		$cloc = @popen ($cloc_cmd, 'r');
 		if ($cloc === FALSE)
 		{

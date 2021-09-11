@@ -164,7 +164,7 @@ class Graph extends CI_Controller
 		if ($path == '.') $path = ''; /* treat a period specially */
 		$path = $this->_normalize_path ($path);
 
-		$cloc = $cloc = $this->subversion->clocRevByFile($projectid, $path, $rev);
+		$cloc = $this->subversion->clocRevByFile($projectid, $path, $rev);
 		print codepot_json_encode($cloc);
 	}
 

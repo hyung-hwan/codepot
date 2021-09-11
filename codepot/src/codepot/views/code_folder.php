@@ -490,7 +490,7 @@ var LocFileApp = (function ()
 	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
 	{
 		GraphApp.call (this, top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
-		this.cf = null;
+		this.fc = null;
 		this.loc_data = null;
 
 		var self = this;
