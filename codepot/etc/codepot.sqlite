@@ -248,7 +248,7 @@ CREATE TABLE code_review (
 CREATE UNIQUE INDEX code_review_index_1 ON code_review(projectid, rev, sno);
 
 CREATE TABLE log  (
-	id         BIGINT PRIMARY KEY,
+	id         INTEGER PRIMARY KEY AUTOINCREMENT,
 	projectid  VARCHAR(32)  NOT NULL,
 	type       VARCHAR(16)  NOT NULL,
 	action     VARCHAR(16)  NOT NULL,

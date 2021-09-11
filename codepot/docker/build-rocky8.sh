@@ -30,9 +30,9 @@ echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/httpd/conf.d/perl.conf && \
 sed -ri -e 's|^max_execution_time[[:space:]]*=.*$|max_execution_time = 120|g' /etc/php.ini
 
 
-# mod_perl has dependency on perl-devel which i think is wrong.
+# mod_perl from the epel repo has dependency on perl-devel.
 # so i can't get perl-devel removed.
-dnf remove -y php-dev subversion-devel make && \
+dnf remove -y php-devel subversion-devel make gcc annobin && \
 dnf autoremove -y && rm -rf /var/cache/yum/*
 
 rm -rf /root/.subversion
