@@ -106,11 +106,11 @@ class Code extends CI_Controller
 
 		$data['login'] = $login;
 
-		$path = $this->converter->HexToAscii ($path);
-		if ($path == '.') $path = ''; /* treat a period specially */
-		$path = $this->_normalize_path ($path);
+		$path = $this->converter->HexToAscii($path);
+		if ($path == '.') $path = ''; // treat a period specially
+		$path = $this->_normalize_path($path);
 
-		$project = $this->projects->get ($projectid);
+		$project = $this->projects->get($projectid);
 		if ($project === FALSE)
 		{
 			$data['message'] = 'DATABASE ERROR';
@@ -126,14 +126,14 @@ class Code extends CI_Controller
 		else
 		{
 			//if ($project->public !== 'Y' && $login['id'] == '')
-			if (!$this->_can_read ($this->projects, $projectid, $login))
+			if (!$this->_can_read($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
 				$this->_redirect_to_signin($this->converter, $login, $project);
 				return;
 			}
 
-			$file = $this->subversion->getFile ($projectid, $path, $rev);
+			$file = $this->subversion->getFile($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
 				$data['project'] = $project;
@@ -144,7 +144,7 @@ class Code extends CI_Controller
 			{
 				if ($file['type'] == 'file')
 				{
-					$head_rev = $this->subversion->getHeadRev ($projectid, $path, $rev);
+					$head_rev = $this->subversion->getHeadRev($projectid, $path, $rev);
 					if ($head_rev === FALSE)
 					{
 						$data['project'] = $project;
@@ -154,15 +154,15 @@ class Code extends CI_Controller
 					else
 					{
 						$file['head_rev'] = $head_rev;
-						$file['prev_rev'] = $this->subversion->getPrevRev (
+						$file['prev_rev'] = $this->subversion->getPrevRev(
 							$projectid, $path, $file['created_rev']);
-						$file['next_rev'] = $this->subversion->getNextRev (
+						$file['next_rev'] = $this->subversion->getNextRev(
 							$projectid, $path, $file['created_rev']);
 
-						$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
+						$file['created_tag'] = $this->subversion->getRevProp($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
 						if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
 
-						$file['head_tag'] = $this->subversion->getRevProp ($projectid, $file['head_rev'], CODEPOT_SVN_TAG_PROPERTY);
+						$file['head_tag'] = $this->subversion->getRevProp($projectid, $file['head_rev'], CODEPOT_SVN_TAG_PROPERTY);
 						if ($file['head_tag'] === FALSE) $file['head_tag'] = '';
 
 						$data['project'] = $project;
@@ -170,17 +170,17 @@ class Code extends CI_Controller
 						$data['file'] = $file; 
 						$data['revision'] = $rev;
 
-						$this->load->view ($this->VIEW_FILE, $data);
+						$this->load->view($this->VIEW_FILE, $data);
 					}
 				}
 				else
 				{
-					$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
+					$file['created_tag'] = $this->subversion->getRevProp($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
 					if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
 
 					foreach ($file['content'] as &$f)
 					{
-						$exe = $this->subversion->getProp (
+						$exe = $this->subversion->getProp(
 							$projectid, $path . '/' . $f['name'], 
 							$file['created_rev'], 'svn:executable');
 						if ($exe !== FALSE && is_array($exe)) 
@@ -204,9 +204,9 @@ class Code extends CI_Controller
 
 					$data['revision'] = $rev;
 					$data['prev_revision'] =
-						$this->subversion->getPrevRev ($projectid, $path, $rev);
+						$this->subversion->getPrevRev($projectid, $path, $rev);
 					$data['next_revision'] =
-						$this->subversion->getNextRev ($projectid, $path, $rev);
+						$this->subversion->getNextRev($projectid, $path, $rev);
 
 					$data['readme_text'] = '';
 					$data['readme_file'] = '';
@@ -215,7 +215,7 @@ class Code extends CI_Controller
 						$rf = trim($rf);
 						if (strlen($rf) > 0)
 						{
-							$readme = $this->subversion->getFile ($projectid, $path . '/' . $rf, $rev);
+							$readme = $this->subversion->getFile($projectid, $path . '/' . $rf, $rev);
 							if ($readme !== FALSE && $readme['type'] == 'file')
 							{
 								$data['readme_text'] = $readme['content'];
@@ -272,7 +272,7 @@ class Code extends CI_Controller
 				return;
 			}
 
-			$file = $this->subversion->getBlame ($projectid, $path, $rev);
+			$file = $this->subversion->getBlame($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
 				$data['project'] = $project;
@@ -281,7 +281,7 @@ class Code extends CI_Controller
 			}
 			else
 			{
-				$head_rev = $this->subversion->getHeadRev ($projectid, $path, $rev);
+				$head_rev = $this->subversion->getHeadRev($projectid, $path, $rev);
 				if ($head_rev === FALSE)
 				{
 					$data['project'] = $project;
@@ -291,15 +291,15 @@ class Code extends CI_Controller
 				else
 				{
 					$file['head_rev'] = $head_rev;
-					$file['prev_rev'] = $this->subversion->getPrevRev (
+					$file['prev_rev'] = $this->subversion->getPrevRev(
 						$projectid, $path, $file['created_rev']);
-					$file['next_rev'] = $this->subversion->getNextRev (
+					$file['next_rev'] = $this->subversion->getNextRev(
 						$projectid, $path, $file['created_rev']);
 
-					$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
+					$file['created_tag'] = $this->subversion->getRevProp($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
 					if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
 
-					$file['head_tag'] = $this->subversion->getRevProp ($projectid, $file['head_rev'], CODEPOT_SVN_TAG_PROPERTY);
+					$file['head_tag'] = $this->subversion->getRevProp($projectid, $file['head_rev'], CODEPOT_SVN_TAG_PROPERTY);
 					if ($file['head_tag'] === FALSE) $file['head_tag'] = '';
 
 
@@ -320,7 +320,7 @@ class Code extends CI_Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
 	
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 		{
 			$this->_redirect_to_signin($this->converter, $login);
@@ -328,11 +328,11 @@ class Code extends CI_Controller
 		}
 		$data['login'] = $login;
 
-		$path = $this->converter->HexToAscii ($path);
+		$path = $this->converter->HexToAscii($path);
 		if ($path == '.') $path = ''; /* treat a period specially */
-		$path = $this->_normalize_path ($path);
+		$path = $this->_normalize_path($path);
 
-		$project = $this->projects->get ($projectid);
+		$project = $this->projects->get($projectid);
 		if ($project === FALSE)
 		{
 			$data['message'] = 'DATABASE ERROR';
@@ -348,14 +348,14 @@ class Code extends CI_Controller
 		else
 		{
 			//if ($project->public !== 'Y' && $login['id'] == '')
-			if (!$this->_can_read ($this->projects, $projectid, $login))
+			if (!$this->_can_read($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
 				$this->_redirect_to_signin($this->converter, $login, $project);
 				return;
 			}
 
-			$file = $this->subversion->getFile ($projectid, $path, $rev);
+			$file = $this->subversion->getFile($projectid, $path, $rev);
 			if ($file === FALSE)
 			{
 				$data['project'] = $project;
@@ -364,7 +364,7 @@ class Code extends CI_Controller
 			}
 			else if ($file['type'] == 'file')
 			{
-				$head_rev = $this->subversion->getHeadRev ($projectid, $path, $rev);
+				$head_rev = $this->subversion->getHeadRev($projectid, $path, $rev);
 				if ($head_rev === FALSE)
 				{
 					$data['project'] = $project;
@@ -374,15 +374,15 @@ class Code extends CI_Controller
 				else
 				{
 					$file['head_rev'] = $head_rev;
-					$file['prev_rev'] = $this->subversion->getPrevRev (
+					$file['prev_rev'] = $this->subversion->getPrevRev(
 						$projectid, $path, $file['created_rev']);
-					$file['next_rev'] = $this->subversion->getNextRev (
+					$file['next_rev'] = $this->subversion->getNextRev(
 						$projectid, $path, $file['created_rev']);
 
-					$file['created_tag'] = $this->subversion->getRevProp ($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
+					$file['created_tag'] = $this->subversion->getRevProp($projectid, $file['created_rev'], CODEPOT_SVN_TAG_PROPERTY);
 					if ($file['created_tag'] === FALSE) $file['created_tag'] = '';
 
-					$file['head_tag'] = $this->subversion->getRevProp ($projectid, $file['head_rev'], CODEPOT_SVN_TAG_PROPERTY);
+					$file['head_tag'] = $this->subversion->getRevProp($projectid, $file['head_rev'], CODEPOT_SVN_TAG_PROPERTY);
 					if ($file['head_tag'] === FALSE) $file['head_tag'] = '';
 
 
@@ -407,12 +407,12 @@ class Code extends CI_Controller
 
 	function edit ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
-		return $this->_edit ($projectid, $path, $rev, 'file');
+		return $this->_edit($projectid, $path, $rev, 'file');
 	}
 
 	function bledit ($projectid = '', $path = '', $rev = SVN_REVISION_HEAD)
 	{
-		return $this->_edit ($projectid, $path, $rev, 'blame');
+		return $this->_edit($projectid, $path, $rev, 'blame');
 	}
 
 	function xhr_import ($projectid = '', $path = '')
@@ -432,9 +432,9 @@ class Code extends CI_Controller
 		{
 			$path = $this->converter->HexToAscii ($path);
 			if ($path == '.') $path = ''; /* treat a period specially */
-			$path = $this->_normalize_path ($path);
+			$path = $this->_normalize_path($path);
 
-			$project = $this->projects->get ($projectid);
+			$project = $this->projects->get($projectid);
 			if ($project === FALSE)
 			{
 				$status = "error - failed to get the project {$projectid}";
@@ -467,17 +467,17 @@ class Code extends CI_Controller
 						$d = $this->input->post("code_new_item_empfile_{$i}");
 						if (strlen($d) > 0) 
 						{
-							array_push ($import_files, array ('type' => 'empfile', 'name' => $d));
+							array_push ($import_files, array('type' => 'empfile', 'name' => $d));
 						}
 
 						$fid = "code_new_item_file_{$i}";
 						if (array_key_exists($fid, $_FILES) && $_FILES[$fid]['name'] != '')
 						{
-							array_push ($import_files, array ('type' => 'file', 'name' => $_FILES[$fid]['name'], 'fid' => $fid, 'unzip' => $post_unzip));
+							array_push ($import_files, array('type' => 'file', 'name' => $_FILES[$fid]['name'], 'fid' => $fid, 'unzip' => $post_unzip));
 						}
 					}
 
-					if (count($import_files) > 0 && $this->subversion->importFiles ($projectid, $path, $login['id'], $post_new_message, $import_files, $this->upload) === FALSE)
+					if (count($import_files) > 0 && $this->subversion->importFiles($projectid, $path, $login['id'], $post_new_message, $import_files, $this->upload) === FALSE)
 					{
 						$status = 'error - ' . $this->subversion->getErrorMessage();
 					}
@@ -501,7 +501,7 @@ class Code extends CI_Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
 
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 		$revision_saved = -1;
 
 		if ($login['id'] == '')
@@ -510,11 +510,11 @@ class Code extends CI_Controller
 		}
 		else
 		{
-			$path = $this->converter->HexToAscii ($path);
+			$path = $this->converter->HexToAscii($path);
 			if ($path == '.') $path = ''; /* treat a period specially */
-			$path = $this->_normalize_path ($path);
+			$path = $this->_normalize_path($path);
 
-			$project = $this->projects->get ($projectid);
+			$project = $this->projects->get($projectid);
 			if ($project === FALSE)
 			{
 				$status = "error - failed to get the project {$projectid}";
@@ -525,7 +525,7 @@ class Code extends CI_Controller
 			}
 			//else if (!$login['sysadmin?'] && 
 			//        $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
-			else if (!$this->_can_write ($this->projects, $projectid, $login))
+			else if (!$this->_can_write($this->projects, $projectid, $login))
 			{
 				$status = "error - disallowed";
 			}
@@ -546,7 +546,7 @@ class Code extends CI_Controller
 						}
 					}
 
-					if (count($delete_files) > 0 && $this->subversion->deleteFiles ($projectid, $path, $login['id'], $post_delete_message, $delete_files) === FALSE)
+					if (count($delete_files) > 0 && $this->subversion->deleteFiles($projectid, $path, $login['id'], $post_delete_message, $delete_files) === FALSE)
 					{
 						$status = 'error - ' . $this->subversion->getErrorMessage();
 					}
@@ -579,11 +579,11 @@ class Code extends CI_Controller
 		}
 		else
 		{
-			$path = $this->converter->HexToAscii ($path);
+			$path = $this->converter->HexToAscii($path);
 			if ($path == '.') $path = ''; /* treat a period specially */
-			$path = $this->_normalize_path ($path);
+			$path = $this->_normalize_path($path);
 
-			$project = $this->projects->get ($projectid);
+			$project = $this->projects->get($projectid);
 			if ($project === FALSE)
 			{
 				$status = "error - failed to get the project {$projectid}";
@@ -594,7 +594,7 @@ class Code extends CI_Controller
 			}
 			//else if (!$login['sysadmin?'] && 
 			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
-			else if (!$this->_can_write ($this->projects, $projectid, $login))
+			else if (!$this->_can_write($this->projects, $projectid, $login))
 			{
 				$status = "error - disallowed";
 			}
@@ -604,7 +604,7 @@ class Code extends CI_Controller
 				$post_rename_file_count = $this->input->post('code_rename_file_count');
 				if ($post_rename_message !== FALSE && $post_rename_file_count !== FALSE)
 				{
-					$rename_files = array ();
+					$rename_files = array();
 					for ($i = 0; $i < $post_rename_file_count; $i++)
 					{
 						$d1 = $this->input->post("code_rename_file_old_$i");
@@ -615,7 +615,7 @@ class Code extends CI_Controller
 						}
 					}
 
-					if (count($rename_files) > 0 && $this->subversion->renameFiles ($projectid, $path, $login['id'], $post_rename_message, $rename_files) === FALSE)
+					if (count($rename_files) > 0 && $this->subversion->renameFiles($projectid, $path, $login['id'], $post_rename_message, $rename_files) === FALSE)
 					{
 						$status = 'error - ' . $this->subversion->getErrorMessage();
 					}
@@ -639,9 +639,9 @@ class Code extends CI_Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
 
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 
-		$project = $this->projects->get ($projectid);
+		$project = $this->projects->get($projectid);
 		if ($project === FALSE)
 		{
 			$status = "error - failed to get the project {$projectid}";
@@ -653,16 +653,16 @@ class Code extends CI_Controller
 		else
 		{
 			//if ($project->public !== 'Y' && $login['id'] == '')
-			if (!$this->_can_read ($this->projects, $projectid, $login))
+			if (!$this->_can_read($this->projects, $projectid, $login))
 			{
 				// non-public projects require sign-in.
 				$this->_redirect_to_signin($this->converter, $login, $project);
 				return;
 			}
 
-			$tag = $this->converter->HexToAscii ($tag);
+			$tag = $this->converter->HexToAscii($tag);
 
-			$rev = $this->subversion->findRevWithRevProp ($projectid, CODEPOT_SVN_TAG_PROPERTY, $tag);
+			$rev = $this->subversion->findRevWithRevProp($projectid, CODEPOT_SVN_TAG_PROPERTY, $tag);
 			if ($rev === FALSE)
 			{
 				$status = 'repoerr - ' . $this->subversion->getErrorMessage();
@@ -685,7 +685,7 @@ class Code extends CI_Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
 
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 		$revision_saved = -1;
 
 		if ($login['id'] == '')
@@ -694,7 +694,7 @@ class Code extends CI_Controller
 		}
 		else
 		{
-			$project = $this->projects->get ($projectid);
+			$project = $this->projects->get($projectid);
 			if ($project === FALSE)
 			{
 				$status = "error - failed to get the project {$projectid}";
@@ -705,7 +705,7 @@ class Code extends CI_Controller
 			}
 			//else if (!$login['sysadmin?'] && 
 			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
-			else if (!$this->_can_write ($this->projects, $projectid, $login))
+			else if (!$this->_can_write($this->projects, $projectid, $login))
 			{
 				$status = "error - disallowed";
 			}
@@ -718,7 +718,7 @@ class Code extends CI_Controller
 				$logmsg = $this->input->post('code_edit_revision_message');
 				if ($logmsg != $this->subversion->getRevProp ($projectid, $rev, 'svn:log'))
 				{
-					$affected_rev = $this->subversion->setRevProp (
+					$affected_rev = $this->subversion->setRevProp(
 						$projectid, $rev, 'svn:log', $logmsg, $login['id']);
 					if ($affected_rev === FALSE)
 					{
@@ -744,7 +744,7 @@ class Code extends CI_Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
 
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 		$revision_saved = -1;
 
 		if ($login['id'] == '')
@@ -753,7 +753,7 @@ class Code extends CI_Controller
 		}
 		else
 		{
-			$project = $this->projects->get ($projectid);
+			$project = $this->projects->get($projectid);
 			if ($project === FALSE)
 			{
 				$status = "error - failed to get the project {$projectid}";
@@ -764,7 +764,7 @@ class Code extends CI_Controller
 			}
 			//else if (!$login['sysadmin?'] && 
 			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
-			else if (!$this->_can_write ($this->projects, $projectid, $login))
+			else if (!$this->_can_write($this->projects, $projectid, $login))
 			{
 				$status = "error - disallowed";
 			}
@@ -779,12 +779,12 @@ class Code extends CI_Controller
 				if (empty($tag)) 
 				{
 					// delete the tag if the value is empty
-					$affected_rev = $this->subversion->killRevProp (
+					$affected_rev = $this->subversion->killRevProp(
 						$projectid, $rev, CODEPOT_SVN_TAG_PROPERTY, $login['id']);
 				}
 				else
 				{
-					$affected_rev = $this->subversion->setRevProp (
+					$affected_rev = $this->subversion->setRevProp(
 						$projectid, $rev, CODEPOT_SVN_TAG_PROPERTY, $tag, $login['id']);
 				}
 
@@ -808,7 +808,7 @@ class Code extends CI_Controller
 		$this->load->model ('SubversionModel', 'subversion');
 		$this->load->model ('CodeModel', 'code');
 
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 		$revision_saved = -1;
 
 		if ($login['id'] == '')
@@ -817,7 +817,7 @@ class Code extends CI_Controller
 		}
 		else
 		{
-			$project = $this->projects->get ($projectid);
+			$project = $this->projects->get($projectid);
 			if ($project === FALSE)
 			{
 				$status = "error - failed to get the project {$projectid}";
@@ -828,7 +828,7 @@ class Code extends CI_Controller
 			}
 			//else if (!$login['sysadmin?'] && 
 			//         $this->projects->projectHasMember($projectid, $login['id']) === FALSE)
-			else if (!$this->_can_write ($this->projects, $projectid, $login))
+			else if (!$this->_can_write($this->projects, $projectid, $login))
 			{
 				$status = "error - disallowed";
 			}
@@ -842,7 +842,7 @@ class Code extends CI_Controller
 				}
 				else
 				{
-					$review_sno = $this->code->insertReview ($projectid, $rev, $login['id'], $review_comment);
+					$review_sno = $this->code->insertReview($projectid, $rev, $login['id'], $review_comment);
 					if ($review_sno === FALSE)
 					{
 						$status = 'error - ' . $this->code->getErrorMessage();
@@ -854,12 +854,12 @@ class Code extends CI_Controller
 						if (CODEPOT_COMMIT_REVIEW_NOTIFICATION)
 						{
 							// TODO: message localization
-							$email_subject =  sprintf (
+							$email_subject =  sprintf(
 								'New review message #%d for r%d by %s in %s', 
 								$review_sno, $rev, $login['id'], $projectid
 							);
 							$email_message = $review_url . "\r\n" . $review_comment;
-							$this->projects->emailMessageToMembers (
+							$this->projects->emailMessageToMembers(
 								$projectid, $this->login, $email_subject, $email_message
 							);
 						}
@@ -877,7 +877,7 @@ class Code extends CI_Controller
 		$this->load->model ('SubversionModel', 'subversion');
 		$this->load->model ('CodeModel', 'code');
 
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 		$revision_saved = -1;
 
 		if ($login['id'] == '')
