@@ -24,7 +24,7 @@
 
 					if (in_array ($fileext, array ('png', 'jpg', 'jpeg', 'gif', 'tif', 'bmp', 'ico')))
 					{
-						$img = @imagecreatefromstring($file['content']);
+						$img = @imagecreatefromstring ($file['content']);
 						if ($img !== FALSE) 
 						{
 							@imagedestroy ($img);
@@ -104,10 +104,7 @@
 
 <!--[if lte IE 8]><script type="text/javascript" src="<?php print base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.min.js')?>"></script>
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.time.min.js')?>"></script>
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.pie.min.js')?>"></script>
 
 <script type="text/javascript" src="<?php print base_url_make('/js/vis.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/vis.min.css')?>" />
@@ -555,8 +552,7 @@ var RevGraphApp = (function ()
 
 	return App;
 })();
-
-
+	
 var LocGraphApp = (function ()
 {
 	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
@@ -583,37 +579,34 @@ var LocGraphApp = (function ()
 
 		this.clearMessage ();
 
-		var pd = [];
 		// files, blank, comment, code 
 		// files is always 1.
-		for (var i = 1; i < data.SUM.length ; i++)
-		{
-			pd[i - 1] = [ i - 1, data.SUM[i] ];				
-		}
 		this.plot_dataset = [
-			{ label: 'LOC', data: pd }
-		]
-
-		var ticks = [
-    			[0, "<?php print $this->lang->line('Blank')?>(" + data.SUM[1] + ")"], 
-			[1, "<?php print $this->lang->line('Comment')?>(" + data.SUM[2] + "])"],
-			[2, "<?php print $this->lang->line('Code')?>(" + data.SUM[3] + ")"]
+			{ label: "<?php print $this->lang->line('Blank')?>", data: data.SUM[1] },
+			{ label: "<?php print $this->lang->line('Comment')?>", data: data.SUM[2] },
+			{ label: "<?php print $this->lang->line('Code')?>", data: data.SUM[3] }
 		];
 
-		this.plot_options = {
+		this.plot_options = 
+		{
 			series: {
-				bars: { show: true }
+				shadowSize: 0,
+				pie: {
+					show: true,
+					innerRadius: 0.1,
+					label: {
+						show: true,
+						radius: 0.9,
+						formatter: function labelFormatter(label, series)
+						{
+							return "<div style='font-size:8pt; text-align:center; padding:2px; '>" + label + "<br/>" + series.data[0][1] + "(" + Math.round(series.percent) + "%)</div>";
+						},
+						backgraound: { opacity: 0.8 }
+					}
+				}
 			},
-			bars: {
-				align: "center",
-				barWidth: 0.8
-			},
-			xaxis: {
-				axisLabel: "",
-				axisLabelUseCanvas: true,
-				ticks: ticks
-			},
-			yaxis: {
+			legend: {
+				show: false
 			}
 		};
 	}
@@ -895,9 +888,6 @@ $this->load->view (
 				print ' ';
 				print anchor("code/edit/{$project->id}/{$hex_headpath}{$revreq}", $this->lang->line('Edit'), 'id="code_file_edit_button"');
 			}
-			/*print anchor ("#", "LOC", "id=code_file_loc_button");*/
-			print '<a id="code_file_loc_graph_button" href="#">';
-			print '<i id="code_file_loc_graph_spin" class="fa"></i>LOC</a>';
 		}
 		?>
 	</div>
@@ -935,7 +925,12 @@ $this->load->view (
 		print anchor ('#', $history_anchor_text, 'id="code_file_history_button"');
 		//print anchor ('', $download_anchor_text, 'id="code_file_download_button"');
 		print anchor ("code/fetch/{$project->id}/${hex_headpath}{$revreq}", $download_anchor_text, 'id="code_file_download_button"');
-		if (!$is_special_stream) print anchor ('#', $this->lang->line('Enstyle'), 'id="code_file_style_button"');
+		if (!$is_special_stream) 
+		{
+			print anchor ('#', $this->lang->line('Enstyle'), 'id="code_file_style_button"');
+			print '<a id="code_file_loc_graph_button" href="#">';
+			print '<i id="code_file_loc_graph_spin" class="fa"></i>LOC</a>';
+		}
 
 		print '<a id="code_file_revision_graph_button" href="#">';
 		print '<i id="code_file_revision_graph_spin" class="fa"></i>';
