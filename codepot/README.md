@@ -336,7 +336,7 @@ jQuery JavaScript Library v1.11.2            MIT See http://jquery.org/license
 jQuery UI 1.9.2                              MIT See http://jquery.org/license
 X-editable 1.5.1                             MIT
 PHPGraphLib                                  MIT
-CLOC 1.62                                    GPL
+CLOC 1.91                                    GPL
 Flot                                         https://github.com/flot/flot/blob/master/LICENSE.txt
 Font Awesome 4.3.0                           MIT & SIL OFL 1.1
 D3.js 3.5.5                                  BSD
