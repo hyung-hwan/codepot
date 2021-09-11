@@ -331,7 +331,7 @@ class User extends CI_Controller
 			}
 		}
 
-		$img = imagecreate (50, 50);
+		$img = imagecreate(50, 50);
 
 		$bgcolor = imagecolorallocate($img, 250, 255, 250);
 		imagefill ($img, 0, 0, $bgcolor);

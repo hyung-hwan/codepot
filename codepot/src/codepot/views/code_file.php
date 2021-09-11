@@ -24,7 +24,7 @@
 
 					if (in_array ($fileext, array ('png', 'jpg', 'jpeg', 'gif', 'tif', 'bmp', 'ico')))
 					{
-						$img = @imagecreatefromstring ($file['content']);
+						$img = @imagecreatefromstring($file['content']);
 						if ($img !== FALSE) 
 						{
 							@imagedestroy ($img);

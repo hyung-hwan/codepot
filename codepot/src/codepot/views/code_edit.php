@@ -341,7 +341,7 @@ $this->load->view (
 		if ($is_octet_stream || 
 		    in_array (strtolower($fileext), array ('png', 'jpg', 'gif', 'tif', 'bmp', 'ico')))
 		{
-			$img = @imagecreatefromstring ($file['content']);
+			$img = @imagecreatefromstring($file['content']);
 			if ($img !== FALSE)
 			{
 				@imagedestroy ($img);
