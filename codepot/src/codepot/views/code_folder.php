@@ -28,8 +28,6 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jqueryui-editable.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jqueryui-editable.css')?>" />
 
-<!--[if lte IE 8]><script type="text/javascript" src="<?php print base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
-
 <script type="text/javascript" src="<?php print base_url_make('/js/chart.min.js')?>"></script>
 
 <script type="text/javascript" src="<?php print base_url_make('/js/vis.min.js')?>"></script>
@@ -448,6 +446,7 @@ var LocLangApp = (function ()
 			this.chart = null;
 		}
 	}
+
 	return App;
 })();
 
@@ -472,35 +471,55 @@ var LocFileApp = (function ()
 
 		this.clearMessage ();
 
-		var gen_color = function() {
-			var letters = '0123456789ABCDEF'.split('');
-			var color = '#';
-			for (var i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
-			return color;
-		};
+		//var gen_color = function() {
+		//	var letters = '0123456789ABCDEF'.split('');
+		//	var color = '#';
+		//	for (var i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
+		//	return color;
+		//};
 
 		var labels = [];
-		var dataset = [];
+		var dataset_lines = [];
+		var dataset_bytes = [];
 		var bgcolors = [];
-		for (var key in loc.children) {
-			var size = loc.children[key].size;
-			if (size == null) size = 0;
 
-			var name = loc.children[key].name;
-			name = name.split('/').reverse()[0];
-			labels.push (name);
-			dataset.push (size);
-			//bgcolors.push(gen_color());
-		}
+		var add_items = function(items)
+		{
+			for (var key in items) {
+				var item = items[key];
+				if ('children' in item)
+				{
+					// directory item.
+					add_items (item.children);	
+				}
+				else
+				{
+					// plain file item
+					var lines = item.lines;
+					if (lines == null) lines = 0;
+					var size = item.size;
+					if (size == null) lines = 0;
+					labels.push (item.name);
+					dataset_lines.push (item.lines == null? 0: item.lines);
+					dataset_bytes.push (item.bytes == null? 0: item.bytes);
+					//bgcolors.push(gen_color());
+				}
+			}
+		};
+		add_items (loc.children);
 
 		this.plot_dataset = {
 			labels: labels,
 			datasets: [
 				{ 
-					label: 'LOC',
-					data: dataset,
+					label: 'Lines',
+					data: dataset_lines
 					//backgroundColor: bgcolors
-				}
+				}/*,
+				{ 
+					label: 'Bytes',
+					data: dataset_bytes
+				}*/
 			]
 		};
 		this.plot_options = {
@@ -508,7 +527,8 @@ var LocFileApp = (function ()
 			maintainAspectRatio: false,
 			scales: {
 				x: { 
-					grid: { display: false }
+					grid: { display: false },
+					stacked: true
 				},
 				y: {
 					beginAtZero: true,

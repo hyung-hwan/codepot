@@ -34,7 +34,7 @@ class Graph extends CI_Controller
 		$this->load->model ('ProjectModel', 'projects');
 		$this->load->model ('SubversionModel', 'subversion');
 
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
 		$data['login'] = $login;
@@ -73,7 +73,7 @@ class Graph extends CI_Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 		{
 			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
@@ -116,7 +116,7 @@ class Graph extends CI_Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 		{
 			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
@@ -144,7 +144,7 @@ class Graph extends CI_Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 		{
 			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
@@ -172,7 +172,7 @@ class Graph extends CI_Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 		{
 			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 
@@ -200,7 +200,7 @@ class Graph extends CI_Controller
 	{
 		$this->load->model ('ProjectModel', 'projects');
 
-		$login = $this->login->getUser ();
+		$login = $this->login->getUser();
 		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
 		{
 			header($_SERVER['SERVER_PROTOCOL'].' 404 Not Found'); 

@@ -102,9 +102,7 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery-ui.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jquery-ui.css')?>" />
 
-<!--[if lte IE 8]><script type="text/javascript" src="<?php print base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.min.js')?>"></script>
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.pie.min.js')?>"></script>
+<script type="text/javascript" src="<?php print base_url_make('/js/chart.min.js')?>"></script>
 
 <script type="text/javascript" src="<?php print base_url_make('/js/vis.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/vis.min.css')?>" />
@@ -404,6 +402,10 @@ var GraphApp = (function ()
 			self.resizeGraph ();
 		});
 
+		this.graph_container.on ("dialogclose", function (evt, ui) {
+			self.closeGraph ();
+		});
+
 		this.graph_button.button().click (function ()
 		{
 			open_graph.call (self);
@@ -437,6 +439,11 @@ var GraphApp = (function ()
 	}
 
 	App.prototype.resizeGraph = function ()
+	{
+		/* SHOULD BE IMPLEMENTED BY INHERITER */
+	}
+
+	App.prototype.closeGraph = function ()
 	{
 		/* SHOULD BE IMPLEMENTED BY INHERITER */
 	}
@@ -558,15 +565,18 @@ var LocGraphApp = (function ()
 	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
 	{
 		GraphApp.call (this, top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
+		this.chart = null;
 		this.plot_dataset = null;
 		this.plot_options = null;
 		return this;
 	}
+
 	App.prototype = Object.create(GraphApp.prototype);
 	App.prototype.constructor = App;
+
 	App.prototype.renderGraph = function (data)
 	{
-		if (!data.hasOwnProperty('SUM'))
+		if (!("SUM" in data))
 		{
 			this.showMessage ('No data to show');
 			return;
@@ -579,36 +589,38 @@ var LocGraphApp = (function ()
 
 		this.clearMessage ();
 
-		// files, blank, comment, code 
-		// files is always 1.
-		this.plot_dataset = [
-			{ label: "<?php print $this->lang->line('Blank')?>", data: data.SUM[1] },
-			{ label: "<?php print $this->lang->line('Comment')?>", data: data.SUM[2] },
-			{ label: "<?php print $this->lang->line('Code')?>", data: data.SUM[3] }
+		var labels = [
+			"<?php print $this->lang->line('Blank')?>", 
+			"<?php print $this->lang->line('Comment')?>",
+			"<?php print $this->lang->line('Code')?>"
 		];
 
-		this.plot_options = 
-		{
-			series: {
-				shadowSize: 0,
-				pie: {
-					show: true,
-					innerRadius: 0.1,
-					label: {
-						show: true,
-						radius: 0.9,
-						formatter: function labelFormatter(label, series)
-						{
-							return "<div style='font-size:8pt; text-align:center; padding:2px; '>" + label + "<br/>" + series.data[0][1] + "(" + Math.round(series.percent) + "%)</div>";
-						},
-						backgraound: { opacity: 0.8 }
-					}
+		// data.SUM[] => files, blank, comment, code 
+		// files is always 1.
+		this.plot_dataset = {
+			labels: labels,
+			datasets: [
+				{
+					data: [data.SUM[1], data.SUM[2], data.SUM[3]],
+					backgroundColor: [
+						'rgb(255, 99, 132)',
+						'rgb(54, 162, 235)',
+						'rgb(255, 205, 86)'
+					]
 				}
-			},
-			legend: {
-				show: false
-			}
+			]
 		};
+
+		this.plot_options = {
+			responsive: true,
+			maintainAspectRatio: false
+		};
+
+		this.chart = new Chart(this.graph_canvas[0].getContext('2d'), {
+			type: 'doughnut',
+			data: this.plot_dataset,
+			options: this.plot_options
+		});
 	}
 
 	App.prototype.resizeGraph = function ()
@@ -617,7 +629,15 @@ var LocGraphApp = (function ()
 		{
 			this.graph_canvas.width (this.graph_container.width() - 5);
 			this.graph_canvas.height (this.graph_container.height() - 10);
-			$.plot(this.graph_canvas, this.plot_dataset, this.plot_options);
+		}
+	}
+
+	App.prototype.closeGraph = function ()
+	{
+		if (this.chart != null)
+		{
+			this.chart.destroy();
+			this.chart = null;
 		}
 	}
 
@@ -982,7 +1002,8 @@ $this->load->view (
 	</div>
 
 	<div id="code_file_loc_graph_container">
-		<div id="code_file_loc_graph"></div>
+		<!-- <div id="code_file_loc_graph"></div> -->
+		<canvas id="code_file_loc_graph"></canvas>
 		<div id="code_file_loc_graph_error"></div>
 	</div>
 </div>

@@ -1596,10 +1596,9 @@ class SubversionModel extends CodeRepoModel
 				if ($info === FALSE || $info === NULL || count($info) != 1)  continue;
 			}
 
-			if ($info[0]['kind'] == SVN_NODE_FILE) return FALSE;
-			$info0 = &$info[0];
+			if ($info[0]['kind'] == SVN_NODE_FILE) continue;
 
-			$list = @svn_ls ($workurl, $rev, FALSE, TRUE);
+			$list = @svn_ls($workurl, $rev, FALSE, TRUE);
 			if ($list === FALSE) return FALSE;
 
 			foreach ($list as $key => $value)
@@ -1609,20 +1608,25 @@ class SubversionModel extends CodeRepoModel
 				{
 					$obj = new stdClass();
 					//$obj->name = $key;
-					$obj->name = $full_path;
+					//$obj->name = $full_path;
+					$obj->name = substr($full_path, strlen($path) + 1); // relative path
 
-					$text = @svn_cat ("{$orgurl}/{$key}{$trailer}", $rev);
-					if ($text === FALSE) $obj->size = 0;
+					$text = @svn_cat("{$orgurl}/{$key}{$trailer}", $rev);
+					if ($text === FALSE) 
+					{
+						$obj->lines = 0;
+						$obj->bytes = 0;
+					}
 					else
 					{
 						$text_len = strlen($text);
-						$obj->size = substr_count($text, "\n");
-						if ($text_len > 0 && $text[$text_len - 1] != "\n") $obj->size++;
+						$obj->lines = substr_count($text, "\n");
+						if ($text_len > 0 && $text[$text_len - 1] != "\n") $obj->lines++;
+						$obj->bytes = $text_len;
 					}
 
 					$obj->language = substr(strrchr($key, '.'), 1); // file extension
 					if ($obj->language === FALSE) $obj->language = '';
-
 
 					array_push ($current_cloc->children, $obj);
 				}
@@ -1634,11 +1638,11 @@ class SubversionModel extends CodeRepoModel
 					// other same base name in a different directory.
 					// let's use a full path. it's anyway clearer.
 					//$obj->name = $key;
-					$obj->name = $full_path;
+					//$obj->name = $full_path;
+					$obj->name = substr($full_path, strlen($path) + 1); // relativte path
 
 					$obj->children = array();
 					array_push ($current_cloc->children, $obj);
-
 					array_push ($stack, $full_path);
 					array_push ($stack, $obj);
 				}
