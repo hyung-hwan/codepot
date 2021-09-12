@@ -29,11 +29,8 @@
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/jqueryui-editable.css')?>" />
 
 <!--[if lte IE 8]><script type="text/javascript" src="<?php print base_url_make('/js/excanvas.min.js')?>"></script><![endif]-->
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.min.js')?>"></script>
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.time.min.js')?>"></script>
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.categories.min.js')?>"></script>
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
-<script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
+
+<script type="text/javascript" src="<?php print base_url_make('/js/chart.min.js')?>"></script>
 
 <script type="text/javascript" src="<?php print base_url_make('/js/vis.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/vis.min.css')?>" />
@@ -202,6 +199,10 @@ var GraphApp = (function ()
 			self.resizeGraph ();
 		});
 
+		this.graph_container.on ("dialogclose", function (evt, ui) {
+			self.closeGraph ();
+		});
+
 		this.graph_button.button().click (function ()
 		{
 			open_graph.call (self);
@@ -235,6 +236,11 @@ var GraphApp = (function ()
 	}
 
 	App.prototype.resizeGraph = function ()
+	{
+		/* SHOULD BE IMPLEMENTED BY INHERITER */
+	}
+
+	App.prototype.closeGraph = function ()
 	{
 		/* SHOULD BE IMPLEMENTED BY INHERITER */
 	}
@@ -357,8 +363,6 @@ var LocLangApp = (function ()
 	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
 	{
 		GraphApp.call (this, top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
-		this.tooltip = null;
-		this.plot_last_point = null;
 		this.plot_dataset = null;
 		this.plot_options = null;
 		return this;
@@ -367,105 +371,63 @@ var LocLangApp = (function ()
 	App.prototype = Object.create (GraphApp.prototype);
 	App.prototype.constructor = App;
 
-	function show_tooltip(id, x, y, contents) 
-	{
-		var gco = this.graph_container.offset();
-
-		if (this.tooltip != null) this.tooltip.remove();
-
-		this.tooltip = $('<div id="' + id + '">' + contents + '</div>').css( {
-			position: 'absolute',
-			display: 'none',
-			top: y - gco.top,
-			left: x - gco.left,
-			border: '1px solid #fdd',
-			padding: '2px',
-			'background-color': '#fee',
-			'font-size': '0.8em',
-			'font-family': 'inherit',
-			opacity: 0.80
-		});
-		this.tooltip.appendTo(this.graph_container).fadeIn(200);
-	}
-
-	function on_plot_hover (item)
-	{
-		if (item) 
-		{
-			if (this.plot_last_point != item.datapoint) 
-			{
-				this.plot_last_point = item.datapoint;
-				show_tooltip.call (this, "code_folder_loc_by_lang_tooltip", item.pageX, item.pageY, item.datapoint[1]);
-			}
-		} 
-		else  
-		{
-			if (this.plot_last_point != null) this.plot_last_point = null;
-			if (this.tooltip != null) 
-			{
-				this.tooltip.remove();
-				this.tooltip = null;
-			}
-		}
-	}
-
 	App.prototype.renderGraph = function (loc)
 	{
 		var self = this;
 
 		this.clearMessage ();
 
+		var labels = [];
+
 		var blank = [];
-		for (var key in loc) blank.push ([ key, loc[key][1]] );
-
 		var comment = [];
-		for (var key in loc) comment.push ([ key, loc[key][2]] );
-
 		var code = [];
-		for (var key in loc) code.push ([ key, loc[key][3]] );
+		for (var key in loc) 
+		{
+			labels.push (key);
+			blank.push (loc[key][1]);
+			comment.push (loc[key][2]);
+			code.push (loc[key][3]);
+		}
 
-		var dataset = 
-		[
-			{ label: "<?php print $this->lang->line('Code')?>",  data: code },
-			{ label: "<?php print $this->lang->line('Comment')?>",  data: comment },
-			{ label: "<?php print $this->lang->line('Blank')?>",  data: blank }
-		];
-
-		var options = {
-			series: {
-				stack: true,
-				shadowSize: 0,
-				bars: { 
-					show: true, 
-					fill: true,
-					align: "center",
-					barWidth: 0.8
+		this.plot_dataset = {
+			labels: labels,
+			datasets: [
+				{ 
+					label: "<?php print $this->lang->line('Blank')?>",
+					data: blank
 				},
-				lines: { show: false, fill: true },
-				points: { show: false }
-			},
-
-			grid: { hoverable: true, clickable: true },
-
-			xaxes: [
-				{ mode: "categories",
-				  autoscaleMargin: 0.05,
-				  rotateTicks: ((code.length >= 8)? 135: 0)
+				{ 
+					label: "<?php print $this->lang->line('Comment')?>",
+					data: comment
 				},
-			],
-
-			yaxes: { }
+				{ 
+					label: "<?php print $this->lang->line('Code')?>",
+					data: code
+				},
+			]
 		};
 
-		//this.graph_canvas.width(550).height(400);
-		//$.plot(this.graph_canvas, dataset, options);
 
-		this.plot_dataset = dataset;
-		this.plot_options = options;
-		this.plot_last_point = null;
+		this.plot_options = {
+			responsive: true,
+			maintainAspectRatio: false,
+			scales: {
+				x: { 
+					grid: { display: false },
+					stacked: true
+				},
+				y: {
+					beginAtZero: true,
+					grid: { display: true }
+				}
+			}
+		};
 
-		this.graph_canvas.bind("plothover", function (event, pos, item) {
-			on_plot_hover.call (self, item);
+		this.chart = new Chart(this.graph_canvas[0].getContext('2d'), {
+			type: 'bar',
+			data: this.plot_dataset,
+			options: this.plot_options
 		});
 	}
 
@@ -475,7 +437,15 @@ var LocLangApp = (function ()
 		{
 			this.graph_canvas.width (this.graph_container.width() - 5);
 			this.graph_canvas.height (this.graph_container.height() - 10);
-			$.plot(this.graph_canvas, this.plot_dataset, this.plot_options);
+		}
+	}
+
+	App.prototype.closeGraph = function ()
+	{
+		if (this.chart != null)
+		{
+			this.chart.destroy();
+			this.chart = null;
 		}
 	}
 	return App;
@@ -487,59 +457,14 @@ var LocFileApp = (function ()
 	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
 	{
 		GraphApp.call (this, top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
-		this.tooltip = null;
-		this.plot_last_point = null;
 		this.plot_dataset = null;
 		this.plot_options = null;
+		this.chart = null;
 		return this;
 	}
 
 	App.prototype = Object.create (GraphApp.prototype);
 	App.prototype.constructor = App;
-
-	function show_tooltip(id, x, y, contents) 
-	{
-		var gco = this.graph_container.offset();
-
-		if (this.tooltip != null) this.tooltip.remove();
-
-		this.tooltip = $('<div id="' + id + '">' + contents + '</div>').css( {
-			position: 'absolute',
-			display: 'none',
-			top: y - gco.top,
-			left: x - gco.left,
-			border: '1px solid #fdd',
-			padding: '2px',
-			'background-color': '#fee',
-			'font-size': '0.8em',
-			'font-family': 'inherit',
-			opacity: 0.80
-		});
-		this.tooltip.appendTo(this.graph_container).fadeIn(200);
-	}
-
-	function on_plot_hover (item)
-	{
-		if (item) 
-		{
-			if (this.plot_last_point != item.datapoint) 
-			{
-				this.plot_last_point = item.datapoint;
-
-				var name = item.series.data[item.dataIndex][0];
-				show_tooltip.call (this, "code_folder_loc_by_file_tooltip", item.pageX, item.pageY, name + '(' +  item.datapoint[1] + ')');
-			}
-		} 
-		else  
-		{
-			if (this.plot_last_point != null) this.plot_last_point = null;
-			if (this.tooltip != null) 
-			{
-				this.tooltip.remove();
-				this.tooltip = null;
-			}
-		}
-	}
 
 	App.prototype.renderGraph = function (loc)
 	{
@@ -547,49 +472,55 @@ var LocFileApp = (function ()
 
 		this.clearMessage ();
 
+		var gen_color = function() {
+			var letters = '0123456789ABCDEF'.split('');
+			var color = '#';
+			for (var i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
+			return color;
+		};
+
+		var labels = [];
 		var dataset = [];
+		var bgcolors = [];
 		for (var key in loc.children) {
 			var size = loc.children[key].size;
 			if (size == null) size = 0;
+
 			var name = loc.children[key].name;
 			name = name.split('/').reverse()[0];
-			dataset.push ([name, size]);
+			labels.push (name);
+			dataset.push (size);
+			//bgcolors.push(gen_color());
 		}
 
-		var options = {
-			series: {
-				stack: true,
-				shadowSize: 0,
-				bars: { 
-					show: true, 
-					fill: false,
-					align: "center",
-					barWidth: 0.7,
-					lineWidth: 0.5
+		this.plot_dataset = {
+			labels: labels,
+			datasets: [
+				{ 
+					label: 'LOC',
+					data: dataset,
+					//backgroundColor: bgcolors
+				}
+			]
+		};
+		this.plot_options = {
+			responsive: true,
+			maintainAspectRatio: false,
+			scales: {
+				x: { 
+					grid: { display: false }
 				},
-				lines: { show: false, fill: true },
-				points: { show: false }
-			},
-
-			grid: { hoverable: true, clickable: true },
-
-			xaxes: [
-				{ mode: "categories",
-				  autoscaleMargin: 0.01,
-				  rotateTicks: 90,
-				  tickLength: 0
-				},
-			],
-
-			yaxes: { }
+				y: {
+					beginAtZero: true,
+					grid: { display: true }
+				}
+			}
 		};
 
-		this.plot_dataset = [ {label: "LOC", data: dataset} ];
-		this.plot_options = options;
-		this.plot_last_point = null;
-
-		this.graph_canvas.bind("plothover", function (event, pos, item) {
-			on_plot_hover.call (self, item);
+		this.chart = new Chart(this.graph_canvas[0].getContext('2d'), {
+			type: 'bar',
+			data: this.plot_dataset,
+			options: this.plot_options
 		});
 	}
 
@@ -599,7 +530,15 @@ var LocFileApp = (function ()
 		{
 			this.graph_canvas.width (this.graph_container.width() - 5);
 			this.graph_canvas.height (this.graph_container.height() - 10);
-			$.plot(this.graph_canvas, this.plot_dataset, this.plot_options);
+		}
+	}
+
+	App.prototype.closeGraph = function ()
+	{
+		if (this.chart != null)
+		{
+			this.chart.destroy();
+			this.chart = null;
 		}
 	}
 	return App;
@@ -1339,12 +1278,14 @@ $this->load->view (
 
 <div id="code_folder_graph" class="graph">
 	<div id="code_folder_loc_by_lang_container">
-		<div id="code_folder_loc_by_lang"></div>
+		<!-- <div id="code_folder_loc_by_lang"></div> -->
+		<canvas id="code_folder_loc_by_lang"></canvas>
 		<div id="code_folder_loc_by_lang_error"></div>
 	</div>
 
 	<div id="code_folder_loc_by_file_container">
-		<div id="code_folder_loc_by_file"></div>
+		<!-- <div id="code_folder_loc_by_file"></div> -->
+		<canvas id="code_folder_loc_by_file"></canvas>
 		<div id="code_folder_loc_by_file_error"></div>
 	</div>
 
