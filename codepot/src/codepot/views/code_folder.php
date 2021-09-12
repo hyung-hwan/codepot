@@ -35,9 +35,6 @@
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.stack.min.js')?>"></script>
 <script type="text/javascript" src="<?php print base_url_make('/js/jquery.flot.tickrotor.js')?>"></script>
 
-<script type="text/javascript" src="<?php print base_url_make('/js/d3.min.js')?>"></script>
-<script type="text/javascript" src="<?php print base_url_make('/js/CodeFlower.js')?>"></script>
-
 <script type="text/javascript" src="<?php print base_url_make('/js/vis.min.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?php print base_url_make('/css/vis.min.css')?>" />
 
@@ -490,40 +487,123 @@ var LocFileApp = (function ()
 	function App (top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title)
 	{
 		GraphApp.call (this, top_container, graph_container, graph_msgdiv, graph_canvas, graph_button, graph_spin, graph_url, graph_title);
-		this.fc = null;
-		this.loc_data = null;
-
-		var self = this;
-		this.graph_container.on ("dialogclose", function (evt) {
-			if (self.fc != null)
-			{
-				self.fc.cleanup ();
-				self.fc = null;
-			}
-		});
+		this.tooltip = null;
+		this.plot_last_point = null;
+		this.plot_dataset = null;
+		this.plot_options = null;
 		return this;
 	}
 
 	App.prototype = Object.create (GraphApp.prototype);
 	App.prototype.constructor = App;
 
+	function show_tooltip(id, x, y, contents) 
+	{
+		var gco = this.graph_container.offset();
+
+		if (this.tooltip != null) this.tooltip.remove();
+
+		this.tooltip = $('<div id="' + id + '">' + contents + '</div>').css( {
+			position: 'absolute',
+			display: 'none',
+			top: y - gco.top,
+			left: x - gco.left,
+			border: '1px solid #fdd',
+			padding: '2px',
+			'background-color': '#fee',
+			'font-size': '0.8em',
+			'font-family': 'inherit',
+			opacity: 0.80
+		});
+		this.tooltip.appendTo(this.graph_container).fadeIn(200);
+	}
+
+	function on_plot_hover (item)
+	{
+		if (item) 
+		{
+			if (this.plot_last_point != item.datapoint) 
+			{
+				this.plot_last_point = item.datapoint;
+
+				var name = item.series.data[item.dataIndex][0];
+				show_tooltip.call (this, "code_folder_loc_by_file_tooltip", item.pageX, item.pageY, name + '(' +  item.datapoint[1] + ')');
+			}
+		} 
+		else  
+		{
+			if (this.plot_last_point != null) this.plot_last_point = null;
+			if (this.tooltip != null) 
+			{
+				this.tooltip.remove();
+				this.tooltip = null;
+			}
+		}
+	}
+
 	App.prototype.renderGraph = function (loc)
 	{
+		var self = this;
+
 		this.clearMessage ();
-		this.loc_data = loc;
+
+		var dataset = [];
+		for (var key in loc.children) {
+			var size = loc.children[key].size;
+			if (size == null) size = 0;
+			var name = loc.children[key].name;
+			name = name.split('/').reverse()[0];
+			dataset.push ([name, size]);
+		}
+
+		var options = {
+			series: {
+				stack: true,
+				shadowSize: 0,
+				bars: { 
+					show: true, 
+					fill: false,
+					align: "center",
+					barWidth: 0.7,
+					lineWidth: 0.5
+				},
+				lines: { show: false, fill: true },
+				points: { show: false }
+			},
+
+			grid: { hoverable: true, clickable: true },
+
+			xaxes: [
+				{ mode: "categories",
+				  autoscaleMargin: 0.01,
+				  rotateTicks: 90,
+				  tickLength: 0
+				},
+			],
+
+			yaxes: { }
+		};
+
+		this.plot_dataset = [ {label: "LOC", data: dataset} ];
+		this.plot_options = options;
+		this.plot_last_point = null;
+
+		this.graph_canvas.bind("plothover", function (event, pos, item) {
+			on_plot_hover.call (self, item);
+		});
 	}
 
 	App.prototype.resizeGraph = function ()
 	{
-		if (this.fc == null) 
+		if (this.plot_dataset != null)
 		{
-			this.fc = new CodeFlower ("#code_folder_loc_by_file", this.graph_container.width() - 5, this.graph_container.height() - 10);
-			if (this.loc_data != null) this.fc.update (this.loc_data);
+			this.graph_canvas.width (this.graph_container.width() - 5);
+			this.graph_canvas.height (this.graph_container.height() - 10);
+			$.plot(this.graph_canvas, this.plot_dataset, this.plot_options);
 		}
 	}
 	return App;
 })();
-
 
 function render_readme()
 {
