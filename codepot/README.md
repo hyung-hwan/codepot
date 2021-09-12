@@ -335,7 +335,6 @@ JavaScript Creole 1.0 Wiki Markup Parser     See src/js/creole.js
 jQuery JavaScript Library v1.11.2            MIT See http://jquery.org/license
 jQuery UI 1.9.2                              MIT See http://jquery.org/license
 X-editable 1.5.1                             MIT
-PHPGraphLib                                  MIT
 CLOC 1.91                                    GPL
 Flot                                         https://github.com/flot/flot/blob/master/LICENSE.txt
 Chart.js                                     MIT
