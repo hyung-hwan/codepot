@@ -15,10 +15,10 @@ For example, you may run the following commands to start the container.
 
 ```
 $ docker pull hyunghwan/codepot:ubnt20.04
-$ docker run -dit --restart unless-stopped --name codepot -p 7000:80 hyunghwan/codepot:ubnt20.04
+$ docker run -dit --restart=unless-stopped --name=codepot -p 1080:1080 hyunghwan/codepot:ubnt20.04 --port=1080 --https-redirected=yes --hide-index-page=yes
 ```
 
-Then you can open a web browser to http://docker-host-address:7000/ to access the codepot system.
+Then you can open a web browser to http://docker-host-address:1080/ to access the codepot system.
 
 The image runs the apache2 server in the foreground by default. You may open
 a shell session to configure various aspects of codepot.
@@ -41,7 +41,7 @@ If you like to keep the data persistenly on the docker host, map /var/lib/codepo
 directory or a volume on the host when starting the container.
 
 ```
-$ docker run -dit --restart unless-stopped --name codepot -p 7000:80 -v ${HOME}/codepot-data:/var/lib/codepot hyunghwan/codepot:ubnt20.04
+$ docker run -dit --restart=unless-stopped --name=codepot -p 1080:1080 -v ${HOME}/codepot-data:/var/lib/codepot hyunghwan/codepot:ubnt20.04 --port=1080 --https-redirected=yes --hide-index-page=yes
 ```
 
 If you run this command, codepot stores all data under ${HOME}/codepot-data from the host 
