@@ -312,6 +312,7 @@ top_srcdir = @top_srcdir@
 wwwdir = $(WWWDIR)/js
 SUBDIRS = prettify
 www_DATA = \
+	chart.min.js \
 	codepot.js \
 	creole.js  \
 	jquery.min.js \

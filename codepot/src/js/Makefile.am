@@ -2,6 +2,7 @@ SUBDIRS =  prettify
 
 wwwdir=$(WWWDIR)/js
 www_DATA = \
+	chart.min.js \
 	codepot.js \
 	creole.js  \
 	jquery.min.js \
