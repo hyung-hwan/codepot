@@ -475,11 +475,11 @@ sub trigger_webhooks
 			my $res = $ua->get($webhook);
 			if ($res->is_success)
 			{
-				print "$res->decoded_content\n";
+				##print "$res->decoded_content\n";
 			}
 			else
 			{
-				print "$res->status_line\n";
+				##print "$res->status_line\n";
 			}
 		}
 	}
