@@ -146,6 +146,7 @@ class ProjectModel extends CI_Model
 		$this->db->set ('name', $project->name);
 		$this->db->set ('summary', $project->summary);
 		$this->db->set ('description', $project->description);
+		$this->db->set ('webhooks', $project->webhooks);
 		$this->db->set ('commitable', $project->commitable);
 		$this->db->set ('public', $project->public);
 		$this->db->set ('createdon', codepot_nowtodbdate());
@@ -217,6 +218,7 @@ class ProjectModel extends CI_Model
 		$this->db->set ('name', $project->name);
 		$this->db->set ('summary', $project->summary);
 		$this->db->set ('description', $project->description);
+		$this->db->set ('webhooks', $project->webhooks);
 		$this->db->set ('commitable', $project->commitable);
 		$this->db->set ('public', $project->public);
 		$this->db->set ('updatedon', codepot_nowtodbdate());

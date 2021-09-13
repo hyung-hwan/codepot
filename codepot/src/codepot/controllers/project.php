@@ -207,7 +207,9 @@ class Project extends CI_Controller
 		$this->form_validation->set_rules (
 			'project_description', 'description', 'required');
 		$this->form_validation->set_rules (
-			'project_commitable', 'commitable', 'alpha');
+			'project_webhooks', 'description', 'required');
+		//$this->form_validation->set_rules (
+		//	'project_commitable', 'commitable', 'alpha');
 		$this->form_validation->set_rules (
 			'project_public', 'public', 'alpha');
 		$this->form_validation->set_rules (
@@ -230,6 +232,7 @@ class Project extends CI_Controller
 			$project->name = $this->input->post('project_name');
 			$project->summary = $this->input->post('project_summary');
 			$project->description = $this->input->post('project_description');
+			$project->webhooks = $this->input->post('project_webhooks');
 			$project->commitable = $this->input->post('project_commitable');
 			$project->public = $this->input->post('project_public');
 			$project->members = array_unique (preg_split ('/[[:space:],]+/', $this->input->post('project_members')));
@@ -291,6 +294,7 @@ class Project extends CI_Controller
 		$project->name = '';
 		$project->summary = '';
 		$project->description = '';
+		$project->wehhooks = '';
 		$project->commitable = 'Y';
 		$project->public = 'Y';
 		$project->members = array ($login['id']);
@@ -571,7 +575,7 @@ class Project extends CI_Controller
 			else
 			{
 				// get project entries staring from the offset.
-				$projects = $this->projects->getEntries ($login['id'], $offset, CODEPOT_MAX_PROJECTS_PER_PAGE, $search);
+				$projects = $this->projects->getEntries($login['id'], $offset, CODEPOT_MAX_PROJECTS_PER_PAGE, $search);
 				if ($projects === FALSE)
 				{
 					$status = 'dberr';
@@ -581,7 +585,11 @@ class Project extends CI_Controller
 				{
 					$status = 'ok';
 					// exclude the description column
-					foreach ($projects as $p) unset ($p->description);
+					foreach ($projects as $p) 
+					{
+						unset ($p->description);
+						unset ($p->webhooks);
+					}
 				}
 			}
 		}
