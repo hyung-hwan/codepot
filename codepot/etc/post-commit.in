@@ -15,6 +15,7 @@ use Net::LDAP;
 use Net::LDAP qw(LDAP_SUCCESS);
 use URI;
 use Mail::Sendmail;
+use LWP::UserAgent;
 
 my $CFG_FILE = '@CFGDIR@/codepot.ini';
 my $REPOFS = $ARGV[0];
@@ -27,37 +28,37 @@ sub get_config
 {
 	my $cfg = new Config::Simple();
 
-	if (!$cfg->read ($CFG_FILE))
+	if (!$cfg->read($CFG_FILE))
 	{
 		return undef;
 	}
 
 	my $config = {
-		login_model => $cfg->param ('login_model'),
+		login_model => $cfg->param('login_model'),
 		
-		ldap_server_uri => $cfg->param ('ldap_server_uri'),
-		ldap_server_protocol_version => $cfg->param ('ldap_server_protocol_version'),
-		ldap_auth_mode => $cfg->param ('ldap_auth_mode'),
-		ldap_userid_format => $cfg->param ('ldap_userid_format'),
-		ldap_password_format => $cfg->param ('ldap_password_format'),
-		ldap_admin_binddn => $cfg->param ('ldap_admin_binddn'),
-		ldap_admin_password => $cfg->param ('ldap_admin_password'),
-		ldap_userid_search_base => $cfg->param ('ldap_userid_search_base'),
-		ldap_userid_search_filter => $cfg->param ('ldap_userid_search_filter'),
-		ldap_mail_attribute_name => $cfg->param ('ldap_mail_attribute_name'),
+		ldap_server_uri => $cfg->param('ldap_server_uri'),
+		ldap_server_protocol_version => $cfg->param('ldap_server_protocol_version'),
+		ldap_auth_mode => $cfg->param('ldap_auth_mode'),
+		ldap_userid_format => $cfg->param('ldap_userid_format'),
+		ldap_password_format => $cfg->param('ldap_password_format'),
+		ldap_admin_binddn => $cfg->param('ldap_admin_binddn'),
+		ldap_admin_password => $cfg->param('ldap_admin_password'),
+		ldap_userid_search_base => $cfg->param('ldap_userid_search_base'),
+		ldap_userid_search_filter => $cfg->param('ldap_userid_search_filter'),
+		ldap_mail_attribute_name => $cfg->param('ldap_mail_attribute_name'),
 
-		database_hostname => $cfg->param ("database_hostname"),
-		database_port => $cfg->param ("database_port"),
-		database_username => $cfg->param ("database_username"),
-		database_password => $cfg->param ("database_password"),
-		database_name => $cfg->param ("database_name"),
-		database_driver => $cfg->param ("database_driver"),
-		database_prefix => $cfg->param ("database_prefix"),
-		database_store_gmt => $cfg->param ("database_store_gmt"),
+		database_hostname => $cfg->param("database_hostname"),
+		database_port => $cfg->param("database_port"),
+		database_username => $cfg->param("database_username"),
+		database_password => $cfg->param("database_password"),
+		database_name => $cfg->param("database_name"),
+		database_driver => $cfg->param("database_driver"),
+		database_prefix => $cfg->param("database_prefix"),
+		database_store_gmt => $cfg->param("database_store_gmt"),
 
-		email_sender => $cfg->param ("email_sender"),
-		commit_notification => $cfg->param ("commit_notification"),
-		commit_notification_url => $cfg->param ("commit_notification_url")
+		email_sender => $cfg->param("email_sender"),
+		commit_notification => $cfg->param("commit_notification"),
+		commit_notification_url => $cfg->param("commit_notification_url")
 	};
 
 	return $config;
@@ -138,8 +139,8 @@ sub find_issue_reference_in_commit_message
 
 	$dbh->begin_work ();
 
-	my $query = $dbh->prepare ("DELETE FROM ${QC}${prefix}issue_coderev${QC} WHERE ${QC}codeproid${QC}=? AND ${QC}coderev${QC}=?");
-	if (!$query || !$query->execute ($projectid, $revision))
+	my $query = $dbh->prepare("DELETE FROM ${QC}${prefix}issue_coderev${QC} WHERE ${QC}codeproid${QC}=? AND ${QC}coderev${QC}=?");
+	if (!$query || !$query->execute($projectid, $revision))
 	{
 		my $errstr = $dbh->errstr();
 		if ($query) { $query->finish (); }
@@ -150,7 +151,7 @@ sub find_issue_reference_in_commit_message
 
 	for my $issue_id(@unique_issue_ids)
 	{
-		my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}issue_coderev${QC} (${QC}projectid${QC},${QC}issueid${QC},${QC}codeproid${QC},${QC}coderev${QC}) VALUES (?,?,?,?)");
+		my $query = $dbh->prepare("INSERT INTO ${QC}${prefix}issue_coderev${QC} (${QC}projectid${QC},${QC}issueid${QC},${QC}codeproid${QC},${QC}coderev${QC}) VALUES (?,?,?,?)");
 		if ($query)
 		{
 			# ignore errors
@@ -177,11 +178,11 @@ sub write_commit_log
 
 	if (($store_gmt =~ /^\d+?$/ && int($store_gmt) != 0) || (lc($store_gmt) eq 'yes'))
 	{
-		$timestamp = POSIX::strftime ('%Y-%m-%d %H:%M:%S', gmtime());
+		$timestamp = POSIX::strftime('%Y-%m-%d %H:%M:%S', gmtime());
 	}
 	else
 	{
-		$timestamp = POSIX::strftime ('%Y-%m-%d %H:%M:%S', localtime());
+		$timestamp = POSIX::strftime('%Y-%m-%d %H:%M:%S', localtime());
 	}
 
 	# the PHP side is executing ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS.FF.
@@ -219,7 +220,7 @@ sub get_author
 		return undef;
 	}
 	
-	my $fs = $svn->fs ();
+	my $fs = $svn->fs();
 	if (!defined($fs))
 	{
 		print (STDERR "Cannot open fs - $REPOFS\n");
@@ -240,14 +241,14 @@ sub get_commit_message
 		return undef;
 	}
 
-	my $fs = $svn->fs ();
+	my $fs = $svn->fs();
 	if (!defined($fs))
 	{
 		print (STDERR "Cannot open fs - $REPOFS\n");
 		return undef;
 	}
 
-	my $logmsg = $fs->revision_prop ($REV, 'svn:log');
+	my $logmsg = $fs->revision_prop($REV, 'svn:log');
 	return $logmsg;
 }
 
@@ -445,6 +446,48 @@ sub format_commit_url
 
 	return $out;
 }
+
+sub trigger_webhooks
+{
+	my ($cfg, $dbh, $prefix, $projectid) = @_;
+
+	my $query = $dbh->prepare("SELECT ${QC}webhooks${QC} FROM ${QC}${prefix}project${QC} WHERE ${QC}projectid${QC}=?");
+	if (!$query || !$query->execute($projectid))
+	{
+		if ($query) { $query->finish (); }
+		return (-1, $dbh->errstr());
+	}
+
+	my $webhooks = '';
+	if (my @row = $query->fetchrow_array())
+	{
+		$webhooks = $row[0];
+	}
+
+	my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
+	$ua->timeout (5);
+	foreach my $webhook (split(/\n/ ,$webhooks))
+	{
+		$webhook =~ s/^\s+|\s+$//g;
+		if ($webhook ne '')
+		{
+			## TODO: some formatting on webhook?
+			my $res = $ua->get($webhook);
+			if ($res->is_success)
+			{
+				print "$res->decoded_content\n";
+			}
+			else
+			{
+				print "$res->status_line\n";
+			}
+		}
+	}
+
+	$query->finish ();
+	return (0, undef);
+}
+
 #------------------------------------------------------------
 # MAIN
 #------------------------------------------------------------
@@ -498,6 +541,8 @@ if (lc($cfg->{commit_notification}) eq 'yes')
 
 	email_message_to_project_members ($cfg, $dbh, $cfg->{database_prefix}, $REPOBASE, $commit_subject, $commit_message);
 }
+
+trigger_webhooks ($cfg, $dbh, $cfg->{database_prefix}, $REPOBASE);
 
 close_database ($dbh);
 
