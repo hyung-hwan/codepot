@@ -36,6 +36,7 @@ CREATE TABLE project (
 	name        VARCHAR(255) UNIQUE NOT NULL,
 	summary     VARCHAR(255) NOT NULL,
 	description TEXT NOT NULL,
+	webhooks    TEXT NOT NULL,
 	commitable  CHAR(1)      NOT NULL DEFAULT 'Y',
 	public      CHAR(1)      NOT NULL DEFAULT 'Y',
 	codecharset VARCHAR(32),

@@ -41,6 +41,7 @@ CREATE TABLE "cpot_project" (
 	"name"          VARCHAR(255) UNIQUE NOT NULL,
 	"summary"       VARCHAR(255) NOT NULL,
 	"description"   CLOB NOT NULL,
+	"webhooks"      CLOB NOT NULL,
 	"commitable"    CHAR(1)    DEFAULT 'Y' NOT NULL,
 	"public"        CHAR(1)    DEFAULT 'Y' NOT NULL,
 	"codecharset"   VARCHAR(32),
