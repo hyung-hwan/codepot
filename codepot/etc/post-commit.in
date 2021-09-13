@@ -451,7 +451,7 @@ sub trigger_webhooks
 {
 	my ($cfg, $dbh, $prefix, $projectid) = @_;
 
-	my $query = $dbh->prepare("SELECT ${QC}webhooks${QC} FROM ${QC}${prefix}project${QC} WHERE ${QC}projectid${QC}=?");
+	my $query = $dbh->prepare("SELECT ${QC}webhooks${QC} FROM ${QC}${prefix}project${QC} WHERE ${QC}id${QC}=?");
 	if (!$query || !$query->execute($projectid))
 	{
 		if ($query) { $query->finish (); }
@@ -475,11 +475,11 @@ sub trigger_webhooks
 			my $res = $ua->get($webhook);
 			if ($res->is_success)
 			{
-				##print "$res->decoded_content\n";
+				##print $res->decoded_content . "\n";
 			}
 			else
 			{
-				##print "$res->status_line\n";
+				##print $res->status_line . "\n";
 			}
 		}
 	}
