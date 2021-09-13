@@ -130,11 +130,11 @@ $this->load->view (
 				'rows' => 20,
 				'cols' => 80
 			);
-			print form_textarea ($xdata);
+			print form_textarea($xdata);
 		?>
 	</div>
 	<div id='project_edit_description_preview' class='codepot-styled-text-preview'></div>
-j
+
 	<div class='form_input_label'>
 		<?php print form_label('Webhooks: ', 'project_webhooks')?>
 		<?php print form_error('project_webhooks')?>
@@ -145,7 +145,7 @@ j
 				'name' => 'project_webhooks',
 				'value' => set_value ('project_webhooks', $project->webhooks),
 				'id' => 'project_edit_webhooks',
-				'rows' => 20,
+				'rows' => 5,
 				'cols' => 80
 			);
 			print form_textarea($xdata);

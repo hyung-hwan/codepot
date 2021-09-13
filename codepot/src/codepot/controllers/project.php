@@ -206,10 +206,10 @@ class Project extends CI_Controller
 			'project_summary', 'summary', 'required|max_length[255]');
 		$this->form_validation->set_rules (
 			'project_description', 'description', 'required');
-		$this->form_validation->set_rules (
-			'project_webhooks', 'description', 'required');
 		//$this->form_validation->set_rules (
-		//	'project_commitable', 'commitable', 'alpha');
+		//	'project_webhooks', 'webhooks', 'required');
+		$this->form_validation->set_rules (
+			'project_commitable', 'commitable', 'alpha');
 		$this->form_validation->set_rules (
 			'project_public', 'public', 'alpha');
 		$this->form_validation->set_rules (
