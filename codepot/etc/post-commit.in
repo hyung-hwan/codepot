@@ -281,10 +281,10 @@ sub get_author_email_ldap
 		return (-1, undef);
 	}
 
-	my $f_rootdn = format_string ($cfg->{ldap_admin_binddn}, $userid, '');
-	my $f_rootpw = format_string ($cfg->{ldap_admin_password}, $userid, '');
+	my $f_rootdn = format_string($cfg->{ldap_admin_binddn}, $userid, '');
+	my $f_rootpw = format_string($cfg->{ldap_admin_password}, $userid, '');
 
-	my $res = $ldap->bind ($f_rootdn, password => $f_rootpw);
+	my $res = $ldap->bind($f_rootdn, password => $f_rootpw);
 	if ($res->code != LDAP_SUCCESS) 
 	{
 		print (STDERR "Cannot bind LDAP as $f_rootdn - " . $res->error());
@@ -298,10 +298,10 @@ sub get_author_email_ldap
 
 	if ($cfg->{ldap_auth_mode} == 2)
 	{
-		$f_basedn = format_string ($cfg->{ldap_userid_search_base}, $userid, '');
-		$f_filter = format_string ($cfg->{ldap_userid_search_filter}, $userid, '');
+		$f_basedn = format_string($cfg->{ldap_userid_search_base}, $userid, '');
+		$f_filter = format_string($cfg->{ldap_userid_search_filter}, $userid, '');
 
-		$res = $ldap->search (base => $f_basedn, scope => 'sub', filter => $f_filter);
+		$res = $ldap->search(base => $f_basedn, scope => 'sub', filter => $f_filter);
 		if ($res->code != LDAP_SUCCESS)
 		{
 			$ldap->unbind();
@@ -315,16 +315,16 @@ sub get_author_email_ldap
 			return (0, undef);
 		}
 
-		$f_basedn = $entry->dn ();
+		$f_basedn = $entry->dn();
 	}
 	else
 	{
-		$f_basedn = format_string ($cfg->{ldap_userid_format}, $userid, '');
+		$f_basedn = format_string($cfg->{ldap_userid_format}, $userid, '');
 	}
 
 	$f_filter = '(' . $cfg->{ldap_mail_attribute_name} . '=*)';
 
-	$res = $ldap->search (base => $f_basedn, scope => 'sub', filter => $f_filter);
+	$res = $ldap->search(base => $f_basedn, scope => 'sub', filter => $f_filter);
 	if ($res->code != LDAP_SUCCESS) 
 	{
 		$ldap->unbind();
@@ -449,7 +449,14 @@ sub format_commit_url
 
 sub trigger_webhooks
 {
-	my ($cfg, $dbh, $prefix, $projectid) = @_;
+	my ($cfg, $dbh, $prefix, $projectid, $commit_message) = @_;
+
+	# find [skip ci] or [no ci]
+	if ($commit_message =~ /\[(skip|no) ci\]/g)
+	{
+		## no webhooks triggered
+		return (0, undef);
+	}
 
 	my $query = $dbh->prepare("SELECT ${QC}webhooks${QC} FROM ${QC}${prefix}project${QC} WHERE ${QC}id${QC}=?");
 	if (!$query || !$query->execute($projectid))
@@ -500,14 +507,14 @@ if (!defined($AUTHOR))
 }
 chomp ($AUTHOR);
 
-my $cfg = get_config ();
+my $cfg = get_config();
 if (!defined($cfg))
 {
 	print (STDERR "Cannot load codepot configuration file\n");
 	exit (1);
 }
 
-my $dbh = open_database ($cfg);
+my $dbh = open_database($cfg);
 if (!defined($dbh))
 {
 	printf (STDERR "Cannot open database - %s\n", $DBI::errstr);
@@ -542,7 +549,7 @@ if (lc($cfg->{commit_notification}) eq 'yes')
 	email_message_to_project_members ($cfg, $dbh, $cfg->{database_prefix}, $REPOBASE, $commit_subject, $commit_message);
 }
 
-trigger_webhooks ($cfg, $dbh, $cfg->{database_prefix}, $REPOBASE);
+trigger_webhooks ($cfg, $dbh, $cfg->{database_prefix}, $REPOBASE, $raw_commit_message);
 
 close_database ($dbh);
 

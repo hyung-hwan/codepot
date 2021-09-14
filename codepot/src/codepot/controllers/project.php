@@ -294,7 +294,7 @@ class Project extends CI_Controller
 		$project->name = '';
 		$project->summary = '';
 		$project->description = '';
-		$project->wehhooks = '';
+		$project->webhooks = '';
 		$project->commitable = 'Y';
 		$project->public = 'Y';
 		$project->members = array ($login['id']);
