@@ -194,10 +194,10 @@ sub write_commit_log
 	$dbh->begin_work ();
 
 	#my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}log${QC} (${QC}type${QC},${QC}projectid${QC},${QC}message${QC},${QC}createdon${QC},${QC}action${QC},${QC}userid${QC}) VALUES (?,?,?,?,?,?)");
-	#if (!$query || !$query->execute ('code', $projectid, $message, $createdon, 'commit', $userid))
+	#if (!$query || !$query->execute('code', $projectid, $message, $createdon, 'commit', $userid))
 
 	my $query = $dbh->prepare ("INSERT INTO ${QC}${prefix}log${QC} (${QC}type${QC},${QC}projectid${QC},${QC}message${QC},${QC}createdon${QC},${QC}action${QC},${QC}userid${QC}) VALUES (?,?,?,?,?,?)");
-	if (!$query || !$query->execute ('code', $projectid, $message, $timestamp, 'commit', $userid))
+	if (!$query || !$query->execute('code', $projectid, $message, $timestamp, 'commit', $userid))
 	{
 		my $errstr = $dbh->errstr();
 		if ($query) { $query->finish (); }
@@ -359,8 +359,8 @@ sub get_author_email_db
 {
 	my ($cfg, $dbh, $prefix, $userid) = @_;
 
-	my $query = $dbh->prepare ("SELECT ${QC}email${QC} FROM ${QC}${prefix}user_account${QC} WHERE ${QC}userid${QC}=?");
-	if (!$query || !$query->execute ($userid))
+	my $query = $dbh->prepare("SELECT ${QC}email${QC} FROM ${QC}${prefix}user_account${QC} WHERE ${QC}userid${QC}=?");
+	if (!$query || !$query->execute($userid))
 	{
 		return (-1, $dbh->errstr());
 	}
@@ -377,8 +377,8 @@ sub email_message_to_project_members
 {
 	my ($cfg, $dbh, $prefix, $projectid, $subject, $message) = @_;
 
-	my $query = $dbh->prepare ("SELECT ${QC}userid${QC} FROM ${QC}${prefix}project_membership${QC} WHERE ${QC}projectid${QC}=?");
-	if (!$query || !$query->execute ($projectid))
+	my $query = $dbh->prepare("SELECT ${QC}userid${QC} FROM ${QC}${prefix}project_membership${QC} WHERE ${QC}projectid${QC}=?");
+	if (!$query || !$query->execute($projectid))
 	{
 		if ($query) { $query->finish (); }
 		return (-1, $dbh->errstr());
@@ -399,11 +399,11 @@ sub email_message_to_project_members
 
 		if ($cfg->{login_model} eq 'LdapLoginModel')
 		{
-			($xret, $email) = get_author_email_ldap ($cfg, $member)
+			($xret, $email) = get_author_email_ldap($cfg, $member)
 		}
 		elsif ($cfg->{login_model} eq 'DbLoginModel')
 		{
-			($xret, $email) = get_author_email_db ($cfg, $dbh, $prefix, $member);
+			($xret, $email) = get_author_email_db($cfg, $dbh, $prefix, $member);
 		}
 		else
 		{
