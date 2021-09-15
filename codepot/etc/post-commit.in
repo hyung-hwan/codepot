@@ -451,11 +451,11 @@ sub trigger_webhooks
 {
 	my ($cfg, $dbh, $prefix, $projectid, $commit_message) = @_;
 
-	# find [skip ci] or [no ci]
-	if ($commit_message =~ /\[(skip|no) ci\]/g)
+	# find [skip ci], [no ci] or something similar
+	my @skip = ();
+	while ($commit_message =~ /\[(skip|no)[[:space:]]+([[:alpha:]]+)\]/g)
 	{
-		## no webhooks triggered
-		return (0, undef);
+		push (@skip, $2);
 	}
 
 	my $query = $dbh->prepare("SELECT ${QC}webhooks${QC} FROM ${QC}${prefix}project${QC} WHERE ${QC}id${QC}=?");
@@ -478,8 +478,17 @@ sub trigger_webhooks
 		$webhook =~ s/^\s+|\s+$//g;
 		if ($webhook ne '')
 		{
-			## TODO: some formatting on webhook?
-			my $res = $ua->get($webhook);
+			my @tmp = split(/[[:space:]]+/, $webhook);
+			my $type = 'ci';
+			my $url = '';
+			if (scalar(@tmp) == 1) { $url = @tmp[0]; }
+			elsif (scalar(@tmp) == 2) { $type = @tmp[0]; $url = @tmp[1]; }
+			else { next; }
+
+			if (grep(/^$type$/, @skip)) { next; }
+
+			## TODO: some formatting on url?
+			my $res = $ua->get($url);
 			if ($res->is_success)
 			{
 				##print $res->decoded_content . "\n";
