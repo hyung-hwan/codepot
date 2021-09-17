@@ -86,6 +86,42 @@ define('APPPATH', $application_folder.'/');
 
 /*
 |---------------------------------------------------------------
+| UPDATING $_SERVER
+|---------------------------------------------------------------
+*/ 
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']))
+{
+	// set to https if the first X-Forwarded-Proto is https
+	if (array_search ("https", array_map ('strtolower', preg_split("/[\s,]+/", $_SERVER['HTTP_X_FORWARDED_PROTO']))) === 0)
+	{
+		$_SERVER['REQUEST_PROTOCOL'] = 'https';
+	}
+	else
+	{
+		$_SERVER['REQUEST_PROTOCOL'] = 'http';
+	}
+}
+else if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')
+{
+	$_SERVER['REQUEST_PROTOCOL'] = 'https';
+}
+else
+{
+	$_SERVER['REQUEST_PROTOCOL'] = 'http';
+}
+
+if (array_key_exists('HTTP_X_FORWARDED_HOST', $_SERVER) && $_SERVER['HTTP_X_FORWARDED_HOST'] != '')
+{
+	$_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
+}
+
+if (array_key_exists('HTTP_X_FORWARDED_SERVER', $_SERVER) && $_SERVER['HTTP_X_FORWARDED_SERVER'] != '')
+{
+	$_SERVER['SERVER_NAME'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
+}
+
+/*
+|---------------------------------------------------------------
 | COMPULSORY HTTPS 
 |---------------------------------------------------------------
 */
