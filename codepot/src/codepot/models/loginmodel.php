@@ -125,8 +125,8 @@ class LoginModel extends CI_Model
 
 	function formatString ($fmt, $userid, $password)
 	{
-		$fmt = preg_replace(sprintf('/\$\{?%s\}?/', 'userid'), $userid, $fmt);
-		$fmt = preg_replace(sprintf('/\$\{?%s\}?/', 'password'), $password, $fmt);
-		return $fmt;
+		$regexs = array('${userid}', '${password}');
+		$repl = array($userid, $password);
+		return str_replace($regexs, $repl, $fmt);
 	}
 }
