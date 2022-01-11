@@ -253,6 +253,18 @@ function showRawCode()
 	showing_raw_code = !showing_raw_code;
 }
 
+function copyCodeToClipboard ()
+{
+	$("#code_file_result_code").fadeOut(100);
+	$("#code_file_result_code").fadeIn(100);
+	var range = document.createRange();
+	range.selectNode(document.getElementById("code_file_result_code"));
+	window.getSelection().removeAllRanges(); // clear current selection
+	window.getSelection().addRange(range); // to select text
+	document.execCommand("copy");
+	window.getSelection().removeAllRanges();// to deselect	
+}
+
 function render_wiki_wc ()
 {
 	$("#code_toggle_wc_view_button").button().click(function() {
@@ -778,6 +790,11 @@ $(function () {
 		return false;
 	});
 
+$("#code_file_copy_button").button({"label": '<?php print $this->lang->line("Copy"); ?>'}).click (function () {
+		copyCodeToClipboard ();	
+		return false;
+	});
+
 	<?php if ($is_wiki_file): ?>
  
 	<?php if ($fileext == "wc"): ?>
@@ -948,6 +965,7 @@ $this->load->view (
 		if (!$is_special_stream) 
 		{
 			print anchor ('#', $this->lang->line('Enstyle'), 'id="code_file_style_button"');
+			print anchor ('#', $this->lang->line('Copy'), 'id="code_file_copy_button"');
 			print '<a id="code_file_loc_graph_button" href="#">';
 			print '<i id="code_file_loc_graph_spin" class="fa"></i>LOC</a>';
 		}
