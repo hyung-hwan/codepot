@@ -20,6 +20,7 @@ $lang['Comment'] = 'Comment';
 $lang['Commit'] = 'Commit';
 $lang['Commitable'] = 'Commitable';
 $lang['Committer'] = 'Committer';
+$lang['Copy'] = 'Copy';
 $lang['Create'] = 'Create';
 $lang['Created by'] = 'Created by';
 $lang['Created on'] = 'Created on';

@@ -20,6 +20,7 @@ $lang['Comment'] = '소견';
 $lang['Commit'] = '커밋';
 $lang['Commitable'] = '커밋가능';
 $lang['Committer'] = '커밋터';
+$lang['Copy'] = '복사';
 $lang['Create'] = '생성';
 $lang['Created by'] = '최초생성인';
 $lang['Created on'] = '최초생성시간';
