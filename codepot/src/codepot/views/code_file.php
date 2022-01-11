@@ -790,7 +790,7 @@ $(function () {
 		return false;
 	});
 
-$("#code_file_copy_button").button({"label": '<?php print $this->lang->line("Copy"); ?>'}).click (function () {
+	$("#code_file_copy_button").button({"label": '<?php print $this->lang->line("Copy"); ?>'}).click (function () {
 		copyCodeToClipboard ();	
 		return false;
 	});
