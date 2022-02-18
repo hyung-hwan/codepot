@@ -16,8 +16,10 @@ install-data-hook:
 	$(INSTALL) -d "$(DESTDIR)@DEPOTDIR@/usericons"
 	$(INSTALL) -d "$(DESTDIR)@LOGDIR@"
 	$(INSTALL) -d "$(DESTDIR)@CACHEDIR@"
+	[ -x /usr/bin/sqlite3 ] && /usr/bin/sqlite3 "$(DESTDIR)@DEPOTDIR@/codepot.db" < "@abs_srcdir@/etc/codepot.sqlite" || /bin/true
 
 uninstall-hook:
+	rm -f "$(DESTDIR)@DEPOTDIR@/codepot.db"
 	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/usericons"
 	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/attachments"
 	$(RMDIR) "$(DESTDIR)@DEPOTDIR@/issuefiles"

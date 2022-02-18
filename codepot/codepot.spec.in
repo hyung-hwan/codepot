@@ -58,10 +58,11 @@ dependency.
 make
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=%{buildroot}
+rm -f %{buildroot}/var/lib/codepot/codepot.db
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
@@ -73,6 +74,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/codepot/codepot.ini
 /etc/codepot/codepot.mysql 
 /etc/codepot/codepot.pgsql 
+/etc/codepot/codepot.sqlite 
 /etc/codepot/codepot.a2ldap
 /etc/codepot/codepot.httpd
 /etc/codepot/start-commit
