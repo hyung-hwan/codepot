@@ -989,7 +989,16 @@ $this->load->view (
 
 	<div id='code_file_metadata_body' class='codepot-metadata-collapsible-body'>
 		<div class='codepot-plain-text-view'>
-			<pre><?php print htmlspecialchars ($file['logmsg']); ?></pre>
+			<?php
+				$transformed_message = htmlspecialchars($file['logmsg']);
+				// handle [[#RXXX]]
+				$transformed_message = preg_replace (
+					"/\[\[(#R([[:digit:]]+))\]\]/",
+					'[[' . anchor ("/code/revision/{$project->id}/!./\${2}", "\${1}", "class='codepot-hashed-revision-number'") . ']]',
+					$transformed_message
+				);
+			?>
+			<pre id="code_file_metadata_text"><?php print $transformed_message; ?></pre>
 		</div>
 
 		<?php
