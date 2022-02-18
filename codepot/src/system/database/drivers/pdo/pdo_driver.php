@@ -273,7 +273,13 @@ class CI_DB_pdo_driver extends CI_DB {
 	function _execute($sql)
 	{
 		$sql = $this->_prep_query($sql);
-		$result_id = new CI_DB_pdo_statement_wrapper($this->conn_id->prepare($sql));
+		$stmt = $this->conn_id->prepare($sql);
+		if ($stmt === FALSE)
+		{
+			$this->affect_rows = 0;
+			return FALSE;
+		}
+		$result_id = new CI_DB_pdo_statement_wrapper($stmt);
 
 		if (is_object($result_id) && $result_id->execute())
 		{
