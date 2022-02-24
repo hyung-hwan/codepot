@@ -431,7 +431,7 @@ sub restrict_changes_in_topdirs
 		return 0;
 	}
 
-	foreach my $affected_file(keys %$paths_changed)
+	foreach my $affected_file(keys(%$paths_changed))
 	{
 		my $chg = $paths_changed->{$affected_file};
 		my $action = $chg->change_kind();
@@ -541,6 +541,103 @@ sub restrict_changes_in_topdirs
 	return ($disallowed > 0)? -1: 0;
 }
 
+sub restrict_read_only_files()
+{
+	my $disallowed = 0;
+
+	my $pool = SVN::Pool->new(undef);
+	#my $config = SVN::Core::config_get_config(undef);
+	#my $fs = eval { SVN::Fs::open($REPOFS, $config, $pool) };
+	my $svn = eval { SVN::Repos::open($REPOFS, $pool) };
+	if (!defined($svn))
+	{
+		print (STDERR "Cannot open svn - $REPOFS\n");
+		return -1; # error
+	}
+
+	my $fs = $svn->fs();
+	if (!defined($fs))
+	{
+		print (STDERR "Cannot open fs - $REPOFS\n");
+		return -1; # error
+	}
+
+	my $txn = eval { $fs->open_txn ($TRANSACTION) };
+	if (!defined($txn))
+	{
+		print (STDERR "Cannot open transaction - $TRANSACTION\n");
+		return -1;
+	}
+
+	my $root = eval { $txn->root() };
+	if (!defined($root))
+	{
+		print (STDERR "Cannot open root of transaction - $TRANSACTION\n");
+		return -1;
+	}
+
+	my $paths_changed = eval { $root->paths_changed() };
+	if (!defined($paths_changed))
+	{
+		# no change information found. return ok
+		$root->close_root ();
+		return 0;
+	}
+
+	my $fs_root = $fs->revision_root($fs->youngest_rev());
+
+	foreach my $affected_file(keys(%$paths_changed))
+	{
+		my $chg = $paths_changed->{$affected_file};
+		my $action = $chg->change_kind();
+		my $action_verb = $SVN_ACTION_VERBS{$action};
+		if (length($action_verb) <= 0) { $action_verb = "work on"; }
+
+		## check codepot:readonly only if there is content change.
+		## property-only change is always allowed.
+		## directory addition is probably allowed. ## TODO: prevent this?
+		next if ($action != $SVN::Fs::PathChange::delete && !$chg->text_mod());
+
+		my $file = $affected_file;
+		my $readonly = eval { $fs_root->node_prop($file, 'codepot:readonly') };
+		if ($readonly eq 'yes')
+		{
+			$disallowed = 1;
+			print (STDERR "Unable to $action_verb $file - read-only\n");
+		 }
+		 elsif ($readonly eq 'no')
+		 {
+			## no is set explicitly on the node itself.
+			## don't proceed to check the parent side.
+			## change is granted immediately.
+			## DO NOTHING HERE 
+		 }
+		 else
+		 {
+			## check permission in the parent side
+			while ((my $slash = rindex($file, "/")) >= 0)
+			{
+				$file = substr($file, 0, $slash);
+				my $tmp = $file;
+				$tmp = '/' if ($tmp eq '');
+				$readonly = eval { $fs_root->node_prop($tmp, 'codepot:readonly') };
+				if ($readonly eq 'yes')
+				{
+					$disallowed = 1;
+					print (STDERR "Unable to $action_verb $affected_file - $tmp set to read-only\n");
+				}
+				elsif ($readonly eq 'no')
+				{
+					last;
+				}
+			}
+		 }
+	}
+
+	$root->close_root ();
+	return ($disallowed > 0)? -1: 0;
+}
+
 #------------------------------------------------------------
 # MAIN
 #------------------------------------------------------------
@@ -575,6 +672,11 @@ if (defined($topdirs))
 			exit (1);
 		}
 	}
+}
+
+if (restrict_read_only_files() <= -1)
+{
+	exit (1);
 }
 
 #my $dbh = open_database ($cfg);
