@@ -8,3 +8,7 @@ perl_SCRIPTS=perl/Codepot/AccessHandler.pm perl/Codepot/AuthenHandler.pm
 
 EXTRA_DIST = $(cfg_DATA) $(cfg_SCRIPTS) $(perl_SCRIPTS) 
 
+install-exec-hook:
+	perl -e 'use Digest::SHA1' 2>/dev/null || \
+	perl -e 'use Digest::SHA' 2>/dev/null && \
+	sed -ri -e 's|Digest::SHA1|Digest::SHA|g' "$(DESTDIR)$(CFGDIR)/perl/Codepot/AccessHandler.pm"
