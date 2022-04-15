@@ -1196,8 +1196,6 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 			'id="issue_show_edit_type" disabled="disabled"'
 		);
 		?>
-
-		<?php print htmlspecialchars($issue->summary); ?>
 		<input type='text' id='issue_show_edit_summary' name='issue_show_edit_summary' size='50' placeholder='<?php print $this->lang->line('Summary'); ?>' value="<?php print htmlspecialchars($issue->summary); ?>"/>
 	</div>
 
