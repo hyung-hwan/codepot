@@ -83,7 +83,7 @@ $this->load->view (
 	<hr style="height:1px; border:none; background-color:#CCCCCC;" />
 
 	<?php print form_label($this->lang->line('Oneliner about me').': ', 'user_summary')?>
-	<input type="text" name="user_summary" size="50" value="<?php print addslashes($settings->user_summary); ?>" />
+	<input type="text" name="user_summary" size="50" value="<?php print htmlspecialchars($settings->user_summary); ?>" />
 
 	<hr style="height:1px; border:none; background-color:#CCCCCC;" />
 

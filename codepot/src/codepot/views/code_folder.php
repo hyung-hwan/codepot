@@ -1474,7 +1474,7 @@ $this->load->view (
 				if (isset($login['id']) && $login['id'] != '')
 				{
 					print '<td align="middle">';
-					printf ('<input type="checkbox" name="code_folder_file_%d" value="%s" class="file_selector" id="code_folder_result_table_file_selector_%d" />', $rownum, addslashes($f['name']), $rownum);
+					printf ('<input type="checkbox" name="code_folder_file_%d" value="%s" class="file_selector" id="code_folder_result_table_file_selector_%d" />', $rownum, htmlspecialchars($f['name']), $rownum);
 					print '</td>';
 				}
 				print '<td>';
@@ -1507,7 +1507,7 @@ $this->load->view (
 				if (isset($login['id']) && $login['id'] != '')
 				{
 					print '<td align="middle">';
-					printf ('<input type="checkbox" name="code_folder_file_%d", value="%s" class="file_selector" id="code_folder_result_table_file_selector_%d" />', $rownum, addslashes($f['name']), $rownum);
+					printf ('<input type="checkbox" name="code_folder_file_%d", value="%s" class="file_selector" id="code_folder_result_table_file_selector_%d" />', $rownum, htmlspecialchars($f['name']), $rownum);
 					print '</td>';
 				}
 				print '<td>';

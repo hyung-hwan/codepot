@@ -698,8 +698,8 @@ $this->load->view (
 
 <div id='file_show_edit_form'>
 	<div style='line-height: 2em;'>
-		<?php print $this->lang->line('Tag'); ?>: <input type='text' id='file_show_edit_tag' name='file_show_edit_tag' size='30' value='<?php print addslashes($file->tag); ?>'/>
-		<?php print $this->lang->line('Name'); ?>: <input type='text' id='file_show_edit_name' name='file_show_edit_name' size='60' value='<?php print addslashes($file->name); ?>'/>
+		<?php print $this->lang->line('Tag'); ?>: <input type='text' id='file_show_edit_tag' name='file_show_edit_tag' size='30' value="<?php print htmlspecialchars($file->tag); ?>"/>
+		<?php print $this->lang->line('Name'); ?>: <input type='text' id='file_show_edit_name' name='file_show_edit_name' size='60' value="<?php print htmlspecialchars($file->name); ?>"/>
 	</div>
 
 	<div id='file_show_edit_description_tabs' style='width:100%;'>
@@ -739,7 +739,7 @@ $this->load->view (
 		print '</td><td>';
 		printf ('<span id="file_show_edit_file_name_%d">%s</span>', $i, htmlspecialchars($f->filename));
 		print '</td><td>';
-		printf ('<input type="text" id="file_show_edit_file_desc_%d" value="%s" size="40" autocomplete="off" />', $i, addslashes($f->description));
+		printf ('<input type="text" id="file_show_edit_file_desc_%d" value="%s" size="40" autocomplete="off" />', $i, htmlspecialchars($f->description));
 		print '</td></tr>';
 	}
 	?>

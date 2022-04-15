@@ -533,7 +533,7 @@ $this->load->view (
 			<option value="C">WikiCreole</option>
 			<option value="M">Markdown</option>
 		</select>
-		<input type="text" name="wiki_name" value="<?php print addslashes($wiki->name); ?>" maxlength="80" size="40" id="wiki_edit_name" placeholder="<?php print $this->lang->line('Name'); ?>" />
+		<input type="text" name="wiki_name" value="<?php print htmlspecialchars($wiki->name); ?>" maxlength="80" size="40" id="wiki_edit_name" placeholder="<?php print $this->lang->line('Name'); ?>" />
 	</div>
 
 	<div class="actions">

@@ -592,7 +592,7 @@ $this->load->view (
 <div class="mainarea" id="wiki_edit_mainarea">
 
 <div class="codepot-title-band" id="wiki_edit_title_band">
-	<div class="title"><input type="text" name="wiki_name" value="<?php print addslashes($wiki->name); ?>" maxlength="80" size="40" id="wiki_edit_name" placeholder="<?php print $this->lang->line('Name'); ?>" /></div>
+	<div class="title"><input type="text" name="wiki_name" value="<?php print htmlspecialchars($wiki->name); ?>" maxlength="80" size="40" id="wiki_edit_name" placeholder="<?php print $this->lang->line('Name'); ?>" /></div>
 
 	<div class="actions">
 		<a id="wiki_edit_save_button" href='#'><?php print $this->lang->line('Save')?></a>

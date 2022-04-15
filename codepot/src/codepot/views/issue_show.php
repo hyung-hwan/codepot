@@ -1158,7 +1158,7 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 		{
 			print "<div id='issue_show_edit_comment_form_{$i}'>";
 			printf ('<a href="#" id="issue_show_edit_comment_preview_button_%d">%s</a>', $i, $this->lang->line('Preview'));
-			printf ('<input type="hidden" id="issue_show_edit_comment_sno_%d" value="%s" />', $i, addslashes($new->sno));
+			printf ('<input type="hidden" id="issue_show_edit_comment_sno_%d" value="%s" />', $i, htmlspecialchars($new->sno));
 			printf ('<textarea id="issue_show_edit_comment_text_%d" class="codepot-issue-edit-comment" rows="20">%s</textarea>', $i, $escaped_comment);
 			printf ('<div id="issue_show_edit_comment_preview_%d" class="codepot-styled-text-preview"></div>', $i);
 			print '</div>';
@@ -1196,7 +1196,9 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 			'id="issue_show_edit_type" disabled="disabled"'
 		);
 		?>
-		<input type='text' id='issue_show_edit_summary' name='issue_show_edit_summary' size='50' placeholder='<?php print $this->lang->line('Summary'); ?>' value='<?php print addslashes($issue->summary); ?>'/>
+
+		<?php print htmlspecialchars($issue->summary); ?>
+		<input type='text' id='issue_show_edit_summary' name='issue_show_edit_summary' size='50' placeholder='<?php print $this->lang->line('Summary'); ?>' value="<?php print htmlspecialchars($issue->summary); ?>"/>
 	</div>
 
 	<div id='issue_show_edit_description_tabs' style='width:100%;'>
@@ -1238,7 +1240,7 @@ function print_issue_state ($con, $issue, $old, $issue_type_array, $issue_status
 		print '</td><td>';
 		printf ('<span id="issue_show_edit_file_name_%d">%s</span>', $i, htmlspecialchars($f->filename));
 		print '</td><td>';
-		printf ('<input type="text" id="issue_show_edit_file_desc_%d" value="%s" size="40" autocomplete="off" />', $i, addslashes($f->description));
+		printf ('<input type="text" id="issue_show_edit_file_desc_%d" value="%s" size="40" autocomplete="off" />', $i, htmlspecialchars($f->description));
 		print '</td></tr>';
 	}
 	?>
