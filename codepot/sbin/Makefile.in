@@ -486,7 +486,7 @@ uninstall-am: uninstall-sbinSCRIPTS
 install-exec-hook:
 	perl -e 'use Digest::SHA1' 2>/dev/null || \
 	perl -e 'use Digest::SHA' 2>/dev/null && \
-	sed -ri -e 's|Digest::SHA1|Digest::SHA|g' '$(DESTDIR)$(sbindir)/codepot-user'
+	sed -ri -e 's|Digest::SHA1|Digest::SHA|g' "$(DESTDIR)$(sbindir)/codepot-user"
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

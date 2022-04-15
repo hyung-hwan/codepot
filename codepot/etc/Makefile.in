@@ -503,14 +503,14 @@ info-am:
 
 install-data-am: install-cfgDATA install-cfgSCRIPTS \
 	install-perlSCRIPTS
-
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-am
 
 install-dvi-am:
 
 install-exec-am:
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
+
 install-html: install-html-am
 
 install-html-am:
@@ -550,17 +550,17 @@ ps-am:
 uninstall-am: uninstall-cfgDATA uninstall-cfgSCRIPTS \
 	uninstall-perlSCRIPTS
 
-.MAKE: install-am install-exec-am install-strip
+.MAKE: install-am install-data-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic cscopelist-am \
 	ctags-am distclean distclean-generic distdir dvi dvi-am html \
 	html-am info info-am install install-am install-cfgDATA \
-	install-cfgSCRIPTS install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-exec-hook \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-perlSCRIPTS \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	install-cfgSCRIPTS install-data install-data-am \
+	install-data-hook install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-perlSCRIPTS install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am tags-am uninstall uninstall-am \
 	uninstall-cfgDATA uninstall-cfgSCRIPTS uninstall-perlSCRIPTS
@@ -568,7 +568,7 @@ uninstall-am: uninstall-cfgDATA uninstall-cfgSCRIPTS \
 .PRECIOUS: Makefile
 
 
-install-exec-hook:
+install-data-hook:
 	perl -e 'use Digest::SHA1' 2>/dev/null || \
 	perl -e 'use Digest::SHA' 2>/dev/null && \
 	sed -ri -e 's|Digest::SHA1|Digest::SHA|g' "$(DESTDIR)$(CFGDIR)/perl/Codepot/AccessHandler.pm"
