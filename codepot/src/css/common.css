@@ -124,7 +124,7 @@ pre, code, tt {
 
 .content .taskbar {
 	font-size: 1em;
-	text-transform: uppercase;
+	/*text-transform: uppercase;*/
 	padding: 0.5em 0.2em 0.5em 0.2em;
 	color: #ffffff;
 	background-color: #2F2F2F;
@@ -228,7 +228,7 @@ pre, code, tt {
 
 .content .projectbar .title {
 	font-size: 2em;
-	text-transform: uppercase;
+	/*text-transform: uppercase;*/
 	white-space: nowrap;
 }
 
@@ -394,7 +394,7 @@ pre, code, tt {
 	vertical-align: middle;
 	padding-left: 5px;
 	padding-right: 5px;
-	text-transform: uppercase;
+	/*text-transform: uppercase;*/
 
 	background: #3498db;
 	background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
@@ -583,7 +583,7 @@ pre, code, tt {
 
 .codepot-title-band .title {
 	float: left;
-	text-transform: uppercase;
+	/*text-transform: uppercase;*/
 	font-weight: bold;
 	font-size: 1.2em !important;
 	line-height: 1.5em;
