@@ -367,7 +367,7 @@ class CI_DB_pdo_driver extends CI_DB {
 			return TRUE;
 		}
 
-		$ret = $this->conn->commit();
+		$ret = $this->conn_id->commit();
 		return $ret;
 	}
 
