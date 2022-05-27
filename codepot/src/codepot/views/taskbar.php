@@ -86,8 +86,6 @@ function show_taskbar ($con, $login)
 	}
 	print '</div>'; // boxb
 
-	
-
 	print '</div>';
 }
 ?>
@@ -249,6 +247,13 @@ var TaskbarApp = (function ()
 			success: function(data, textStatus, jqXHR) 
 			{ 
 				this.project_find_ajax = null;
+				if (data instanceof Array)
+				{
+					// the project id doesn't contains a slash. use a slash as a differentiator 
+					data.splice(0, 0, {id: '/files', value: '', label: 'find in files'});
+					data.splice(1, 0, {id: '/issues', value: '', label: 'find in issues'});
+					data.splice(2, 0, {id: '/wikis', value: '', label: 'find in wikis'});
+				}
 				response (data);  // call the bacllback function for autocompletion
 			},
 			error: function(jqXHR, textStatus, errorThrown)
@@ -310,7 +315,14 @@ var TaskbarApp = (function ()
 			},
 
 			select: function(event, ui) {
-				$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", "/project/home/" + ui.item.id));
+				if (ui.item.id == '/wikis' || ui.item.id == '/issues' || ui.item.id == '/files')
+				{
+					$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", "/site/search" +  ui.item.id + '/' + codepot_ascii_to_hex(this.value)));
+				}
+				else
+				{
+					$(location).attr ('href', codepot_merge_path("<?php print site_url(); ?>", "/project/home/" + ui.item.id));
+				}
 				//ui.item.value , ui.item.id ,  this.value
 			}
 		});
