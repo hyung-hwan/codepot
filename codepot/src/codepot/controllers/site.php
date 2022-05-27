@@ -9,6 +9,7 @@ class Site extends CI_Controller
 	var $VIEW_DELETE = 'site_delete';
 	var $VIEW_CATALOG = 'site_catalog';
 	var $VIEW_LOG = 'log';
+	var $VIEW_SEARCH = 'site_search';
 
 	function __construct ()
 	{
@@ -608,6 +609,100 @@ class Site extends CI_Controller
 			$hexattname = $this->converter->AsciiTohex($part[2]);
 			redirect ("wiki/attachment/{$part[0]}/{$hexwikiname}/{$hexattname}");
 		}
+	}
+
+	function search ($scope = '', $needle = '')
+	{
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+			redirect (CODEPOT_SIGNIN_REDIR_PATH . $this->converter->AsciiTohex(current_url()));
+
+		$search = new stdClass();
+		$search->scope = $scope;
+		$search->needle = $this->converter->HexToAscii($needle);
+
+		$data['login'] = $login;
+		$data['search'] = $search;
+
+		$this->load->view ($this->VIEW_SEARCH, $data);
+	}
+
+	function enjson_search ($filter = '', $offset = '')
+	{
+		$this->load->model ('WikiModel', 'wikis');
+		$this->load->model ('IssueModel', 'issues');
+		$this->load->model ('FileModel', 'files');
+
+		$login = $this->login->getUser ();
+		if (CODEPOT_SIGNIN_COMPULSORY && $login['id'] == '')
+		{
+			$status = 'signin';
+			$results = array();
+		}
+		else
+		{
+			$scope = '';
+			$needle = '';
+			if ($filter != '')
+			{
+				parse_str ($this->converter->HexToAscii($filter), $search);
+				if (array_key_exists ('scope', $search)) $scope = $search['scope'];
+				if (array_key_exists ('needle', $search)) $needle = $search['needle'];
+			}
+
+			if ($filter == '' && $offset == '')
+			{
+				$offset = 0;
+			}
+			else if ($filter != '' && $offset == '')
+			{
+				if (is_numeric($filter))
+				{
+					$offset = (integer)$filter;
+				}
+				else
+				{
+					$offset = 0;
+				}
+			}
+			else 
+			{
+				$offset = (integer)$offset;
+			}
+
+			$status = 'ok';
+			$results = array();
+
+			if ($scope == 'wikis' || $scope == 'all')
+			{
+				$x = $this->wikis->search($needle);
+				if ($x === FALSE) $status = 'dberr';
+				else $results = array_merge($results, $x);
+			}
+
+			if ($scope == 'issues' || $scope == 'all')
+			{
+				$x = $this->issues->search($needle);
+				if ($x === FALSE) $status = 'dberr';
+				else $results = array_merge($results, $x);
+			}
+
+			if ($scope == 'files' || $scope == 'all')
+			{
+				$x = $this->files->search($needle);
+				if ($x === FALSE) $status = 'dberr';
+				else $results = array_merge($results, $x);
+			}
+
+			if ($status != 'ok') $results = array();
+		}
+
+		$data = array (
+			'status' => $status,
+			'results' => $results
+		);
+
+		print codepot_json_encode($data);
 	}
 }
 

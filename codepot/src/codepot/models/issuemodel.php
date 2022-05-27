@@ -1076,6 +1076,109 @@ class IssueModel extends CI_Model
 		$issue = &$result[0];
 		return ($issue->createdby == $userid || $issue->updatedby == $userid);
 	}
+
+	function search ($needle = '')
+	{
+		$items = array();
+		if ($needle == '') return $items;
+
+		$this->db->trans_start ();
+
+		$this->db->select ('projectid,id,summary,description');
+		$this->db->like ('summary', $needle);
+		$this->db->or_like ('description', $needle);
+		$query = $this->db->get('issue');
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+
+		$result = $query->result();
+		if (!empty($result))
+		{
+			foreach ($result as $r)
+			{
+				$posa = stripos($r->summary, $needle);
+				$posb = stripos($r->description, $needle);
+				if ($posa !== false || $posb !== false)
+				{
+					$text = "";
+					if ($posb !== false) 
+					{
+						$start_pos = $posb - 30;
+						if ($start_pos < 0) $start_pos = 0;
+						$text = substr($r->description, $start_pos, strlen($needle) + 100);
+					}
+					array_push ($items, array( 'type' => 'issue', 'projectid' => $r->projectid,  'issueid' => $r->id, 'summary' => $r->summary, 'partial_text' => $text));
+				}
+			}
+		}
+
+		$this->db->select ('projectid,id,sno,comment');
+		$this->db->like ('comment', $needle);
+		$query = $this->db->get ('issue_change');
+
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+		
+		$result = $query->result();
+		if (!empty($result))
+		{
+			// TODO: create a link to each chnage log comment in the main issue view.
+			//       Use the link to jump to the comment.
+			foreach ($result as $r)
+			{
+				$posa = false;
+				if (($posa = stripos($r->comment, $needle)) !== false)
+				{
+					$start_pos = $posa - 30;
+					if ($start_pos < 0) $start_pos = 0;
+					$text = substr($r->comment, $start_pos, strlen($needle) + 100);
+					array_push ($items, array( 'type' => 'issue', 'projectid' => $r->projectid, 'issueid' => $r->id, 'summary' => $r->sno, 'partial_text' => $text));
+				}
+			}
+		}
+
+		$this->db->select ('projectid,issueid,filename,description');
+		$this->db->like ('filename', $needle);
+		$this->db->or_like ('description', $needle);
+		$query = $this->db->get ('issue_file_list');
+
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+
+		$result = $query->result();
+		if (!empty($result))
+		{
+			foreach ($result as $r)
+			{
+				$posa = stripos($r->filename, $needle);
+				$posb = stripos($r->description, $needle);
+				if ($posa !== false || $posb !== false)
+				{
+					$text = "";
+					if ($posb !== false) 
+					{
+						$start_pos = $posb - 30;
+						if ($start_pos < 0) $start_pos = 0;
+						$text = substr($r->description, $start_pos, strlen($needle) + 30);
+					}
+					array_push ($items, array( 'type' => 'issue_file', 'projectid' => $r->projectid,  'issueid' => $r->issueid, 'filename' => $r->filename, 'partial_text' => $text));
+				}
+			}
+		}
+
+		$this->db->trans_complete ();
+
+		return $items;
+	}
 }
 
 ?>

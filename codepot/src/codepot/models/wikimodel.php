@@ -518,6 +518,75 @@ class WikiModel extends CI_Model
 		restore_error_handler ();
 		return $x;
 	}
+
+	function search ($needle = '')
+	{
+		$items = array();
+		if ($needle == '') return $items;
+
+		$this->db->trans_start ();
+
+		$this->db->select ('projectid,name,text,doctype');
+		$this->db->like ('name', $needle);
+		$this->db->or_like ('text', $needle);
+		$query = $this->db->get('wiki');
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+
+		$result = $query->result();
+		if (!empty($result))
+		{
+			foreach ($result as $r)
+			{
+				$posa = stripos($r->name, $needle);
+				$posb = stripos($r->text, $needle);
+				/* TODO: consider the wiki type and strip special tags, and let matching happen against the normal text only */
+				if ($posa !== false || $posb !== false)
+				{
+					$text = "";
+					if ($posb !== false) 
+					{
+						$start_pos = $posb - 30;
+						if ($start_pos < 0) $start_pos = 0;
+						$text = substr($r->text, $start_pos, strlen($needle) + 100);
+					}
+					array_push ($items, array( 'type' => 'wiki', 'projectid' => $r->projectid,  'name' => $r->name, 'partial_text' => $text));
+				}
+			}
+		}
+
+		$this->db->select ('projectid,wikiname,name');
+		
+		$this->db->like ('name', $needle);
+		$query = $this->db->get ('wiki_attachment');
+
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+		
+		$result = $query->result();
+		if (!empty($result))
+		{
+			foreach ($result as $r)
+			{
+				/* TODO: consider the wiki type and strip special tags, and let matching happen against the normal text only */
+				if (($posa = stripos($r->name, $needle)) !== false)
+				{
+					array_push ($items, array( 'type' => 'wiki_attachment', 'projectid' => $r->projectid,  'name' => $r->name, 'wikiname' => $r->wikiname));
+				}
+			}
+		}
+
+		$this->db->trans_complete ();
+
+		return $items;
+	}
+
 }
 
 ?>

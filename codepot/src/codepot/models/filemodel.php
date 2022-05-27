@@ -560,6 +560,83 @@ class FileModel extends CI_Model
 		restore_error_handler ();
 		return $x;
 	}
+
+	function search ($needle = '')
+	{
+		$items = array();
+		if ($needle == '') return $items;
+
+		$this->db->trans_start ();
+
+		$this->db->select ('projectid,name,tag,description');
+		$this->db->like ('name', $needle);
+		$this->db->or_like ('tag', $needle);
+		$this->db->or_like ('description', $needle);
+		$query = $this->db->get('file');
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+
+		$result = $query->result();
+		if (!empty($result))
+		{
+			foreach ($result as $r)
+			{
+				$posa = stripos($r->name, $needle);
+				$posb = stripos($r->tag, $needle);
+				$posc = stripos($r->description, $needle);
+				if ($posa !== false || $posb !== false || $posc !== false)
+				{
+					$text = "";
+					if ($posc !== false) 
+					{
+						$start_pos = $posc - 30;
+						if ($start_pos < 0) $start_pos = 0;
+						$text = substr($r->description, $start_pos, strlen($needle) + 100);
+					}
+					array_push ($items, array( 'type' => 'file_holder', 'projectid' => $r->projectid, 'name' => $r->name, 'tag' => $r->tag, 'partial_text' => $text));
+				}
+			}
+		}
+
+		$this->db->select ('projectid,name,filename,description');
+		$this->db->like ('filename', $needle);
+		$this->db->or_like ('description', $needle);
+		$query = $this->db->get ('file_list');
+
+		if ($this->db->trans_status() === FALSE) 
+		{
+			$this->db->trans_complete ();
+			return FALSE;
+		}
+
+		$result = $query->result();
+		if (!empty($result))
+		{
+			foreach ($result as $r)
+			{
+				$posa = stripos($r->filename, $needle);
+				$posb = stripos($r->description, $needle);
+				if ($posa !== false || $posb !== false)
+				{
+					$text = "";
+					if ($posb !== false) 
+					{
+						$start_pos = $posb - 30;
+						if ($start_pos < 0) $start_pos = 0;
+						$text = substr($r->description, $start_pos, strlen($needle) + 30);
+					}
+					array_push ($items, array( 'type' => 'file', 'projectid' => $r->projectid, 'name' => $r->name, 'filename' => $r->filename, 'partial_text' => $text));
+				}
+			}
+		}
+
+		$this->db->trans_complete ();
+
+		return $items;
+	}
 }
 
 ?>

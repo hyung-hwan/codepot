@@ -280,6 +280,7 @@ www_DATA = \
 	site_edit.php \
 	site_delete.php \
 	site_home.php \
+	site_search.php \
 	site_show.php \
 	taskbar.php \
 	user_home.php \
