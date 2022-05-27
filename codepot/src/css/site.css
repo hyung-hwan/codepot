@@ -71,3 +71,21 @@
 	width: 100%;
 }
 
+
+/*----------------------------------------------- 
+ * site search view 
+ *-----------------------------------------------*/
+#site_search_mainarea_result_list {
+	list-style: none;
+	padding-left: 1em;
+}
+
+#site_search_mainarea_result_list li {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+#site_search_mainarea_result_list li div {
+	padding-left: 0.5em;
+}
+
