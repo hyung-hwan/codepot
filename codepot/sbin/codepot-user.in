@@ -8,8 +8,7 @@ use strict;
 use Switch;
 use Config::Simple;
 use DBI;
-use Digest::SHA1 qw (sha1_hex);
-
+use Digest::SHA;
 
 my $CFG_FILE = '@CFGDIR@/codepot.ini';
 my $QC = '';
@@ -112,7 +111,7 @@ sub rand_string
 sub format_passwd 
 {
 	my ($password, $binsalt, $hexsalt) = @_;
-	my $fmt_pw = '{ssha1}' . sha1_hex ($password . $binsalt) . $hexsalt;
+	my $fmt_pw = '{ssha1}' . Digest::SHA::sha1_hex($password . $binsalt) . $hexsalt;
 	return $fmt_pw;
 }
 

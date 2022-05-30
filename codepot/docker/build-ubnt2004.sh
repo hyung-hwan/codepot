@@ -25,8 +25,6 @@ rm -rf /var/lib/codepot/* && \
 sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*"localhost"$|database_hostname = "/var/lib/codepot/codepot.db"|g' \
         -e 's|^database_driver[[:space:]]*=[[:space:]]*""$|database_driver = "sqlite"|g' \
         -e 's|^database_use_pdo[[:space:]]*=[[:space:]]*"no"$|database_use_pdo = "yes"|g' /etc/codepot/codepot.ini &&  \
-sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /usr/sbin/codepot-user && \
-sed -ri -e 's|Digest::SHA1|Digest::SHA|g' /etc/codepot/perl/Codepot/AccessHandler.pm && \
 cp -pf /etc/codepot/codepot.httpd /etc/apache2/conf-enabled/codepot.conf && \
 echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/apache2/conf-enabled/perl.conf && \
 sed -ri -e 's|^max_execution_time[[:space:]]*=.*$|max_execution_time = 120|g' /etc/php/*/apache2/php.ini

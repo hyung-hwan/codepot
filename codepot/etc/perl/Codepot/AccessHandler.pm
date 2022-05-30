@@ -37,10 +37,9 @@ use APR::Base64;
 
 use Config::Simple;
 use Net::LDAP;
-use Net::LDAP qw(LDAP_SUCCESS);
 use URI;
 use DBI;
-use Digest::SHA1 qw (sha1_hex);
+use Digest::SHA;
 
 use Apache2::Const -compile => qw(OK DECLINED FORBIDDEN HTTP_UNAUTHORIZED HTTP_INTERNAL_SERVER_ERROR PROXYREQ_PROXY AUTH_REQUIRED);
 
@@ -48,13 +47,13 @@ sub get_config
 {
 	my $cfg = new Config::Simple();
 
-	if (!$cfg->read ($ENV{'CODEPOT_CONFIG_FILE'}))
+	if (!$cfg->read($ENV{'CODEPOT_CONFIG_FILE'}))
 	{
 		return undef;
 	}
 
 	my $config = {
-		login_model => $cfg->param ('login_model'),
+		login_model => $cfg->param('login_model'),
 		
 		ldap_server_uri => $cfg->param('ldap_server_uri'),
 		ldap_server_protocol_version => $cfg->param('ldap_server_protocol_version'),
@@ -101,8 +100,8 @@ sub authenticate_ldap
 	my $binddn;
 	my $passwd;
 
-	my $uri = URI->new ($cfg->{ldap_server_uri});
-	my $ldap = Net::LDAP->new (
+	my $uri = URI->new($cfg->{ldap_server_uri});
+	my $ldap = Net::LDAP->new(
 		$uri->host, 
 		scheme => $uri->scheme,
 		port => $uri->port,
@@ -116,21 +115,21 @@ sub authenticate_ldap
 
 	if ($cfg->{ldap_auth_mode} == 2)
 	{
-		my $f_rootdn = format_string ($cfg->{ldap_admin_binddn}, $userid, $password);
-		my $f_rootpw = format_string ($cfg->{ldap_admin_password}, $userid, $password);
-		my $f_basedn = format_string ($cfg->{ldap_userid_search_base}, $userid, $password);
-		my $f_filter = format_string ($cfg->{ldap_userid_search_filter}, $userid, $password);
+		my $f_rootdn = format_string($cfg->{ldap_admin_binddn}, $userid, $password);
+		my $f_rootpw = format_string($cfg->{ldap_admin_password}, $userid, $password);
+		my $f_basedn = format_string($cfg->{ldap_userid_search_base}, $userid, $password);
+		my $f_filter = format_string($cfg->{ldap_userid_search_filter}, $userid, $password);
 
-		my $res = $ldap->bind ($f_rootdn, password => $f_rootpw);
-		if ($res->code != LDAP_SUCCESS) 
+		my $res = $ldap->bind($f_rootdn, password => $f_rootpw);
+		if ($res->code != Net::LDAP::LDAP_SUCCESS) 
 		{
 			$r->log_error ("Cannot bind LDAP as $f_rootdn - " . $res->error());
 			$ldap->unbind();
 			return -1; 
 		}
 
-		$res = $ldap->search (base => $f_basedn, scope => 'sub', filter => $f_filter);
-		if ($res->code != LDAP_SUCCESS) 
+		$res = $ldap->search(base => $f_basedn, scope => 'sub', filter => $f_filter);
+		if ($res->code != Net::LDAP::LDAP_SUCCESS) 
 		{
 			$ldap->unbind();
 			return 0;
@@ -152,7 +151,7 @@ sub authenticate_ldap
 
 	$passwd = format_string ($cfg->{ldap_password_format}, $userid, $password);
 	my $res = $ldap->bind ($binddn, password => $passwd);
-	if ($res->code != LDAP_SUCCESS)
+	if ($res->code != Net::LDAP::LDAP_SUCCESS)
 	{
 		#$r->log_error ("Cannot bind LDAP as $binddn - " . $res->error());
 		$ldap->unbind();
@@ -171,8 +170,8 @@ sub authenticate_ldap
 			#my $f_filter = '(' . $cfg->{ldap_insider_attribute_name} . '=*)';
 			my $f_filter = '(objectClass=*)';
 
-			$res = $ldap->search (base => $binddn, scope => 'base', filter => $f_filter, @attrs);
-			if ($res->code == LDAP_SUCCESS) 
+			$res = $ldap->search(base => $binddn, scope => 'base', filter => $f_filter, @attrs);
+			if ($res->code == Net::LDAP::LDAP_SUCCESS) 
 			{
 			search_loop:
 				foreach my $entry ($res->entries)
@@ -203,7 +202,7 @@ sub authenticate_database
 {
 	my ($dbh, $prefix, $userid, $password, $qc) = @_;
 	
-	my $query = $dbh->prepare ("SELECT ${qc}userid${qc},${qc}passwd${qc} FROM ${qc}${prefix}user_account${qc} WHERE ${qc}userid${qc}=? and ${qc}enabled${qc}='Y'");
+	my $query = $dbh->prepare("SELECT ${qc}userid${qc},${qc}passwd${qc} FROM ${qc}${prefix}user_account${qc} WHERE ${qc}userid${qc}=? and ${qc}enabled${qc}='Y'");
 	if (!$query || !$query->execute ($userid))
 	{
 		return (-1, $dbh->errstr());
@@ -217,10 +216,10 @@ sub authenticate_database
 	my $db_pw = $row[1];
 	if (length($db_pw) < 10) { return (0, undef); }
 
-	my $hexsalt = substr ($db_pw, -10);
-	my $binsalt = pack ('H*', $hexsalt);
+	my $hexsalt = substr($db_pw, -10);
+	my $binsalt = pack('H*', $hexsalt);
 
-	my $fmt_pw = '{ssha1}' . sha1_hex ($password . $binsalt) . $hexsalt;
+	my $fmt_pw = '{ssha1}' . Digest::SHA::sha1_hex($password . $binsalt) . $hexsalt;
 	return  (($fmt_pw eq $db_pw? 1: 0), undef);
 }
 
@@ -281,7 +280,7 @@ sub is_project_member
 {
 	my ($dbh, $prefix, $projectid, $userid, $qc) = @_;
 
-	my $query = $dbh->prepare ("SELECT ${qc}projectid${qc} FROM ${qc}${prefix}project_membership${qc} WHERE ${qc}userid${qc}=? AND ${qc}projectid${qc}=?");
+	my $query = $dbh->prepare("SELECT ${qc}projectid${qc} FROM ${qc}${prefix}project_membership${qc} WHERE ${qc}userid${qc}=? AND ${qc}projectid${qc}=?");
 	if (!$query || !$query->execute ($userid, $projectid))
 	{
 		return (-1, $dbh->errstr());
@@ -296,7 +295,7 @@ sub is_project_public
 {
 	my ($dbh, $prefix, $projectid, $qc) = @_;
 
-	my $query = $dbh->prepare ("SELECT ${qc}public${qc} FROM ${qc}${prefix}project${qc} WHERE ${qc}id${qc}=?");
+	my $query = $dbh->prepare("SELECT ${qc}public${qc} FROM ${qc}${prefix}project${qc} WHERE ${qc}id${qc}=?");
 	if (!$query || !$query->execute ($projectid))
 	{
 		return (-1, $dbh->errstr());
@@ -322,7 +321,7 @@ sub __handler
 	my $method = uc($r->method());
 	my $is_method_r = is_read_method($method);
 
-	#my ($empty, $base, $repo, $dummy) = split ('/', $r->uri(), 4);
+	#my ($empty, $base, $repo, $dummy) = split('/', $r->uri(), 4);
 	my @urisegs = split('/', $r->uri());
 	my $repo = $urisegs[2];
 
@@ -348,7 +347,7 @@ sub __handler
 
 	if (defined($author))
 	{
-		my ($rc, $pass) = $r->get_basic_auth_pw ();
+		my ($rc, $pass) = $r->get_basic_auth_pw();
 		if ($rc != Apache2::Const::OK) { return $rc; }
 
 		#$author = APR::Base64::decode((split(/ /,$author))[1]);
@@ -460,14 +459,14 @@ sub handler: method
 	my $res;
 	my $cfg;
 
-	$cfg = get_config (); 
+	$cfg = get_config(); 
 	if (!defined($cfg))
 	{
 		$r->log_error ('Cannot load configuration');
 		return Apache2::Const::HTTP_INTERNAL_SERVER_ERROR;
 	}
 
-	my $dbh = open_database ($cfg);
+	my $dbh = open_database($cfg);
 	if (!defined($dbh))
 	{
 		$r->log_error ('Cannot open database - ' . $DBI::errstr);
