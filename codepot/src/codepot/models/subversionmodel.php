@@ -262,7 +262,7 @@ class SubversionModel extends CodeRepoModel
 		if ($rev == SVN_REVISION_HEAD)
 		{
 			$info = @svn_info($url, FALSE, $rev);
-			if ($info === FALSE || $info === NULL || count($info) != 1)  return FALASE;
+			if ($info === FALSE || $info === NULL || count($info) != 1)  return FALSE;
 		}
 		else
 		{
