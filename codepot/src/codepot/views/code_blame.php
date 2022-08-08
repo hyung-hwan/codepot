@@ -148,7 +148,7 @@ $this->load->view (
 	<?php
 		print anchor (
 			"code/file/{$project->id}{$revreqroot}",
-			htmlspecialchars($project->name));
+			htmlspecialchars($project->id));
 
 		$exps = explode ('/', $headpath);
 		$expsize = count($exps);

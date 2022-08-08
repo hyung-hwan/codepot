@@ -136,7 +136,7 @@ $this->load->view (
 		// let the anchor text be the project name.
 		print anchor (
 			"code/file/{$project->id}{$revreqroot}", 
-			htmlspecialchars($project->name));
+			htmlspecialchars($project->id));
 
 		// explode non-root folder parts to anchors
 		$exps = explode ('/', $headpath);

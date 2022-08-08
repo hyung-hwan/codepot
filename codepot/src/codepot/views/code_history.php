@@ -70,7 +70,7 @@ $this->load->view (
 		// print the anchor for the root nolder with a project name
 		print anchor (
 			"code/history/{$project->id}{$revreqroot}",
-			htmlspecialchars($project->name));
+			htmlspecialchars($project->id));
 
 		// explodes part of the full path name into an array 
 		$exps = explode ('/', $fullpath);
