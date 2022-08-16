@@ -29,10 +29,9 @@ RUN \
 		--with-phpextinidir=`php-config --ini-dir | sed 's|/cli/|/apache2/|g'` && \
 	make && make install DESTDIR=${VROOT} && rm -rf ${VROOT}/var/lib/codepot/*
 
-RUN \
-	sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*"localhost"$|database_hostname = "/var/lib/codepot/codepot.db"|g' \
-	-e 's|^database_driver[[:space:]]*=[[:space:]]*""$|database_driver = "sqlite"|g' \
-	-e 's|^database_use_pdo[[:space:]]*=[[:space:]]*"no"$|database_use_pdo = "yes"|g' ${VROOT}/etc/codepot/codepot.ini 
+RUN sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*"localhost"$|database_hostname = "/var/lib/codepot/codepot.db"|g' \
+            -e 's|^database_driver[[:space:]]*=[[:space:]]*""$|database_driver = "sqlite"|g' \
+            -e 's|^database_use_pdo[[:space:]]*=[[:space:]]*"no"$|database_use_pdo = "yes"|g' ${VROOT}/etc/codepot/codepot.ini 
 
 RUN tar -C ${VROOT} -zcvf /tmp/codepot-root.tar.gz .
 

@@ -2,7 +2,7 @@
 dnl AC_PREREQ(2.59)
 
 AC_INIT([codepot],[0.4.0],,,[http://code.abiyo.net/@codepot])
-AC_CONFIG_HEADER([./config.h])
+AC_CONFIG_HEADERS([./config.h])
 AC_CONFIG_AUX_DIR([ac/aux])
 AC_CONFIG_MACRO_DIR([ac/m4])
 
@@ -21,7 +21,7 @@ RM="$RM -f"
 # storage directory for file uploads and subversion repositories
 depotdir="${localstatedir}/lib/${PACKAGE}"
 AC_ARG_WITH(depotdir,
-	AC_HELP_STRING(
+	AS_HELP_STRING(
 		[--with-depotdir],
 		[directory for file uploads and subversion repositories]),
 	[depotdir=$withval])
@@ -30,7 +30,7 @@ AC_SUBST(depotdir, $depotdir)
 # configuration direcotry
 cfgdir="${sysconfdir}/${PACKAGE}"
 AC_ARG_WITH(cfgdir,
-	AC_HELP_STRING(
+	AS_HELP_STRING(
 		[--with-cfgdir],
 		[directory for configuration files]),
 	[cfgdir=$withval])
@@ -39,7 +39,7 @@ AC_SUBST(cfgdir, $cfgdir)
 # www document direcotry
 wwwdir="${localstatedir}/www/${PACKAGE}"
 AC_ARG_WITH(wwwdir,
-	AC_HELP_STRING(
+	AS_HELP_STRING(
 		[--with-wwwdir],
 		[directory for www document files]),
 	[wwwdir=$withval])
@@ -48,7 +48,7 @@ AC_SUBST(wwwdir, $wwwdir)
 # log directory
 logdir="${localstatedir}/log/${PACKAGE}"
 AC_ARG_WITH(logdir,
-	AC_HELP_STRING(
+	AS_HELP_STRING(
 		[--with-logdir],
 		[directory for log files]),
 	[logdir=$withval])
@@ -57,7 +57,7 @@ AC_SUBST(logdir, $logdir)
 # cache directory
 cachedir="${localstatedir}/cache/${PACKAGE}"
 AC_ARG_WITH(cachedir,
-	AC_HELP_STRING(
+	AS_HELP_STRING(
 		[--with-cachedir],
 		[directory for cache files]),
 	[cachedir=$withval])
@@ -65,7 +65,7 @@ AC_SUBST(cachedir, $cachedir)
 
 phpextdir="${libdir}/php/modules"
 AC_ARG_WITH(phpextdir,
-	AC_HELP_STRING(
+	AS_HELP_STRING(
 		[--with-phpextdir],
 		[directory where a php extension file is stored]),
 	[phpextdir=$withval])
@@ -73,7 +73,7 @@ AC_SUBST(phpextdir, $phpextdir)
 
 phpextinidir="${sysconfdir}/php.d"
 AC_ARG_WITH(phpextinidir,
-	AC_HELP_STRING(
+	AS_HELP_STRING(
 		[--with-phpextinidir],
 		[directory where a php extension is enabled]),
 	[phpextinidir=$withval])

@@ -1,0 +1,64 @@
+ARG VROOT=/tmp/codepot-root
+
+### -------------------------------------------------------------------------------
+
+FROM rockylinux/rockylinux:latest as installer
+
+ARG VROOT
+
+RUN dnf install -y php-devel subversion-devel perl-devel perl-Digest-SHA make 
+
+COPY codepot-0.4.0.tar.gz /tmp
+
+RUN \
+	cd /tmp && \
+	tar -zxvf codepot-0.4.0.tar.gz && \
+	cd codepot-0.4.0 && \
+	./configure \
+		--prefix=/usr \
+		--libdir=/usr/lib64 \
+		--sysconfdir=/etc \
+		--with-wwwdir=/var/www/html \
+		--with-cfgdir=/etc/codepot \
+		--with-depotdir=/var/lib/codepot \
+		--with-logdir=/var/log/codepot \
+		--with-cachedir=/var/cache/codepot \
+		--with-phpextdir=`php-config --extension-dir` \
+	make && make install DESTDIR=${VROOT} && rm -rf ${VROOT}/var/lib/codepot/*
+
+RUN sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*"localhost"$|database_hostname = "/var/lib/codepot/codepot.db"|g' \
+            -e 's|^database_driver[[:space:]]*=[[:space:]]*""$|database_driver = "sqlite"|g' \
+            -e 's|^database_use_pdo[[:space:]]*=[[:space:]]*"no"$|database_use_pdo = "yes"|g' ${VROOT}/etc/codepot/codepot.ini
+
+RUN tar -C ${VROOT} -zcvf /tmp/codepot-root.tar.gz .
+
+### -------------------------------------------------------------------------------
+
+FROM rockylinux/rockylinux:latest
+
+ARG VROOT
+
+## epel-release for mod_perl
+RUN dnf install -y epel-release
+
+# for mysql access, include php-mysqli and perl-DBD-MYSQL
+RUN dnf install -y --enablerepo=powertools \
+	subversion subversion-perl \
+	httpd php php-gd php-pdo php-ldap \
+	perl-Digest-SHA perl-Config-Simple \
+	perl-DBD-SQLite perl-LDAP perl-Mail-Sendmail perl-Switch \
+	mod_dav_svn mod_perl diffutils sqlite
+
+COPY --from=installer /tmp/codepot-root.tar.gz /tmp
+COPY httpd-fg.sh /usr/sbin/
+
+RUN \
+        rm -rf /var/www/html && \
+	mkdir -p /run/php-fpm && \
+        tar -C / -zxvf /tmp/codepot-root.tar.gz && \
+	cp -pf /etc/codepot/codepot.httpd /etc/httpd/conf.d/codepot.conf && \
+	echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/httpd/conf.d/perl.conf && \
+	sed -ri -e 's|^max_execution_time[[:space:]]*=.*$|max_execution_time = 120|g' /etc/php.ini
+
+##CMD ["/usr/sbin/httpd-fg.sh"]
+ENTRYPOINT ["/usr/sbin/httpd-fg.sh"]
