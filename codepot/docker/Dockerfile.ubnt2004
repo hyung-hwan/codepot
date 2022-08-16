@@ -1,4 +1,47 @@
+ARG VROOT=/tmp/codepot-root
+
+### -------------------------------------------------------------------------------
+
+FROM ubuntu:20.04 as installer
+
+ARG VROOT
+
+RUN apt update && \
+    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+       php-dev libsvn-dev make
+
+COPY codepot-0.4.0.tar.gz /tmp
+
+RUN \
+	cd /tmp && \
+	tar -zxvf codepot-0.4.0.tar.gz && \
+	cd codepot-0.4.0 && \
+	./configure \
+		--prefix=/usr \
+		--libdir=/usr/lib64 \
+		--sysconfdir=/etc \
+		--with-wwwdir=/var/www/html \
+		--with-cfgdir=/etc/codepot \
+		--with-depotdir=/var/lib/codepot \
+		--with-logdir=/var/log/codepot \
+		--with-cachedir=/var/cache/codepot \
+		--with-phpextdir=`php-config --extension-dir` \
+		--with-phpextinidir=`php-config --ini-dir | sed 's|/cli/|/apache2/|g'` && \
+	make && make install DESTDIR=${VROOT} && rm -rf ${VROOT}/var/lib/codepot/*
+
+RUN \
+	sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*"localhost"$|database_hostname = "/var/lib/codepot/codepot.db"|g' \
+	-e 's|^database_driver[[:space:]]*=[[:space:]]*""$|database_driver = "sqlite"|g' \
+	-e 's|^database_use_pdo[[:space:]]*=[[:space:]]*"no"$|database_use_pdo = "yes"|g' ${VROOT}/etc/codepot/codepot.ini 
+
+RUN tar -C ${VROOT} -zcvf /tmp/codepot-root.tar.gz .
+
+
+### -------------------------------------------------------------------------------
+
 FROM ubuntu:20.04
+
+ARG VROOT
 
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
@@ -7,12 +50,18 @@ RUN apt update && \
        libapache2-mod-perl2 libapache2-mod-svn \
        libswitch-perl libconfig-simple-perl libdigest-sha-perl \
        libdbd-sqlite3-perl libnet-ldap-perl libsvn-perl libmail-sendmail-perl \
-       sqlite3 php-dev libsvn-dev make vim
+       sqlite3 vim
 
-COPY build-ubnt2004.sh /tmp
-COPY codepot-0.4.0.tar.gz /tmp
-RUN /tmp/build-ubnt2004.sh && rm -rf /tmp/*
-
+COPY --from=installer /tmp/codepot-root.tar.gz /tmp
 COPY apache2-fg.sh /usr/sbin/
+
+RUN \
+	rm -rf /var/www/html && \
+	tar -C / -zxvf /tmp/codepot-root.tar.gz && \
+	a2enmod rewrite && a2enmod headers && \
+	cp -pf /etc/codepot/codepot.httpd /etc/apache2/conf-enabled/codepot.conf && \
+	echo "PerlSwitches -Mlib=/etc/codepot/perl" >> /etc/apache2/conf-enabled/perl.conf && \
+	sed -ri -e 's|^max_execution_time[[:space:]]*=.*$|max_execution_time = 120|g' /etc/php/*/apache2/php.ini && \
+	rm -rf /tmp/*
 
 ENTRYPOINT ["/usr/sbin/apache2-fg.sh"]
