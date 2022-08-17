@@ -19,7 +19,7 @@ do
 			;;
 		port=*)
 			SERVICE_PORT=${OPTARG#*=}
-                    	opt=${OPTARG%=$val}
+			opt=${OPTARG%=$val}
 			;;
 
 		hide-index-page)
@@ -30,7 +30,7 @@ do
 
 		hide-index-page=*)
 			HIDE_INDEX_PAGE=${OPTARG#*=}
-                    	opt=${OPTARG%=$val}
+			opt=${OPTARG%=$val}
 			;;
 
 		https-redirected)
@@ -41,11 +41,11 @@ do
 
 		https-redirected=*)
 			HTTPS_REDIRECTED=${OPTARG#*=}
-                    	opt=${OPTARG%=$val}
+			opt=${OPTARG%=$val}
 			;;
 
 		*)
-               		echo "Warning: unknown option - $OPTARG"
+			echo "Warning: unknown option - $OPTARG"
 			;;
 		esac
 		;;
@@ -62,6 +62,7 @@ do
 		echo " -hide-index-page  yes/no   hide/show the index page script from the URL"
 		echo " -https-redirected yes/no   indicate if the requets are HTTPS redirected"
 		echo "-------------------------------------------------------------------------"
+		exit 0
 		;;
 	p)
 		SERVICE_PORT=${OPTARG#*=}
@@ -69,7 +70,7 @@ do
 		;;
 
 	*)
-               	echo "Warning: unknown option - $OPTARG"
+		echo "Warning: unknown option - $OPTARG"
 		;;
 	esac
 done

@@ -1,11 +1,11 @@
-DOCKER ?= docker
+DOCKER ?= DOCKER_BUILDKIT=1 docker
 
 all:
 	@echo "Choose one of the following targets:"
-	@echo "  rocky ubnt2004"
+	@echo "  rocky ubnt"
 
-ubnt2004: @srcdir@/codepot-@VERSION@.tar.gz
-	$(DOCKER) build -t codepot:ubnt20.04 -f @srcdir@/Dockerfile.ubnt2004 @srcdir@ || true
+ubnt: @srcdir@/codepot-@VERSION@.tar.gz
+	$(DOCKER) build -t codepot:ubnt -f @srcdir@/Dockerfile.ubnt @srcdir@ || true
 	rm -f @srcdir@/codepot-@VERSION@.tar.gz
 
 rocky: @srcdir@/codepot-@VERSION@.tar.gz

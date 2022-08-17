@@ -33,6 +33,7 @@ RUN sed -ri -e 's|^database_hostname[[:space:]]*=[[:space:]]*"localhost"$|databa
             -e 's|^database_driver[[:space:]]*=[[:space:]]*""$|database_driver = "sqlite"|g' \
             -e 's|^database_use_pdo[[:space:]]*=[[:space:]]*"no"$|database_use_pdo = "yes"|g' ${VROOT}/etc/codepot/codepot.ini 
 
+COPY apache2-fg.sh ${VROOT}/usr/sbin/
 RUN tar -C ${VROOT} -zcvf /tmp/codepot-root.tar.gz .
 
 
@@ -42,19 +43,16 @@ FROM ubuntu:20.04
 
 ARG VROOT
 
-RUN apt update && \
-    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
-       subversion apache2 \
-       php libapache2-mod-php php-gd php-sqlite3 php-ldap \
-       libapache2-mod-perl2 libapache2-mod-svn \
-       libswitch-perl libconfig-simple-perl libdigest-sha-perl \
-       libdbd-sqlite3-perl libnet-ldap-perl libsvn-perl libmail-sendmail-perl \
-       sqlite3 vim
-
 COPY --from=installer /tmp/codepot-root.tar.gz /tmp
-COPY apache2-fg.sh /usr/sbin/
 
 RUN \
+	apt update && \
+	DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+		subversion apache2 \
+		php libapache2-mod-php php-gd php-sqlite3 php-ldap \
+		libapache2-mod-perl2 libapache2-mod-svn \
+		libswitch-perl libconfig-simple-perl libdigest-sha-perl \
+		libdbd-sqlite3-perl libnet-ldap-perl libsvn-perl libmail-sendmail-perl sqlite3 vim-tiny && \
 	rm -rf /var/www/html && \
 	tar -C / -zxvf /tmp/codepot-root.tar.gz && \
 	a2enmod rewrite && a2enmod headers && \
