@@ -6,7 +6,7 @@ all:
 	@echo "  alpine rocky ubnt"
 
 alpine: @srcdir@/codepot-@VERSION@.tar.gz
-	$(DOCKER) build -t codepot:ubnt -f @srcdir@/Dockerfile.alpine @srcdir@ || true
+	$(DOCKER) build -t codepot:alpine -f @srcdir@/Dockerfile.alpine @srcdir@ || true
 	rm -f @srcdir@/codepot-@VERSION@.tar.gz
 
 rocky: @srcdir@/codepot-@VERSION@.tar.gz
