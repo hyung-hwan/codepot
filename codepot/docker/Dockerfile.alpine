@@ -57,7 +57,7 @@ RUN \
 	apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
 		subversion apache2 libldap \
 		php7-apache2 php7-gd php7-sqlite3 php7-ldap php7-ctype \
-		php7-pdo php7-pdo_sqlite php7-pdo_mysql php7-zip \
+		php7-iconv php7-pdo php7-pdo_sqlite php7-pdo_mysql php7-zip \
 		apache2-webdav mod_dav_svn \
 		perl-switch perl-config-simple perl-digest-sha1 \
 		perl-dbd-sqlite perl-ldap perl-subversion perl-mail-sendmail sqlite bash && \
