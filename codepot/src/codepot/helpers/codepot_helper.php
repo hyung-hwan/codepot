@@ -221,19 +221,19 @@ if ( !function_exists ('codepot_zip_dir'))
 		if (!is_dir($path)) return FALSE;
 		if (!class_exists('ZipArchive')) return FALSE;
 
-		$stack = array ();
+		$stack = array();
 
 		array_push ($stack, $path); 
 		$prefix = strlen($path);
 
 		$zip = new ZipArchive();
-		if (@$zip->open ($output_file, ZipArchive::OVERWRITE) === FALSE) return FALSE;
+		if (@$zip->open($output_file, ZipArchive::OVERWRITE | ZipArchive::CREATE) === FALSE) return FALSE;
 
 		while (!empty($stack))
 		{
 			$dir = array_pop($stack);
 
-			$d = @opendir ($dir);
+			$d = @opendir($dir);
 			if ($d === FALSE) continue;
 
 			$new_path = empty($local_path)? $dir: substr_replace($dir, $local_path, 0, $prefix);
