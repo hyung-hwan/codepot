@@ -48,7 +48,7 @@ RUN \
 	dnf install -y epel-release && \
 	dnf install -y --enablerepo=powertools \
 		subversion subversion-perl \
-		httpd php php-gd php-pdo php-ldap \
+		httpd php php-gd php-pdo php-ldap php-mbstring php-zip \
 		perl-Digest-SHA perl-Config-Simple \
 		perl-DBD-SQLite perl-LDAP perl-Mail-Sendmail perl-Switch \
 		mod_dav_svn mod_perl diffutils sqlite && \

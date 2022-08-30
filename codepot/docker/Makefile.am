@@ -17,6 +17,12 @@ ubnt: @srcdir@/codepot-@VERSION@.tar.gz
 	$(DOCKER) build -t codepot:ubnt -f @srcdir@/Dockerfile.ubnt @srcdir@ || true
 	rm -f @srcdir@/codepot-@VERSION@.tar.gz
 
+push:
+	$(DOCKER) tag codepot:rocky hyunghwan/codepot:rocky
+	$(DOCKER) tag codepot:ubnt hyunghwan/codepot:ubnt
+	$(DOCKER) push hyunghwan/codepot:rocky
+	$(DOCKER) push hyunghwan/codepot:ubnt
+
 @srcdir@/codepot-@VERSION@.tar.gz:
 	cd .. && make dist
 	cp ../codepot-@VERSION@.tar.gz  @srcdir@/
