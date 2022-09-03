@@ -2,7 +2,7 @@ ARG VROOT=/tmp/codepot-root
 
 ### -------------------------------------------------------------------------------
 
-FROM rockylinux/rockylinux:latest as installer
+FROM rockylinux/rockylinux:8 as installer
 
 ARG VROOT
 
@@ -35,7 +35,7 @@ RUN tar -C ${VROOT} -zcvf /tmp/codepot-root.tar.gz .
 
 ### -------------------------------------------------------------------------------
 
-FROM rockylinux/rockylinux:latest
+FROM rockylinux/rockylinux:8
 
 ARG VROOT
 
