@@ -117,17 +117,30 @@ for e in "${!APACHE_@}"; do
 	fi
 done
 
-[ ! -d /var/lib/codepot/attachments ] && mkdir -p /var/lib/codepot/attachments
-[ ! -d /var/lib/codepot/files ] && mkdir -p /var/lib/codepot/files
-[ ! -d /var/lib/codepot/issuefiles ] && mkdir -p /var/lib/codepot/issuefiles
-[ ! -d /var/lib/codepot/svnrepo ] && mkdir -p /var/lib/codepot/svnrepo
-[ ! -d /var/lib/codepot/usericons ] && mkdir -p /var/lib/codepot/usericons
-[ ! -f /var/lib/codepot/codepot.db ] && sqlite3 -init /etc/codepot/codepot.sqlite /var/lib/codepot/codepot.db ""
+chown www-data:www-data /var/lib/codepot
 
-mkdir -p /var/cache/codepot /var/log/codepot
-chown -R www-data:www-data /var/lib/codepot /var/cache/codepot /var/log/codepot
+for i in /var/cache/codepot /var/log/codepot \
+	/var/lib/codepot/attachments \
+	/var/lib/codepot/files \
+	/var/lib/codepot/issuefiles \
+	/var/lib/codepot/svnrepo \
+	/var/lib/codepot/usericons
+do
+	[ ! -d "$i" ] && {
+		mkdir -p "$i"
+		chown www-data:www-data "$i"
+	}
+done
 
-[ ! -f "${CODEPOT_CONFIG_FILE}" ] && cp -pf /etc/codepot/codepot.ini "${CODEPOT_CONFIG_FILE}"
+[ ! -f /var/lib/codepot/codepot.db ] && {
+	sqlite3 -init /etc/codepot/codepot.sqlite /var/lib/codepot/codepot.db ""
+	chown www-data:www-data /var/lib/codepot/codepot.db
+}
+
+[ ! -f "${CODEPOT_CONFIG_FILE}" ] && {
+	cp -pf /etc/codepot/codepot.ini "${CODEPOT_CONFIG_FILE}"
+	chown www-data:www-data "${CODEPOT_CONFIG_FILE}"
+}
 
 grep -F -q  '<Location "/">' /etc/apache2/conf-enabled/codepot.conf || {
         cat <<EOF >> /etc/apache2/conf-enabled/codepot.conf
