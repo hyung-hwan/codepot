@@ -3,10 +3,12 @@ set -e
 
 CODEPOT_CONFIG_FILE="/var/lib/codepot/codepot.ini"
 HTTPD_CONFIG_FILE="/etc/apache2/apache2.conf"
+MPM_PREFORK_CONFIG_FILE="/etc/apache2/mods-available/mpm_prefork.conf"
 
 SERVICE_PORT=""
 HIDE_INDEX_PAGE=""
 HTTPS_REDIRECTED=""
+MPM_PREFORK_MAX_WORKERS=""
 while getopts ":hp:-:" oc
 do
 	case "${oc}" in
@@ -41,6 +43,11 @@ do
 
 		https-redirected=*)
 			HTTPS_REDIRECTED=${OPTARG#*=}
+			opt=${OPTARG%=$val}
+			;;
+
+		mpm-prefork-max-workers=*)
+			MPM_PREFORK_MAX_WORKERS=${OPTARG#*=}
 			opt=${OPTARG%=$val}
 			;;
 
@@ -154,7 +161,7 @@ sed -r -i "s|PerlSetEnv CODEPOT_CONFIG_FILE .*\$|PerlSetEnv CODEPOT_CONFIG_FILE 
 
 
 ## change the port number as specified on the command line
-echo "Configuring to listen on the port[$SERVICE_PORT] hide-index-page[$HIDE_INDEX_PAGE] https-redirected[$HTTPS_REDIRECTED]"
+echo "Configuring to listen on the port[$SERVICE_PORT] hide-index-page[$HIDE_INDEX_PAGE] https-redirected[$HTTPS_REDIRECTED] mpm-prefork-max-workers[$MPM_PREFORK_MAX_WORKERS]"
 
 sed -r -i "s|^Listen[[:space:]]+.*|Listen ${SERVICE_PORT}|g" "/etc/apache2/ports.conf"
 sed -r -i "s|^<VirtualHost .+$|<VirtualHost *:${SERVICE_PORT}>|g" "/etc/apache2/sites-available/000-default.conf"
@@ -187,6 +194,11 @@ else
 	rm -rf /var/www/html/.htaccess
 
 	sed -r -i '/<Directory \/var\/www\/>/,/<\/Directory>/s|^[[:space:]]*AllowOverride[[:space:]]+.*$|\tAllowOverride None|g' "${HTTPD_CONFIG_FILE}"
+fi
+
+if [[ -n "${MPM_PREFORK_MAX_WORKERS}" && -f "${MPM_PREFORK_CONFIG_FILE}" ]]
+then
+	sed -r -i "s/^([[:space:]]*MaxRequestWorkers[[:space:]]+)[[:digit:]]+[[:space:]]*$/\1${MPM_PREFORK_MAX_WORKERS}/g" "${MPM_PREFORK_CONFIG_FILE}"
 fi
 
 #httpd server in the foreground
